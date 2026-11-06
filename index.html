@@ -117,6 +117,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .btn.gold{background:var(--gold);color:#1b1405;border-color:var(--gold)}
 .btn.gold small{color:#4a3a10}
 .btn[disabled]{opacity:.45}
+.btn.dis{opacity:.45}
 .kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px}
 .kv span:nth-child(even){text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
 .q{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--edge);border-radius:8px;background:var(--panel)}
@@ -141,8 +142,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .ov .primary:active{background:var(--ink)}
 </style>
 
-</head>
-<body>
 <div class="game" id="game">
   <canvas id="cv"></canvas>
 
@@ -382,7 +381,7 @@ function buildWorld(){
 buildWorld();
 
 /* ---------- durum ---------- */
-var P = null, K = null, mobs = [], npcs = [], herbs = [], floats = [], fxs = [], logLines = [], quests = {};
+var P = null, K = null, mobs = [], npcs = [], herbs = [], ores = [], floats = [], fxs = [], logLines = [], quests = {};
 var T = 30, paused = true, joy = { x:0, y:0 }, keys = {}, zoneId = -1, townId = -1;
 var explored = new Uint8Array(TW * TH);
 var mapImg = document.createElement('canvas'); mapImg.width = TW; mapImg.height = TH;
@@ -406,7 +405,7 @@ function nearTown(x, y, r){ for (var i = 0; i < TOWNS.length; i++){ if (Math.hyp
 function nearestTown(x, y){ var b = 0, bd = 1e9; for (var i = 0; i < TOWNS.length; i++){ var d = Math.hypot(x - TOWNS[i].x, y - TOWNS[i].y); if (d < bd){ bd = d; b = i; } } return b; }
 
 function spawnWorld(){
-  mobs = []; npcs = []; herbs = [];
+  mobs = []; npcs = []; herbs = []; ores = [];
   var counts = [44, 26, 26, 40];
   var r = mulberry32(777), id = 0;
   ZONES.forEach(function(zn, zi){
@@ -448,6 +447,16 @@ function spawnWorld(){
     herbs.push({ x:hx + 0.5, y:hy + 0.5, at:0 });
     hm++;
   }
+  var orr = mulberry32(9090), om = 0, ot = 0;
+  while (om < 36 && ot < 4000){
+    ot++;
+    var oxx = 1 + Math.floor(orr() * (TW - 2)), oyy = 1 + Math.floor(orr() * (TH - 2));
+    var ozz = zoneMap[idx(oxx, oyy)];
+    if (ozz < 1 && orr() < 0.7) continue;
+    if (!walkable(oxx + 0.5, oyy + 0.5) || tiles[idx(oxx, oyy)] === T_ROAD || distTownMin(oxx, oyy) < 5) continue;
+    ores.push({ x:oxx + 0.5, y:oyy + 0.5, at:0, z:ozz });
+    om++;
+  }
 }
 function makeMob(id, ty, lvl, x, y){
   var hp = Math.round((12 + 11 * lvl) * ty.f);
@@ -456,15 +465,24 @@ function makeMob(id, ty, lvl, x, y){
 }
 
 /* ---------- oyuncu ---------- */
+var TAL = [
+  { id:'pow',   n:'Güç',         ic:'⚔️', d:'Her kademe +%4 saldırı' },
+  { id:'vit',   n:'Dayanıklılık', ic:'❤️', d:'Her kademe +%5 can' },
+  { id:'mind',  n:'Zihin',       ic:'🔷', d:'Her kademe +%6 mana' },
+  { id:'eye',   n:'Keskin Göz',  ic:'🎯', d:'Her kademe +%2,5 kritik şansı' },
+  { id:'swift', n:'Çeviklik',    ic:'👟', d:'Her kademe +%3 hareket hızı' }
+];
+function tal(id){ return (P.tal && P.tal[id]) || 0; }
+function talLeft(){ var sp = 0; TAL.forEach(function(t){ sp += tal(t.id); }); return Math.max(0, P.lvl - 1 - sp); }
 function xpNeed(l){ return 40 * l + 6 * l * l; }
-function atkTotal(){ return K.atk + (P.lvl - 1) * 1.8 + (P.wep ? P.wep.b : 0); }
+function atkTotal(){ return (K.atk + (P.lvl - 1) * 1.8 + (P.wep ? P.wep.b : 0)) * (1 + 0.04 * tal('pow')); }
 function armTotal(){ return K.arm + P.lvl * 0.8 + (P.arm ? P.arm.b : 0); }
-function maxHp(){ return K.hp + (P.lvl - 1) * 12; }
-function maxMp(){ return K.mp + (P.lvl - 1) * 5; }
+function maxHp(){ return Math.round((K.hp + (P.lvl - 1) * 12) * (1 + 0.05 * tal('vit'))); }
+function maxMp(){ return Math.round((K.mp + (P.lvl - 1) * 5) * (1 + 0.06 * tal('mind'))); }
 function newPlayer(cls, name){
   K = CLASSES[cls];
   P = { cls:cls, name:name || 'Kahraman', x:40.5, y:64.5, lvl:1, xp:0, hp:K.hp, mp:K.mp, gold:0, pots:3, wep:null, arm:null,
-        shield:0, shieldT:0, atkT:0, gcd:0, cd:[0,0,0,0], potCd:0, auto:false, target:null, mounted:false, dead:false, lastCombat:-99, slowT:0, kills:0, rest:0, ach:{}, bossKills:0, cast:null, pet:null };
+        shield:0, shieldT:0, atkT:0, gcd:0, cd:[0,0,0,0], potCd:0, auto:false, target:null, mounted:false, dead:false, lastCombat:-99, slowT:0, kills:0, rest:0, ach:{}, bossKills:0, cast:null, pet:null, tal:{}, ores:0, home:0, hsCd:0 };
   TOWNS.forEach(function(t, i){ t.seen = i === 0; });
   if (K.pet) P.pet = { x:P.x - 1, y:P.y, atkT:0 };
   quests = {}; explored = new Uint8Array(TW * TH); logLines = []; floats = []; fxs = [];
@@ -478,7 +496,7 @@ function save(){
     var ex = ''; for (var i = 0; i < explored.length; i++) ex += explored[i] ? '1' : '0';
     localStorage.setItem(SAVE_KEY, JSON.stringify({ v:1, cls:P.cls, name:P.name, lvl:P.lvl, xp:P.xp, gold:P.gold, pots:P.pots, wep:P.wep, arm:P.arm,
       x:P.x, y:P.y, hp:P.hp, mp:P.mp, quests:quests, ex:ex, T:T,
-      rest:P.rest, ach:P.ach, bk:P.bossKills, seen:TOWNS.map(function(t){ return t.seen ? 1 : 0; }) }));
+      rest:P.rest, ach:P.ach, bk:P.bossKills, tal:P.tal, oc:P.ores, home:P.home, hs:P.hsCd, seen:TOWNS.map(function(t){ return t.seen ? 1 : 0; }) }));
   } catch (e) {}
 }
 function readSave(){
@@ -486,11 +504,11 @@ function readSave(){
 }
 function loadSave(d){
   newPlayer(d.cls, d.name);
-  P.lvl = d.lvl; P.xp = d.xp; P.gold = d.gold; P.pots = d.pots; P.wep = d.wep; P.arm = d.arm;
+  P.tal = d.tal || {}; P.lvl = d.lvl; P.xp = d.xp; P.gold = d.gold; P.pots = d.pots; P.wep = d.wep; P.arm = d.arm;
   if (canStand(d.x, d.y, 0.28)){ P.x = d.x; P.y = d.y; }
   P.hp = Math.max(1, Math.min(d.hp, maxHp())); P.mp = Math.min(d.mp, maxMp());
   quests = d.quests || {}; T = d.T || 30;
-  P.rest = d.rest || 0; P.ach = d.ach || {}; P.bossKills = d.bk || 0;
+  P.ores = d.oc || 0; P.home = d.home || 0; P.hsCd = d.hs || 0; P.rest = d.rest || 0; P.ach = d.ach || {}; P.bossKills = d.bk || 0;
   (d.seen || []).forEach(function(v, i){ if (TOWNS[i]) TOWNS[i].seen = !!v; }); TOWNS[0].seen = true;
   if (P.pet){ P.pet.x = P.x - 1; P.pet.y = P.y; }
   explored = new Uint8Array(TW * TH);
@@ -513,7 +531,7 @@ function levelColor(l){
 
 /* ---------- savaş ---------- */
 function roll(base){
-  var v = base * (0.85 + Math.random() * 0.3), crit = Math.random() < 0.1;
+  var v = base * (0.85 + Math.random() * 0.3), crit = Math.random() < 0.1 + 0.025 * tal('eye');
   if (crit) v *= 1.8;
   return { v:Math.max(1, Math.round(v)), crit:crit };
 }
@@ -540,7 +558,7 @@ function gainXp(n){
     P.hp = maxHp(); P.mp = maxMp();
     fxs.push({ k:'ring', x:P.x, y:P.y, r:2.4, t:0, d:0.8, col:'#f2c75c' });
     showBanner('SEVİYE ' + P.lvl, 'Can ve mana doldu', '#f2c75c');
-    say('Seviye atladın! Sv ' + P.lvl + '.', '#f2c75c');
+    say('Seviye atladın! Sv ' + P.lvl + '.', '#f2c75c'); say('Yetenek puanı kazandın (karakter ekranından harca).', '#f2c75c');
     var un = K.ab.filter(function(a){ return a.lv === P.lvl; });
     un.forEach(function(a){ say('Yeni yetenek: ' + a.n + '.', '#f2c75c'); });
     if (P.lvl === 4) say('Binek açıldı. Savaş dışındayken 🐎 tuşuna bas.', '#f2c75c');
@@ -612,6 +630,7 @@ function hurtPlayer(raw, m){
   var ab = Math.min(P.shield, d);
   P.shield -= ab; d -= ab;
   P.hp -= d; P.lastCombat = T; dismount();
+  if (P.cast && P.cast.i === 'hs'){ P.cast = null; say('Ev Taşı yarıda kesildi.', '#ff9a8a'); }
   floatText(P.x, P.y - 0.7, ab && !d ? 'Emildi' : '-' + d, '#ff6a5a', false);
   flash = 0.25;
   if (P.hp <= 0 && !P.dead) die();
@@ -638,6 +657,22 @@ function flyTo(t, price){
   if (P.pet){ P.pet.x = P.x - 1; P.pet.y = P.y; }
   mobs.forEach(function(m){ if (m.state === 'chase') evade(m); });
   closeSheet(); revealAround(P.x, P.y, 9); say(t.name + '\'e uçtun.', '#f2c75c'); save();
+}
+function startHearth(){
+  if (!P || P.dead) return;
+  if (P.cast){ return; }
+  if (P.hsCd > T){ say('Ev Taşı hazır değil.'); return; }
+  if (inCombat()){ say('Savaştayken Ev Taşı kullanılamaz.', '#ff9a8a'); return; }
+  closeSheet(); P.cast = { i:'hs', t:0, ct:8 }; P.auto = false; dismount();
+  say('Ev Taşı hazırlanıyor... kıpırdama.', '#f2c75c');
+}
+function finishHearth(){
+  var t = TOWNS[P.home || 0]; P.hsCd = T + 300;
+  P.x = t.x + 0.5; P.y = t.y + 2.5; P.target = null; P.auto = false; P.mounted = false;
+  if (P.pet){ P.pet.x = P.x - 1; P.pet.y = P.y; }
+  mobs.forEach(function(m){ if (m.state === 'chase') evade(m); });
+  fxs.push({ k:'ring', x:P.x, y:P.y, r:2, t:0, d:0.8, col:'#6aa8ff' });
+  revealAround(P.x, P.y, 9); say(t.name + '\'e döndün.', '#6aa8ff'); save();
 }
 function evade(m){ m.state = 'idle'; m.x = m.hx; m.y = m.hy; m.hp = m.max; m.stuck = 0; if (P.target === m) P.target = null; }
 
@@ -743,7 +778,7 @@ function update(dt){
   var len = Math.hypot(ix, iy);
   if (len > 1){ ix /= len; iy /= len; len = 1; }
   var moving = len > 0.15;
-  var sp = 3.4 * (P.mounted ? 1.8 : 1) * (P.slowT > 0 ? 0.5 : 1);
+  var sp = 3.4 * (1 + 0.03 * tal('swift')) * (P.mounted ? 1.8 : 1) * (P.slowT > 0 ? 0.5 : 1);
   if (moving) moveEnt(P, ix * sp * dt * Math.min(1, len * 1.2), iy * sp * dt * Math.min(1, len * 1.2), 0.28);
   else if (P.auto && validTarget() && !P.cast){
     var d0 = dist(P, P.target), need = K.range * 0.8;
@@ -751,7 +786,7 @@ function update(dt){
   }
   if (P.cast){
     if (moving){ P.cast = null; say('Büyü yarıda kesildi.', '#ff9a8a'); }
-    else { P.cast.t += dt; if (P.cast.t >= P.cast.ct){ var ci = P.cast.i; P.cast = null; useAbility(ci, true); } }
+    else { P.cast.t += dt; if (P.cast.t >= P.cast.ct){ var ci = P.cast.i; P.cast = null; if (ci === 'hs') finishHearth(); else useAbility(ci, true); } }
   }
   if (validTarget() && dist(P, P.target) > 14){ P.target = null; P.auto = false; }
   P.atkT = Math.max(0, P.atkT - dt); P.gcd = Math.max(0, P.gcd - dt); P.potCd = Math.max(0, P.potCd - dt);
@@ -778,6 +813,17 @@ function update(dt){
       else say('İksir çantan dolu.');
     }
   }
+
+  for (i = 0; i < ores.length; i++){
+    var ob = ores[i];
+    if (ob.at > T) continue;
+    if (Math.hypot(P.x - ob.x, P.y - ob.y) < 0.8){
+      ob.at = T + 90; P.ores = (P.ores || 0) + 1;
+      if (Math.random() < 0.12){ var gg = 40 + 25 * ob.z; P.gold += gg; say('Parlak mücevher buldun! +' + gg + ' altın.', '#c58bff'); floatText(P.x, P.y - 0.9, '+' + gg, '#c58bff', true); }
+      else { var g2 = 6 + ob.z * 5 + rnd(8); P.gold += g2; say('Maden damarı: +' + g2 + ' altın.', '#f2c75c'); floatText(P.x, P.y - 0.9, '+' + g2, '#f2c75c', false); }
+    }
+  }
+  if (townId >= 0) P.home = townId;
 
   mobsUpdate(dt);
 
@@ -1008,6 +1054,16 @@ function openChar(){
       q.appendChild(h('small', a.mp + ' mana · ' + a.cd + ' sn bekleme'));
       b.appendChild(q);
     });
+    b.appendChild(h('h3', 'Yetenek Puanları · ' + talLeft() + ' kaldı'));
+    TAL.forEach(function(t){
+      var r = tal(t.id), can = talLeft() > 0 && r < 5;
+      b.appendChild(btn(t.ic + ' ' + t.n + ' ' + r + '/5', t.d, can ? 'gold' : 'dis', function(){
+        if (!can) return; P.tal[t.id] = r + 1; save(); closeSheet(); openChar();
+      }));
+    });
+    b.appendChild(h('h3', 'Ev Taşı'));
+    var hsLeft = Math.max(0, Math.ceil(P.hsCd - T));
+    b.appendChild(btn('🏠 Ev Taşı', hsLeft > 0 ? hsLeft + ' sn sonra hazır' : 'Son girdiğin köye ışınlan (8 sn, savaş dışı, H tuşu)', hsLeft > 0 ? 'dis' : '', function(){ startHearth(); }));
     var pts = 0; ACH.forEach(function(a){ if (P.ach[a.id]) pts += a.p; });
     b.appendChild(h('h3', 'Başarımlar · ' + pts + ' puan'));
     ACH.forEach(function(a){
@@ -1092,7 +1148,7 @@ function updateHud(){
   $('#xpF').style.width = (P.lvl >= 20 ? 100 : clamp(P.xp / xpNeed(P.lvl) * 100, 0, 100)) + '%';
   $('#xpF').parentNode.classList.toggle('rest', P.rest > 1 && P.lvl < 20);
   var cb = $('#castbar');
-  if (P.cast){ cb.hidden = false; $('#castF').style.width = clamp(P.cast.t / P.cast.ct * 100, 0, 100) + '%'; $('#castT').textContent = K.ab[P.cast.i].n; } else cb.hidden = true;
+  if (P.cast){ cb.hidden = false; $('#castF').style.width = clamp(P.cast.t / P.cast.ct * 100, 0, 100) + '%'; $('#castT').textContent = P.cast.i === 'hs' ? 'Ev Taşı' : K.ab[P.cast.i].n; } else cb.hidden = true;
   var tf = $('#tf');
   if (validTarget()){
     var t = P.target; tf.hidden = false;
@@ -1230,6 +1286,7 @@ function drawWorld(){
   }
   var i2;
   for (i2 = 0; i2 < herbs.length; i2++){ var hb = herbs[i2]; if (hb.at <= T && hb.x > x0 && hb.x < x1 && hb.y > y0 && hb.y < y1) list.push({ y:hb.y, k:1, o:hb }); }
+  for (i2 = 0; i2 < ores.length; i2++){ var ob2 = ores[i2]; if (ob2.at <= T && ob2.x > x0 && ob2.x < x1 && ob2.y > y0 && ob2.y < y1) list.push({ y:ob2.y, k:6, o:ob2 }); }
   for (i2 = 0; i2 < npcs.length; i2++){ var n = npcs[i2]; if (n.x > x0 && n.x < x1 && n.y > y0 && n.y < y1) list.push({ y:n.y, k:2, o:n }); }
   for (i2 = 0; i2 < mobs.length; i2++){ var m = mobs[i2]; if (m.x > x0 && m.x < x1 && m.y > y0 && m.y < y1 && (!m.dead || T - m.diedAt < 1.2)) list.push({ y:m.y, k:3, o:m }); }
   list.push({ y:P.y, k:4 });
@@ -1239,6 +1296,7 @@ function drawWorld(){
     var it = list[i2];
     if (it.k === 0){ var dc = DECOS[it.d]; drawSpr(dc.c, it.x, it.y - (dc.s - 1) * 0.3, dc.s); }
     else if (it.k === 1){ drawSpr('🌿', it.o.x, it.o.y, 0.8); }
+    else if (it.k === 6){ drawSpr('🪨', it.o.x, it.o.y, 0.85); drawSpr('✨', it.o.x + 0.2, it.o.y - 0.35, 0.45, 0.6 + 0.4 * Math.sin(T * 4 + it.o.x)); }
     else if (it.k === 2){
       var nn = it.o; shadow(nn.x, nn.y, 0.3); drawSpr(nn.c, nn.x, nn.y, 1);
       var mk = npcMarker(nn);
@@ -1394,6 +1452,7 @@ window.addEventListener('keydown', function(e){
   if (k === ' '){ e.preventDefault(); toggleAttack(); return; }
   if (k === 'f'){ usePotion(); return; }
   if (k === 'z'){ toggleMount(); return; }
+  if (k === 'h'){ startHearth(); return; }
   if (k === 'e'){ var t = $('#talk')._n; if (t) openDialog(t); return; }
   if (k === 'Tab'){ e.preventDefault(); var m = nearestMob(10); if (m) P.target = m; return; }
   keys[k] = true;
@@ -1464,6 +1523,7 @@ var ACH = [
   { id:'q10',  n:'Görev Ustası',     d:'10 görev tamamla.',                 p:10, f:function(){ return doneQuests() >= 10; } },
   { id:'g500', n:'Zengin',           d:'500 altın biriktir.',               p:5,  f:function(){ return P.gold >= 500; } },
   { id:'ex50', n:'Kaşif',            d:'Haritanın yarısını keşfet.',        p:10, f:function(){ return exploredPct() >= 0.5; } },
+  { id:'ore20', n:'Madenci',        d:'20 maden damarı topla.',            p:10, f:function(){ return (P.ores || 0) >= 20; } },
   { id:'bf',   n:'Ejderha Katili',   d:'Buz Ejderhası\'nı yen.',            p:25, f:function(){ return false; } }
 ];
 var ACHBY = {}; ACH.forEach(function(a){ ACHBY[a.id] = a; });

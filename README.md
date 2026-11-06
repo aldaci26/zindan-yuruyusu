@@ -14,6 +14,9 @@ Tarayıcıda oynanan, World of Warcraft'tan esinlenmiş açık dünya mini RPG. 
 - **Ganimet:** Sıradan, Nadir, Üstün, Destansı eşyalar
 - **Köylerde:** şifacı, tüccar, görev veren, **uçuş ustası** (keşfettiğin köylere hızlı seyahat)
 - **Binek**, şifalı otlar, iksirler
+- **Yetenek puanları:** her seviyede 1 puan. Güç, Dayanıklılık, Zihin, Keskin Göz (kritik şansı) ve Çeviklik (hız) arasında dağıt, her biri 5 kademe
+- **Ev Taşı:** 8 saniye hazırlanır, savaş dışında son girdiğin köye ışınlar. 5 dakika bekleme süresi
+- **Maden damarları:** haritada ⛏️ taşlar, üzerinden geç, altın topla. Ara sıra parlak mücevher çıkar
 - **Başarımlar**, gece-gündüz döngüsü, mini harita, dünya haritası, kar yağışı
 - Otomatik kayıt (`localStorage`)
 
@@ -25,7 +28,7 @@ Tarayıcıda oynanan, World of Warcraft'tan esinlenmiş açık dünya mini RPG. 
 | Düşmana dokun: hedef seç | `Tab`: en yakın hedef |
 | Kılıç düğmesi: otomatik saldırı | `Boşluk` |
 | Yetenek düğmeleri | `1` `2` `3` `4` |
-| İksir / binek | `F` / `Z` |
+| İksir / binek / Ev Taşı | `F` / `Z` / `H` |
 | Konuş düğmesi (NPC yakınında çıkar) | `E` |
 | Karakter / görevler / harita | `C` / `Q` / `M` |
 

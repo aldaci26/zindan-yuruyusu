@@ -1322,7 +1322,7 @@ function resize(){
   if (!w || !hh) return;
   cv.width = Math.round(w * DPR); cv.height = Math.round(hh * DPR);
   W = cv.width; H = cv.height;
-  TS = Math.round(Math.max(32, w / 9.5) * DPR);
+  var tilesAcross = w < 700 ? 9.5 : 22; TS = Math.round(Math.max(32, w / tilesAcross) * DPR);
   var mw = $('#mmw').clientWidth || 92;
   mmc.width = Math.round(mw * DPR); mmc.height = Math.round(mw * DPR);
   snow = [];

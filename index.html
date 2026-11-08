@@ -27,7 +27,7 @@
   --mp:#4a8dff;
   --xp:#a35cf0;
   --danger:#f0604a;
-  --font-display:"Cinzel", Georgia, "Times New Roman", serif;
+  --font-display:"Cinzel", Georgia, "Tahoma", serif;
   --font-ui:"JetBrains Mono", ui-monospace, Menlo, monospace;
   color-scheme: dark;
 }
@@ -124,7 +124,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .q b{color:var(--gold)}
 .q small{color:var(--muted)}
 .mapc{width:100%;max-width:340px;aspect-ratio:1;align-self:center;border:2px solid var(--edge);border-radius:6px;image-rendering:pixelated;background:#000}
-
+      
 /* tam ekran perde */
 .ov{position:absolute;inset:0;z-index:40;background:rgba(8,12,15,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px max(20px, env(safe-area-inset-right, 0px)) 20px max(20px, env(safe-area-inset-left, 0px));overflow-y:auto;touch-action:pan-y}
 .ov h1{margin:0;font:800 30px/1.1 var(--font-display);color:var(--gold);letter-spacing:.05em;text-wrap:balance}
@@ -231,13 +231,13 @@ var ZONES = [
   { name:'Buzdağı',   lo:12, hi:20, town:3, col:'#9fd8ff' }
 ];
 var TOWNS = [
-  { name:'Altınyol', x:40, y:62, zone:0, tier:0 },
+  { name:'Sarısungur', x:40, y:62, zone:0, tier:0 },
   { name:'Gölgeköy', x:12, y:36, zone:1, tier:1 },
   { name:'Vaha',     x:68, y:36, zone:2, tier:2 },
   { name:'Buzkale',  x:40, y:16, zone:3, tier:3 }
 ];
 var NPCDEF = [
-  [ { id:'belin', name:'Muhtar Belin',  role:'quest', c:'🧑‍🌾', ox:0,  oy:-2 }, { id:'elara', name:'Şifacı Elara', role:'heal', c:'🧑‍⚕️', ox:-2, oy:1 }, { id:'orhan', name:'Tüccar Orhan', role:'shop', c:'🧑‍💼', ox:2, oy:1 } ],
+  [ { id:'haydar', name:'Muhtar Haydar',  role:'quest', c:'🧑‍🌾', ox:0,  oy:-2 }, { id:'elara', name:'Şifacı Elara', role:'heal', c:'🧑‍⚕️', ox:-2, oy:1 }, { id:'orhan', name:'Tüccar Orhan', role:'shop', c:'🧑‍💼', ox:2, oy:1 } ],
   [ { id:'selin', name:'Avcı Selin',    role:'quest', c:'🧑‍🌾', ox:0,  oy:-2 }, { id:'mora',  name:'Şifacı Mora',  role:'heal', c:'🧑‍⚕️', ox:-2, oy:1 }, { id:'kerem', name:'Tüccar Kerem', role:'shop', c:'🧑‍💼', ox:2, oy:1 } ],
   [ { id:'harun', name:'Kâhya Harun',   role:'quest', c:'🧑‍🌾', ox:0,  oy:-2 }, { id:'naz',   name:'Şifacı Naz',   role:'heal', c:'🧑‍⚕️', ox:-2, oy:1 }, { id:'cem',   name:'Tüccar Cem',   role:'shop', c:'🧑‍💼', ox:2, oy:1 } ],
   [ { id:'ada',   name:'Komutan Ada',   role:'quest', c:'🧑‍🌾', ox:0,  oy:-2 }, { id:'lale',  name:'Şifacı Lale',  role:'heal', c:'🧑‍⚕️', ox:-2, oy:1 }, { id:'bora',  name:'Tüccar Bora',  role:'shop', c:'🧑‍💼', ox:2, oy:1 } ]
@@ -268,13 +268,13 @@ var MINIBOSS = [
 ];
 
 var QUESTS = [
-  { id:'q1',  giver:'belin', title:'Kurt Sürüsü',        kind:'kill', target:'Kurt',            n:5,  lvl:1,  prev:null, xp:60,   gold:15,   text:'Köyün çevresinde kurtlar çoğaldı. Beş tanesini avla.' },
-  { id:'q2',  giver:'belin', title:'Fare İstilası',      kind:'kill', target:'Fare',            n:6,  lvl:1,  prev:null, xp:70,   gold:20,   text:'Ambarları fareler bastı. Altı fare temizle.' },
-  { id:'q3',  giver:'belin', title:'Yaban Domuzu Avı',   kind:'kill', target:'Yaban Domuzu',    n:6,  lvl:2,  prev:'q1', xp:140,  gold:35,   text:'Yaban domuzları tarlaları çiğniyor. Altısını durdur.' },
-  { id:'q4',  giver:'belin', title:'Gölgeköy\'e Mektup', kind:'deliver', turn:'selin',         lvl:4,  prev:'q3', xp:200,  gold:40,   text:'Bu mektubu batıdaki Gölgeköy\'de Avcı Selin\'e ulaştır. Yol boyunca batıya git.' },
-  { id:'q5',  giver:'selin', title:'Ayı Tehdidi',        kind:'kill', target:'Orman Ayısı',     n:6,  lvl:5,  prev:'q4', xp:420,  gold:80,   text:'Karaorman\'daki ayılar avcılarımıza saldırıyor. Altısını bul ve yen.' },
-  { id:'q6',  giver:'selin', title:'Örümcek Yuvası',     kind:'kill', target:'Orman Örümceği',  n:8,  lvl:6,  prev:'q5', xp:520,  gold:90,   text:'Dev örümcekler ağlarını yollara ördü. Sekiz tanesini temizle.' },
-  { id:'q7',  giver:'selin', title:'Goblin Kampı',       kind:'kill', target:'Goblin',          n:8,  lvl:7,  prev:'q6', xp:700,  gold:120,  text:'Goblinler orman yolunu kesiyor. Sekizini dize getir.' },
+  { id:'q1',  giver:'haydar', title:'Kurt Sürüsü',        kind:'kill', target:'Kurt',            n:5,  lvl:1,  prev:null, xp:60,   gold:15,   text:'Köyün çevresinde kurtlar çoğaldı. Beş tanesini avla.' },
+  { id:'q2',  giver:'haydar', title:'Fare İstilası',      kind:'kill', target:'Fare',            n:6,  lvl:1,  prev:null, xp:70,   gold:20,   text:'Ambarları fareler bastı. Altı fare temizle.' },
+  { id:'q3',  giver:'haydar', title:'Yaban Domuzu Avı',   kind:'kill', target:'Yaban Domuzu',    n:6,  lvl:2,  prev:null, xp:140,  gold:35,   text:'Yaban domuzları tarlaları çiğniyor. Altısını durdur.' },
+  { id:'q4',  giver:'haydar', title:'Gölgeköy\'e Mektup', kind:'deliver', turn:'selin',         lvl:4,  prev:'q3', xp:200,  gold:40,   text:'Bu mektubu batıdaki Gölgeköy\'de Avcı Selin\'e ulaştır. Yol boyunca batıya git.' },
+  { id:'q5',  giver:'selin', title:'Ayı Tehdidi',        kind:'kill', target:'Orman Ayısı',     n:6,  lvl:5,  prev:null, xp:420,  gold:80,   text:'Karaorman\'daki ayılar avcılarımıza saldırıyor. Altısını bul ve yen.' },
+  { id:'q6',  giver:'selin', title:'Örümcek Yuvası',     kind:'kill', target:'Orman Örümceği',  n:8,  lvl:6,  prev:null, xp:520,  gold:90,   text:'Dev örümcekler ağlarını yollara ördü. Sekiz tanesini temizle.' },
+  { id:'q7',  giver:'selin', title:'Goblin Kampı',       kind:'kill', target:'Goblin',          n:8,  lvl:7,  prev:null, xp:700,  gold:120,  text:'Goblinler orman yolunu kesiyor. Sekizini dize getir.' },
   { id:'q8',  giver:'selin', title:'Vaha\'ya Haber',     kind:'deliver', turn:'harun',         lvl:9,  prev:'q7', xp:600,  gold:100,  text:'Doğudaki Vaha\'da Kâhya Harun\'a haber götür. Güneydeki yolu izle.' },
   { id:'q9',  giver:'harun', title:'Akrep Kuyruğu',      kind:'kill', target:'Akrep',           n:8,  lvl:9,  prev:'q8', xp:1100, gold:160,  text:'Kum akrepleri kervanları durduruyor. Sekizini avla.' },
   { id:'q10', giver:'harun', title:'Kum İskeletleri',    kind:'kill', target:'Kum İskeleti',    n:8,  lvl:11, prev:'q9', xp:1500, gold:200,  text:'Çölde eski bir lanet iskeletleri uyandırdı. Sekizini yeniden gömme.' },
@@ -282,13 +282,13 @@ var QUESTS = [
   { id:'q12', giver:'ada',   title:'Buz Kurtları',       kind:'kill', target:'Buz Kurdu',       n:10, lvl:13, prev:'q11', xp:2200, gold:300, text:'Buz kurtları sürü halinde saldırıyor. On tanesini avla.' },
   { id:'q13', giver:'ada',   title:'Golem Avı',          kind:'kill', target:'Buz Golemi',      n:6,  lvl:15, prev:'q12', xp:3000, gold:420, text:'Buz golemleri surlara yaklaşıyor. Altısını parçala.' },
   { id:'q14', giver:'ada',   title:'Ejderha Kral',       kind:'kill', target:'Buz Ejderhası',   n:1,  lvl:18, prev:'q13', xp:6000, gold:1200,text:'Dağın zirvesindeki Buz Ejderhası diyarı tehdit ediyor. Onu yen ve efsane ol.' },
-  { id:'qb1', giver:'belin', title:'Kral Domuz',          kind:'kill', target:'Kral Domuz',        n:1, lvl:4,  prev:'q3', xp:300,  gold:70,  text:'Vadide dev bir domuz sürüyü yönetiyor. Kral Domuz\'u bul ve yen.' },
+  { id:'qb1', giver:'haydar', title:'Kral Domuz',          kind:'kill', target:'Kral Domuz',        n:1, lvl:4,  prev:'q3', xp:300,  gold:70,  text:'Vadide dev bir domuz sürüyü yönetiyor. Kral Domuz\'u bul ve yen.' },
   { id:'qb2', giver:'selin', title:'Örümcek Kraliçesi',   kind:'kill', target:'Örümcek Kraliçesi', n:1, lvl:8,  prev:'q6', xp:900,  gold:150, text:'Örümceklerin kraliçesi ormanın derinlerinde yuvalanmış. Onu yen.' },
   { id:'qb3', giver:'harun', title:'Kum Solucanı',        kind:'kill', target:'Kum Solucanı',      n:1, lvl:12, prev:'q9', xp:2000, gold:260, text:'Dev bir solucan kervan yollarını yutuyor. Onu durdur.' }
 ];
 
 var CLASSES = {
-  war: { name:'Savaşçı', col:'#ef8a4a', spr:'🤺', hp:70, mp:30, atk:6,   arm:6, range:1.6, aspd:1.1, desc:'Yakın dövüş. Yüksek can ve zırh.', wn:['Kılıç','Balta','Gürz'], an:['Zırh','Miğfer','Kalkan'],
+  war: { name:'Savaşçı', col:'#ef8a4a', spr:'🤺', hp:70, mp:30, atk:10000,   arm:6, range:1.6, aspd:1.1, desc:'Yakın dövüş. Yüksek can ve zırh.', wn:['Kılıç','Balta','Gürz'], an:['Zırh','Miğfer','Kalkan'],
     ab:[ { n:'Güçlü Vuruş', ic:'💥', lv:1, t:'strike', r:1.9, m:2.2, mp:6,  cd:3 },
          { n:'Savuruş',     ic:'🌀', lv:3, t:'nova',   r:2.4, m:1.5, mp:10, cd:6, col:'#ffb070' },
          { n:'Kalkan Duvarı', ic:'🛡️', lv:5, t:'shield', a:20, pl:5, mp:12, cd:20 },
@@ -1380,7 +1380,7 @@ function resize(){
   if (!w || !hh) return;
   cv.width = Math.round(w * DPR); cv.height = Math.round(hh * DPR);
   W = cv.width; H = cv.height;
-  TS = Math.round(Math.max(32, w / 9.5) * DPR);
+  var tilesAcross = w < 700 ? 9.5 : 22; TS = Math.round(Math.max(32, w / tilesAcross) * DPR);
   var mw = $('#mmw').clientWidth || 92;
   mmc.width = Math.round(mw * DPR); mmc.height = Math.round(mw * DPR);
   snow = [];

@@ -20,6 +20,12 @@ Tarayıcıda oynanan, World of Warcraft'tan esinlenmiş açık dünya mini RPG. 
 - **Başarımlar**, gece-gündüz döngüsü, mini harita, dünya haritası, kar yağışı
 - Otomatik kayıt (`localStorage`)
 
+## 3D sürüm (deneme)
+
+`3d.html` dosyası oyunun 3D deneme sürümüdür: Dun Morogh esintili karlı bir vadide **cüce savaşçı**. Kodla çizilmiş özgün low-poly sahne, üçüncü şahıs kamera, öfke (rage) ile çalışan yetenekler (Güçlü Vuruş, Savuruş, Kalkan Çarpması), kurt, yaban domuzu ve ayı avı, kamp ateşi ve köy. Pages açıksa adres: `https://aldaci26.github.io/zindan-yuruyusu/3d.html`
+
+Kontroller: sol yarıda sürükle = yürü, sağ yarıda sürükle = kamera, düşmana dokun = hedef seç. Klavyede WASD, Q/E kamera, `Boşluk` otomatik saldırı, `1` `2` `3` yetenekler, `F` iksir.
+
 ## Kontroller
 
 | Dokunmatik | Klavye |

@@ -48,3 +48,6 @@ iPhone'da Safari'de aç, Paylaş düğmesi → **Ana Ekrana Ekle** ile tam ekran
 ## Teknik
 
 Saf HTML, CSS ve JavaScript, dış kütüphane yok. Yazı tipleri Google Fonts'tan yüklenir, yüklenemezse sistem yazı tipine düşer. Dünya sabit bir tohumdan üretilir.
+
+## 🎮 Bilgisayar sürümü (Godot 3D)
+`godot/` klasöründe aynı oyunun Windows / Mac / Linux sürümü var. İndirmek için **Releases** sayfasına bak. Ayrıntılar: [godot/README.md](godot/README.md)

@@ -1,0 +1,56 @@
+name: Oyunu derle (Windows / Mac / Linux)
+
+on:
+  push:
+    branches: [main]
+    paths: ["godot/**", ".github/workflows/godot-export.yml"]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Şablonları kur
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable || true
+      - name: Derle
+        working-directory: godot
+        run: |
+          mkdir -p build/windows build/linux build/mac
+          godot --headless --verbose --import || true
+          godot --headless --verbose --export-release "Windows" build/windows/CuceSavasci.exe
+          godot --headless --verbose --export-release "Linux" build/linux/CuceSavasci.x86_64
+          godot --headless --verbose --export-release "macOS" build/mac/CuceSavasci.zip
+          chmod +x build/linux/CuceSavasci.x86_64
+          cd build && cp ../README.md linux/ 2>/dev/null || true
+          cd windows && zip -r ../CuceSavasci-Windows.zip . && cd ..
+          cd linux && tar -czf ../CuceSavasci-Linux.tar.gz . && cd ..
+          mv mac/CuceSavasci.zip CuceSavasci-Mac.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CuceSavasci-Windows
+          path: godot/build/CuceSavasci-Windows.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CuceSavasci-Linux
+          path: godot/build/CuceSavasci-Linux.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CuceSavasci-Mac
+          path: godot/build/CuceSavasci-Mac.zip
+      - name: Sürüm yayınla
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            godot/build/CuceSavasci-Windows.zip
+            godot/build/CuceSavasci-Linux.tar.gz
+            godot/build/CuceSavasci-Mac.zip

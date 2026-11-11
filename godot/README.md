@@ -14,15 +14,30 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 | Tuş | İşlev |
 |---|---|
 | W A S D | Yürü |
+| Boşluk | Zıpla |
 | Sağ tık basılı tut | Kamerayı çevir |
 | Sol tık | Hedef seç |
-| Tekerlek / Q E | Yakınlaştır / kamera |
-| Boşluk | Otomatik saldırı |
-| 1 2 3 | Güçlü Vuruş, Savuruş, Kalkan Çarpması (Öfke harcar) |
-| F | İksir |
+| Tekerlek / Q E | Yakınlaştır / kamerayı döndür |
+| R | Otomatik saldırı |
+| 1 - 9 | Yetenekler |
+| 0 veya F | Can iksiri |
+| Tab / Esc | En yakın hedef / hedefi bırak |
 | G | NPC ile konuş |
-| Tab | Sıradaki hedef |
+| H | Yardım penceresi |
 | F11 | Tam ekran |
+
+## Yetenekler (savaşçı, Öfke ile çalışır)
+| Tuş | Yetenek | Seviye | Ne yapar |
+|---|---|---|---|
+| 1 | Kahramanlık Darbesi | 1 | Güçlü vuruş |
+| 2 | Hamle | 1 | Hedefe atılır, sersemletir, öfke verir |
+| 3 | Yaralama | 2 | Kanatır (zamanla hasar) |
+| 4 | Savaş Narası | 2 | Saldırıyı %25 artırır |
+| 5 | Gök Gürültüsü | 3 | Yakındakilere vurur ve yavaşlatır |
+| 6 | Kalkan Bloğu | 3 | 5 sn gelen hasarı %70 azaltır |
+| 7 | İnfaz | 4 | Canı %20 altındaki hedefe dev hasar |
+| 8 | Ölümcül Darbe | 5 | Devasa vuruş |
+| 9 | Kasırga | 6 | Çevredeki herkese vurur |
 
 ## Kendin derlemek istersen
 Godot 4.3 ile bu klasörü aç (`project.godot`), F5. Dışarıdan dosya yok; her şey kodla üretilir.

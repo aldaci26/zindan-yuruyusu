@@ -49,6 +49,10 @@ class Mob:
 	var wz: float
 	var ph := 0.0
 	var lunge := 0.0
+	var bleed_t := 0.0
+	var bleed_tick := 0.0
+	var bleed_v := 0.0
+	var slow := 0.0
 	var node: Node3D
 	var legs: Array = []
 	var id: int
@@ -149,7 +153,6 @@ func _ready() -> void:
 	add_child(hud)
 	hud.start_pressed.connect(_on_start)
 	hud.ability_pressed.connect(ability)
-	hud.potion_pressed.connect(use_potion)
 	_update_camera(0.0)
 	if "test" in OS.get_cmdline_user_args():
 		_selftest()
@@ -627,7 +630,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0, "gold": 0, "pot": 3,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0], "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0}
 	P["hp"] = float(max_hp())
 
@@ -635,7 +638,7 @@ func max_hp() -> int:
 	return 110 + 28 * (P["lvl"] - 1)
 
 func atk() -> float:
-	return 9.0 + 3.2 * P["lvl"] + P["wep_b"]
+	return (9.0 + 3.2 * P["lvl"] + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0)
 
 func xp_need(l: int) -> float:
 	return 50.0 + 40.0 * l
@@ -773,11 +776,20 @@ func _unhandled_input(ev: InputEvent) -> void:
 		cam_pitch = clampf(cam_pitch + ev.relative.y * 0.004, 0.05, 1.25)
 	elif ev is InputEventKey and ev.pressed and not ev.echo:
 		match ev.keycode:
-			KEY_SPACE: toggle_auto()
+			KEY_SPACE: jump()
+			KEY_R: toggle_auto()
 			KEY_1: ability(0)
 			KEY_2: ability(1)
 			KEY_3: ability(2)
+			KEY_4: ability(3)
+			KEY_5: ability(4)
+			KEY_6: ability(5)
+			KEY_7: ability(6)
+			KEY_8: ability(7)
+			KEY_9: ability(8)
+			KEY_0: use_potion()
 			KEY_F: use_potion()
+			KEY_H: hud.toggle_help()
 			KEY_G:
 				if dlg_open:
 					close_dialog()
@@ -790,6 +802,11 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_ESCAPE:
 				if dlg_open:
 					close_dialog()
+				elif hud.help_box.visible:
+					hud.toggle_help()
+				else:
+					P["target"] = null
+					P["auto"] = false
 			KEY_F11:
 				var w := get_window()
 				w.mode = Window.MODE_WINDOWED if w.mode == Window.MODE_FULLSCREEN else Window.MODE_FULLSCREEN
@@ -853,6 +870,7 @@ func hit_mob(m, r: Dictionary, col: Color = Color.WHITE) -> void:
 
 func kill_mob(m) -> void:
 	m.dead = true
+	m.bleed_t = 0.0
 	m.died_at = T
 	m.state = "idle"
 	if P["target"] == m:
@@ -880,6 +898,10 @@ func gain_xp(n: float) -> void:
 		ring_fx(Vector3(P["x"], P["y"], P["z"]), 3.0, Color("f2c75c"), 0.9)
 		hud.banner("SEVİYE %d" % P["lvl"], "Can doldu")
 		hud.say("Seviye atladın! Sv %d" % P["lvl"], Color("f2c75c"))
+		for a in HudScript.ABIL:
+			if a["lvl"] == P["lvl"]:
+				hud.say("Yeni yetenek: %s" % a["name"], Color("7fb8ff"))
+				hud.banner("SEVİYE %d" % P["lvl"], "Yeni yetenek: " + a["name"])
 
 func swing() -> void:
 	swing_t = 0.001
@@ -895,48 +917,113 @@ func auto_attack() -> void:
 	P["yaw"] = atan2(m.x - P["x"], m.z - P["z"])
 	hit_mob(m, roll(atk()))
 
+func jump() -> void:
+	if mode != "play" or P["dead"] or dlg_open:
+		return
+	if P["jy"] <= 0.001 and P["vy"] <= 0.0 and P["charge"] == null:
+		P["vy"] = 8.6
+
+func _face(m) -> void:
+	P["yaw"] = atan2(m.x - P["x"], m.z - P["z"])
+
 func ability(i: int) -> void:
 	if mode != "play" or P["dead"] or dlg_open:
 		return
-	var cost: float = [15.0, 25.0, 12.0][i]
-	var cdt: float = [0.0, 6.0, 8.0][i]
+	if i == 9:
+		use_potion()
+		return
+	var a: Dictionary = HudScript.ABIL[i]
+	if P["lvl"] < a["lvl"]:
+		hud.say("%s: Seviye %d'de öğrenilir." % [a["name"], a["lvl"]], Color("ff9a8a"))
+		return
 	if P["gcd"] > 0.0 or P["cd"][i] > 0.0:
 		return
+	var cost: float = a["cost"]
 	if P["rage"] < cost:
 		hud.say("Yeterli öfke yok.", Color("ff9a8a"))
 		return
-	var m = P["target"] if (P["target"] != null and not P["target"].dead) else nearest_mob(6.0)
-	if i != 1:
+	var kind: String = a["kind"]
+	var m = P["target"] if (P["target"] != null and not P["target"].dead) else null
+	var pp := Vector3(P["x"], P["y"], P["z"])
+	var melee := kind in ["strike", "rend", "execute", "mortal"]
+	if melee or kind == "charge":
 		if m == null:
-			hud.say("Hedef yok.")
-			return
-		if dist_to(m) > 2.6:
-			hud.say("Hedef çok uzak.")
+			m = nearest_mob(25.0 if kind == "charge" else 6.0)
+		if m == null:
+			hud.say("Hedef yok.", Color("ff9a8a"))
 			return
 		P["target"] = m
-		P["yaw"] = atan2(m.x - P["x"], m.z - P["z"])
+		var dd := dist_to(m)
+		if melee and dd > 2.6:
+			hud.say("Hedef çok uzak.", Color("ff9a8a"))
+			return
+		if kind == "charge":
+			if dd < 6.0:
+				hud.say("Hedef çok yakın.", Color("ff9a8a"))
+				return
+			if dd > 25.0:
+				hud.say("Hedef çok uzak.", Color("ff9a8a"))
+				return
+		if kind == "execute" and m.hp > m.maxhp * 0.2:
+			hud.say("Hedef henüz yeterince yaralı değil.", Color("ff9a8a"))
+			return
+		_face(m)
 	P["rage"] -= cost
-	P["gcd"] = 0.9
-	P["cd"][i] = cdt
-	swing()
+	P["gcd"] = 1.0
+	P["cd"][i] = a["cd"]
 	P["combat_t"] = T
-	var pp := Vector3(P["x"], P["y"], P["z"])
-	if i == 0:
-		hit_mob(m, roll(atk() * 2.3), Color("ffd8a0"))
-	elif i == 1:
-		ring_fx(pp, 4.6, Color("ffa050"), 0.5)
-		var any := false
-		for o in mobs:
-			if not o.dead and dist_to(o) <= 4.6:
-				any = true
-				hit_mob(o, roll(atk() * 1.35), Color("ffd8a0"))
-		if not any:
-			hud.say("Yakında düşman yok.")
-	else:
-		ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.8, Color("59a9ff"), 0.5)
-		hit_mob(m, roll(atk() * 0.9), Color("bfe0ff"))
-		m.stun = 2.5
-		float_text(Vector3(m.x, 2.4 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), "Sersem", Color("8ec9ff"), false)
+	match kind:
+		"strike":
+			swing()
+			hit_mob(m, roll(atk() * 2.3), Color("ffd8a0"))
+		"mortal":
+			swing()
+			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.6, Color("ff5040"), 0.45)
+			hit_mob(m, roll(atk() * 3.4), Color("ff9a8a"))
+		"execute":
+			swing()
+			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.8, Color("ffe45c"), 0.5)
+			hit_mob(m, roll(atk() * 5.0), Color("ffe08a"))
+		"rend":
+			swing()
+			m.bleed_t = 8.0
+			m.bleed_tick = 2.0
+			m.bleed_v = atk() * 0.55
+			float_text(Vector3(m.x, 2.4 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), "Kanama", Color("ff6a5a"), false)
+			hit_mob(m, roll(atk() * 0.5), Color("ffb0a0"))
+		"charge":
+			P["charge"] = m
+			P["charge_t"] = 0.0
+			P["auto"] = false
+			ring_fx(pp, 1.8, Color("ffd890"), 0.4)
+		"shout":
+			P["bs_t"] = 60.0
+			ring_fx(pp, 3.4, Color("ffd23a"), 0.6)
+			float_text(pp + Vector3(0, 2.6, 0), "Savaş Narası!", Color("ffe08a"), true)
+		"shield":
+			P["sb_t"] = 5.0
+			ring_fx(pp, 1.8, Color("59a9ff"), 0.5)
+			float_text(pp + Vector3(0, 2.6, 0), "Kalkan Bloğu", Color("8ec9ff"), false)
+		"clap":
+			swing()
+			ring_fx(pp, 6.0, Color("6aa8ff"), 0.55)
+			var any := false
+			for o in mobs:
+				if not o.dead and dist_to(o) <= 6.0:
+					any = true
+					o.slow = 8.0
+					hit_mob(o, roll(atk() * 1.0), Color("bfe0ff"))
+			if not any:
+				hud.say("Yakında düşman yok.", Color("ff9a8a"))
+		"whirl":
+			P["spin"] = 0.6
+			swing()
+			ring_fx(pp, 5.0, Color("c8f0f8"), 0.55)
+			for o in mobs:
+				if not o.dead and dist_to(o) <= 5.0:
+					hit_mob(o, roll(atk() * 1.7), Color("d8f4ff"))
+	if melee and not P["auto"] and P["target"] != null:
+		P["auto"] = true
 
 func use_potion() -> void:
 	if mode != "play" or P["dead"]:
@@ -973,6 +1060,10 @@ func toggle_auto() -> void:
 func hurt_player(raw: float, m) -> void:
 	var arm: float = 6.0 + P["lvl"] * 2.2
 	var d := maxi(1, roundi(raw * (1.0 - arm / (arm + 30.0 + m.lvl * 4.0))))
+	if P["sb_t"] > 0.0:
+		d = maxi(1, roundi(d * 0.3))
+		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
+		add_rage(5.0)
 	P["hp"] -= d
 	P["combat_t"] = T
 	add_rage(4.0)
@@ -1034,7 +1125,7 @@ func render_quests() -> void:
 		var s: Dictionary = qs[id]
 		if s["st"] == "done":
 			continue
-		lines.append("%s %s %d/%d" % ["✓" if s["st"] == "ready" else "•", QUESTS[id]["title"], s["n"], QUESTS[id]["n"]])
+		lines.append("%s  %d/%d%s" % [QUESTS[id]["title"], s["n"], QUESTS[id]["n"], " — Teslim et" if s["st"] == "ready" else ""])
 	hud.set_quests(lines)
 
 func quest_kill(m) -> void:
@@ -1210,7 +1301,32 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 		var rx := -fz
 		var rz := fx
 		var sp := 5.0
-		if moving:
+		var chm = P["charge"]
+		if chm != null and (chm.dead or P["charge_t"] > 2.0):
+			P["charge"] = null
+			chm = null
+		if chm != null:
+			P["charge_t"] += dt
+			var cdist := dist_to(chm)
+			P["yaw"] = atan2(chm.x - P["x"], chm.z - P["z"])
+			if cdist <= 1.7:
+				P["charge"] = null
+				add_rage(15.0)
+				chm.stun = 1.5
+				if chm.state == "idle":
+					chm.state = "chase"
+				ring_fx(Vector3(chm.x, height_at(chm.x, chm.z), chm.z), 2.2, Color("ffd890"), 0.4)
+				float_text(Vector3(chm.x, 2.4 * chm.sc, chm.z) + Vector3(0, chm.node.position.y, 0), "Sersem", Color("8ec9ff"), false)
+				P["combat_t"] = T
+				P["auto"] = true
+				P["spd"] = 0.0
+			else:
+				var cl: float = cdist + chm.rad
+				var cc := collide(P["x"] + (chm.x - P["x"]) / cl * 24.0 * dt, P["z"] + (chm.z - P["z"]) / cl * 24.0 * dt, 0.5)
+				P["x"] = cc.x
+				P["z"] = cc.y
+				P["spd"] = 1.8
+		elif moving:
 			var dx := fx * iy + rx * ix
 			var dz := fz * iy + rz * ix
 			var dl := maxf(0.0001, Vector2(dx, dz).length())
@@ -1246,8 +1362,16 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 		P["atk_t"] = maxf(0.0, P["atk_t"] - dt)
 		P["gcd"] = maxf(0.0, P["gcd"] - dt)
 		P["pot_cd"] = maxf(0.0, P["pot_cd"] - dt)
-		for i in 3:
+		for i in 9:
 			P["cd"][i] = maxf(0.0, P["cd"][i] - dt)
+		P["bs_t"] = maxf(0.0, P["bs_t"] - dt)
+		P["sb_t"] = maxf(0.0, P["sb_t"] - dt)
+		P["spin"] = maxf(0.0, P["spin"] - dt)
+		P["vy"] -= 24.0 * dt
+		P["jy"] += P["vy"] * dt
+		if P["jy"] <= 0.0:
+			P["jy"] = 0.0
+			P["vy"] = maxf(P["vy"], 0.0) if P["vy"] > 0.0 else 0.0
 		if P["auto"] and P["target"] != null and not P["target"].dead and P["atk_t"] <= 0.0:
 			auto_attack()
 		var ooc := not in_combat()
@@ -1271,7 +1395,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 				if m.state == "chase":
 					m.state = "return"
 			hud.say("Kamp ateşinde canlandın.", Color("6aa8ff"))
-	P["y"] = height_at(P["x"], P["z"])
+	P["y"] = height_at(P["x"], P["z"]) + P["jy"]
 
 func _step_mob(m, dt: float) -> void:
 	var node: Node3D = m.node
@@ -1290,6 +1414,8 @@ func _step_mob(m, dt: float) -> void:
 			m.x = m.hx
 			m.z = m.hz
 			m.state = "idle"
+			m.bleed_t = 0.0
+			m.slow = 0.0
 			node.visible = true
 			node.rotation.z = 0.0
 			node.scale = Vector3.ONE * m.sc
@@ -1299,6 +1425,19 @@ func _step_mob(m, dt: float) -> void:
 	var d := sqrt(dx * dx + dz * dz)
 	var moving := false
 	m.stun = maxf(0.0, m.stun - dt)
+	m.slow = maxf(0.0, m.slow - dt)
+	var msp: float = m.spd * (0.5 if m.slow > 0.0 else 1.0)
+	if m.bleed_t > 0.0:
+		m.bleed_t -= dt
+		m.bleed_tick -= dt
+		if m.bleed_tick <= 0.0:
+			m.bleed_tick += 2.0
+			var bd := maxi(1, roundi(m.bleed_v * (0.9 + randf() * 0.2)))
+			m.hp -= bd
+			float_text(Vector3(m.x, 1.9 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), str(bd), Color("ff6a5a"), false)
+			if m.hp <= 0.0:
+				kill_mob(m)
+				return
 	if mode == "play" and not P["dead"] and m.state == "idle" and d < m.aggro:
 		m.state = "chase"
 	if P["dead"] and m.state == "chase":
@@ -1310,7 +1449,7 @@ func _step_mob(m, dt: float) -> void:
 		if hd > 38.0:
 			m.state = "return"
 		elif d > m.rad + 0.9:
-			var c := collide(m.x + dx / d * m.spd * dt, m.z + dz / d * m.spd * dt, m.rad * 0.6)
+			var c := collide(m.x + dx / d * msp * dt, m.z + dz / d * msp * dt, m.rad * 0.6)
 			m.x = c.x
 			m.z = c.y
 			moving = true
@@ -1380,9 +1519,10 @@ func _step_npcs(dt: float) -> void:
 func _animate_player(dt: float) -> void:
 	walk_ph += P["spd"] * dt * 9.0
 	var sw: float = sin(walk_ph) * 0.75 * P["spd"]
-	rig["legL"].rotation.x = sw
-	rig["legR"].rotation.x = -sw
-	rig["armL"].rotation.x = -0.3 - sw * 0.35
+	var air: bool = P["jy"] > 0.05
+	rig["legL"].rotation.x = -0.7 if air else sw
+	rig["legR"].rotation.x = 0.3 if air else -sw
+	rig["armL"].rotation.x = -2.2 if air else (-0.3 - sw * 0.35)
 	var bob: float = absf(sin(walk_ph)) * 0.07 * P["spd"]
 	if swing_t > 0.0:
 		swing_t += dt
@@ -1395,7 +1535,7 @@ func _animate_player(dt: float) -> void:
 	else:
 		rig["armR"].rotation.x = sw * 0.35 - 0.2 + sin(T * 2.0) * 0.03
 	player.position = Vector3(P["x"], P["y"] + bob, P["z"])
-	player.rotation.y = P["yaw"]
+	player.rotation.y = P["yaw"] + ((1.0 - P["spin"] / 0.6) * TAU if P["spin"] > 0.0 else 0.0)
 	if P["dead"]:
 		player.rotation.x = lerpf(player.rotation.x, -1.4, minf(1.0, dt * 6.0))
 		player.position.y = P["y"] + 0.3
@@ -1438,16 +1578,39 @@ func _lvl_color(l: int) -> Color:
 		return Color("7fe08a")
 	return Color("a8a8a8")
 
+func _mob_kind(m) -> String:
+	if m.nm == "Kurt":
+		return "wolf"
+	if m.nm == "Yaban Domuzu":
+		return "boar"
+	return "bear"
+
 func _update_hud() -> void:
 	if hud == null:
 		return
+	var buffs: Array = []
+	if P["bs_t"] > 0.0:
+		buffs.append({"kind": "shout", "t": P["bs_t"]})
+	if P["sb_t"] > 0.0:
+		buffs.append({"kind": "shield", "t": P["sb_t"]})
+	var t0 = P["target"]
+	var exec_ok: bool = t0 != null and not t0.dead and t0.hp <= t0.maxhp * 0.2 and P["lvl"] >= 4
 	hud.update_player({"lvl": P["lvl"], "hp": P["hp"], "maxhp": max_hp(), "rage": P["rage"], "xp": P["xp"], "xpneed": xp_need(P["lvl"]),
-		"gold": P["gold"], "cd": P["cd"], "pot": P["pot"], "potcd": P["pot_cd"]})
+		"gold": P["gold"], "cd": P["cd"], "gcd": P["gcd"], "pot": P["pot"], "potcd": P["pot_cd"], "exec_ok": exec_ok, "buffs": buffs})
 	var t = P["target"]
 	if t != null and not t.dead:
-		hud.update_target({"name": t.nm, "lvl": t.lvl, "hp": t.hp, "maxhp": t.maxhp, "color": _lvl_color(t.lvl)})
+		hud.update_target({"name": t.nm, "lvl": t.lvl, "hp": t.hp, "maxhp": t.maxhp, "color": _lvl_color(t.lvl), "kind": _mob_kind(t),
+			"hint": "Kanıyor" if t.bleed_t > 0.0 else ("Yavaş" if t.slow > 0.0 else "")})
 	else:
 		hud.update_target({})
+	var mp: Array = []
+	for m in mobs:
+		if not m.dead:
+			mp.append(Vector2(m.x, m.z))
+	var np: Array = []
+	for n in npcs:
+		np.append({"p": Vector2(n["x"], n["z"]), "mark": npc_mark(n)})
+	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np})
 	# isim levhaları
 	for m in mobs:
 		var show: bool = mode == "play" and not m.dead and Vector2(m.x - P["x"], m.z - P["z"]).length() < 22.0
@@ -1478,6 +1641,7 @@ func _update_hud() -> void:
 				hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 			else:
 				hud.banner("KAR DAĞI VADİSİ", "Cüce toprakları")
+		hud.set_zone("Demirkazan" if z == "c" else ("Kar Dağı Köyü" if z == "v" else "Kar Dağı Vadisi"))
 
 # ---------- kendi kendine test ----------
 func _selftest() -> void:
@@ -1498,14 +1662,16 @@ func _selftest() -> void:
 	P["x"] = best.x - 4.0
 	P["z"] = best.z
 	P["target"] = best
+	P["lvl"] = 6
+	P["hp"] = float(max_hp())
+	jump()
 	toggle_auto()
 	var t0 := T
 	for i in 700:
 		step(0.05)
 		if i % 25 == 0:
-			ability(0)
-			ability(1)
-			ability(2)
+			for k in 9:
+				ability(k)
 		if best.dead:
 			break
 	print("SELFTEST fight: dead=", best.dead, " hp=", roundi(P["hp"]), " rage=", roundi(P["rage"]), " gold=", P["gold"], " t=", snappedf(T - t0, 0.1))
@@ -1543,3 +1709,38 @@ func _shots(dir: String) -> void:
 		await get_tree().process_frame
 		await RenderingServer.frame_post_draw
 		get_viewport().get_texture().get_image().save_png("%s/%s.png" % [dir, s[0]])
+
+	# HUD denemesi: hedef + buff + diyalog + zıplama
+	var w = null
+	for m in mobs:
+		if m.nm == "Kurt" and not m.dead:
+			w = m
+			break
+	P["x"] = w.x - 5.0
+	P["z"] = w.z
+	P["target"] = w
+	P["rage"] = 60.0
+	P["cd"][1] = 9.0
+	P["bs_t"] = 40.0
+	P["sb_t"] = 3.0
+	w.hp = w.maxhp * 0.15
+	w.bleed_t = 5.0
+	cam_yaw = 1.6
+	jump()
+	for i in 6:
+		step(0.05)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png("%s/hud.png" % dir)
+	var ragna = npcs[0]
+	P["x"] = ragna["x"] + 1.5
+	P["z"] = ragna["z"] + 2.0
+	P["target"] = null
+	for i in 40:
+		step(0.05)
+	open_talk()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	get_viewport().get_texture().get_image().save_png("%s/dialog.png" % dir)

@@ -49,9 +49,13 @@ jobs:
           name: CuceSavasci-Mac
           path: godot/build/CuceSavasci-Mac.zip
       - name: Sürüm yayınla
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'son-surum' }}
+          name: Cüce Savaşçı ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '(son sürüm)' }}
+          body: "Windows, Mac ve Linux için indirilebilir oyun. İmzasız olduğundan işletim sistemi ilk açılışta uyarı verebilir (ayrıntı: godot/README.md)."
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           files: |
             godot/build/CuceSavasci-Windows.zip
             godot/build/CuceSavasci-Linux.tar.gz

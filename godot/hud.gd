@@ -516,7 +516,7 @@ func update_player(d: Dictionary) -> void:
 		s.frac = f
 		s.cd_text = txt
 		s.norage = d["rage"] < a["cost"]
-		s.glow = (i == 6 and d["exec_ok"]) or (i == 3 and false)
+		s.glow = (i == 6 and d["exec_ok"])
 		s.queue_redraw()
 	var ps = slots[9]
 	ps.count = str(d["pot"])

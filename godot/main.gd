@@ -129,7 +129,6 @@ func height_at(x: float, z: float) -> float:
 # ---------- kurulum ----------
 func _ready() -> void:
 	randomize()
-	_define_inputs()
 	m_stone = _tmat(Tex.stone(), 0.22, 0.0, 0.9)
 	m_wood = _tmat(Tex.wood(), 0.4, 0.0, 0.85)
 	m_roof = _tmat(Tex.roof(), 0.3, 0.0, 0.8)
@@ -154,11 +153,6 @@ func _ready() -> void:
 	hud.start_pressed.connect(_on_start)
 	hud.ability_pressed.connect(ability)
 	_update_camera(0.0)
-	if "test" in OS.get_cmdline_user_args():
-		_selftest()
-
-func _define_inputs() -> void:
-	pass
 
 func _tmat(tex: Texture2D, scale: float, metal: float, rough: float) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
@@ -1644,103 +1638,3 @@ func _update_hud() -> void:
 		hud.set_zone("Demirkazan" if z == "c" else ("Kar Dağı Köyü" if z == "v" else "Kar Dağı Vadisi"))
 
 # ---------- kendi kendine test ----------
-func _selftest() -> void:
-	var args := OS.get_cmdline_user_args()
-	hud.start_game_without_click()
-	mode = "play"
-	await get_tree().process_frame
-	await get_tree().process_frame
-	var shot_dir := ""
-	for a in args:
-		if a.begins_with("shots="):
-			shot_dir = a.substr(6)
-	# savaş testi
-	var best = null
-	for m in mobs:
-		if m.nm == "Kurt" and (best == null or Vector2(m.x, m.z).length() < Vector2(best.x, best.z).length()):
-			best = m
-	P["x"] = best.x - 4.0
-	P["z"] = best.z
-	P["target"] = best
-	P["lvl"] = 6
-	P["hp"] = float(max_hp())
-	jump()
-	toggle_auto()
-	var t0 := T
-	for i in 700:
-		step(0.05)
-		if i % 25 == 0:
-			for k in 9:
-				ability(k)
-		if best.dead:
-			break
-	print("SELFTEST fight: dead=", best.dead, " hp=", roundi(P["hp"]), " rage=", roundi(P["rage"]), " gold=", P["gold"], " t=", snappedf(T - t0, 0.1))
-	# NPC ve görev
-	var ragna = npcs[0]
-	P["x"] = ragna["x"] + 1.5
-	P["z"] = ragna["z"] + 2.0
-	step(0.05)
-	open_talk()
-	print("SELFTEST dialog open=", dlg_open, " npc=", cur_npc["name"] if cur_npc else "-")
-	qs["q_wolf"] = {"st": "active", "n": 0}
-	render_quests()
-	close_dialog()
-	if shot_dir != "":
-		await _shots(shot_dir)
-	print("SELFTEST done")
-	get_tree().quit()
-
-func _shots(dir: String) -> void:
-	var spots := [
-		["village", Vector3(0, 0, 4), 0.5, 0.25],
-		["road", Vector3(0, 0, -14), 0.0, 0.3],
-		["gate", Vector3(0, 0, -38), 0.0, 0.22],
-		["plaza", Vector3(-9, 0, -52), -1.1, 0.2],
-		["forge", Vector3(8, 0, -48), 0.9, 0.3],
-	]
-	for s in spots:
-		P["x"] = s[1].x
-		P["z"] = s[1].z
-		cam_yaw = s[2]
-		cam_pitch = s[3]
-		for i in 8:
-			step(0.05)
-		await get_tree().process_frame
-		await get_tree().process_frame
-		await RenderingServer.frame_post_draw
-		get_viewport().get_texture().get_image().save_png("%s/%s.png" % [dir, s[0]])
-
-	# HUD denemesi: hedef + buff + diyalog + zıplama
-	var w = null
-	for m in mobs:
-		if m.nm == "Kurt" and not m.dead:
-			w = m
-			break
-	P["x"] = w.x - 5.0
-	P["z"] = w.z
-	P["target"] = w
-	P["rage"] = 60.0
-	P["cd"][1] = 9.0
-	P["bs_t"] = 40.0
-	P["sb_t"] = 3.0
-	w.hp = w.maxhp * 0.15
-	w.bleed_t = 5.0
-	cam_yaw = 1.6
-	jump()
-	for i in 6:
-		step(0.05)
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await RenderingServer.frame_post_draw
-	get_viewport().get_texture().get_image().save_png("%s/hud.png" % dir)
-	var ragna = npcs[0]
-	P["x"] = ragna["x"] + 1.5
-	P["z"] = ragna["z"] + 2.0
-	P["target"] = null
-	for i in 40:
-		step(0.05)
-	open_talk()
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await RenderingServer.frame_post_draw
-	get_viewport().get_texture().get_image().save_png("%s/dialog.png" % dir)

@@ -2,6 +2,12 @@
 
 Tarayıcıda oynanan, World of Warcraft'tan esinlenmiş açık dünya mini RPG. Tek dosya (`index.html`), kurulum ve sunucu gerekmez. iPhone dikey ekranına sığacak şekilde tasarlandı.
 
+## 🎮 3D Cüce Savaşçı (bilgisayar sürümü)
+
+Aynı depoda ayrıca Godot 4 ile yapılmış 3D bir oyun var: karlı vadi, Demirkazan cüce şehri, NPC'ler, görevler ve WoW tarzı savaşçı yetenekleri. Windows, Mac ve Linux için [Releases](../../releases) sayfasından indir. Kontroller ve yetenekler: [godot/README.md](godot/README.md)
+
+## 📱 Tarayıcı oyunu (2D)
+
 ## Özellikler
 
 - **Açık dünya:** 80x80 karelik harita, 4 bölge (Yeşilvadi, Karaorman, Kızıl Çöl, Buzdağı), 4 köy, yollar
@@ -19,12 +25,6 @@ Tarayıcıda oynanan, World of Warcraft'tan esinlenmiş açık dünya mini RPG. 
 - **Maden damarları:** haritada ⛏️ taşlar, üzerinden geç, altın topla. Ara sıra parlak mücevher çıkar
 - **Başarımlar**, gece-gündüz döngüsü, mini harita, dünya haritası, kar yağışı
 - Otomatik kayıt (`localStorage`)
-
-## 3D sürüm (deneme)
-
-`3d.html` dosyası oyunun 3D deneme sürümüdür: Dun Morogh esintili karlı bir vadide **cüce savaşçı**. Kodla çizilmiş özgün low-poly sahne, üçüncü şahıs kamera, öfke (rage) ile çalışan yetenekler (Güçlü Vuruş, Savuruş, Kalkan Çarpması), kurt, yaban domuzu ve ayı avı, kamp ateşi ve köy. Taş surlu, kuleli, lav ocaklı **Demirkazan** cüce şehri, özgün NPC'ler (görev verenler, tüccar, demirci, han sahibi), 3 görev zinciri, altın, iksir alımı ve silah bileme. Dokular kodla boyanır, dış dosya yoktur. Pages açıksa adres: `https://aldaci26.github.io/zindan-yuruyusu/3d.html`
-
-Kontroller: sol yarıda sürükle = yürü, sağ yarıda sürükle = kamera, düşmana dokun = hedef seç. Klavyede WASD, Q/E kamera, `Boşluk` otomatik saldırı, `1` `2` `3` yetenekler, `F` iksir, `G` konuş.
 
 ## Kontroller
 
@@ -48,6 +48,3 @@ iPhone'da Safari'de aç, Paylaş düğmesi → **Ana Ekrana Ekle** ile tam ekran
 ## Teknik
 
 Saf HTML, CSS ve JavaScript, dış kütüphane yok. Yazı tipleri Google Fonts'tan yüklenir, yüklenemezse sistem yazı tipine düşer. Dünya sabit bir tohumdan üretilir.
-
-## 🎮 Bilgisayar sürümü (Godot 3D)
-`godot/` klasöründe aynı oyunun Windows / Mac / Linux sürümü var. İndirmek için **Releases** sayfasına bak. Ayrıntılar: [godot/README.md](godot/README.md)

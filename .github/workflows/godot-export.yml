@@ -32,7 +32,7 @@ jobs:
           godot --headless --verbose --export-release "Linux" build/linux/CuceSavasci.x86_64
           godot --headless --verbose --export-release "macOS" build/mac/CuceSavasci.zip
           chmod +x build/linux/CuceSavasci.x86_64
-          cd build && cp ../README.md linux/ 2>/dev/null || true
+          cd build
           cd windows && zip -r ../CuceSavasci-Windows.zip . && cd ..
           cd linux && tar -czf ../CuceSavasci-Linux.tar.gz . && cd ..
           mv mac/CuceSavasci.zip CuceSavasci-Mac.zip

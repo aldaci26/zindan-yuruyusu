@@ -4,7 +4,11 @@ extends CanvasLayer
 const Parts = preload("res://ui_parts.gd")
 const Glyph = preload("res://glyph.gd")
 
-signal start_pressed
+signal start_pressed(continue_game: bool)
+signal resume_pressed
+signal quit_pressed
+signal volume_changed(v: float)
+signal fullscreen_pressed
 signal ability_pressed(i: int)
 signal talk_pressed
 
@@ -64,6 +68,9 @@ var dlg_buttons: VBoxContainer
 var talk_lbl: Label
 var dead_lbl: Label
 var title_box: Control
+var continue_btn: Button
+var pause_box: PanelContainer
+var vol_slider: HSlider
 var help_box: PanelContainer
 var gold_lbl: Label
 var pot_lbl: Label
@@ -156,6 +163,7 @@ func _ready() -> void:
 	_build_dialog()
 	_build_banner()
 	_build_help()
+	_build_pause()
 	_build_title()
 	talk_lbl = _label("", 18, Color("9be8a8"))
 	_place(talk_lbl, 0.5, 1.0, 0.5, 1.0, -200, -150, 200, -126)
@@ -384,6 +392,61 @@ func _build_banner() -> void:
 	banner_sub.modulate.a = 0.0
 	root.add_child(banner_sub)
 
+func _menu_button(text: String, size: int = 20) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.custom_minimum_size = Vector2(240, 52)
+	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	b.add_theme_font_size_override("font_size", size)
+	b.add_theme_stylebox_override("normal", _box(Color("5a3a1a"), Color("d8ae4a"), 3, 6))
+	b.add_theme_stylebox_override("hover", _box(Color("7a5226"), Color("f2c75c"), 3, 6))
+	b.add_theme_stylebox_override("pressed", _box(Color("3a2410"), Color("f2c75c"), 3, 6))
+	b.add_theme_color_override("font_color", Color("f2e2b0"))
+	b.add_theme_color_override("font_hover_color", Color.WHITE)
+	b.focus_mode = Control.FOCUS_NONE
+	return b
+
+func _build_pause() -> void:
+	pause_box = PanelContainer.new()
+	pause_box.add_theme_stylebox_override("panel", _box(Color(0.05, 0.04, 0.03, 0.96), Color("c9a24a"), 3, 8))
+	_place(pause_box, 0.5, 0.5, 0.5, 0.5, -160, -170, 160, 170)
+	pause_box.visible = false
+	pause_box.z_index = 30
+	root.add_child(pause_box)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 12)
+	pause_box.add_child(v)
+	var t := _label("Oyun Menüsü", 24, GOLD, 5)
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(t)
+	var rb := _menu_button("Devam et")
+	rb.pressed.connect(func(): resume_pressed.emit())
+	v.add_child(rb)
+	var fb := _menu_button("Tam ekran")
+	fb.pressed.connect(func(): fullscreen_pressed.emit())
+	v.add_child(fb)
+	var vl := _label("Ses", 14, Color("e9eef2"), 3)
+	vl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(vl)
+	vol_slider = HSlider.new()
+	vol_slider.min_value = 0.0
+	vol_slider.max_value = 1.0
+	vol_slider.step = 0.05
+	vol_slider.value = 0.8
+	vol_slider.custom_minimum_size = Vector2(240, 22)
+	vol_slider.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	vol_slider.value_changed.connect(func(x): volume_changed.emit(x))
+	v.add_child(vol_slider)
+	var qb := _menu_button("Kaydet ve çık")
+	qb.pressed.connect(func(): quit_pressed.emit())
+	v.add_child(qb)
+
+func set_paused(v: bool) -> void:
+	pause_box.visible = v
+
+func set_has_save(v: bool) -> void:
+	continue_btn.visible = v
+
 func _build_help() -> void:
 	help_box = PanelContainer.new()
 	help_box.add_theme_stylebox_override("panel", _box(Color(0.04, 0.035, 0.03, 0.95), Color("c9a24a"), 2, 6))
@@ -431,20 +494,17 @@ func _build_title() -> void:
 	var s := _label("Karlı vadide kurt, domuz ve ayı avla. Demirkazan şehrinde görev al.", 20, Color("d5e1ea"))
 	s.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(s)
-	var b := Button.new()
-	b.text = "OYNA"
-	b.custom_minimum_size = Vector2(220, 56)
-	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	b.add_theme_font_size_override("font_size", 24)
-	b.add_theme_stylebox_override("normal", _box(Color("5a3a1a"), Color("d8ae4a"), 3, 6))
-	b.add_theme_stylebox_override("hover", _box(Color("7a5226"), Color("f2c75c"), 3, 6))
-	b.add_theme_stylebox_override("pressed", _box(Color("3a2410"), Color("f2c75c"), 3, 6))
-	b.add_theme_color_override("font_color", Color("f2e2b0"))
-	b.focus_mode = Control.FOCUS_NONE
-	b.pressed.connect(func():
+	continue_btn = _menu_button("DEVAM ET", 24)
+	continue_btn.visible = false
+	continue_btn.pressed.connect(func():
 		start_game_without_click()
-		start_pressed.emit())
-	v.add_child(b)
+		start_pressed.emit(true))
+	v.add_child(continue_btn)
+	var nb := _menu_button("YENİ OYUN", 24)
+	nb.pressed.connect(func():
+		start_game_without_click()
+		start_pressed.emit(false))
+	v.add_child(nb)
 	var h := _label("WASD yürü · Boşluk zıpla · Sağ tık basılı tut: kamera · Sol tık: hedef · H: yardım", 14, Color("93a1ad"))
 	h.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(h)

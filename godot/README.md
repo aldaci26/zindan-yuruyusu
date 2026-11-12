@@ -21,7 +21,8 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 | R | Otomatik saldırı |
 | 1 - 9 | Yetenekler |
 | 0 veya F | Can iksiri |
-| Tab / Esc | En yakın hedef / hedefi bırak |
+| Tab | En yakın hedef |
+| Esc | Hedefi bırak, tekrar basınca oyun menüsü (ses, tam ekran, kaydet ve çık) |
 | G | NPC ile konuş |
 | H | Yardım penceresi |
 | F11 | Tam ekran |
@@ -38,6 +39,9 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 | 7 | İnfaz | 4 | Canı %20 altındaki hedefe dev hasar |
 | 8 | Ölümcül Darbe | 5 | Devasa vuruş |
 | 9 | Kasırga | 6 | Çevredeki herkese vurur |
+
+## Kayıt
+Oyun her 20 saniyede, görev alıp bitirince ve menüden çıkarken kendiliğinden kaydolur. Başlangıç ekranında **Devam et** ile kaldığın yerden devam edersin. Kayıt dosyası bilgisayarında oyun verileri klasöründe (`cuce_save.json`) durur.
 
 ## Kendin derlemek istersen
 Godot 4.3 ile bu klasörü aç (`project.godot`), F5. Dışarıdan dosya yok; her şey kodla üretilir.

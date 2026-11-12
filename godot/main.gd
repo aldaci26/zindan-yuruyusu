@@ -4,6 +4,7 @@ extends Node3D
 const Dwarf = preload("res://dwarf.gd")
 const Tex = preload("res://tex.gd")
 const HudScript = preload("res://hud.gd")
+const SfxScript = preload("res://sfx.gd")
 
 const WORLD_R := 92.0
 const CITY := {"x": 0.0, "z": -58.0, "r": 24.0, "y": 3.0}
@@ -59,6 +60,10 @@ class Mob:
 
 # ---------- durum ----------
 var hud
+var sfx
+var paused := false
+var save_t := 0.0
+const SAVE_PATH := "user://cuce_save.json"
 var cam: Camera3D
 var sun: DirectionalLight3D
 var player: Node3D
@@ -152,6 +157,17 @@ func _ready() -> void:
 	add_child(hud)
 	hud.start_pressed.connect(_on_start)
 	hud.ability_pressed.connect(ability)
+	hud.resume_pressed.connect(toggle_pause)
+	hud.quit_pressed.connect(func():
+		save_game()
+		get_tree().quit())
+	hud.fullscreen_pressed.connect(toggle_fullscreen)
+	sfx = SfxScript.new()
+	add_child(sfx)
+	hud.volume_changed.connect(sfx.set_volume)
+	sfx.set_volume(0.8)
+	hud.set_has_save(FileAccess.file_exists(SAVE_PATH))
+	get_tree().set_auto_accept_quit(false)
 	_update_camera(0.0)
 
 func _tmat(tex: Texture2D, scale: float, metal: float, rough: float) -> StandardMaterial3D:
@@ -749,12 +765,83 @@ func _setup_snow() -> void:
 	add_child(snow_node)
 
 # ---------- girdi ----------
-func _on_start() -> void:
+func _on_start(cont: bool) -> void:
 	mode = "play"
+	sfx.start_ambient()
+	sfx.play("click")
+	if cont and load_game():
+		hud.say("Kayıtlı oyun yüklendi.", Color("f2c75c"))
+		return
+	if FileAccess.file_exists(SAVE_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
 	hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 	hud.say("Kurtlar ve domuzlar vadide dolaşıyor. İyi avlar!", Color("f2c75c"))
 
+func toggle_fullscreen() -> void:
+	var w := get_window()
+	w.mode = Window.MODE_WINDOWED if w.mode == Window.MODE_FULLSCREEN else Window.MODE_FULLSCREEN
+
+func toggle_pause() -> void:
+	if mode != "play":
+		return
+	paused = not paused
+	hud.set_paused(paused)
+	if paused:
+		rmb = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		save_game()
+
+func save_game() -> void:
+	if mode != "play" or P["dead"]:
+		return
+	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"], "gold": P["gold"], "pot": P["pot"],
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "qs": qs}
+	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if f:
+		f.store_string(JSON.stringify(d))
+
+func load_game() -> bool:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return false
+	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if f == null:
+		return false
+	var d = JSON.parse_string(f.get_as_text())
+	if typeof(d) != TYPE_DICTIONARY:
+		return false
+	for k in ["x", "z", "yaw", "lvl", "xp", "gold", "pot", "wep_b", "wep_lvl", "hp"]:
+		if not d.has(k) or typeof(d[k]) != TYPE_FLOAT:
+			return false
+	P["x"] = clampf(d["x"], -WORLD_R, WORLD_R)
+	P["z"] = clampf(d["z"], -WORLD_R, WORLD_R)
+	P["yaw"] = d["yaw"]
+	P["lvl"] = clampi(int(d["lvl"]), 1, 10)
+	P["xp"] = maxf(0.0, d["xp"])
+	P["gold"] = maxi(0, int(d["gold"]))
+	P["pot"] = clampi(int(d["pot"]), 0, 9)
+	P["wep_b"] = d["wep_b"]
+	P["wep_lvl"] = clampi(int(d["wep_lvl"]), 0, 6)
+	P["hp"] = clampf(d["hp"], 1.0, float(max_hp()))
+	qs = {}
+	if typeof(d.get("qs")) == TYPE_DICTIONARY:
+		for id in d["qs"]:
+			if QUESTS.has(id) and typeof(d["qs"][id]) == TYPE_DICTIONARY:
+				var e: Dictionary = d["qs"][id]
+				qs[id] = {"st": str(e.get("st", "active")), "n": int(e.get("n", 0))}
+	P["y"] = height_at(P["x"], P["z"])
+	render_quests()
+	return true
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		save_game()
+		get_tree().quit()
+
 func _unhandled_input(ev: InputEvent) -> void:
+	if paused:
+		if ev is InputEventKey and ev.pressed and not ev.echo and ev.keycode == KEY_ESCAPE:
+			toggle_pause()
+		return
 	if ev is InputEventMouseButton:
 		if ev.button_index == MOUSE_BUTTON_RIGHT:
 			rmb = ev.pressed
@@ -798,12 +885,13 @@ func _unhandled_input(ev: InputEvent) -> void:
 					close_dialog()
 				elif hud.help_box.visible:
 					hud.toggle_help()
-				else:
+				elif P["target"] != null or P["auto"]:
 					P["target"] = null
 					P["auto"] = false
+				else:
+					toggle_pause()
 			KEY_F11:
-				var w := get_window()
-				w.mode = Window.MODE_WINDOWED if w.mode == Window.MODE_FULLSCREEN else Window.MODE_FULLSCREEN
+				toggle_fullscreen()
 
 func _select_at(pos: Vector2) -> void:
 	var best = null
@@ -854,6 +942,7 @@ func hit_mob(m, r: Dictionary, col: Color = Color.WHITE) -> void:
 	if m.dead:
 		return
 	m.hp -= r["v"]
+	sfx.play("crit" if r["crit"] else "hit", -4)
 	float_text(Vector3(m.x, 1.9 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), str(r["v"]), Color("ffd23a") if r["crit"] else col, r["crit"])
 	P["combat_t"] = T
 	add_rage(9.0 if r["crit"] else 6.0)
@@ -877,6 +966,7 @@ func kill_mob(m) -> void:
 		hud.say("Ganimet: iksir +1", Color("43d17f"))
 	var gd: int = 2 + m.lvl * 3 + randi() % 4
 	P["gold"] += gd
+	sfx.play("coin", -8)
 	hud.say("+%d altın" % gd, Color("f2c75c"))
 	quest_kill(m)
 	gain_xp(xp)
@@ -890,6 +980,7 @@ func gain_xp(n: float) -> void:
 		P["lvl"] += 1
 		P["hp"] = float(max_hp())
 		ring_fx(Vector3(P["x"], P["y"], P["z"]), 3.0, Color("f2c75c"), 0.9)
+		sfx.play("level")
 		hud.banner("SEVİYE %d" % P["lvl"], "Can doldu")
 		hud.say("Seviye atladın! Sv %d" % P["lvl"], Color("f2c75c"))
 		for a in HudScript.ABIL:
@@ -899,6 +990,7 @@ func gain_xp(n: float) -> void:
 
 func swing() -> void:
 	swing_t = 0.001
+	sfx.play("swing", -10)
 
 func auto_attack() -> void:
 	var m = P["target"]
@@ -986,19 +1078,23 @@ func ability(i: int) -> void:
 			float_text(Vector3(m.x, 2.4 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), "Kanama", Color("ff6a5a"), false)
 			hit_mob(m, roll(atk() * 0.5), Color("ffb0a0"))
 		"charge":
+			sfx.play("charge")
 			P["charge"] = m
 			P["charge_t"] = 0.0
 			P["auto"] = false
 			ring_fx(pp, 1.8, Color("ffd890"), 0.4)
 		"shout":
+			sfx.play("shout")
 			P["bs_t"] = 60.0
 			ring_fx(pp, 3.4, Color("ffd23a"), 0.6)
 			float_text(pp + Vector3(0, 2.6, 0), "Savaş Narası!", Color("ffe08a"), true)
 		"shield":
+			sfx.play("block")
 			P["sb_t"] = 5.0
 			ring_fx(pp, 1.8, Color("59a9ff"), 0.5)
 			float_text(pp + Vector3(0, 2.6, 0), "Kalkan Bloğu", Color("8ec9ff"), false)
 		"clap":
+			sfx.play("thunder")
 			swing()
 			ring_fx(pp, 6.0, Color("6aa8ff"), 0.55)
 			var any := false
@@ -1010,6 +1106,7 @@ func ability(i: int) -> void:
 			if not any:
 				hud.say("Yakında düşman yok.", Color("ff9a8a"))
 		"whirl":
+			sfx.play("whirl")
 			P["spin"] = 0.6
 			swing()
 			ring_fx(pp, 5.0, Color("c8f0f8"), 0.55)
@@ -1031,6 +1128,7 @@ func use_potion() -> void:
 		hud.say("Canın zaten dolu.")
 		return
 	P["pot"] -= 1
+	sfx.play("potion")
 	P["pot_cd"] = 20.0
 	var hv := mini(max_hp() - roundi(P["hp"]), roundi(max_hp() * 0.45))
 	P["hp"] += hv
@@ -1057,13 +1155,16 @@ func hurt_player(raw: float, m) -> void:
 	if P["sb_t"] > 0.0:
 		d = maxi(1, roundi(d * 0.3))
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
+		sfx.play("block", -6)
 		add_rage(5.0)
 	P["hp"] -= d
 	P["combat_t"] = T
+	sfx.play("hurt", -4)
 	add_rage(4.0)
 	float_text(Vector3(P["x"], P["y"] + 2.2, P["z"]), "-%d" % d, Color("ff6a5a"), false)
 	if P["hp"] <= 0.0 and not P["dead"]:
 		P["dead"] = true
+		sfx.play("die")
 		P["dead_t"] = T
 		P["auto"] = false
 		P["target"] = null
@@ -1133,6 +1234,8 @@ func quest_kill(m) -> void:
 				s["st"] = "ready"
 				hud.say("Görev tamam: %s (teslim et)" % d["title"], Color("7fe08a"))
 				hud.banner("GÖREV HAZIR", d["title"])
+				sfx.play("quest")
+				save_game()
 			else:
 				hud.say("%s: %d/%d" % [d["title"], s["n"], d["n"]], Color("f2c75c"))
 	render_quests()
@@ -1183,7 +1286,9 @@ func render_dialog() -> void:
 				body = "%s\n\nGörev: %d %s öldür.\nÖdül: %d tecrübe, %d altın%s." % [q["text"], q["n"], q["kill"], q["xp"], q["gold"], (", +%d saldırı" % q["wep"]) if q["wep"] > 0 else ""]
 				buttons.append({"label": "Görevi kabul et", "cb": func():
 					qs[n["q"]] = {"st": "active", "n": 0}
+					sfx.play("quest")
 					hud.say("Görev alındı: " + q["title"], Color("f2c75c"))
+					save_game()
 					render_quests()
 					close_dialog()})
 		else:
@@ -1196,6 +1301,7 @@ func render_dialog() -> void:
 					st["st"] = "done"
 					P["gold"] += q["gold"]
 					P["wep_b"] += q["wep"]
+					sfx.play("coin")
 					hud.say("Ödül: %d XP, %d altın" % [q["xp"], q["gold"]], Color("f2c75c"))
 					render_quests()
 					close_dialog()
@@ -1208,6 +1314,7 @@ func render_dialog() -> void:
 			if P["gold"] >= 15 and P["pot"] < 9:
 				P["gold"] -= 15
 				P["pot"] += 1
+				sfx.play("coin")
 				hud.say("İksir satın aldın.", Color("43d17f"))
 			render_dialog()})
 	elif n["role"] == "smith":
@@ -1221,6 +1328,7 @@ func render_dialog() -> void:
 					P["gold"] -= cost
 					P["wep_lvl"] += 1
 					P["wep_b"] += 3.0
+					sfx.play("block")
 					hud.say("Silah bilendi: +3 saldırı", Color("f2c75c"))
 					ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.6, Color("ffb040"), 0.5)
 				render_dialog()})
@@ -1241,6 +1349,8 @@ func render_dialog() -> void:
 
 # ---------- güncelleme ----------
 func _process(delta: float) -> void:
+	if paused:
+		return
 	step(minf(delta, 0.05))
 
 func collide(x: float, z: float, r: float) -> Vector2:
@@ -1257,6 +1367,11 @@ func collide(x: float, z: float, r: float) -> Vector2:
 
 func step(dt: float) -> void:
 	T += dt
+	if mode == "play" and not P["dead"]:
+		save_t += dt
+		if save_t >= 20.0:
+			save_t = 0.0
+			save_game()
 	var ix := 0.0
 	var iy := 0.0
 	if mode == "play" and not P["dead"]:
@@ -1511,7 +1626,10 @@ func _step_npcs(dt: float) -> void:
 		node.position.y = n["y"] + sin(T * 1.4 + n["z"]) * 0.015
 
 func _animate_player(dt: float) -> void:
+	var ph0 := walk_ph
 	walk_ph += P["spd"] * dt * 9.0
+	if P["spd"] > 0.2 and P["jy"] <= 0.05 and floorf(walk_ph / PI) != floorf(ph0 / PI):
+		sfx.play("step", -16)
 	var sw: float = sin(walk_ph) * 0.75 * P["spd"]
 	var air: bool = P["jy"] > 0.05
 	rig["legL"].rotation.x = -0.7 if air else sw

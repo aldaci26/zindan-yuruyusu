@@ -31,6 +31,27 @@ const CAMPS := [
 ]
 
 const QUESTS := {
+	"q_trogg": {"title": "Trogg Tehdidi", "kill": "Trogg", "n": 5, "lvl": 3, "xp": 220, "money": 600, "rew": ["sh_gate", "wt_iron", "axe_forge"],
+		"text": "Doğudaki trogglar sürülerimize saldırıyor. Beş tanesini temizle.", "done": "Doğu yolu rahatladı. Al, hak ettin."},
+	"q_grik": {"title": "Soğuğun Reisi", "kill": "Grik'nir the Cold", "n": 1, "lvl": 5, "xp": 400, "money": 1200, "rew": ["ch_mail", "hd_iron", "rg_sig"],
+		"text": "Trogg reisi Grik'nir the Cold buzdan bir kale kurdu. Onu devir, sürüsü dağılır.", "done": "Soğuk reis düştü! Ödülünü seç."},
+	"q_arc": {"title": "Kar Dağının Efendisi", "kill": "Büyük Baba Arctikus", "n": 1, "lvl": 5, "xp": 500, "money": 1500, "rew": ["helm_ward", "nk_rune", "ft_iron"],
+		"text": "Batı ormanında Büyük Baba Arctikus diye bir dev ayı dolaşıyor. Güçlü bir savaşçı olmadan yaklaşma.", "done": "Arctikus'u yendin! Efsane olacaksın."},
+	"q_gnoll": {"title": "Gnoll Sürüsü", "kill": "Gnoll", "n": 5, "lvl": 4, "xp": 260, "money": 700, "rew": ["so_boar", "rg_iron", "sh_rein"],
+		"text": "Gnolllar doğu-güney yolunu tutmuş, kervanları soyuyorlar. Beşini avla.", "done": "Yollar yine güvenli. İşte ödülün."},
+	"q_chok": {"title": "Ogre Savaş Başı", "kill": "Chok'sul", "n": 1, "lvl": 6, "xp": 500, "money": 1600, "rew": ["axe_deepf", "so_peak", "wt_rune"],
+		"text": "Ogre Chok'sul batıda köylere ezip geçiyor. Onu durdur.", "done": "Ogre devrildi. Seç bakalım."},
+	"q_hogger": {"title": "Hogger'ı Avla", "kill": "Hogger", "n": 1, "lvl": 7, "xp": 650, "money": 2200, "rew": ["lg_plate", "wr_rune", "tr_horn"],
+		"text": "Gnoll elebaşı Hogger doğuda küçük bir ordu topladı. Başını getir.", "done": "Hogger'ı yendin! Bu ödülü hak ettin."},
+	"q_defias": {"title": "Defias Haydutları", "kill": "Defias Haydudu", "n": 5, "lvl": 6, "xp": 420, "money": 1300, "rew": ["ch_plate", "hd_deep", "tr_horn"],
+		"text": "Güneybatıda Defias haydutları sığınak kurmuş. Beşini temizle.", "done": "Haydutlar dağıldı. Şu eşyalardan birini al."},
+	"q_dark": {"title": "Kara Demir Büyücüleri", "kill": "Kara Demir Büyücüsü", "n": 5, "lvl": 7, "xp": 520, "money": 1800, "rew": ["ft_deep", "axe_storm", "nk_gold"],
+		"text": "Kara Demir büyücüleri batıda ateş büyüleri deniyor. Beşini yok et, ama uzaktan vururlar, yaklaş.", "done": "Büyücüler yok oldu. Ödülünü seç."},
+	"q_vc": {"title": "Defias Elebaşı", "kill": "Edwin VanCleef", "n": 1, "lvl": 8, "xp": 800, "money": 3000, "rew": ["sh_deep", "rg_ruby", "ch_deep"],
+		"text": "Edwin VanCleef güneybatıdaki Defias sığınağının reisi. Onu alt et.", "done": "VanCleef öldü! Büyük zafer."},
+	"q_rag": {"title": "Ateşin Efendisi", "kill": "Ragnaros", "n": 1, "lvl": 10, "xp": 1500, "money": 8000, "rew": ["helm_king", "rg_king", "tr_eye"],
+		"text": "Demirkazan'ın büyük ocağında Ateş Efendisi Ragnaros uyuyor. Onu uyandırıp yen. Çok iyi donan.", "done": "Ragnaros devrildi! Krallar bile bunu başaramadı."},
+
 	"q_wolf": {"title": "Kurt Sürüsü", "kill": "Kurt", "n": 4, "lvl": 1, "xp": 90, "money": 250, "rew": ["axe_wolf", "bk_fur", "nk_tooth"],
 		"text": "Vadide kurtlar çoğaldı, sürüler köye yaklaşıyor. Dört kurdu avla, köy sana minnettar kalır.", "done": "Sürü dağıldı, teşekkürler. İşte ödülün."},
 	"q_boar": {"title": "Domuz İstilası", "kill": "Yaban Domuzu", "n": 4, "lvl": 2, "xp": 170, "money": 450, "rew": ["axe_boar", "so_boar", "ft_iron"],
@@ -762,17 +783,17 @@ func xp_need(l: int) -> float:
 	return 50.0 + 40.0 * l
 
 const NPCDEF := [
-	{"id": "ragna", "name": "Avcı Başı Ragna", "title": "Kurt Avı", "role": "quest", "q": "q_wolf", "x": -3.5, "z": 6.5, "face": 0.9,
+	{"id": "ragna", "name": "Avcı Başı Ragna", "title": "Kurt Avı", "role": "quest", "qs": ["q_wolf", "q_trogg", "q_grik", "q_arc"], "x": -3.5, "z": 6.5, "face": 0.9,
 		"o": {"beard": Color("8a5a2b"), "cloth": Color("2f6b3a"), "metal": Color("6f7d68"), "helm": false, "prop": "spear"}},
 	{"id": "kelda", "name": "Han Sahibi Kelda", "title": "Han", "role": "inn", "x": -5.2, "z": 14.5, "face": 0.3,
 		"o": {"beard": Color("e9e4d6"), "cloth": Color("7a5230"), "metal": Color("8d8472"), "helm": false, "prop": "none"}},
-	{"id": "dorn", "name": "Muhafız Dorn", "title": "Kapı Muhafızı", "role": "quest", "q": "q_boar", "x": 5.2, "z": -40.5, "face": 0.0,
+	{"id": "dorn", "name": "Muhafız Dorn", "title": "Kapı Muhafızı", "role": "quest", "qs": ["q_boar", "q_gnoll", "q_chok", "q_hogger"], "x": 5.2, "z": -40.5, "face": 0.0,
 		"o": {"beard": Color("4a2b18"), "cloth": Color("1d3b86"), "metal": Color("9aa8c0"), "helm": true, "prop": "axe"}},
 	{"id": "hilda", "name": "Tüccar Hilda", "title": "Tüccar", "role": "vendor", "x": -10.0, "z": -51.8, "face": 0.35,
 		"o": {"beard": Color("dbb46a"), "cloth": Color("8e2f4a"), "metal": Color("b09060"), "helm": false, "prop": "none"}},
 	{"id": "borga", "name": "Demirci Borga", "title": "Silah Ustası", "role": "smith", "x": 5.2, "z": -59.5, "face": -2.4,
 		"o": {"beard": Color("2e2018"), "cloth": Color("5a3a22"), "metal": Color("6a6f78"), "helm": false, "prop": "hammer", "skin": Color("d69a74")}},
-	{"id": "thrum", "name": "Komutan Thrum", "title": "Dağ Komutanı", "role": "quest", "q": "q_bear", "x": -4.0, "z": -73.5, "face": 0.0,
+	{"id": "thrum", "name": "Komutan Thrum", "title": "Dağ Komutanı", "role": "quest", "qs": ["q_bear", "q_defias", "q_dark", "q_vc", "q_rag"], "x": -4.0, "z": -73.5, "face": 0.0,
 		"o": {"beard": Color("aab0b8"), "cloth": Color("8a1f1f"), "metal": Color("c0c8d4"), "helm": true, "prop": "axe"}},
 ]
 
@@ -1767,12 +1788,22 @@ func quest_kill(m) -> void:
 				hud.say("%s: %d/%d" % [d["title"], s["n"], d["n"]], Color("f2c75c"))
 	render_quests()
 
+## NPC'nin şu anki görevi: zincirde bitmemiş ilk görev ("" = hepsi bitti).
+func npc_quest(n: Dictionary) -> String:
+	for id in n["qs"]:
+		if not qs.has(id) or qs[id]["st"] != "done":
+			return id
+	return ""
+
 func npc_mark(n: Dictionary) -> String:
 	if n["role"] != "quest":
 		return ""
-	if qs.has(n["q"]) and qs[n["q"]]["st"] == "ready":
+	var id := npc_quest(n)
+	if id == "":
+		return ""
+	if qs.has(id) and qs[id]["st"] == "ready":
 		return "?"
-	return "!" if q_avail(n["q"]) else ""
+	return "!" if q_avail(id) else ""
 
 func near_npc():
 	var best = null
@@ -1846,28 +1877,30 @@ func render_dialog() -> void:
 	var body := ""
 	var buttons: Array = []
 	if n["role"] == "quest":
-		var q: Dictionary = QUESTS[n["q"]]
-		if not qs.has(n["q"]):
-			if P["lvl"] < q["lvl"]:
-				body = "Biraz daha güçlenince gel. (Seviye %d gerekli)" % q["lvl"]
-			else:
-				body = "%s\n\nGörev: %d %s öldür.\nÖdül: %d tecrübe, %s ve bir eşya seçimi." % [q["text"], q["n"], q["kill"], q["xp"], Items.money_plain(q["money"])]
-				buttons.append({"label": "Görevi kabul et", "cb": func():
-					qs[n["q"]] = {"st": "active", "n": 0}
-					sfx.play("quest")
-					hud.say("Görev alındı: " + q["title"], Color("f2c75c"))
-					save_game()
-					render_quests()
-					close_dialog()})
+		var qid := npc_quest(n)
+		if qid == "":
+			body = "Yardımın için sağ ol, kahraman. Şimdilik başka işim yok."
 		else:
-			var st: Dictionary = qs[n["q"]]
-			if st["st"] == "active":
-				body = "%s: %d/%d %s. Devam et!" % [q["title"], st["n"], q["n"], q["kill"]]
-			elif st["st"] == "ready":
-				body = q["done"]
-				buttons.append({"label": "Ödülü al", "cb": func(): reward_pick(n["q"])})
+			var q: Dictionary = QUESTS[qid]
+			if not qs.has(qid):
+				if P["lvl"] < q["lvl"]:
+					body = "Biraz daha güçlenince gel. (Seviye %d gerekli)" % q["lvl"]
+				else:
+					body = "%s\n\nGörev: %d %s öldür.\nÖdül: %d tecrübe, %s ve bir eşya seçimi." % [q["text"], q["n"], q["kill"], q["xp"], Items.money_plain(q["money"])]
+					buttons.append({"label": "Görevi kabul et", "cb": func():
+						qs[qid] = {"st": "active", "n": 0}
+						sfx.play("quest")
+						hud.say("Görev alındı: " + q["title"], Color("f2c75c"))
+						save_game()
+						render_quests()
+						close_dialog()})
 			else:
-				body = "Yardımın için sağ ol, kahraman."
+				var st: Dictionary = qs[qid]
+				if st["st"] == "active":
+					body = "%s: %d/%d %s. Devam et!" % [q["title"], st["n"], q["n"], q["kill"]]
+				else:
+					body = q["done"]
+					buttons.append({"label": "Ödülü al", "cb": func(): reward_pick(qid)})
 	elif n["role"] == "vendor":
 		body = "Taze iksirler, sıcak çorba, sağlam zırhlar! Ne lazım?"
 		buttons.append({"label": "Alışveriş", "cb": func(): open_vendor(n)})

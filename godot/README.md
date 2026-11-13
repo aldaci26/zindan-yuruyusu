@@ -46,6 +46,9 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 ## Eşyalar
 WoW Classic mantığıyla: nadirlik renkleri (gri, beyaz, yeşil, mavi, mor), 16 ekipman yuvası, 16 gözlü çanta, bakır/gümüş/altın parası, eşya ipuçları ve giyili eşyayla karşılaştırma. Canavarlar ceset üzerinde ganimet bırakır (sol tık veya G). Tüccar Hilda ve Demirci Borga eşya satar, sattıklarını geri alabilirsin. Görev ödüllerinde eşya seçersin. İki takım vardır: Derin Ocak Takımı ve Dağ Kralının Mirası; parça sayısına göre ek güç verir. Eşyalar sadece istatistik değiştirir, görünüm değişmez.
 
+## Görevler
+Üç görev vericisi (Avcı Başı Ragna, Muhafız Dorn, Komutan Thrum) birer görev zinciri verir; biri bitince sıradaki açılır. Toplam 13 görev var: trogg, gnoll, Defias ve Kara Demir avları ile Grik'nir, Arctikus, Chok'sul, Hogger, VanCleef ve Ragnaros boss görevleri. Her görev tecrübe, para ve üç eşyadan birini seçme hakkı verir. Görev vericisinin üstündeki `!` yeni görev, `?` teslim demektir.
+
 ## Düşmanlar
 Kurt, yaban domuzu ve dağ ayısına ek olarak dört kamp vardır: **Troggar** (doğu, Sv 3-6), **Gnoll'lar** (doğu-güney, Sv 4-7), **Defias haydutları** (güneybatı, Sv 6-8) ve **Kara Demir büyücüleri** (batı, Sv 7-9; uzaktan ateş okuyla vururlar). Her türün kendine özel çerçöpü düşer.
 

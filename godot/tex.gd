@@ -90,16 +90,23 @@ static func cobble() -> ImageTexture:
 	_speckle(img, r, 700, 0.14)
 	return _finish(img)
 
-## Arazi için hafif lekeli ton (köşeler renkle çarpılır)
+## Arazi için el boyaması hissi: iki ölçekli leke, ince tanecik, hafif çizgi
 static func detail() -> ImageTexture:
 	var nz := FastNoiseLite.new()
 	nz.seed = 7
 	nz.frequency = 0.03
 	nz.fractal_octaves = 3
+	var nz2 := FastNoiseLite.new()
+	nz2.seed = 19
+	nz2.frequency = 0.12
+	nz2.fractal_octaves = 2
 	var src := nz.get_seamless_image(S, S, false, false, 0.1, true)
+	var src2 := nz2.get_seamless_image(S, S, false, false, 0.1, true)
+	var r := _rng(5)
 	var img := Image.create(S, S, false, Image.FORMAT_RGB8)
 	for y in S:
 		for x in S:
-			var v := 0.82 + 0.18 * src.get_pixel(x, y).r
-			img.set_pixel(x, y, Color(v, v, v * 1.02))
+			var v := 0.78 + 0.16 * src.get_pixel(x, y).r + 0.12 * src2.get_pixel(x, y).r
+			v *= 0.96 + r.randf() * 0.08
+			img.set_pixel(x, y, Color(v * 0.99, v, v * 1.04))
 	return _finish(img)

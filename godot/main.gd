@@ -232,7 +232,7 @@ func _ready() -> void:
 	m_cobble = _tmat(Tex.cobble(), 0.25, 0.0, 0.95)
 	m_gold = Dwarf.mat(Color.html("e6b440"), 0.85, 0.28)
 	m_bronze = Dwarf.mat(Color.html("b8782e"), 0.7, 0.4)
-	m_snow = Dwarf.mat(Color.html("f4f8ff"), 0.0, 0.9)
+	m_snow = Dwarf.mat(Color.html("e6eefa"), 0.0, 0.9)
 	m_blue = Dwarf.mat(Color.html("2a55b8"), 0.0, 0.85)
 	m_blue.cull_mode = BaseMaterial3D.CULL_DISABLED
 	_setup_environment()
@@ -285,20 +285,21 @@ func _setup_environment() -> void:
 	var env := Environment.new()
 	var sky := Sky.new()
 	var psm := ProceduralSkyMaterial.new()
-	psm.sky_top_color = Color("3d7dcf")
-	psm.sky_horizon_color = Color("f6dcc2")
-	psm.ground_horizon_color = Color("f6dcc2")
-	psm.ground_bottom_color = Color("9fb4cf")
-	psm.sky_curve = 0.18
+	psm.sky_top_color = Color("2f5fb0")
+	psm.sky_horizon_color = Color("d9d2dc")
+	psm.ground_horizon_color = Color("c8c9d6")
+	psm.ground_bottom_color = Color("7f93b8")
+	psm.sky_curve = 0.22
 	psm.sun_angle_max = 28.0
 	psm.sun_curve = 0.12
 	sky.sky_material = psm
 	env.background_mode = Environment.BG_SKY
 	env.sky = sky
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_sky_contribution = 0.7
-	env.ambient_light_energy = 1.0
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color("9db4dc")
+	env.ambient_light_energy = 0.8
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	env.tonemap_exposure = 0.88
 	env.tonemap_white = 6.0
 	env.glow_enabled = true
 	env.glow_intensity = 0.7
@@ -308,18 +309,18 @@ func _setup_environment() -> void:
 	env.ssao_radius = 1.6
 	env.ssao_intensity = 1.8
 	env.fog_enabled = true
-	env.fog_light_color = Color("dde3ec")
-	env.fog_density = 0.0048
-	env.fog_sky_affect = 0.35
+	env.fog_light_color = Color("c5d0e6")
+	env.fog_density = 0.0075
+	env.fog_sky_affect = 0.45
 	env.adjustment_enabled = true
-	env.adjustment_saturation = 1.18
-	env.adjustment_contrast = 1.1
+	env.adjustment_saturation = 1.12
+	env.adjustment_contrast = 1.12
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
 	sun = DirectionalLight3D.new()
-	sun.light_color = Color("ffe2b0")
-	sun.light_energy = 1.15
+	sun.light_color = Color("ffd9a0")
+	sun.light_energy = 1.05
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
 	sun.directional_shadow_max_distance = 110.0
@@ -380,15 +381,23 @@ func _build_terrain() -> void:
 func _terrain_color(x: float, z: float, y: float) -> Color:
 	var s := maxf(absf(height_at(x + 1.2, z) - y), absf(height_at(x, z + 1.2) - y)) / 1.2
 	var n := vn(x * 0.11, z * 0.11)
+	var n2 := vn(x * 0.37 + 9.0, z * 0.37 - 4.0)
 	var d := sqrt(x * x + z * z)
-	var c := Color("f4f8ff").lerp(Color("b4cff0"), clampf(n * 1.2 - 0.2, 0.0, 1.0))
+	# kar: soğuk mavi-beyaz, gölgelerde mora çalan
+	var c := Color("e8f0fb").lerp(Color("a9c0e4"), clampf(n * 1.3 - 0.15, 0.0, 1.0))
+	c = c.lerp(Color("c9d6ee"), clampf(n2 * 0.5, 0.0, 0.4))
+	# donmuş çimen ve kuru otlar (Dun Morogh)
 	var gp := clampf((0.58 - n) * 3.0 + (3.0 - y) * 0.08, 0.0, 1.0) * clampf(1.3 - absf(y) / 9.0, 0.0, 1.0)
-	c = c.lerp(Color("6fab58"), gp * 0.85)
-	c = c.lerp(Color("77818b"), clampf((s - 0.55) * 2.2, 0.0, 1.0))
+	var grass := Color("5f8f4a").lerp(Color("9a9a58"), clampf(n2 * 1.4 - 0.3, 0.0, 1.0))
+	c = c.lerp(grass, gp * 0.85)
+	# çıplak toprak lekeleri
+	var dp := clampf((n2 - 0.62) * 4.0, 0.0, 1.0) * clampf(0.5 - n * 0.4, 0.0, 1.0)
+	c = c.lerp(Color("7c6a52"), dp * 0.7)
+	c = c.lerp(Color("6f7a88"), clampf((s - 0.55) * 2.2, 0.0, 1.0))
 	c = c.lerp(Color("7a6a58"), clampf((11.0 - d) / 5.0, 0.0, 1.0))
 	var rdx := absf(x - sin(z * 0.07) * 3.0)
 	if z < 14.0 and z > CITY.z + 18.0:
-		c = c.lerp(Color("a09282"), clampf(1.0 - (rdx - 1.8) / 1.2, 0.0, 1.0) * 0.9)
+		c = c.lerp(Color("9c8a74"), clampf(1.0 - (rdx - 1.8) / 1.2, 0.0, 1.0) * 0.9)
 	return c
 
 func _cone_mi(r: float, h: float, m: Material, pos: Vector3, shadow: bool = true, seg: int = 7) -> MeshInstance3D:
@@ -398,25 +407,31 @@ func _cone_mi(r: float, h: float, m: Material, pos: Vector3, shadow: bool = true
 	return mi
 
 func _build_mountains() -> void:
-	var mm := Dwarf.mat(Color.html("8a97ba"), 0.0, 0.95)
-	var cap := Dwarf.mat(Color.html("f6f9ff"), 0.0, 0.9)
-	for i in 26:
-		var a := float(i) / 26.0 * TAU + hash2(i, 3) * 0.2
-		var r := 135.0 + hash2(i, 9) * 25.0
-		var h := 38.0 + hash2(i, 5) * 42.0
+	var mm := Dwarf.mat(Color.html("7d8aa8"), 0.0, 0.95)
+	var mm2 := Dwarf.mat(Color.html("9aa6c4"), 0.0, 0.95)
+	var cap := Dwarf.mat(Color.html("eef3fc"), 0.0, 0.9)
+	for i in 34:
+		var a := float(i) / 34.0 * TAU + hash2(i, 3) * 0.2
+		var far := i % 2 == 1
+		var r := (150.0 if far else 128.0) + hash2(i, 9) * 25.0
+		var h := 40.0 + hash2(i, 5) * 48.0
 		var w := 24.0 + hash2(i, 7) * 18.0
-		var c := _cone_mi(w, h, mm, Vector3(cos(a) * r, h / 2.0 - 8.0, sin(a) * r), false, 6)
+		var base := mm2 if far else mm
+		var c := _cone_mi(w, h, base, Vector3(cos(a) * r, h / 2.0 - 8.0, sin(a) * r), false, 5)
 		c.rotation.y = hash2(i, 1) * 3.0
-		var t := _cone_mi(w * 0.42, h * 0.38, cap, Vector3(cos(a) * r, h * 0.81 - 8.0, sin(a) * r), false, 6)
+		var t := _cone_mi(w * 0.5, h * 0.46, cap, Vector3(cos(a) * r, h * 0.77 - 8.0, sin(a) * r), false, 5)
 		t.rotation.y = c.rotation.y
 
-func _add_multimesh(mesh: Mesh, m: Material, xfs: Array) -> void:
+func _add_multimesh(mesh: Mesh, m: Material, xfs: Array, cols: Array = []) -> void:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
+	mm.use_colors = not cols.is_empty()
 	mm.mesh = mesh
 	mm.instance_count = xfs.size()
 	for i in xfs.size():
 		mm.set_instance_transform(i, xfs[i])
+		if not cols.is_empty():
+			mm.set_instance_color(i, cols[i])
 	var mmi := MultiMeshInstance3D.new()
 	mmi.multimesh = mm
 	mmi.material_override = m
@@ -445,42 +460,84 @@ func _build_forest() -> void:
 		var sc := 0.8 + rnd.randf() * 0.9
 		if ok:
 			trees.append({"x": x, "z": z, "s": sc, "y": height_at(x, z), "rot": rnd.randf() * TAU})
+	# çam: 4 katman, her katmanın üstünde kar; ağaç başına renk ve boy farkı
 	var trunk: Array = []
-	var l1: Array = []
-	var l2: Array = []
-	var l3: Array = []
+	var tiers: Array = [[], [], [], []]
+	var snows: Array = [[], [], [], []]
+	var tcols: Array = []
+	var radii := [2.3, 1.8, 1.35, 0.9]
+	var ys := [2.7, 4.2, 5.6, 6.9]
 	for t in trees:
-		var b := Basis(Vector3.UP, t.rot).scaled(Vector3.ONE * t.s)
+		var tall := 0.85 + hash2(int(t.x * 3.0), int(t.z * 3.0)) * 0.5
+		var b := Basis(Vector3.UP, t.rot).scaled(Vector3(t.s, t.s * tall, t.s))
 		var p := Vector3(t.x, t.y, t.z)
-		trunk.append(Transform3D(b, p + Vector3(0, 1.2 * t.s, 0)))
-		l1.append(Transform3D(b, p + Vector3(0, 3.4 * t.s, 0)))
-		l2.append(Transform3D(b, p + Vector3(0, 5.2 * t.s, 0)))
-		l3.append(Transform3D(b, p + Vector3(0, 6.9 * t.s, 0)))
+		trunk.append(Transform3D(b, p + Vector3(0, 1.2 * t.s * tall, 0)))
+		var tint := 0.82 + hash2(int(t.x * 5.0), int(t.z * 7.0)) * 0.32
+		tcols.append(Color(tint, tint * (0.96 + hash2(int(t.z), int(t.x)) * 0.1), tint))
+		for k in 4:
+			tiers[k].append(Transform3D(b, p + Vector3(0, ys[k] * t.s * tall, 0)))
+			snows[k].append(Transform3D(b.scaled(Vector3(0.78, 0.5, 0.78)), p + Vector3(0, (ys[k] + 0.95) * t.s * tall, 0)))
 		_add_obs(t.x, t.z, 0.55 * t.s)
 	var tm := CylinderMesh.new()
 	tm.top_radius = 0.25
-	tm.bottom_radius = 0.4
+	tm.bottom_radius = 0.42
 	tm.height = 2.4
-	tm.radial_segments = 7
-	var c1 := CylinderMesh.new()
-	c1.top_radius = 0.0
-	c1.bottom_radius = 2.0
-	c1.height = 3.4
-	c1.radial_segments = 9
-	var c2 := CylinderMesh.new()
-	c2.top_radius = 0.0
-	c2.bottom_radius = 1.5
-	c2.height = 2.8
-	c2.radial_segments = 9
-	var c3 := CylinderMesh.new()
-	c3.top_radius = 0.0
-	c3.bottom_radius = 0.95
-	c3.height = 2.2
-	c3.radial_segments = 9
-	_add_multimesh(tm, Dwarf.mat(Color.html("5a3d26"), 0.0, 0.95), trunk)
-	_add_multimesh(c1, Dwarf.mat(Color.html("2b6a48"), 0.0, 0.9), l1)
-	_add_multimesh(c2, Dwarf.mat(Color.html("3a8a58"), 0.0, 0.9), l2)
-	_add_multimesh(c3, m_snow, l3)
+	tm.radial_segments = 6
+	var wm := Dwarf.mat(Color.html("ffffff"), 0.0, 0.95)
+	wm.vertex_color_use_as_albedo = true
+	var trunk_m := Dwarf.mat(Color.html("5a4030"), 0.0, 0.95)
+	trunk_m.vertex_color_use_as_albedo = true
+	_add_multimesh(tm, trunk_m, trunk, tcols)
+	var greens := ["1f4f46", "26604a", "2f7050", "3a8058"]
+	for k in 4:
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.0
+		cm.bottom_radius = radii[k]
+		cm.height = 2.9 - k * 0.2
+		cm.radial_segments = 7
+		var gm := Dwarf.mat(Color.html(greens[k]), 0.0, 0.92)
+		gm.vertex_color_use_as_albedo = true
+		_add_multimesh(cm, gm, tiers[k], tcols)
+		var sm := CylinderMesh.new()
+		sm.top_radius = 0.0
+		sm.bottom_radius = radii[k] * 1.02
+		sm.height = 2.9 - k * 0.2
+		sm.radial_segments = 7
+		_add_multimesh(sm, m_snow, snows[k])
+	# çalılar ve kuru ot demetleri
+	var bush: Array = []
+	var bcols: Array = []
+	var tuft: Array = []
+	var tucols: Array = []
+	for q in 220:
+		var a3 := rnd.randf() * TAU
+		var r3 := 6.0 + sqrt(rnd.randf()) * 82.0
+		var x3 := cos(a3) * r3
+		var z3 := sin(a3) * r3
+		if Vector2(x3 - CITY.x, z3 - CITY.z).length() < 26.0 or Vector2(x3, z3).length() < 12.0:
+			continue
+		var y3 := height_at(x3, z3)
+		var s3 := 0.5 + rnd.randf() * 0.7
+		if q % 3 == 0:
+			bush.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3(s3 * 1.2, s3 * 0.8, s3 * 1.2)), Vector3(x3, y3 + 0.3 * s3, z3)))
+			bcols.append(Color.from_hsv(0.3 + rnd.randf() * 0.08, 0.45, 0.55 + rnd.randf() * 0.2))
+		else:
+			tuft.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3(s3 * 1.4, s3 * 0.6, s3 * 1.4)), Vector3(x3, y3 + 0.1 * s3, z3)))
+			tucols.append(Color.from_hsv(0.12 + rnd.randf() * 0.05, 0.4, 0.62 + rnd.randf() * 0.2))
+	var bm := SphereMesh.new()
+	bm.radius = 0.6
+	bm.height = 1.0
+	bm.radial_segments = 6
+	bm.rings = 3
+	var bmat := Dwarf.mat(Color.html("ffffff"), 0.0, 0.95)
+	bmat.vertex_color_use_as_albedo = true
+	_add_multimesh(bm, bmat, bush, bcols)
+	var tf := CylinderMesh.new()
+	tf.top_radius = 0.0
+	tf.bottom_radius = 0.4
+	tf.height = 0.6
+	tf.radial_segments = 7
+	_add_multimesh(tf, bmat, tuft, tucols)
 	# kayalar
 	var rocks: Array = []
 	var caps: Array = []
@@ -502,7 +559,7 @@ func _build_forest() -> void:
 	rm.height = 2.0
 	rm.radial_segments = 6
 	rm.rings = 4
-	_add_multimesh(rm, Dwarf.mat(Color.html("7a8590"), 0.0, 0.95), rocks)
+	_add_multimesh(rm, Dwarf.mat(Color.html("737f8e"), 0.0, 0.95), rocks)
 	_add_multimesh(rm, m_snow, caps)
 
 func _flame(parent: Node, pos: Vector3, size: float) -> void:

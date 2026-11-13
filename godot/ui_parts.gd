@@ -278,3 +278,154 @@ class Minimap extends Control:
 		var np := c + Vector2(sin(cam_yaw), -cos(cam_yaw)) * (R - 9.0) * Vector2(1, 1)
 		Glyph.text(self, "K", np + Vector2(-8, 4), 16, 12, Color("ff8a7a"), 4)
 
+
+
+## WoW tarzı taş-metal panel: koyu gradyan, çift pah, altın şerit, köşe perçinleri
+class Frame extends Control:
+	var rivets := true
+	var trim := true
+
+	func _init() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var r := Rect2(Vector2.ZERO, size)
+		var top := Color("34302a")
+		var bot := Color("14110d")
+		draw_polygon(PackedVector2Array([r.position, Vector2(r.end.x, 0), r.end, Vector2(0, r.end.y)]), PackedColorArray([top, top, bot, bot]))
+		draw_rect(r, Color("050403"), false, 2.0)
+		draw_line(Vector2(2, 2), Vector2(r.end.x - 2, 2), Color(0.62, 0.55, 0.42, 0.55), 1.5)
+		draw_line(Vector2(2, 2), Vector2(2, r.end.y - 2), Color(0.5, 0.44, 0.34, 0.4), 1.5)
+		draw_line(Vector2(2, r.end.y - 2), Vector2(r.end.x - 2, r.end.y - 2), Color(0, 0, 0, 0.7), 1.5)
+		draw_line(Vector2(r.end.x - 2, 2), Vector2(r.end.x - 2, r.end.y - 2), Color(0, 0, 0, 0.55), 1.5)
+		if trim:
+			draw_rect(r.grow(-4), Color(0.6, 0.47, 0.2, 0.9), false, 1.0)
+		if rivets:
+			for p in [Vector2(6, 6), Vector2(size.x - 6, 6), Vector2(6, size.y - 6), Vector2(size.x - 6, size.y - 6)]:
+				draw_circle(p, 2.2, Color("c9a447"))
+				draw_circle(p + Vector2(-0.6, -0.6), 0.9, Color("f6e3a0"))
+
+## Aksiyon çubuğunun yanındaki kanatlı süs (grifon kanadı)
+class Wing extends Control:
+	var flip := false
+
+	func _init() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+		size = Vector2(70, 80)
+
+	func _draw() -> void:
+		var sgn := -1.0 if flip else 1.0
+		var ox := 0.0 if not flip else size.x
+		var gold := Color("c9a447")
+		var dk := Color("5a4418")
+		# gövde yuvası
+		draw_circle(Vector2(ox + sgn * 12.0, 40), 15.0, Color("1a140c"))
+		draw_arc(Vector2(ox + sgn * 12.0, 40), 15.0, 0, TAU, 28, gold, 2.5, true)
+		draw_circle(Vector2(ox + sgn * 12.0, 40), 6.0, gold)
+		# tüyler
+		for i in 6:
+			var t := float(i) / 5.0
+			var y0 := 40.0 - 8.0 - t * 22.0
+			var len := 26.0 + t * 26.0
+			var ang := -0.15 - t * 0.55
+			var tip := Vector2(ox + sgn * (12.0 + cos(ang) * len), y0 + sin(ang) * len * 0.5 - t * 6.0)
+			var base1 := Vector2(ox + sgn * 14.0, y0 + 4.0)
+			var base2 := Vector2(ox + sgn * 14.0, y0 - 5.0)
+			var col := gold.lerp(dk, t * 0.35)
+			draw_colored_polygon(PackedVector2Array([base1, tip, base2]), col)
+			draw_line(base1, tip, Color(0.1, 0.07, 0.02, 0.8), 1.2)
+		for i in 4:
+			var t2 := float(i) / 3.0
+			var y1 := 40.0 + 8.0 + t2 * 18.0
+			var len2 := 24.0 + t2 * 18.0
+			var tip2 := Vector2(ox + sgn * (12.0 + len2), y1 + len2 * 0.3)
+			draw_colored_polygon(PackedVector2Array([Vector2(ox + sgn * 14.0, y1 - 4.0), tip2, Vector2(ox + sgn * 14.0, y1 + 5.0)]), gold.lerp(dk, t2 * 0.4))
+
+## Küçük menü düğmesi (karakter, yardım, menü)
+class MicroBtn extends Control:
+	signal pressed
+	var kind := "char"
+	var hover := false
+
+	func _init() -> void:
+		custom_minimum_size = Vector2(24, 34)
+		size = Vector2(24, 34)
+		mouse_filter = Control.MOUSE_FILTER_STOP
+
+	func _gui_input(ev: InputEvent) -> void:
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+			pressed.emit()
+
+	func _notification(what: int) -> void:
+		if what == NOTIFICATION_MOUSE_ENTER:
+			hover = true
+			queue_redraw()
+		elif what == NOTIFICATION_MOUSE_EXIT:
+			hover = false
+			queue_redraw()
+
+	func _draw() -> void:
+		var r := Rect2(Vector2.ZERO, size)
+		draw_rect(r, Color("1a140c") if not hover else Color("33281a"))
+		draw_rect(r, Color("050403"), false, 2.0)
+		draw_rect(r.grow(-2), Color("c9a447") if hover else Color("7a6030"), false, 1.0)
+		var c := r.get_center()
+		var g := Color("e8d49a") if hover else Color("c8b27a")
+		match kind:
+			"char":
+				draw_circle(c + Vector2(0, -6), 4.5, g)
+				draw_colored_polygon(PackedVector2Array([c + Vector2(-8, 10), c + Vector2(-6, 0), c + Vector2(6, 0), c + Vector2(8, 10)]), g)
+			"help":
+				draw_string(ThemeDB.fallback_font, c + Vector2(-5, 8), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, g)
+			"menu":
+				for i in 3:
+					draw_rect(Rect2(c.x - 7, c.y - 8 + i * 6, 14, 3), g)
+
+## Sırt çantası (B) ve boş çanta yuvaları
+class BagBar extends Control:
+	signal pressed
+	var hover := false
+
+	func _init() -> void:
+		size = Vector2(150, 40)
+		mouse_filter = Control.MOUSE_FILTER_STOP
+
+	func _gui_input(ev: InputEvent) -> void:
+		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT and ev.position.x < 42:
+			pressed.emit()
+
+	func _notification(what: int) -> void:
+		if what == NOTIFICATION_MOUSE_EXIT:
+			hover = false
+			queue_redraw()
+
+	func _draw() -> void:
+		# sırt çantası
+		var r := Rect2(0, 0, 40, 40)
+		draw_rect(r, Color("1a140c"))
+		draw_rect(r, Color("050403"), false, 2.0)
+		draw_rect(r.grow(-2), Color("7a6030"), false, 1.0)
+		draw_rect(Rect2(10, 12, 20, 22), Color("8a5a2a"))
+		draw_rect(Rect2(10, 12, 20, 22), Color("2a1808"), false, 1.5)
+		draw_rect(Rect2(13, 22, 14, 9), Color("a8743a"))
+		draw_rect(Rect2(13, 22, 14, 9), Color("2a1808"), false, 1.0)
+		draw_arc(Vector2(20, 12), 6.0, PI, TAU, 10, Color("5a3a18"), 2.5, true)
+		draw_rect(Rect2(18, 25, 4, 3), Color("e0b040"))
+		var f := ThemeDB.fallback_font
+		draw_string(f, Vector2(2, 38), "B", HORIZONTAL_ALIGNMENT_LEFT, -1, 10, Color(1, 1, 1, 0.8))
+		# boş çanta yuvaları
+		for i in 4:
+			var q := Rect2(46 + i * 26, 7, 24, 26)
+			draw_rect(q, Color(0.05, 0.04, 0.03, 0.9))
+			draw_rect(q, Color("050403"), false, 2.0)
+			draw_rect(q.grow(-2), Color(0.35, 0.28, 0.14), false, 1.0)
+
+## Tecrübe çubuğundaki bölme çizgileri (WoW'daki 20 parça)
+class Ticks extends Control:
+	func _init() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		for i in range(1, 20):
+			var x := size.x * i / 20.0
+			draw_line(Vector2(x, 0), Vector2(x, size.y), Color(0, 0, 0, 0.55), 1.0)

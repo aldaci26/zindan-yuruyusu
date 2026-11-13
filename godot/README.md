@@ -66,3 +66,6 @@ Oyun her 20 saniyede, görev alıp bitirince ve menüden çıkarken kendiliğind
 
 ## Kendin derlemek istersen
 Godot 4.3 ile bu klasörü aç (`project.godot`), F5. Dışarıdan dosya yok; her şey kodla üretilir.
+
+## Arayüz (WoW tarzı)
+Taş-metal çerçeveli oyuncu/hedef/aksiyon çubuğu, altın grifon kanatları, bölmeli tecrübe çubuğu, sohbet sekmeleri (Genel / Savaş Kaydı), mini harita saati, mikro menü (Karakter, Yardım, Menü) ve çanta çubuğu (B).

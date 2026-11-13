@@ -254,6 +254,8 @@ func _ready() -> void:
 	hud.add_child(invui)
 	hud.bag_pressed.connect(func(): toggle_win("bag"))
 	hud.char_pressed.connect(func(): toggle_win("char"))
+	hud.menu_pressed.connect(toggle_pause)
+	hud.help_pressed.connect(hud.toggle_help)
 	inv_changed()
 	hud.start_pressed.connect(_on_start)
 	hud.ability_pressed.connect(ability)
@@ -2639,7 +2641,7 @@ func _update_hud() -> void:
 	var t0 = P["target"]
 	var exec_ok: bool = t0 != null and not t0.dead and t0.hp <= t0.maxhp * 0.2 and P["lvl"] >= 4
 	hud.update_player({"lvl": P["lvl"], "hp": P["hp"], "maxhp": max_hp(), "rage": P["rage"], "xp": P["xp"], "xpneed": xp_need(P["lvl"]),
-		"money": Items.money_short(inv.money), "cd": P["cd"], "gcd": P["gcd"], "pot": potion_count(), "potcd": P["pot_cd"], "exec_ok": exec_ok, "buffs": buffs})
+		"cd": P["cd"], "gcd": P["gcd"], "pot": potion_count(), "potcd": P["pot_cd"], "exec_ok": exec_ok, "buffs": buffs})
 	var t = P["target"]
 	if t != null and not t.dead:
 		hud.update_target({"name": t.nm, "lvl": t.lvl, "hp": t.hp, "maxhp": t.maxhp, "color": _lvl_color(t.lvl), "kind": _mob_kind(t),

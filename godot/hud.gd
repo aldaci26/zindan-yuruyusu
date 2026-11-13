@@ -12,6 +12,8 @@ signal fullscreen_pressed
 signal ability_pressed(i: int)
 signal talk_pressed
 signal bag_pressed
+signal menu_pressed
+signal help_pressed
 signal char_pressed
 
 const GOLD := Color("f2c75c")
@@ -74,8 +76,6 @@ var continue_btn: Button
 var pause_box: PanelContainer
 var vol_slider: HSlider
 var help_box: PanelContainer
-var gold_lbl: Label
-var pot_lbl: Label
 var plates := {}
 
 # ---------- stil yardımcıları ----------
@@ -140,12 +140,10 @@ func _place(c: Control, l: float, t: float, r: float, b: float, ol: float, ot: f
 	c.offset_right = orr
 	c.offset_bottom = ob
 
-func _wood_panel(rect: Rect2, alpha: float = 0.88) -> Panel:
-	var p := Panel.new()
-	p.add_theme_stylebox_override("panel", _box(Color(0.07, 0.055, 0.04, alpha), Color("7a6030"), 2, 5))
+func _wood_panel(rect: Rect2, _alpha: float = 0.88) -> Control:
+	var p = Parts.Frame.new()
 	p.position = rect.position
 	p.size = rect.size
-	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return p
 
 # ---------- kurulum ----------
@@ -234,10 +232,9 @@ func _build_target_frame() -> void:
 	tf.add_child(hint)
 
 func _build_minimap() -> void:
-	var zr := Panel.new()
-	zr.add_theme_stylebox_override("panel", _box(Color(0.07, 0.055, 0.04, 0.92), Color("7a6030"), 2, 4))
+	var zr = Parts.Frame.new()
+	zr.rivets = false
 	_place(zr, 1.0, 0.0, 1.0, 0.0, -176, 8, -16, 30)
-	zr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(zr))
 	zone_lbl = _label("Kar Dağı Vadisi", 13, GOLD, 3)
 	zone_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -268,8 +265,20 @@ func _build_quest_tracker() -> void:
 
 func _build_chat() -> void:
 	var p := Panel.new()
-	p.add_theme_stylebox_override("panel", _box(Color(0.02, 0.02, 0.03, 0.42), Color(0.3, 0.26, 0.16, 0.7), 1, 3))
+	p.add_theme_stylebox_override("panel", _box(Color(0.0, 0.0, 0.0, 0.45), Color(0.0, 0.0, 0.0, 0.0), 0, 0))
 	_place(p, 0.0, 1.0, 0.0, 1.0, 12, -200, 380, -34)
+	for i in 2:
+		var tab := Panel.new()
+		tab.add_theme_stylebox_override("panel", _box(Color(0.08, 0.07, 0.05, 0.9 if i == 0 else 0.55), Color("6a5528") if i == 0 else Color("3a3020"), 1, 2))
+		tab.position = Vector2(2 + i * 84, -22)
+		tab.size = Vector2(82, 20)
+		tab.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		p.add_child(tab)
+		var tl := _label("Genel" if i == 0 else "Savaş Kaydı", 11, GOLD if i == 0 else Color("8a8270"), 3)
+		tl.set_anchors_preset(Control.PRESET_FULL_RECT)
+		tl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		tl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		tab.add_child(tl)
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(p))
 	log_box = VBoxContainer.new()
@@ -290,6 +299,14 @@ func _build_actionbar() -> void:
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(holder))
 	holder.add_child(_wood_panel(Rect2(0, 0, 516, 64), 0.92))
+	var wl = Parts.Wing.new()
+	wl.position = Vector2(-66, -8)
+	wl.flip = true
+	wl.size = Vector2(70, 80)
+	holder.add_child(wl)
+	var wr = Parts.Wing.new()
+	wr.position = Vector2(512, -8)
+	holder.add_child(wr)
 	for i in 10:
 		var s = Parts.Slot.new()
 		s.idx = i
@@ -304,48 +321,39 @@ func _build_actionbar() -> void:
 		holder.add_child(s)
 		slots.append(s)
 	# tecrübe çubuğu
-	xp_bar = _bar(Color("8a3ad8"), 12.0, 516.0)
+	xp_bar = _bar(Color("8a3ad8"), 11.0, 516.0)
 	xp_bar.position = Vector2(0, 68)
-	xp_lbl = _overlay_label(xp_bar, 10)
+	xp_lbl = _overlay_label(xp_bar, 9)
 	holder.add_child(xp_bar)
+	var tk = Parts.Ticks.new()
+	tk.set_anchors_preset(Control.PRESET_FULL_RECT)
+	xp_bar.add_child(tk)
 
 func _build_bag() -> void:
-	var p := Panel.new()
-	p.add_theme_stylebox_override("panel", _box(Color(0.07, 0.055, 0.04, 0.9), Color("7a6030"), 2, 5))
-	_place(p, 1.0, 1.0, 1.0, 1.0, -250, -92, -14, -14)
-	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(_reg(p))
-	var coin := Panel.new()
-	var cs := _box(Color("e6b440"), Color("8a5a10"), 2, 9)
-	coin.add_theme_stylebox_override("panel", cs)
-	coin.position = Vector2(12, 11)
-	coin.size = Vector2(18, 18)
-	coin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	p.add_child(coin)
-	gold_lbl = _label("0", 16, GOLD)
-	gold_lbl.position = Vector2(38, 8)
-	p.add_child(gold_lbl)
-	var fl := Panel.new()
-	fl.add_theme_stylebox_override("panel", _box(Color("d02a3a"), Color("5a0a14"), 2, 9))
-	fl.position = Vector2(12, 40)
-	fl.size = Vector2(18, 18)
-	fl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	p.add_child(fl)
-	pot_lbl = _label("", 14, Color("e9eef2"))
-	pot_lbl.position = Vector2(38, 38)
-	p.add_child(pot_lbl)
-	var h := _label("H  Yardım", 11, Color("a9b6c2"), 3)
-	h.position = Vector2(150, 62)
-	p.add_child(h)
-	for i in 2:
-		var b := Button.new()
-		b.text = "Çanta (B)" if i == 0 else "Karakter (C)"
-		b.focus_mode = Control.FOCUS_NONE
-		b.position = Vector2(132, 8 + i * 28)
-		b.size = Vector2(96, 24)
-		b.add_theme_font_size_override("font_size", 12)
-		b.pressed.connect(func(): bag_pressed.emit() if i == 0 else char_pressed.emit())
-		p.add_child(b)
+	var holder := Control.new()
+	_place(holder, 1.0, 1.0, 1.0, 1.0, -244, -60, -14, -14)
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_reg(holder))
+	var kinds := ["char", "help", "menu"]
+	var tips := ["Karakter (C)", "Yardım (H)", "Menü (Esc)"]
+	for i in 3:
+		var mb = Parts.MicroBtn.new()
+		mb.kind = kinds[i]
+		mb.position = Vector2(i * 24, 6)
+		mb.tooltip_text = tips[i]
+		mb.pressed.connect(func():
+			if i == 0:
+				char_pressed.emit()
+			elif i == 1:
+				help_pressed.emit()
+			else:
+				menu_pressed.emit())
+		holder.add_child(mb)
+	var bb = Parts.BagBar.new()
+	bb.position = Vector2(80, 3)
+	bb.tooltip_text = "Çanta (B)"
+	bb.pressed.connect(func(): bag_pressed.emit())
+	holder.add_child(bb)
 
 func _build_tip() -> void:
 	tip = PanelContainer.new()
@@ -569,8 +577,6 @@ func update_player(d: Dictionary) -> void:
 	rage_lbl.text = "Öfke %d" % roundi(d["rage"])
 	xp_bar.value = 100.0 if d["lvl"] >= 10 else d["xp"] / d["xpneed"] * 100.0
 	xp_lbl.text = "Seviye 10 (en yüksek)" if d["lvl"] >= 10 else "Tecrübe %d / %d" % [roundi(d["xp"]), roundi(d["xpneed"])]
-	gold_lbl.text = d["money"]
-	pot_lbl.text = "%d iksir" % d["pot"]
 	var gcd: float = d["gcd"]
 	for i in 9:
 		var s = slots[i]
@@ -635,7 +641,7 @@ func update_minimap(d: Dictionary) -> void:
 	minimap.mobs = d["mobs"]
 	minimap.npcs = d["npcs"]
 	minimap.queue_redraw()
-	coord_lbl.text = "%d, %d" % [roundi(d["px"]), roundi(-d["pz"])]
+	coord_lbl.text = "%d, %d   %s" % [roundi(d["px"]), roundi(-d["pz"]), Time.get_time_string_from_system().substr(0, 5)]
 
 func set_zone(s: String) -> void:
 	zone_lbl.text = s

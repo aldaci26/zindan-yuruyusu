@@ -1,9 +1,20 @@
 extends RefCounted
 ## Kodla çizilen modeller: cüce, kurt, yaban domuzu, ayı. Dış dosya yok.
 
+const TexScript = preload("res://tex.gd")
+static var _grain: ImageTexture
+
 static func mat(c: Color, metal: float = 0.05, rough: float = 0.8, emit_c: Color = Color.BLACK, emit_e: float = 0.0) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_color = c
+	if emit_e <= 0.0:
+		# el boyaması hissi: ince lekeli doku, nesne uzayında üç yönlü
+		if _grain == null:
+			_grain = TexScript.grain()
+		m.albedo_texture = _grain
+		m.uv1_triplanar = true
+		m.uv1_scale = Vector3(1.4, 1.4, 1.4)
+		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	m.metallic = metal
 	m.roughness = rough
 	if emit_e > 0.0:
@@ -261,9 +272,20 @@ static func make_trogg(ice: bool = false) -> Node3D:
 		box(g, Vector3(0.28, 0.9, 0.3), skin, Vector3(sd * 0.6, 1.1, 0.1))
 		if ice:
 			cone(g, 0.1, 0.5, crys, Vector3(sd * 0.5, 1.9, -0.1), 5)
+	var bone := mat(Color.html("e8dcc0"), 0.0, 0.8)
+	var fur := mat(Color.html("6a5a44"), 0.0, 0.95)
+	box(g, Vector3(1.0, 0.34, 0.66), fur, Vector3(0, 0.78, 0))
+	box(g, Vector3(0.9, 0.12, 0.64), dk, Vector3(0, 0.96, 0))
+	for sd in [-1.0, 1.0]:
+		cone(g, 0.06, 0.28, bone, Vector3(sd * 0.17, 1.62, 0.78), 5).rotation.x = -0.6
+		sph(g, 0.14, fur, Vector3(sd * 0.55, 1.62, 0.0))
+	for k in 5:
+		cone(g, 0.12, 0.34, fur, Vector3(0, 1.9 - k * 0.0, -0.1 - k * 0.1), 4).rotation.x = -0.9 - k * 0.05
 	var arm := pivot(g, Vector3(0.62, 1.5, 0.1))
 	cyl(arm, 0.06, 0.1, 1.3, wood, Vector3(0, -0.4, 0.4), 6).rotation.x = 1.2
 	sph(arm, 0.2, dk, Vector3(0, -0.6, 0.95))
+	for k in 3:
+		cone(arm, 0.04, 0.2, bone, Vector3(0.12 - k * 0.12, -0.6, 1.12), 4).rotation.x = 1.2
 	g.set_meta("legs", _biped_legs(g, 0.25, 0.8, Vector3(0.3, 0.8, 0.34), dk))
 	return g
 
@@ -279,7 +301,14 @@ static func make_ogre() -> Node3D:
 	box(g, Vector3(1.55, 0.5, 1.0), cloth, Vector3(0, 1.05, 0))
 	box(g, Vector3(0.7, 0.65, 0.65), skin, Vector3(0, 2.75, 0.1))
 	box(g, Vector3(0.5, 0.16, 0.12), dk, Vector3(0, 2.62, 0.45))
+	var tusk := mat(Color.html("efe6cc"), 0.0, 0.7)
+	box(g, Vector3(1.6, 0.16, 1.04), dk, Vector3(0, 1.3, 0))
+	box(g, Vector3(0.24, 0.24, 0.06), mat(Color.html("d0a840"), 0.7, 0.3), Vector3(0, 1.3, 0.54))
+	for k in 5:
+		box(g, Vector3(0.12, 0.12, 0.08), tusk, Vector3(-0.2 + k * 0.1, 2.5, 0.43))
 	for sd in [-1.0, 1.0]:
+		cone(g, 0.07, 0.4, tusk, Vector3(sd * 0.2, 2.65, 0.45), 5).rotation.x = -0.5
+		cone(g, 0.12, 0.5, iron, Vector3(sd * 0.95, 2.78, 0), 5)
 		sph(g, 0.06, eye, Vector3(sd * 0.18, 2.88, 0.43))
 		sph(g, 0.34, skin, Vector3(sd * 0.95, 2.35, 0), Vector3(1, 0.9, 1))
 		box(g, Vector3(0.38, 1.3, 0.42), skin, Vector3(sd * 1.05, 1.6, 0.1))
@@ -303,6 +332,12 @@ static func make_gnoll(big: bool = false) -> Node3D:
 	box(g, Vector3(0.55, 0.45, 0.5), fur, Vector3(0, 1.65, 0.25))
 	box(g, Vector3(0.28, 0.24, 0.4), lt, Vector3(0, 1.55, 0.65))
 	box(g, Vector3(0.1, 0.08, 0.08), dk, Vector3(0, 1.58, 0.86))
+	var tooth := mat(Color.html("f0e8d4"), 0.0, 0.7)
+	for k in 4:
+		box(g, Vector3(0.03, 0.07, 0.03), tooth, Vector3(-0.09 + k * 0.06, 1.44, 0.8))
+	for k in 5:
+		cone(g, 0.08, 0.35, dk, Vector3(0, 1.95 - k * 0.12, 0.0 - k * 0.07), 4).rotation.x = -0.4 - k * 0.15
+	box(g, Vector3(0.74, 0.08, 0.54), iron, Vector3(0, 0.95, 0))
 	for sd in [-1.0, 1.0]:
 		sph(g, 0.04, eye, Vector3(sd * 0.14, 1.78, 0.5))
 		cone(g, 0.1, 0.3, dk, Vector3(sd * 0.2, 2.0, 0.15), 4)

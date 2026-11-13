@@ -110,3 +110,22 @@ static func detail() -> ImageTexture:
 			v *= 0.96 + r.randf() * 0.08
 			img.set_pixel(x, y, Color(v * 0.99, v, v * 1.04))
 	return _finish(img)
+
+## Modeller için ince leke/tanecik dokusu (ortalama ~1.0, rengi bozmaz)
+static func grain() -> ImageTexture:
+	var nz := FastNoiseLite.new()
+	nz.seed = 3
+	nz.frequency = 0.045
+	nz.fractal_octaves = 3
+	var nz2 := FastNoiseLite.new()
+	nz2.seed = 41
+	nz2.frequency = 0.2
+	var a := nz.get_seamless_image(128, 128, false, false, 0.1, true)
+	var b := nz2.get_seamless_image(128, 128, false, false, 0.1, true)
+	var img := Image.create(128, 128, false, Image.FORMAT_RGB8)
+	for y in 128:
+		for x in 128:
+			var v := 0.82 + 0.26 * a.get_pixel(x, y).r + 0.12 * (b.get_pixel(x, y).r - 0.5)
+			img.set_pixel(x, y, Color(v, v, v))
+	img.generate_mipmaps()
+	return ImageTexture.create_from_image(img)

@@ -5,6 +5,9 @@ const Dwarf = preload("res://dwarf.gd")
 const Tex = preload("res://tex.gd")
 const HudScript = preload("res://hud.gd")
 const SfxScript = preload("res://sfx.gd")
+const Items = preload("res://items.gd")
+const Inv = preload("res://inv.gd")
+const InvUI = preload("res://invui.gd")
 
 const WORLD_R := 92.0
 const CITY := {"x": 0.0, "z": -58.0, "r": 24.0, "y": 3.0}
@@ -16,12 +19,18 @@ const MTYPES := {
 }
 
 const QUESTS := {
-	"q_wolf": {"title": "Kurt Sürüsü", "kill": "Kurt", "n": 4, "lvl": 1, "xp": 90, "gold": 25, "wep": 0,
+	"q_wolf": {"title": "Kurt Sürüsü", "kill": "Kurt", "n": 4, "lvl": 1, "xp": 90, "money": 250, "rew": ["axe_wolf", "bk_fur", "nk_tooth"],
 		"text": "Vadide kurtlar çoğaldı, sürüler köye yaklaşıyor. Dört kurdu avla, köy sana minnettar kalır.", "done": "Sürü dağıldı, teşekkürler. İşte ödülün."},
-	"q_boar": {"title": "Domuz İstilası", "kill": "Yaban Domuzu", "n": 4, "lvl": 2, "xp": 170, "gold": 45, "wep": 0,
+	"q_boar": {"title": "Domuz İstilası", "kill": "Yaban Domuzu", "n": 4, "lvl": 2, "xp": 170, "money": 450, "rew": ["axe_boar", "so_boar", "ft_iron"],
 		"text": "Yaban domuzları kapının önündeki yolu çiğniyor. Dört tanesini durdur.", "done": "Yol yeniden güvenli. Demirkazan sana borçlu."},
-	"q_bear": {"title": "Dağın Efendisi", "kill": "Dağ Ayısı", "n": 2, "lvl": 3, "xp": 340, "gold": 90, "wep": 4,
-		"text": "Dağ ayıları ocak ekiplerimizi korkutuyor. İki ayıyı alt et, baltanı bileyleteyim.", "done": "Gerçek bir savaşçısın. Baltan bilendi."},
+	"q_bear": {"title": "Dağın Efendisi", "kill": "Dağ Ayısı", "n": 2, "lvl": 3, "xp": 340, "money": 900, "rew": ["helm_bear", "bk_bear", "sh_deep"],
+		"text": "Dağ ayıları ocak ekiplerimizi korkutuyor. İki ayıyı alt et, cephaneliğimden bir şey seçersin.", "done": "Gerçek bir savaşçısın. Cephanelikten birini seç."},
+}
+
+const VENDORS := {
+	"hilda": ["pot_heal", "pot_big", "helm_cap", "helm_iron", "so_pad", "so_iron", "bk_cloak", "ch_leather", "ch_mail", "wr_cloth", "wr_iron",
+		"hd_glove", "hd_iron", "wt_belt", "wt_iron", "lg_leather", "lg_mail", "ft_hide", "ft_iron", "rg_iron", "nk_tooth"],
+	"borga": ["axe_iron", "axe_forge", "axe_boar", "hammer_smith", "sword_gate", "sh_iron", "sh_gate", "sh_rein", "tr_whet"],
 }
 
 class Mob:
@@ -54,6 +63,10 @@ class Mob:
 	var bleed_tick := 0.0
 	var bleed_v := 0.0
 	var slow := 0.0
+	var loot: Array = []
+	var loot_money := 0
+	var fade_t := 0.0
+	var sparkle: MeshInstance3D
 	var node: Node3D
 	var legs: Array = []
 	var id: int
@@ -62,6 +75,13 @@ class Mob:
 var hud
 var sfx
 var paused := false
+var inv
+var invui
+var held = null
+var G := {}
+var vendor_npc = null
+var vendor_tab := 0
+var loot_mob = null
 var save_t := 0.0
 const SAVE_PATH := "user://cuce_save.json"
 var cam: Camera3D
@@ -155,6 +175,12 @@ func _ready() -> void:
 	_setup_snow()
 	hud = HudScript.new()
 	add_child(hud)
+	invui = InvUI.new()
+	invui.game = self
+	hud.add_child(invui)
+	hud.bag_pressed.connect(func(): toggle_win("bag"))
+	hud.char_pressed.connect(func(): toggle_win("char"))
+	inv_changed()
 	hud.start_pressed.connect(_on_start)
 	hud.ability_pressed.connect(ability)
 	hud.resume_pressed.connect(toggle_pause)
@@ -639,16 +665,45 @@ func _spawn_player() -> void:
 	player = Dwarf.make_dwarf()
 	add_child(player)
 	rig = player.get_meta("rig")
-	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0, "gold": 0, "pot": 3,
+	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
 		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0}
+	inv = Inv.new()
+	G = Items.totals(inv.eq)
 	P["hp"] = float(max_hp())
 
+func base_str() -> int:
+	return 12 + 2 * P["lvl"]
+
+func base_agi() -> int:
+	return 6 + P["lvl"]
+
+func base_sta() -> int:
+	return 10 + 2 * P["lvl"]
+
 func max_hp() -> int:
-	return 110 + 28 * (P["lvl"] - 1)
+	return 110 + 28 * (P["lvl"] - 1) + 7 * G["sta"]
 
 func atk() -> float:
-	return (9.0 + 3.2 * P["lvl"] + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0)
+	var wd: float = (G["wmin"] + G["wmax"]) * 0.5 / G["wspd"] * 1.5
+	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0)
+
+func crit_chance() -> float:
+	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01
+
+func armor_total() -> float:
+	return G["armor"] * 0.5 + P["lvl"] * 1.5
+
+func potion_count() -> int:
+	return inv.count("pot_heal") + inv.count("pot_big")
+
+## Eşya/seviye değişince istatistikleri ve pencereleri yenile.
+func inv_changed() -> void:
+	G = Items.totals(inv.eq)
+	if P.has("hp"):
+		P["hp"] = minf(P["hp"], float(max_hp()))
+	if invui != null:
+		invui.refresh()
 
 func xp_need(l: int) -> float:
 	return 50.0 + 40.0 * l
@@ -777,6 +832,113 @@ func _on_start(cont: bool) -> void:
 	hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 	hud.say("Kurtlar ve domuzlar vadide dolaşıyor. İyi avlar!", Color("f2c75c"))
 
+func toggle_win(name: String) -> void:
+	if mode != "play":
+		return
+	var w: Control = invui.bag_win if name == "bag" else invui.char_win
+	w.visible = not w.visible
+	if w.visible and name == "char" and vendor_npc != null:
+		close_vendor()
+	if not w.visible:
+		held = null
+		invui.hide_tip()
+	sfx.play("click", -6)
+	inv_changed()
+
+func ui_close(name: String) -> void:
+	held = null
+	invui.hide_tip()
+	match name:
+		"bag": invui.bag_win.visible = false
+		"char": invui.char_win.visible = false
+		"vendor": close_vendor()
+		"loot": close_loot()
+	invui.refresh()
+
+func ui_vendor_tab(i: int) -> void:
+	vendor_tab = i
+	invui.refresh()
+
+func ui_vendor_click(idx: int, _button: int) -> void:
+	if vendor_npc == null:
+		return
+	var err: String = ""
+	if vendor_tab == 0:
+		var id: String = VENDORS[vendor_npc["id"]][idx]
+		err = inv.buy(id, 1, Items.buy_price(Items.get_item(id)))
+	else:
+		err = inv.rebuy(idx)
+	if err != "":
+		hud.say(err, Color("ff6a5a"))
+	else:
+		sfx.play("coin", -6)
+	inv_changed()
+
+func ui_loot_click(idx: int) -> void:
+	take_loot(idx)
+
+func ui_slot_click(kind: String, key, button: int) -> void:
+	sfx.play("click", -6)
+	var lvl: int = P["lvl"]
+	var err: String = ""
+	if button == MOUSE_BUTTON_RIGHT:
+		if held != null:
+			held = null
+		elif kind == "bag":
+			var e = inv.bag[key]
+			if e == null:
+				return
+			var it := Items.get_item(e["id"])
+			if vendor_npc != null and invui.vend_win.visible:
+				var gain: int = inv.sell(key)
+				hud.say("Sattın: %s (+%s)" % [it["name"], Items.money_plain(gain)], Color("f2c75c"))
+				sfx.play("coin", -6)
+			elif Items.is_equip(it):
+				err = inv.equip_from_bag(key, lvl)
+			elif it.get("heal", 0.0) > 0.0:
+				use_potion(e["id"])
+		else:
+			err = inv.unequip(key)
+	elif held == null:
+		if kind == "bag" and inv.bag[key] != null:
+			held = {"from": "bag", "i": key}
+		elif kind == "eq" and inv.eq[key] != "":
+			held = {"from": "eq", "slot": key}
+	else:
+		var h: Dictionary = held
+		held = null
+		if h["from"] == "bag":
+			if kind == "bag":
+				inv.swap_bag(h["i"], key)
+			else:
+				err = inv.equip_from_bag(h["i"], lvl, key)
+		else:
+			var sl: String = h["slot"]
+			if kind == "bag":
+				var e2 = inv.bag[key]
+				if e2 == null:
+					inv.bag[key] = {"id": inv.eq[sl], "n": 1}
+					inv.eq[sl] = ""
+				else:
+					var it2 := Items.get_item(e2["id"])
+					if Items.slot_fits(it2, sl) and lvl >= it2["req"]:
+						var old: String = inv.eq[sl]
+						inv.eq[sl] = e2["id"]
+						inv.bag[key] = {"id": old, "n": 1}
+					else:
+						err = "Bu eşya o yuvaya uymuyor."
+			elif key != sl:
+				var a: String = inv.eq[sl]
+				var b: String = inv.eq[key]
+				if Items.slot_fits(Items.get_item(a), key) and (b == "" or Items.slot_fits(Items.get_item(b), sl)):
+					inv.eq[sl] = b
+					inv.eq[key] = a
+				else:
+					err = "Bu eşya o yuvaya uymuyor."
+	if err != "":
+		hud.say(err, Color("ff6a5a"))
+	inv_changed()
+
 func toggle_fullscreen() -> void:
 	var w := get_window()
 	w.mode = Window.MODE_WINDOWED if w.mode == Window.MODE_FULLSCREEN else Window.MODE_FULLSCREEN
@@ -794,8 +956,8 @@ func toggle_pause() -> void:
 func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
-	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"], "gold": P["gold"], "pot": P["pot"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "qs": qs}
+	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "qs": qs, "inv": inv.to_dict()}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
@@ -809,7 +971,7 @@ func load_game() -> bool:
 	var d = JSON.parse_string(f.get_as_text())
 	if typeof(d) != TYPE_DICTIONARY:
 		return false
-	for k in ["x", "z", "yaw", "lvl", "xp", "gold", "pot", "wep_b", "wep_lvl", "hp"]:
+	for k in ["x", "z", "yaw", "lvl", "xp", "wep_b", "wep_lvl", "hp"]:
 		if not d.has(k) or typeof(d[k]) != TYPE_FLOAT:
 			return false
 	P["x"] = clampf(d["x"], -WORLD_R, WORLD_R)
@@ -817,10 +979,18 @@ func load_game() -> bool:
 	P["yaw"] = d["yaw"]
 	P["lvl"] = clampi(int(d["lvl"]), 1, 10)
 	P["xp"] = maxf(0.0, d["xp"])
-	P["gold"] = maxi(0, int(d["gold"]))
-	P["pot"] = clampi(int(d["pot"]), 0, 9)
+	if typeof(d.get("inv")) == TYPE_DICTIONARY and inv.from_dict(d["inv"]):
+		pass
+	else:
+		# eski kayıt: altın ve iksirleri çantaya çevir
+		inv.reset()
+		inv.money = maxi(0, int(d.get("gold", 0))) * 10
+		inv.remove("pot_heal", inv.count("pot_heal"))
+		inv.add("pot_heal", clampi(int(d.get("pot", 3)), 0, 20))
+	held = null
 	P["wep_b"] = d["wep_b"]
 	P["wep_lvl"] = clampi(int(d["wep_lvl"]), 0, 6)
+	G = Items.totals(inv.eq)
 	P["hp"] = clampf(d["hp"], 1.0, float(max_hp()))
 	qs = {}
 	if typeof(d.get("qs")) == TYPE_DICTIONARY:
@@ -830,6 +1000,7 @@ func load_game() -> bool:
 				qs[id] = {"st": str(e.get("st", "active")), "n": int(e.get("n", 0))}
 	P["y"] = height_at(P["x"], P["z"])
 	render_quests()
+	inv_changed()
 	return true
 
 func _notification(what: int) -> void:
@@ -871,17 +1042,41 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_0: use_potion()
 			KEY_F: use_potion()
 			KEY_H: hud.toggle_help()
+			KEY_B: toggle_win("bag")
+			KEY_C: toggle_win("char")
 			KEY_G:
-				if dlg_open:
+				if loot_mob != null:
+					while loot_mob != null and not loot_mob.loot.is_empty():
+						var before: int = loot_mob.loot.size()
+						take_loot(0)
+						if loot_mob != null and loot_mob.loot.size() >= before:
+							break
+				elif dlg_open:
 					close_dialog()
-				else:
+				elif near_npc() != null:
 					open_talk()
+				else:
+					for m in mobs:
+						if m.dead and (not m.loot.is_empty() or m.loot_money > 0) and Vector2(m.x - P["x"], m.z - P["z"]).length() < 4.0:
+							open_loot(m)
+							break
 			KEY_TAB:
 				var m = nearest_mob(14.0)
 				if m:
 					P["target"] = m
 			KEY_ESCAPE:
-				if dlg_open:
+				if held != null:
+					held = null
+					invui.refresh()
+				elif loot_mob != null:
+					close_loot()
+				elif vendor_npc != null:
+					close_vendor()
+				elif invui.bag_win.visible or invui.char_win.visible:
+					invui.bag_win.visible = false
+					invui.char_win.visible = false
+					invui.hide_tip()
+				elif dlg_open:
 					close_dialog()
 				elif hud.help_box.visible:
 					hud.toggle_help()
@@ -894,6 +1089,16 @@ func _unhandled_input(ev: InputEvent) -> void:
 				toggle_fullscreen()
 
 func _select_at(pos: Vector2) -> void:
+	if held != null:
+		held = null
+		invui.refresh()
+		return
+	for m in mobs:
+		if m.dead and (not m.loot.is_empty() or m.loot_money > 0):
+			var lp := Vector3(m.x, m.node.position.y + 0.5, m.z)
+			if not cam.is_position_behind(lp) and cam.unproject_position(lp).distance_to(pos) < 50.0:
+				open_loot(m)
+				return
 	var best = null
 	var bd := 60.0
 	for m in mobs:
@@ -917,8 +1122,8 @@ func add_rage(n: float) -> void:
 	P["rage"] = minf(100.0, P["rage"] + n)
 
 func roll(base: float) -> Dictionary:
-	var crit := randf() < 0.12
-	var v := base * (0.85 + randf() * 0.3)
+	var crit := randf() < crit_chance()
+	var v: float = base * (0.85 + randf() * 0.3) * (1.0 + G["dmg"])
 	if crit:
 		v *= 1.8
 	return {"v": maxi(1, roundi(v)), "crit": crit}
@@ -945,7 +1150,7 @@ func hit_mob(m, r: Dictionary, col: Color = Color.WHITE) -> void:
 	sfx.play("crit" if r["crit"] else "hit", -4)
 	float_text(Vector3(m.x, 1.9 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), str(r["v"]), Color("ffd23a") if r["crit"] else col, r["crit"])
 	P["combat_t"] = T
-	add_rage(9.0 if r["crit"] else 6.0)
+	add_rage((9.0 if r["crit"] else 6.0) + G["rage"])
 	if m.state == "idle":
 		m.state = "chase"
 	if m.hp <= 0.0:
@@ -961,15 +1166,90 @@ func kill_mob(m) -> void:
 		P["auto"] = false
 	var xp := roundi((14.0 + m.lvl * 9.0) * clampf(1.0 + (m.lvl - P["lvl"]) * 0.15, 0.2, 1.6))
 	hud.say("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
-	if randf() < 0.25 and P["pot"] < 9:
-		P["pot"] += 1
-		hud.say("Ganimet: iksir +1", Color("43d17f"))
-	var gd: int = 2 + m.lvl * 3 + randi() % 4
-	P["gold"] += gd
-	sfx.play("coin", -8)
-	hud.say("+%d altın" % gd, Color("f2c75c"))
+	roll_loot(m)
 	quest_kill(m)
 	gain_xp(xp)
+
+func roll_loot(m) -> void:
+	m.loot = []
+	m.loot_money = 4 + m.lvl * 5 + randi() % 6
+	var junk := {"Kurt": "j_wolf", "Yaban Domuzu": "j_boar", "Dağ Ayısı": "j_bear"}
+	if randf() < 0.55:
+		m.loot.append({"id": junk[m.nm], "n": 1})
+	if randf() < 0.2:
+		m.loot.append({"id": "pot_big" if (m.lvl >= 4 and randf() < 0.4) else "pot_heal", "n": 1})
+	var r := randf()
+	var rar := 0
+	if m.nm == "Dağ Ayısı" and r < 0.04:
+		rar = 4
+	elif r < 0.07:
+		rar = 3
+	elif r < 0.30:
+		rar = 2
+	elif r < 0.42:
+		rar = 1
+	if rar > 0:
+		var pl: Array = Items.pool(rar, 1 if rar == 4 else maxi(1, m.lvl - 2), 10 if rar == 4 else m.lvl + 2)
+		if not pl.is_empty():
+			m.loot.append({"id": pl[randi() % pl.size()], "n": 1})
+	m.fade_t = T + 25.0
+	var sp := MeshInstance3D.new()
+	var sm := SphereMesh.new()
+	sm.radius = 0.13
+	sm.height = 0.26
+	sp.mesh = sm
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.albedo_color = Color("ffd45a")
+	sp.material_override = mat
+	sp.position = Vector3(m.x, height_at(m.x, m.z) + 0.8, m.z)
+	add_child(sp)
+	m.sparkle = sp
+
+func open_loot(m) -> void:
+	if m.loot.is_empty() and m.loot_money <= 0:
+		return
+	if Vector2(m.x - P["x"], m.z - P["z"]).length() > 5.0:
+		hud.say("Çok uzaktasın.", Color("ff6a5a"))
+		return
+	loot_mob = m
+	if m.loot_money > 0:
+		inv.money += m.loot_money
+		hud.say("+%s" % Items.money_plain(m.loot_money), Color("f2c75c"))
+		sfx.play("coin", -8)
+		m.loot_money = 0
+	invui.loot_win.visible = true
+	inv_changed()
+	if m.loot.is_empty():
+		close_loot()
+
+func close_loot() -> void:
+	var m = loot_mob
+	loot_mob = null
+	invui.loot_win.visible = false
+	if m != null and m.loot.is_empty() and m.fade_t > T:
+		m.fade_t = T
+	if m != null and m.sparkle != null and m.loot.is_empty():
+		m.sparkle.queue_free()
+		m.sparkle = null
+
+func take_loot(i: int) -> void:
+	var m = loot_mob
+	if m == null or i < 0 or i >= m.loot.size():
+		return
+	var e: Dictionary = m.loot[i]
+	var left: int = inv.add(e["id"], e["n"])
+	if left > 0:
+		e["n"] = left
+		hud.say("Çantan dolu.", Color("ff6a5a"))
+		return
+	var it := Items.get_item(e["id"])
+	hud.say("Ganimet: " + it["name"], Items.RARITY_COL[it["rar"]])
+	sfx.play("click", -4)
+	m.loot.remove_at(i)
+	inv_changed()
+	if m.loot.is_empty():
+		close_loot()
 
 func gain_xp(n: float) -> void:
 	if P["lvl"] >= 10:
@@ -979,6 +1259,7 @@ func gain_xp(n: float) -> void:
 		P["xp"] -= xp_need(P["lvl"])
 		P["lvl"] += 1
 		P["hp"] = float(max_hp())
+		inv_changed()
 		ring_fx(Vector3(P["x"], P["y"], P["z"]), 3.0, Color("f2c75c"), 0.9)
 		sfx.play("level")
 		hud.banner("SEVİYE %d" % P["lvl"], "Can doldu")
@@ -1116,10 +1397,10 @@ func ability(i: int) -> void:
 	if melee and not P["auto"] and P["target"] != null:
 		P["auto"] = true
 
-func use_potion() -> void:
+func use_potion(want: String = "") -> void:
 	if mode != "play" or P["dead"]:
 		return
-	if P["pot"] <= 0:
+	if potion_count() <= 0:
 		hud.say("İksirin kalmadı.")
 		return
 	if P["pot_cd"] > 0.0:
@@ -1127,13 +1408,19 @@ func use_potion() -> void:
 	if P["hp"] >= max_hp():
 		hud.say("Canın zaten dolu.")
 		return
-	P["pot"] -= 1
+	var id := want
+	if id == "":
+		var big: bool = inv.count("pot_big") > 0 and (max_hp() - P["hp"] > max_hp() * 0.45 or inv.count("pot_heal") == 0)
+		id = "pot_big" if big else ("pot_heal" if inv.count("pot_heal") > 0 else "pot_big")
+	inv.remove(id, 1)
 	sfx.play("potion")
 	P["pot_cd"] = 20.0
-	var hv := mini(max_hp() - roundi(P["hp"]), roundi(max_hp() * 0.45))
+	var frac: float = Items.get_item(id)["heal"]
+	var hv := mini(max_hp() - roundi(P["hp"]), roundi(max_hp() * frac))
 	P["hp"] += hv
 	float_text(Vector3(P["x"], P["y"] + 2.3, P["z"]), "+%d" % hv, Color("43d17f"), false)
 	ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.4, Color("43d17f"), 0.5)
+	inv_changed()
 
 func toggle_auto() -> void:
 	if mode != "play" or P["dead"] or dlg_open:
@@ -1150,8 +1437,8 @@ func toggle_auto() -> void:
 	P["auto"] = true
 
 func hurt_player(raw: float, m) -> void:
-	var arm: float = 6.0 + P["lvl"] * 2.2
-	var d := maxi(1, roundi(raw * (1.0 - arm / (arm + 30.0 + m.lvl * 4.0))))
+	var arm: float = armor_total()
+	var d := maxi(1, roundi(raw * (1.0 - minf(0.75, arm / (arm + 30.0 + m.lvl * 4.0)))))
 	if P["sb_t"] > 0.0:
 		d = maxi(1, roundi(d * 0.3))
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
@@ -1273,6 +1560,47 @@ func close_dialog() -> void:
 	cur_npc = null
 	hud.hide_dialog()
 
+func item_brief(it: Dictionary) -> String:
+	if it["slot"] == "mainhand":
+		return "%d-%d hasar" % [it["dmin"], it["dmax"]]
+	if it["armor"] > 0:
+		return "%d zırh" % it["armor"]
+	return "+%d güç" % it["str"] if it["str"] > 0 else "+%d çeviklik" % it["agi"]
+
+func reward_pick(qid: String) -> void:
+	var q: Dictionary = QUESTS[qid]
+	var buttons: Array = []
+	for id in q["rew"]:
+		var it := Items.get_item(id)
+		buttons.append({"label": "%s  (%s)" % [it["name"], item_brief(it)], "disabled": inv.free_slots() < 1, "cb": func():
+			qs[qid]["st"] = "done"
+			inv.add(id, 1)
+			inv.money += q["money"]
+			sfx.play("coin")
+			hud.say("Ödül: %d XP, %s, %s" % [q["xp"], Items.money_plain(q["money"]), it["name"]], Color("f2c75c"))
+			render_quests()
+			close_dialog()
+			gain_xp(q["xp"])
+			inv_changed()
+			save_game()})
+	buttons.append({"label": "Geri", "cb": render_dialog})
+	var body := "Bir ödül seç." if inv.free_slots() > 0 else "Çantan dolu, önce yer aç."
+	hud.show_dialog(cur_npc["name"], cur_npc["title"], body, buttons)
+
+func open_vendor(n: Dictionary) -> void:
+	close_dialog()
+	vendor_npc = n
+	vendor_tab = 0
+	invui.char_win.visible = false
+	invui.vend_win.visible = true
+	invui.bag_win.visible = true
+	inv_changed()
+
+func close_vendor() -> void:
+	vendor_npc = null
+	invui.vend_win.visible = false
+	invui.hide_tip()
+
 func render_dialog() -> void:
 	var n = cur_npc
 	var body := ""
@@ -1283,7 +1611,7 @@ func render_dialog() -> void:
 			if P["lvl"] < q["lvl"]:
 				body = "Biraz daha güçlenince gel. (Seviye %d gerekli)" % q["lvl"]
 			else:
-				body = "%s\n\nGörev: %d %s öldür.\nÖdül: %d tecrübe, %d altın%s." % [q["text"], q["n"], q["kill"], q["xp"], q["gold"], (", +%d saldırı" % q["wep"]) if q["wep"] > 0 else ""]
+				body = "%s\n\nGörev: %d %s öldür.\nÖdül: %d tecrübe, %s ve bir eşya seçimi." % [q["text"], q["n"], q["kill"], q["xp"], Items.money_plain(q["money"])]
 				buttons.append({"label": "Görevi kabul et", "cb": func():
 					qs[n["q"]] = {"st": "active", "n": 0}
 					sfx.play("quest")
@@ -1297,40 +1625,28 @@ func render_dialog() -> void:
 				body = "%s: %d/%d %s. Devam et!" % [q["title"], st["n"], q["n"], q["kill"]]
 			elif st["st"] == "ready":
 				body = q["done"]
-				buttons.append({"label": "Ödülü al", "cb": func():
-					st["st"] = "done"
-					P["gold"] += q["gold"]
-					P["wep_b"] += q["wep"]
-					sfx.play("coin")
-					hud.say("Ödül: %d XP, %d altın" % [q["xp"], q["gold"]], Color("f2c75c"))
-					render_quests()
-					close_dialog()
-					gain_xp(q["xp"])})
+				buttons.append({"label": "Ödülü al", "cb": func(): reward_pick(n["q"])})
 			else:
 				body = "Yardımın için sağ ol, kahraman."
 	elif n["role"] == "vendor":
-		body = "Taze iksirler, sıcak çorba! Cebinde %d altın var, çantanda %d iksir." % [P["gold"], P["pot"]]
-		buttons.append({"label": "İksir al (15 altın)", "disabled": P["gold"] < 15 or P["pot"] >= 9, "cb": func():
-			if P["gold"] >= 15 and P["pot"] < 9:
-				P["gold"] -= 15
-				P["pot"] += 1
-				sfx.play("coin")
-				hud.say("İksir satın aldın.", Color("43d17f"))
-			render_dialog()})
+		body = "Taze iksirler, sıcak çorba, sağlam zırhlar! Ne lazım?"
+		buttons.append({"label": "Alışveriş", "cb": func(): open_vendor(n)})
 	elif n["role"] == "smith":
-		var cost: int = 30 + 25 * P["wep_lvl"]
+		var cost: int = 300 + 250 * P["wep_lvl"]
+		buttons.append({"label": "Alışveriş", "cb": func(): open_vendor(n)})
 		if P["wep_lvl"] >= 6:
-			body = "Baltan bundan fazla bilenmez, usta."
+			body = "Baltan bundan fazla bilenmez, usta. Yeni silah bakacak mısın?"
 		else:
 			body = "Baltanı bileyleyeyim mi? Her bileme +3 saldırı. Şu anki bileme: %d/6." % P["wep_lvl"]
-			buttons.append({"label": "Bileyle (%d altın)" % cost, "disabled": P["gold"] < cost, "cb": func():
-				if P["gold"] >= cost:
-					P["gold"] -= cost
+			buttons.append({"label": "Bileyle (%s)" % Items.money_plain(cost), "disabled": inv.money < cost, "cb": func():
+				if inv.money >= cost:
+					inv.money -= cost
 					P["wep_lvl"] += 1
 					P["wep_b"] += 3.0
 					sfx.play("block")
 					hud.say("Silah bilendi: +3 saldırı", Color("f2c75c"))
 					ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.6, Color("ffb040"), 0.5)
+					inv_changed()
 				render_dialog()})
 	elif n["role"] == "inn":
 		var wait := ceili(60.0 - (T - last_rest))
@@ -1367,6 +1683,7 @@ func collide(x: float, z: float, r: float) -> Vector2:
 
 func step(dt: float) -> void:
 	T += dt
+	_check_windows()
 	if mode == "play" and not P["dead"]:
 		save_t += dt
 		if save_t >= 20.0:
@@ -1400,6 +1717,12 @@ func step(dt: float) -> void:
 	_update_camera(dt)
 	_step_effects(dt)
 	_update_hud()
+
+func _check_windows() -> void:
+	if vendor_npc != null and Vector2(vendor_npc["x"] - P["x"], vendor_npc["z"] - P["z"]).length() > 7.0:
+		close_vendor()
+	if loot_mob != null and Vector2(loot_mob.x - P["x"], loot_mob.z - P["z"]).length() > 6.5:
+		close_loot()
 
 func _step_player(dt: float, ix: float, iy: float) -> void:
 	var il := minf(1.0, Vector2(ix, iy).length())
@@ -1510,13 +1833,22 @@ func _step_mob(m, dt: float) -> void:
 	var node: Node3D = m.node
 	if m.dead:
 		var k: float = T - m.died_at
+		var kf: float = T - m.fade_t if m.fade_t > 0.0 else k - 0.8
 		if k < 0.8:
 			node.rotation.z = lerpf(0.0, 1.5, k / 0.8)
 			node.position.y = height_at(m.x, m.z) + 0.1
-		elif k < 1.6:
-			node.scale = Vector3.ONE * m.sc * maxf(0.001, 1.0 - (k - 0.8) / 0.8)
+		elif kf < 0.0:
+			node.rotation.z = 1.5
+			node.position.y = height_at(m.x, m.z) + 0.1
+		elif kf < 0.8:
+			node.scale = Vector3.ONE * m.sc * maxf(0.001, 1.0 - kf / 0.8)
 		else:
 			node.visible = false
+		if m.sparkle != null:
+			m.sparkle.position.y = height_at(m.x, m.z) + 0.8 + sin(T * 4.0) * 0.1
+			if kf >= 0.0 or loot_mob == null and m.loot.is_empty():
+				m.sparkle.queue_free()
+				m.sparkle = null
 		if k > 32.0:
 			m.dead = false
 			m.hp = m.maxhp
@@ -1525,6 +1857,14 @@ func _step_mob(m, dt: float) -> void:
 			m.state = "idle"
 			m.bleed_t = 0.0
 			m.slow = 0.0
+			m.loot = []
+			m.loot_money = 0
+			m.fade_t = 0.0
+			if m.sparkle != null:
+				m.sparkle.queue_free()
+				m.sparkle = null
+			if loot_mob == m:
+				close_loot()
 			node.visible = true
 			node.rotation.z = 0.0
 			node.scale = Vector3.ONE * m.sc
@@ -1708,7 +2048,7 @@ func _update_hud() -> void:
 	var t0 = P["target"]
 	var exec_ok: bool = t0 != null and not t0.dead and t0.hp <= t0.maxhp * 0.2 and P["lvl"] >= 4
 	hud.update_player({"lvl": P["lvl"], "hp": P["hp"], "maxhp": max_hp(), "rage": P["rage"], "xp": P["xp"], "xpneed": xp_need(P["lvl"]),
-		"gold": P["gold"], "cd": P["cd"], "gcd": P["gcd"], "pot": P["pot"], "potcd": P["pot_cd"], "exec_ok": exec_ok, "buffs": buffs})
+		"money": Items.money_short(inv.money), "cd": P["cd"], "gcd": P["gcd"], "pot": potion_count(), "potcd": P["pot_cd"], "exec_ok": exec_ok, "buffs": buffs})
 	var t = P["target"]
 	if t != null and not t.dead:
 		hud.update_target({"name": t.nm, "lvl": t.lvl, "hp": t.hp, "maxhp": t.maxhp, "color": _lvl_color(t.lvl), "kind": _mob_kind(t),

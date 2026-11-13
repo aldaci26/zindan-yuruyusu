@@ -11,6 +11,8 @@ signal volume_changed(v: float)
 signal fullscreen_pressed
 signal ability_pressed(i: int)
 signal talk_pressed
+signal bag_pressed
+signal char_pressed
 
 const GOLD := Color("f2c75c")
 const PARCH := Color("d8c192")
@@ -310,7 +312,7 @@ func _build_actionbar() -> void:
 func _build_bag() -> void:
 	var p := Panel.new()
 	p.add_theme_stylebox_override("panel", _box(Color(0.07, 0.055, 0.04, 0.9), Color("7a6030"), 2, 5))
-	_place(p, 1.0, 1.0, 1.0, 1.0, -190, -92, -14, -14)
+	_place(p, 1.0, 1.0, 1.0, 1.0, -250, -92, -14, -14)
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(p))
 	var coin := Panel.new()
@@ -333,8 +335,17 @@ func _build_bag() -> void:
 	pot_lbl.position = Vector2(38, 38)
 	p.add_child(pot_lbl)
 	var h := _label("H  Yardım", 11, Color("a9b6c2"), 3)
-	h.position = Vector2(98, 62)
+	h.position = Vector2(150, 62)
 	p.add_child(h)
+	for i in 2:
+		var b := Button.new()
+		b.text = "Çanta (B)" if i == 0 else "Karakter (C)"
+		b.focus_mode = Control.FOCUS_NONE
+		b.position = Vector2(132, 8 + i * 28)
+		b.size = Vector2(96, 24)
+		b.add_theme_font_size_override("font_size", 12)
+		b.pressed.connect(func(): bag_pressed.emit() if i == 0 else char_pressed.emit())
+		p.add_child(b)
 
 func _build_tip() -> void:
 	tip = PanelContainer.new()
@@ -450,7 +461,7 @@ func set_has_save(v: bool) -> void:
 func _build_help() -> void:
 	help_box = PanelContainer.new()
 	help_box.add_theme_stylebox_override("panel", _box(Color(0.04, 0.035, 0.03, 0.95), Color("c9a24a"), 2, 6))
-	_place(help_box, 0.5, 0.5, 0.5, 0.5, -230, -200, 230, 200)
+	_place(help_box, 0.5, 0.5, 0.5, 0.5, -230, -215, 230, 215)
 	help_box.visible = false
 	root.add_child(help_box)
 	var v := VBoxContainer.new()
@@ -461,7 +472,7 @@ func _build_help() -> void:
 		["W A S D", "Yürü"], ["Boşluk", "Zıpla"], ["Sağ tık basılı", "Kamerayı çevir"], ["Sol tık", "Hedef seç"],
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
 		["1 - 9", "Yetenekler"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
-		["G", "NPC ile konuş"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
+		["G", "NPC ile konuş / ganimeti al"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 	]
 	for r in rows:
 		var h := HBoxContainer.new()
@@ -558,7 +569,7 @@ func update_player(d: Dictionary) -> void:
 	rage_lbl.text = "Öfke %d" % roundi(d["rage"])
 	xp_bar.value = 100.0 if d["lvl"] >= 10 else d["xp"] / d["xpneed"] * 100.0
 	xp_lbl.text = "Seviye 10 (en yüksek)" if d["lvl"] >= 10 else "Tecrübe %d / %d" % [roundi(d["xp"]), roundi(d["xpneed"])]
-	gold_lbl.text = "%d altın" % d["gold"]
+	gold_lbl.text = d["money"]
 	pot_lbl.text = "%d iksir" % d["pot"]
 	var gcd: float = d["gcd"]
 	for i in 9:

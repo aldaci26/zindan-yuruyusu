@@ -23,7 +23,10 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 | 0 veya F | Can iksiri |
 | Tab | En yakın hedef |
 | Esc | Hedefi bırak, tekrar basınca oyun menüsü (ses, tam ekran, kaydet ve çık) |
-| G | NPC ile konuş |
+| G | NPC ile konuş, yakındaki cesetten ganimet al |
+| B / C | Çanta / Karakter penceresi |
+| Sol tık (ceset) | Ganimet penceresini aç |
+| Sağ tık (eşya) | Giy, iksiri iç, satıcıdayken sat |
 | H | Yardım penceresi |
 | F11 | Tam ekran |
 
@@ -39,6 +42,9 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 | 7 | İnfaz | 4 | Canı %20 altındaki hedefe dev hasar |
 | 8 | Ölümcül Darbe | 5 | Devasa vuruş |
 | 9 | Kasırga | 6 | Çevredeki herkese vurur |
+
+## Eşyalar
+WoW Classic mantığıyla: nadirlik renkleri (gri, beyaz, yeşil, mavi, mor), 16 ekipman yuvası, 16 gözlü çanta, bakır/gümüş/altın parası, eşya ipuçları ve giyili eşyayla karşılaştırma. Canavarlar ceset üzerinde ganimet bırakır (sol tık veya G). Tüccar Hilda ve Demirci Borga eşya satar, sattıklarını geri alabilirsin. Görev ödüllerinde eşya seçersin. İki takım vardır: Derin Ocak Takımı ve Dağ Kralının Mirası; parça sayısına göre ek güç verir. Eşyalar sadece istatistik değiştirir, görünüm değişmez.
 
 ## Kayıt
 Oyun her 20 saniyede, görev alıp bitirince ve menüden çıkarken kendiliğinden kaydolur. Başlangıç ekranında **Devam et** ile kaldığın yerden devam edersin. Kayıt dosyası bilgisayarında oyun verileri klasöründe (`cuce_save.json`) durur.

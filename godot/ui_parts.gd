@@ -270,3 +270,4 @@ class Minimap extends Control:
 		# kuzey işareti
 		var np := c + Vector2(sin(cam_yaw), -cos(cam_yaw)) * (R - 9.0) * Vector2(1, 1)
 		Glyph.text(self, "K", np + Vector2(-8, 4), 16, 12, Color("ff8a7a"), 4)
+

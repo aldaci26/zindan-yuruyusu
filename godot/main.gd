@@ -575,17 +575,14 @@ func _house(x: float, z: float, rot: float, w: float, d: float) -> void:
 	g.position = Vector3(x, height_at(x, z), z)
 	g.rotation.y = rot
 	add_child(g)
-	var h := 3.0
-	Dwarf.box(g, Vector3(w, h, d), m_stone, Vector3(0, h / 2.0, 0))
-	var r := Dwarf.cone(g, maxf(w, d) * 0.78, 2.4, m_roof, Vector3(0, h + 1.2, 0), 4)
-	r.rotation.y = PI / 4.0
-	var sn := Dwarf.cone(g, maxf(w, d) * 0.6, 0.8, m_snow, Vector3(0, h + 2.0, 0), 4)
-	sn.rotation.y = PI / 4.0
-	Dwarf.box(g, Vector3(1.1, 1.9, 0.2), m_wood, Vector3(0, 0.95, d / 2.0 + 0.05))
-	var win := Dwarf.box(g, Vector3(0.8, 0.8, 0.15), Dwarf.mat(Color.html("ffd27a"), 0.0, 0.5, Color.html("ffa733"), 2.0), Vector3(w / 2.0 - 1.0, 1.9, d / 2.0 + 0.05))
-	win.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	Dwarf.box(g, Vector3(0.7, 2.0, 0.7), m_stone, Vector3(-w / 3.0, h + 1.6, 0))
-	_add_obs(x, z, maxf(w, d) * 0.62)
+	var tw := maxi(2, roundi(w / 2.2))
+	var td := maxi(2, roundi(d / 2.2))
+	var s := 2.2
+	var hs := Kit.house(g, tw, td, s, Color(1.0, 0.93, 0.84), m_roof)
+	hs.scale = Vector3(1.0, 1.15, 1.0)
+	var sn := Dwarf.box(g, Vector3(tw * s * 1.05, 0.25, td * s * 0.7), m_snow, Vector3(0, s * 1.15 + 1.05, 0))
+	Kit.spawn(g, "fantasy-town", "chimney", Vector3(-tw * s * 0.25, s * 1.15, 0), 0.0, s, Color(1.0, 0.93, 0.84))
+	_add_obs(x, z, maxf(tw, td) * s * 0.55)
 
 func _build_village() -> void:
 	_house(-10, -4, 0.5, 6.0, 5.0)
@@ -630,6 +627,27 @@ func _build_village() -> void:
 		var fl := Dwarf.box(self, Vector3(1.2, 2.0, 0.04), m_blue, Vector3(p[0] + 0.65, y0 + 3.9, p[1]))
 		fl.rotation.y = i * 0.4
 		Dwarf.sph(self, 0.14, m_gold, Vector3(p[0], y0 + 5.05, p[1]))
+	_village_props()
+
+func _prop(kit: String, nm: String, x: float, z: float, rot: float, s: float, r := 0.0, tint: Color = Color(1.0, 0.93, 0.84)) -> void:
+	Kit.spawn(self, kit, nm, Vector3(x, height_at(x, z), z), rot, s, tint)
+	if r > 0.0:
+		_add_obs(x, z, r)
+
+func _village_props() -> void:
+	_prop("survival", "tent", -4.5, -6.5, 0.4, 4.2, 1.5)
+	_prop("survival", "tent", 4.0, -7.0, -0.5, 4.2, 1.5)
+	_prop("survival", "barrel", -6.0, 3.0, 0.0, 3.6, 0.6)
+	_prop("survival", "barrel", -6.7, 3.9, 0.0, 3.6, 0.6)
+	_prop("survival", "box-large", -5.2, 4.2, 0.4, 3.6, 0.7)
+	_prop("survival", "chest", 7.5, 1.5, -1.2, 3.4, 0.6)
+	_prop("survival", "signpost", 2.5, 8.5, 0.3, 3.8)
+	_prop("fantasy-town", "cart", 6.5, 14.0, 0.7, 3.4, 1.3)
+	_prop("fantasy-town", "stall-red", -13.5, 3.5, 1.2, 3.6, 1.5)
+	_prop("fantasy-town", "lantern", -2.2, 4.6, 0.0, 3.2)
+	_prop("fantasy-town", "lantern", 2.6, 4.2, 0.0, 3.2)
+	for i in 7:
+		_prop("fantasy-town", "fence", -9.5 + i * 2.0, 16.0, PI / 2.0, 2.2)
 
 func _build_city() -> void:
 	var cx: float = CITY.x

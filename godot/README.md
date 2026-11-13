@@ -69,3 +69,6 @@ Godot 4.3 ile bu klasörü aç (`project.godot`), F5. Dışarıdan dosya yok; he
 
 ## Arayüz (WoW tarzı)
 Taş-metal çerçeveli oyuncu/hedef/aksiyon çubuğu, altın grifon kanatları, bölmeli tecrübe çubuğu, sohbet sekmeleri (Genel / Savaş Kaydı), mini harita saati, mikro menü (Karakter, Yardım, Menü) ve çanta çubuğu (B).
+
+## Üçüncü taraf varlıklar
+Köydeki evler, çadırlar, variller, sandıklar, çit, tezgâh ve araba modelleri **Kenney** (www.kenney.nl) tarafından hazırlanmış, CC0 (kamu malı) lisanslı Fantasy Town ve Survival kitlerindendir (`godot/assets/kenney/`, lisans dosyası orada).

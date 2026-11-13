@@ -16,7 +16,19 @@ const MTYPES := {
 	"wolf": {"name": "Kurt", "lo": 1, "hi": 3, "hp": 26.0, "dmg": 2.2, "spd": 4.6, "aggro": 9.0, "rad": 0.7, "sc": 1.0},
 	"boar": {"name": "Yaban Domuzu", "lo": 2, "hi": 4, "hp": 34.0, "dmg": 2.4, "spd": 3.8, "aggro": 7.0, "rad": 0.8, "sc": 1.0},
 	"bear": {"name": "Dağ Ayısı", "lo": 4, "hi": 6, "hp": 46.0, "dmg": 2.8, "spd": 3.6, "aggro": 8.0, "rad": 1.1, "sc": 1.15},
+	"trogg": {"name": "Trogg", "lo": 3, "hi": 6, "hp": 36.0, "dmg": 2.5, "spd": 3.6, "aggro": 8.0, "rad": 0.8, "sc": 1.15},
+	"gnoll": {"name": "Gnoll", "lo": 4, "hi": 7, "hp": 38.0, "dmg": 2.7, "spd": 4.0, "aggro": 9.0, "rad": 0.7, "sc": 1.05},
+	"defias": {"name": "Defias Haydudu", "lo": 6, "hi": 8, "hp": 40.0, "dmg": 2.8, "spd": 4.0, "aggro": 9.0, "rad": 0.7, "sc": 1.0},
+	"darkiron": {"name": "Kara Demir Büyücüsü", "lo": 7, "hi": 9, "hp": 34.0, "dmg": 2.6, "spd": 3.4, "aggro": 13.0, "rad": 0.7, "sc": 1.05, "ranged": 12.0},
 }
+
+## Düşman kampları: tür, merkez, sayı
+const CAMPS := [
+	{"kind": "trogg", "x": 70.0, "z": 12.0, "n": 6},
+	{"kind": "gnoll", "x": 58.0, "z": -22.0, "n": 6},
+	{"kind": "defias", "x": -30.0, "z": 62.0, "n": 6},
+	{"kind": "darkiron", "x": -78.0, "z": 8.0, "n": 5},
+]
 
 const QUESTS := {
 	"q_wolf": {"title": "Kurt Sürüsü", "kill": "Kurt", "n": 4, "lvl": 1, "xp": 90, "money": 250, "rew": ["axe_wolf", "bk_fur", "nk_tooth"],
@@ -85,6 +97,7 @@ class Mob:
 	var bleed_tick := 0.0
 	var bleed_v := 0.0
 	var slow := 0.0
+	var ranged := 0.0
 	var loot: Array = []
 	var loot_money := 0
 	var fade_t := 0.0
@@ -211,6 +224,7 @@ func _ready() -> void:
 	_spawn_npcs()
 	_spawn_mobs()
 	_spawn_bosses()
+	_spawn_camps()
 	_setup_snow()
 	hud = HudScript.new()
 	add_child(hud)
@@ -898,6 +912,53 @@ func _spawn_bosses() -> void:
 		mobs.append(m)
 		i += 1
 
+func _camp_model(kind: String) -> Node3D:
+	match kind:
+		"trogg": return Dwarf.make_trogg(false)
+		"gnoll": return Dwarf.make_gnoll(false)
+		"defias": return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
+		_: return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"})
+
+func _spawn_camps() -> void:
+	var rnd := RandomNumberGenerator.new()
+	rnd.seed = 311
+	var cid := 200
+	for c in CAMPS:
+		var ty: Dictionary = MTYPES[c["kind"]]
+		for i in c["n"]:
+			var a := rnd.randf() * TAU
+			var sp := _free_spot(c["x"] + cos(a) * (2.0 + rnd.randf() * 7.0), c["z"] + sin(a) * (2.0 + rnd.randf() * 7.0))
+			var lvl: int = rnd.randi_range(ty["lo"], ty["hi"])
+			var m := Mob.new()
+			m.kind = c["kind"]
+			m.nm = ty["name"]
+			m.lvl = lvl
+			m.x = sp.x
+			m.z = sp.y
+			m.hx = sp.x
+			m.hz = sp.y
+			m.wx = sp.x
+			m.wz = sp.y
+			m.yaw = rnd.randf() * 6.0
+			m.maxhp = round(ty["hp"] * (1.0 + (lvl - 1) * 0.55))
+			m.hp = m.maxhp
+			m.dmg = ty["dmg"] * (1.0 + lvl * 0.55)
+			m.spd = ty["spd"]
+			m.aggro = ty["aggro"]
+			m.rad = ty["rad"]
+			m.sc = ty["sc"]
+			m.ranged = ty.get("ranged", 0.0)
+			m.w_t = rnd.randf() * 4.0
+			m.ph = rnd.randf() * 6.0
+			m.id = cid
+			cid += 1
+			m.node = _camp_model(c["kind"])
+			m.node.scale = Vector3.ONE * m.sc
+			m.legs = _humanoid_legs(m.node)
+			add_child(m.node)
+			m.node.position = Vector3(m.x, height_at(m.x, m.z), m.z)
+			mobs.append(m)
+
 func spawn_add(owner_m, nm: String, model: String, lvl: int, hp: float, dmg: float, spd: float, sc: float, off: Vector2) -> void:
 	var m := Mob.new()
 	m.kind = "skull"
@@ -1320,8 +1381,9 @@ func kill_mob(m) -> void:
 
 func _normal_loot(m) -> void:
 	m.loot_money = 4 + m.lvl * 5 + randi() % 6
-	var junk := {"Kurt": "j_wolf", "Yaban Domuzu": "j_boar", "Dağ Ayısı": "j_bear"}
-	if randf() < 0.55:
+	var junk := {"Kurt": "j_wolf", "Yaban Domuzu": "j_boar", "Dağ Ayısı": "j_bear", "Trogg": "j_trogg", "Gnoll": "j_gnoll",
+		"Defias Haydudu": "j_defias", "Kara Demir Büyücüsü": "j_dark"}
+	if randf() < 0.55 and junk.has(m.nm):
 		m.loot.append({"id": junk[m.nm], "n": 1})
 	if randf() < 0.2:
 		m.loot.append({"id": "pot_big" if (m.lvl >= 4 and randf() < 0.4) else "pot_heal", "n": 1})
@@ -2317,7 +2379,7 @@ func _step_mob(m, dt: float) -> void:
 		var hd := Vector2(m.x - m.hx, m.z - m.hz).length()
 		if hd > 38.0:
 			m.state = "return"
-		elif d > m.rad + 0.9 and m.eat_t <= 0.0:
+		elif d > (m.rad + 0.9 if m.ranged <= 0.0 else m.ranged - 2.0) and m.eat_t <= 0.0:
 			var c := collide(m.x + dx / d * msp * dt, m.z + dz / d * msp * dt, m.rad * 0.6)
 			m.x = c.x
 			m.z = c.y
@@ -2327,7 +2389,15 @@ func _step_mob(m, dt: float) -> void:
 		var busy := false
 		if m.boss != "":
 			busy = _boss_ai(m, dt, d)
-		if not busy and d <= m.rad + m.reach and m.atk_t <= 0.0:
+		if not busy and m.ranged > 0.0 and d <= m.ranged and m.atk_t <= 0.0:
+			m.atk_t = 2.6
+			var fd := maxi(1, roundi(m.dmg * 0.8 * (0.85 + randf() * 0.3)))
+			player_hp_loss(fd)
+			float_text(Vector3(m.x, 2.4 * m.sc + m.node.position.y, m.z), "Ateş Oku", Color("ff9a40"), false)
+			ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.4, Color("ff8030"), 0.4)
+			sfx.play("whirl", -10)
+			m.lunge = 0.2
+		elif not busy and m.ranged <= 0.0 and d <= m.rad + m.reach and m.atk_t <= 0.0:
 			m.atk_t = m.atk_int
 			hurt_player(m.dmg * (0.85 + randf() * 0.3), m)
 			m.lunge = 0.2
@@ -2458,6 +2528,10 @@ func _mob_kind(m) -> String:
 		return m.kind
 	if m.temp:
 		return "skull"
+	if m.kind in ["trogg", "gnoll"]:
+		return "skull"
+	if m.kind in ["defias", "darkiron"]:
+		return "dwarf"
 	if m.nm == "Kurt":
 		return "wolf"
 	if m.nm == "Yaban Domuzu":

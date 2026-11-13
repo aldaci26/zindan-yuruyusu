@@ -151,6 +151,10 @@ static func _build() -> void:
 	_misc("pot_big", "Büyük Can İksiri", 1, 5, 60, 20, "potion", 0.7, "red")
 	_misc("j_wolf", "Yıpranmış Kurt Postu", 0, 1, 9, 20, "pelt", 0.0, "fur")
 	_misc("j_boar", "Domuz Derisi", 0, 1, 13, 20, "pelt", 0.0, "brown")
+	_misc("j_trogg", "Trogg Dişi", 0, 1, 18, 20, "claw", 0.0, "bone")
+	_misc("j_gnoll", "Gnoll Pençesi", 0, 1, 22, 20, "claw", 0.0, "brown")
+	_misc("j_defias", "Defias Bandanası", 0, 1, 30, 20, "pelt", 0.0, "red")
+	_misc("j_dark", "Kara Demir Külçesi", 0, 1, 40, 20, "pelt", 0.0, "dark")
 	_misc("j_bear", "Ayı Pençesi", 0, 1, 28, 20, "claw", 0.0, "bone")
 
 # ---------- yardımcılar ----------

@@ -46,6 +46,9 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 ## Eşyalar
 WoW Classic mantığıyla: nadirlik renkleri (gri, beyaz, yeşil, mavi, mor), 16 ekipman yuvası, 16 gözlü çanta, bakır/gümüş/altın parası, eşya ipuçları ve giyili eşyayla karşılaştırma. Canavarlar ceset üzerinde ganimet bırakır (sol tık veya G). Tüccar Hilda ve Demirci Borga eşya satar, sattıklarını geri alabilirsin. Görev ödüllerinde eşya seçersin. İki takım vardır: Derin Ocak Takımı ve Dağ Kralının Mirası; parça sayısına göre ek güç verir. Eşyalar sadece istatistik değiştirir, görünüm değişmez.
 
+## Düşmanlar
+Kurt, yaban domuzu ve dağ ayısına ek olarak dört kamp vardır: **Troggar** (doğu, Sv 3-6), **Gnoll'lar** (doğu-güney, Sv 4-7), **Defias haydutları** (güneybatı, Sv 6-8) ve **Kara Demir büyücüleri** (batı, Sv 7-9; uzaktan ateş okuyla vururlar). Her türün kendine özel çerçöpü düşer.
+
 ## Bosslar
 Dünyada 6 WoW bossu var, hepsi yüksek canlı ve kendine özel yeteneklidir; ölünce mor/mavi eşya bırakır ve beş-on dakikada yeniden doğar:
 - **Büyük Baba Arctikus** (Sv 6, batı ormanı): Parçala, Yırtma (kanama), canı azalınca öfke.

@@ -46,6 +46,15 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 ## Eşyalar
 WoW Classic mantığıyla: nadirlik renkleri (gri, beyaz, yeşil, mavi, mor), 16 ekipman yuvası, 16 gözlü çanta, bakır/gümüş/altın parası, eşya ipuçları ve giyili eşyayla karşılaştırma. Canavarlar ceset üzerinde ganimet bırakır (sol tık veya G). Tüccar Hilda ve Demirci Borga eşya satar, sattıklarını geri alabilirsin. Görev ödüllerinde eşya seçersin. İki takım vardır: Derin Ocak Takımı ve Dağ Kralının Mirası; parça sayısına göre ek güç verir. Eşyalar sadece istatistik değiştirir, görünüm değişmez.
 
+## Bosslar
+Dünyada 6 WoW bossu var, hepsi yüksek canlı ve kendine özel yeteneklidir; ölünce mor/mavi eşya bırakır ve beş-on dakikada yeniden doğar:
+- **Büyük Baba Arctikus** (Sv 6, batı ormanı): Parçala, Yırtma (kanama), canı azalınca öfke.
+- **Grik'nir the Cold** (Sv 5, doğu): Don Dalgası (yavaşlatır), Buz Oku.
+- **Chok'sul** (Sv 7, batı): Yer Yarığı (geri savurur), öfke.
+- **Hogger** (Sv 8, doğu): gnoll çırakları çağırır, canı azalınca yemek yiyip iyileşir.
+- **Edwin VanCleef** (Sv 9, güneybatı): Defias haydutları çağırır, Sırttan Bıçak, zehir.
+- **Ragnaros** (Sv 10, Demirkazan'daki büyük ocakta): Gazap (geri savurur), Magma Topu, Alev Oğulları. Kendiliğinden saldırmaz; sen saldırınca uyanır. Ona yaklaşmadan önce iyi eşya topla.
+
 ## Kayıt
 Oyun her 20 saniyede, görev alıp bitirince ve menüden çıkarken kendiliğinden kaydolur. Başlangıç ekranında **Devam et** ile kaldığın yerden devam edersin. Kayıt dosyası bilgisayarında oyun verileri klasöründe (`cuce_save.json`) durur.
 

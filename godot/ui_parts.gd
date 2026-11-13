@@ -127,6 +127,7 @@ class Portrait extends Control:
 			"wolf": bgc = Color("2c3446")
 			"boar": bgc = Color("4a3a2a")
 			"bear": bgc = Color("3a3020")
+			"skull": bgc = Color("3a1414")
 			"npc": bgc = Color("3a4a2a")
 		draw_circle(c, R, bgc)
 		match kind:
@@ -174,6 +175,12 @@ class Portrait extends Control:
 				draw_circle(c + Vector2(0, 0.15) * R, 0.09 * R, Color("101010"))
 				draw_circle(c + Vector2(-0.26, -0.2) * R, 0.06 * R, Color("101010"))
 				draw_circle(c + Vector2(0.26, -0.2) * R, 0.06 * R, Color("101010"))
+		if kind == "skull":
+			draw_circle(c + Vector2(0, -0.1) * R, 0.55 * R, Color("e8e2d0"))
+			draw_rect(Rect2(c + Vector2(-0.3, 0.2) * R, Vector2(0.6, 0.4) * R), Color("e8e2d0"))
+			draw_circle(c + Vector2(-0.22, -0.1) * R, 0.15 * R, Color("1a0a0a"))
+			draw_circle(c + Vector2(0.22, -0.1) * R, 0.15 * R, Color("1a0a0a"))
+			draw_rect(Rect2(c + Vector2(-0.04, 0.12) * R, Vector2(0.08, 0.14) * R), Color("1a0a0a"))
 		draw_arc(c, R, 0, TAU, 48, Color("0e0a05"), 5.0, true)
 		draw_arc(c, R, 0, TAU, 48, Color("d8ae4a"), 2.5, true)
 		# seviye rozeti

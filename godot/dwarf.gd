@@ -217,11 +217,11 @@ static func make_boar() -> Node3D:
 	g.set_meta("legs", _legs(g, [[-0.28, 0.5, 0.45], [0.28, 0.5, 0.45], [-0.28, -0.5, 0.45], [0.28, -0.5, 0.45]], Vector3(0.2, 0.45, 0.2), dk))
 	return g
 
-static func make_bear() -> Node3D:
+static func make_bear(o: Dictionary = {}) -> Node3D:
 	var g := Node3D.new()
-	var fur = mat(Color.html("5a3b24"), 0.0, 0.95)
-	var dk = mat(Color.html("3a2415"), 0.0, 0.95)
-	var lt = mat(Color.html("9a6d46"), 0.0, 0.95)
+	var fur = mat(o.get("fur", Color.html("5a3b24")), 0.0, 0.95)
+	var dk = mat(o.get("dk", Color.html("3a2415")), 0.0, 0.95)
+	var lt = mat(o.get("lt", Color.html("9a6d46")), 0.0, 0.95)
 	box(g, Vector3(1.1, 1.0, 1.6), fur, Vector3(0, 1.1, 0))
 	box(g, Vector3(0.95, 0.5, 0.7), fur, Vector3(0, 1.7, 0.4))
 	box(g, Vector3(0.75, 0.65, 0.7), fur, Vector3(0, 1.35, 1.15))
@@ -230,4 +230,131 @@ static func make_bear() -> Node3D:
 	for s in [-1.0, 1.0]:
 		sph(g, 0.15, dk, Vector3(s * 0.3, 1.72, 1.0))
 	g.set_meta("legs", _legs(g, [[-0.4, 0.6, 0.65], [0.4, 0.6, 0.65], [-0.4, -0.6, 0.65], [0.4, -0.6, 0.65]], Vector3(0.3, 0.65, 0.32), dk))
+	return g
+
+# ---------- boss ve yeni düşman modelleri ----------
+static func _biped_legs(g: Node3D, x: float, y: float, size: Vector3, m: Material) -> Array:
+	var l := pivot(g, Vector3(-x, y, 0))
+	var r := pivot(g, Vector3(x, y, 0))
+	box(l, size, m, Vector3(0, -size.y * 0.5, 0))
+	box(r, size, m, Vector3(0, -size.y * 0.5, 0))
+	return [l, r, r, l]
+
+static func _fake_legs(g: Node3D) -> Array:
+	var p := pivot(g, Vector3.ZERO)
+	return [p, p, p, p]
+
+## Trogg: kambur, gri-mavi derili, sopalı. ice: buz kristalleri (Grik'nir)
+static func make_trogg(ice: bool = false) -> Node3D:
+	var g := Node3D.new()
+	var skin = mat(Color.html("7f8a96") if ice else Color.html("8a7f6a"), 0.0, 0.9)
+	var dk = mat(Color.html("4a525c") if ice else Color.html("5a5040"), 0.0, 0.9)
+	var wood = mat(Color.html("5a3b24"), 0.0, 0.9)
+	var eye = mat(Color.html("ffe060"), 0.0, 0.5, Color.html("ffc020"), 1.5)
+	var crys = mat(Color.html("9fe4ff"), 0.0, 0.3, Color.html("60c8ff"), 1.6)
+	box(g, Vector3(0.9, 0.9, 0.6), skin, Vector3(0, 1.15, 0))
+	box(g, Vector3(0.8, 0.5, 0.55), skin, Vector3(0, 1.7, 0.18))
+	box(g, Vector3(0.55, 0.45, 0.5), skin, Vector3(0, 1.85, 0.5))
+	box(g, Vector3(0.4, 0.14, 0.12), dk, Vector3(0, 1.72, 0.76))
+	for sd in [-1.0, 1.0]:
+		sph(g, 0.05, eye, Vector3(sd * 0.14, 1.98, 0.76))
+		box(g, Vector3(0.28, 0.9, 0.3), skin, Vector3(sd * 0.6, 1.1, 0.1))
+		if ice:
+			cone(g, 0.1, 0.5, crys, Vector3(sd * 0.5, 1.9, -0.1), 5)
+	var arm := pivot(g, Vector3(0.62, 1.5, 0.1))
+	cyl(arm, 0.06, 0.1, 1.3, wood, Vector3(0, -0.4, 0.4), 6).rotation.x = 1.2
+	sph(arm, 0.2, dk, Vector3(0, -0.6, 0.95))
+	g.set_meta("legs", _biped_legs(g, 0.25, 0.8, Vector3(0.3, 0.8, 0.34), dk))
+	return g
+
+static func make_ogre() -> Node3D:
+	var g := Node3D.new()
+	var skin = mat(Color.html("a07a58"), 0.0, 0.9)
+	var dk = mat(Color.html("5a3a24"), 0.0, 0.9)
+	var cloth = mat(Color.html("6a3a2a"), 0.0, 0.95)
+	var eye = mat(Color.html("ffcf40"), 0.0, 0.5, Color.html("ff9000"), 1.2)
+	var wood = mat(Color.html("4a3020"), 0.0, 0.9)
+	var iron = mat(Color.html("55606c"), 0.6, 0.4)
+	box(g, Vector3(1.5, 1.5, 0.95), skin, Vector3(0, 1.7, 0))
+	box(g, Vector3(1.55, 0.5, 1.0), cloth, Vector3(0, 1.05, 0))
+	box(g, Vector3(0.7, 0.65, 0.65), skin, Vector3(0, 2.75, 0.1))
+	box(g, Vector3(0.5, 0.16, 0.12), dk, Vector3(0, 2.62, 0.45))
+	for sd in [-1.0, 1.0]:
+		sph(g, 0.06, eye, Vector3(sd * 0.18, 2.88, 0.43))
+		sph(g, 0.34, skin, Vector3(sd * 0.95, 2.35, 0), Vector3(1, 0.9, 1))
+		box(g, Vector3(0.38, 1.3, 0.42), skin, Vector3(sd * 1.05, 1.6, 0.1))
+	var arm := pivot(g, Vector3(1.05, 2.1, 0.1))
+	cyl(arm, 0.1, 0.18, 1.8, wood, Vector3(0, -0.2, 0.7), 6).rotation.x = 1.1
+	box(arm, Vector3(0.5, 0.5, 0.5), iron, Vector3(0, -0.8, 1.45))
+	g.set_meta("legs", _biped_legs(g, 0.42, 1.0, Vector3(0.5, 1.0, 0.5), dk))
+	return g
+
+## Gnoll: kamburlu, tüylü. big: Hogger
+static func make_gnoll(big: bool = false) -> Node3D:
+	var g := Node3D.new()
+	var fur = mat(Color.html("9a6a3a") if big else Color.html("8a7050"), 0.0, 0.95)
+	var dk = mat(Color.html("4a3220"), 0.0, 0.95)
+	var lt = mat(Color.html("c8a878"), 0.0, 0.95)
+	var eye = mat(Color.html("ff5030"), 0.0, 0.5, Color.html("ff2000"), 1.5)
+	var cloth = mat(Color.html("7a2a2a") if not big else Color.html("3a5a8a"), 0.0, 0.95)
+	var iron = mat(Color.html("8a919c"), 0.6, 0.4)
+	box(g, Vector3(0.7, 0.8, 0.5), fur, Vector3(0, 1.1, 0))
+	box(g, Vector3(0.72, 0.3, 0.52), cloth, Vector3(0, 0.75, 0))
+	box(g, Vector3(0.55, 0.45, 0.5), fur, Vector3(0, 1.65, 0.25))
+	box(g, Vector3(0.28, 0.24, 0.4), lt, Vector3(0, 1.55, 0.65))
+	box(g, Vector3(0.1, 0.08, 0.08), dk, Vector3(0, 1.58, 0.86))
+	for sd in [-1.0, 1.0]:
+		sph(g, 0.04, eye, Vector3(sd * 0.14, 1.78, 0.5))
+		cone(g, 0.1, 0.3, dk, Vector3(sd * 0.2, 2.0, 0.15), 4)
+		box(g, Vector3(0.2, 0.75, 0.22), fur, Vector3(sd * 0.48, 1.05, 0.1))
+	var arm := pivot(g, Vector3(0.5, 1.4, 0.1))
+	box(arm, Vector3(0.1, 0.9, 0.18), iron, Vector3(0, -0.5, 0.55)).rotation.x = 1.1
+	g.set_meta("legs", _biped_legs(g, 0.2, 0.75, Vector3(0.24, 0.75, 0.28), dk))
+	return g
+
+## Alev Oğlu: ateşli küçük yaratık
+static func make_ember() -> Node3D:
+	var g := Node3D.new()
+	var core = mat(Color.html("ffb030"), 0.0, 0.5, Color.html("ff7010"), 3.0)
+	var shell = mat(Color.html("3a1a10"), 0.0, 0.9)
+	sph(g, 0.5, core, Vector3(0, 1.0, 0), Vector3(1, 1.2, 1))
+	cone(g, 0.3, 0.8, core, Vector3(0, 1.9, 0), 6)
+	for sd in [-1.0, 1.0]:
+		box(g, Vector3(0.25, 0.7, 0.25), shell, Vector3(sd * 0.5, 0.9, 0))
+	var light := OmniLight3D.new()
+	light.light_color = Color("ff8030")
+	light.omni_range = 5.0
+	light.light_energy = 1.2
+	light.position = Vector3(0, 1.0, 0)
+	g.add_child(light)
+	g.set_meta("legs", _biped_legs(g, 0.2, 0.6, Vector3(0.28, 0.6, 0.28), shell))
+	return g
+
+## Ragnaros: lavdan yükselen dev gövde, çekiç
+static func make_ragnaros() -> Node3D:
+	var g := Node3D.new()
+	var rock = mat(Color.html("2a1a14"), 0.0, 0.9)
+	var fire = mat(Color.html("ff7a1f"), 0.0, 0.5, Color.html("ff5a00"), 3.2)
+	var hot = mat(Color.html("ffd060"), 0.0, 0.4, Color.html("ffb020"), 4.0)
+	cyl(g, 2.6, 3.0, 3.0, rock, Vector3(0, 1.0, 0), 16)
+	cyl(g, 2.2, 2.6, 1.0, fire, Vector3(0, 2.4, 0), 16)
+	box(g, Vector3(3.8, 3.0, 2.2), rock, Vector3(0, 4.4, 0))
+	box(g, Vector3(2.2, 2.2, 0.2), fire, Vector3(0, 4.4, 1.1))
+	sph(g, 1.2, rock, Vector3(0, 6.4, 0.2), Vector3(1, 1.0, 1))
+	for sd in [-1.0, 1.0]:
+		sph(g, 0.22, hot, Vector3(sd * 0.45, 6.5, 1.15))
+		sph(g, 1.0, rock, Vector3(sd * 2.4, 5.6, 0), Vector3(1, 0.8, 1))
+		box(g, Vector3(0.9, 3.4, 0.9), rock, Vector3(sd * 2.7, 3.8, 0.3))
+		cone(g, 0.3, 1.4, fire, Vector3(sd * 0.7, 7.5, 0), 5)
+	cone(g, 0.5, 2.0, hot, Vector3(0, 7.7, 0), 5)
+	var arm := pivot(g, Vector3(2.7, 5.4, 0.3))
+	cyl(arm, 0.18, 0.2, 4.0, rock, Vector3(0, 0.6, 1.0), 6).rotation.x = 0.5
+	box(arm, Vector3(1.6, 1.4, 1.6), fire, Vector3(0, 2.4, 2.0))
+	var light := OmniLight3D.new()
+	light.light_color = Color("ff7a30")
+	light.omni_range = 26.0
+	light.light_energy = 3.5
+	light.position = Vector3(0, 5.0, 2.0)
+	g.add_child(light)
+	g.set_meta("legs", _fake_legs(g))
 	return g

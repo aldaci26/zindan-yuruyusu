@@ -1,8 +1,8 @@
 extends RefCounted
 ## Eşya veritabanı (WoW Classic mantığı: nadirlik renkleri, yuvalar, istatistikler, satış fiyatı).
 
-const RARITY_COL := [Color("9d9d9d"), Color("ffffff"), Color("1eff00"), Color("0070dd"), Color("a335ee")]
-const RARITY_NAME := ["Düşük Kalite", "Sıradan", "Sıradışı", "Nadir", "Destansı"]
+const RARITY_COL := [Color("9d9d9d"), Color("ffffff"), Color("1eff00"), Color("0070dd"), Color("a335ee"), Color("ff8000")]
+const RARITY_NAME := ["Düşük Kalite", "Sıradan", "Sıradışı", "Nadir", "Destansı", "Efsanevi"]
 const SLOTS := ["head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "ring1", "ring2", "trinket1", "trinket2", "mainhand", "offhand"]
 const SLOT_NAME := {
 	"head": "Baş", "neck": "Boyun", "shoulder": "Omuz", "back": "Sırt", "chest": "Göğüs", "wrist": "Bilek", "hands": "Eller",
@@ -125,6 +125,27 @@ static func _build() -> void:
 	_eq("sh_rein", "Takviyeli Kalkan", "offhand", 2, 5, 42, 0, 0, 2, 240, "Kalkan", "steel")
 	_eq("sh_deep", "Derin Ocak Burçlu Kalkanı", "offhand", 3, 5, 62, 2, 0, 5, 560, "Kalkan", "bronze")
 	_eq("sh_king", "Kral Kalkanı", "offhand", 4, 9, 90, 4, 0, 8, 2000, "Kalkan", "gold")
+	# boss ganimetleri
+	_eq("wt_arc", "Büyük Baba'nın Kuşağı", "waist", 3, 6, 16, 2, 0, 3, 380, "Deri", "fur")
+	_eq("hd_arc", "Ayı Pençesi Eldiveni", "hands", 3, 6, 18, 3, 0, 2, 400, "Zincir", "fur")
+	_eq("bk_arc", "Kutup Postu Pelerin", "back", 3, 6, 7, 0, 2, 3, 380, "Kumaş", "fur")
+	_wp("axe_grik", "Soğuk Parçalayıcı", 3, 5, 17, 27, 2.2, 3, 2, 0, 560, "mith", 1)
+	_eq("nk_grik", "Buzul Tılsımı", "neck", 3, 5, 0, 2, 0, 3, 420, "", "mith")
+	_wp("hammer_chok", "Ogre Ezici", 3, 7, 24, 38, 2.6, 5, 0, 3, 760, "iron", 2)
+	_eq("wt_chok", "Ogre Kuşağı", "waist", 3, 7, 20, 3, 0, 4, 520, "Zincir", "brown")
+	_eq("lg_hogger", "Hogger'ın Pantolonu", "legs", 3, 8, 44, 3, 0, 5, 640, "Zincir", "blue")
+	_eq("wr_hogger", "Gnoll Pençe Bilekliği", "wrist", 3, 8, 14, 3, 2, 0, 520, "Deri", "bone")
+	_eq("tr_hogger", "Koca Gnoll Pençesi", "trinket", 3, 8, 0, 5, 2, 0, 560, "", "bone")
+	_wp("sword_cruel", "Zalim Diken", 3, 9, 26, 41, 1.9, 3, 5, 0, 900, "steel", 3)
+	_eq("helm_defias", "Kızıl Defias Maskesi", "head", 3, 9, 18, 0, 4, 5, 880, "Deri", "red")
+	_eq("bk_edwin", "Edwin'in Pelerini", "back", 3, 9, 9, 0, 3, 4, 700, "Kumaş", "red")
+	_eq("rg_vc", "Defias Kralının Yüzüğü", "ring", 4, 9, 0, 4, 6, 4, 1700, "", "red")
+	_eq("helm_rag", "Ateş Efendisinin Tacı", "head", 4, 10, 60, 7, 0, 8, 2600, "Plaka", "red")
+	_eq("ch_rag", "Kor Zırhı", "chest", 4, 10, 96, 8, 0, 9, 3000, "Plaka", "dark")
+	_eq("tr_core", "Çekirdek Yüreği", "trinket", 4, 10, 0, 6, 6, 0, 2400, "", "gold")
+	_wp("hammer_sulf", "Sulfuras, Ragnaros'un Eli", 5, 10, 88, 132, 3.7, 18, 0, 12, 20000, "gold", 2)
+	for bid in ["wt_arc", "hd_arc", "bk_arc", "axe_grik", "nk_grik", "hammer_chok", "wt_chok", "lg_hogger", "wr_hogger", "tr_hogger", "sword_cruel", "helm_defias", "bk_edwin", "rg_vc", "helm_rag", "ch_rag", "tr_core", "hammer_sulf"]:
+		_db[bid]["boss"] = true
 	# tüketilenler ve çerçöp
 	_misc("pot_heal", "Can İksiri", 1, 1, 20, 20, "potion", 0.45, "red")
 	_misc("pot_big", "Büyük Can İksiri", 1, 5, 60, 20, "potion", 0.7, "red")
@@ -282,6 +303,6 @@ static func pool(rar: int, lo: int, hi: int) -> Array:
 	var out: Array = []
 	for id in db():
 		var it: Dictionary = db()[id]
-		if it["slot"] != "" and it["rar"] == rar and it["req"] >= lo and it["req"] <= hi:
+		if it["slot"] != "" and not it.get("boss", false) and it["rar"] == rar and it["req"] >= lo and it["req"] <= hi:
 			out.append(id)
 	return out

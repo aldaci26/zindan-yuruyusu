@@ -27,6 +27,28 @@ const QUESTS := {
 		"text": "Dağ ayıları ocak ekiplerimizi korkutuyor. İki ayıyı alt et, cephaneliğimden bir şey seçersin.", "done": "Gerçek bir savaşçısın. Cephanelikten birini seç."},
 }
 
+## WoW bosları: ad, seviye, can, hasar, ganimet ve yetenekler _boss_ai içinde.
+const BOSSES := {
+	"arctikus": {"name": "Büyük Baba Arctikus", "title": "Kar Dağı Efendisi", "lvl": 6, "hp": 2600.0, "dmg": 24.0, "spd": 4.2, "rad": 1.7, "sc": 1.7, "aggro": 12.0,
+		"x": -62.0, "z": 38.0, "model": "bear", "kind": "bear", "respawn": 300.0, "xp": 160,
+		"say": "Büyük Baba Arctikus kükreyerek saldırıya geçti!", "drops": ["wt_arc", "hd_arc", "bk_arc"]},
+	"grik": {"name": "Grik'nir the Cold", "title": "Trogg Reisi", "lvl": 5, "hp": 2000.0, "dmg": 19.0, "spd": 3.6, "rad": 1.0, "sc": 1.5, "aggro": 12.0,
+		"x": 66.0, "z": 40.0, "model": "trogg", "kind": "skull", "respawn": 300.0, "xp": 130,
+		"say": "Grik'nir: Buzzz! Donacaksınız!", "drops": ["axe_grik", "nk_grik"]},
+	"choksul": {"name": "Chok'sul", "title": "Ogre Savaş Başı", "lvl": 7, "hp": 3400.0, "dmg": 30.0, "spd": 3.4, "rad": 1.4, "sc": 1.5, "aggro": 12.0,
+		"x": -70.0, "z": -28.0, "model": "ogre", "kind": "skull", "respawn": 300.0, "xp": 200,
+		"say": "Chok'sul: Ezin! Hepsini ezin!", "drops": ["hammer_chok", "wt_chok"]},
+	"hogger": {"name": "Hogger", "title": "Gnoll Elebaşı", "lvl": 8, "hp": 4400.0, "dmg": 28.0, "spd": 4.0, "rad": 1.1, "sc": 1.6, "aggro": 12.0,
+		"x": 62.0, "z": -38.0, "model": "gnoll", "kind": "skull", "respawn": 300.0, "xp": 280,
+		"say": "Hogger: Grrr... Taze et! Yiiipe!", "drops": ["lg_hogger", "wr_hogger", "tr_hogger"]},
+	"vancleef": {"name": "Edwin VanCleef", "title": "Defias Elebaşı", "lvl": 9, "hp": 6500.0, "dmg": 30.0, "spd": 4.4, "rad": 0.9, "sc": 1.3, "aggro": 12.0,
+		"x": -40.0, "z": 70.0, "model": "vancleef", "kind": "dwarf", "respawn": 360.0, "xp": 400,
+		"say": "VanCleef: Beni durduramazsınız! Muhafızlar, saldırın!", "drops": ["sword_cruel", "helm_defias", "bk_edwin", "rg_vc"]},
+	"ragnaros": {"name": "Ragnaros", "title": "Ateş Efendisi", "lvl": 10, "hp": 24000.0, "dmg": 60.0, "spd": 0.0, "rad": 4.6, "sc": 1.0, "aggro": 0.0, "reach": 1.9, "yoff": 1.3,
+		"x": 0.0, "z": -64.0, "model": "ragnaros", "kind": "skull", "respawn": 600.0, "xp": 900,
+		"say": "Ragnaros: SİZİ KÜÇÜK FANİLER! ATEŞİMDE YANACAKSINIZ!", "drops": ["helm_rag", "ch_rag", "tr_core"]},
+}
+
 const VENDORS := {
 	"hilda": ["pot_heal", "pot_big", "helm_cap", "helm_iron", "so_pad", "so_iron", "bk_cloak", "ch_leather", "ch_mail", "wr_cloth", "wr_iron",
 		"hd_glove", "hd_iron", "wt_belt", "wt_iron", "lg_leather", "lg_mail", "ft_hide", "ft_iron", "rg_iron", "nk_tooth"],
@@ -67,6 +89,21 @@ class Mob:
 	var loot_money := 0
 	var fade_t := 0.0
 	var sparkle: MeshInstance3D
+	var boss := ""
+	var title := ""
+	var reach := 1.3
+	var yoff := 0.0
+	var temp := false
+	var gc := false
+	var engaged := false
+	var respawn := 32.0
+	var cd := {}
+	var flags := {}
+	var eat_t := 0.0
+	var atk_int := 2.0
+	var base_dmg := 0.0
+	var base_spd := 0.0
+	var owner_m = null
 	var node: Node3D
 	var legs: Array = []
 	var id: int
@@ -82,6 +119,7 @@ var G := {}
 var vendor_npc = null
 var vendor_tab := 0
 var loot_mob = null
+var next_id := 100
 var save_t := 0.0
 const SAVE_PATH := "user://cuce_save.json"
 var cam: Camera3D
@@ -172,6 +210,7 @@ func _ready() -> void:
 	_spawn_player()
 	_spawn_npcs()
 	_spawn_mobs()
+	_spawn_bosses()
 	_setup_snow()
 	hud = HudScript.new()
 	add_child(hud)
@@ -667,7 +706,7 @@ func _spawn_player() -> void:
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
 		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
-		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0}
+		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
 	P["hp"] = float(max_hp())
@@ -788,6 +827,110 @@ func _spawn_mobs() -> void:
 		add_child(m.node)
 		mobs.append(m)
 		n += 1
+
+func _free_spot(x: float, z: float) -> Vector2:
+	for i in 60:
+		var a := float(i) * 2.4
+		var r := float(i) * 0.5
+		var px := x + cos(a) * r
+		var pz := z + sin(a) * r
+		var ok := true
+		for o in obs:
+			if Vector2(o.x - px, o.y - pz).length() < o.z + 2.5:
+				ok = false
+				break
+		if ok:
+			return Vector2(px, pz)
+	return Vector2(x, z)
+
+func _make_boss_model(id: String) -> Node3D:
+	match id:
+		"arctikus": return Dwarf.make_bear({"fur": Color("e8eef4"), "dk": Color("9aa8b8"), "lt": Color("ffffff")})
+		"grik": return Dwarf.make_trogg(true)
+		"choksul": return Dwarf.make_ogre()
+		"hogger": return Dwarf.make_gnoll(true)
+		"vancleef": return Dwarf.make_dwarf({"skin": Color("e8c0a0"), "metal": Color("5a2a2a"), "cloth": Color("a32a2a"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
+		_: return Dwarf.make_ragnaros()
+
+func _humanoid_legs(node: Node3D) -> Array:
+	if node.has_meta("legs"):
+		return node.get_meta("legs")
+	var r: Dictionary = node.get_meta("rig")
+	return [r["legL"], r["legR"], r["legR"], r["legL"]]
+
+func _spawn_bosses() -> void:
+	var i := 0
+	for id in BOSSES:
+		var d: Dictionary = BOSSES[id]
+		var m := Mob.new()
+		var sp := Vector2(d["x"], d["z"]) if id == "ragnaros" else _free_spot(d["x"], d["z"])
+		m.boss = id
+		m.kind = d["kind"]
+		m.nm = d["name"]
+		m.title = d["title"]
+		m.lvl = d["lvl"]
+		m.x = sp.x
+		m.z = sp.y
+		m.hx = sp.x
+		m.hz = sp.y
+		m.wx = sp.x
+		m.wz = sp.y
+		m.yaw = 0.0 if id != "ragnaros" else 0.0
+		m.maxhp = d["hp"]
+		m.hp = m.maxhp
+		m.dmg = d["dmg"]
+		m.base_dmg = m.dmg
+		m.spd = d["spd"]
+		m.base_spd = m.spd
+		m.aggro = d["aggro"]
+		m.rad = d["rad"]
+		m.sc = d["sc"]
+		m.reach = d.get("reach", 1.3)
+		m.yoff = d.get("yoff", 0.0)
+		m.respawn = d["respawn"]
+		m.atk_int = 2.4
+		m.id = 900 + i
+		m.node = _make_boss_model(id)
+		m.node.scale = Vector3.ONE * m.sc
+		m.legs = _humanoid_legs(m.node)
+		add_child(m.node)
+		m.node.position = Vector3(m.x, height_at(m.x, m.z) + m.yoff, m.z)
+		mobs.append(m)
+		i += 1
+
+func spawn_add(owner_m, nm: String, model: String, lvl: int, hp: float, dmg: float, spd: float, sc: float, off: Vector2) -> void:
+	var m := Mob.new()
+	m.kind = "skull"
+	m.nm = nm
+	m.lvl = lvl
+	m.x = owner_m.x + off.x
+	m.z = owner_m.z + off.y
+	m.hx = m.x
+	m.hz = m.z
+	m.wx = m.x
+	m.wz = m.z
+	m.maxhp = hp
+	m.hp = hp
+	m.dmg = dmg
+	m.spd = spd
+	m.aggro = 30.0
+	m.rad = 0.7 * sc
+	m.sc = sc
+	m.temp = true
+	m.owner_m = owner_m
+	m.state = "chase"
+	m.id = next_id
+	next_id += 1
+	match model:
+		"gnoll": m.node = Dwarf.make_gnoll(false)
+		"ember": m.node = Dwarf.make_ember()
+		_: m.node = Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
+	m.node.scale = Vector3.ONE * sc
+	m.legs = _humanoid_legs(m.node)
+	add_child(m.node)
+	m.node.position = Vector3(m.x, height_at(m.x, m.z), m.z)
+	mobs.append(m)
+	ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.5, Color("ffb060") if model == "ember" else Color("c9b8a0"), 0.5)
 
 func _setup_snow() -> void:
 	var pm := ParticleProcessMaterial.new()
@@ -1057,7 +1200,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 					open_talk()
 				else:
 					for m in mobs:
-						if m.dead and (not m.loot.is_empty() or m.loot_money > 0) and Vector2(m.x - P["x"], m.z - P["z"]).length() < 4.0:
+						if m.dead and (not m.loot.is_empty() or m.loot_money > 0) and Vector2(m.x - P["x"], m.z - P["z"]).length() < 4.0 + (m.rad if m.boss != "" else 0.0):
 							open_loot(m)
 							break
 			KEY_TAB:
@@ -1165,13 +1308,17 @@ func kill_mob(m) -> void:
 		P["target"] = null
 		P["auto"] = false
 	var xp := roundi((14.0 + m.lvl * 9.0) * clampf(1.0 + (m.lvl - P["lvl"]) * 0.15, 0.2, 1.6))
+	if m.boss != "":
+		xp = BOSSES[m.boss]["xp"]
+		_boss_reset(m)
+		hud.banner("BOSS ÖLDÜ", m.nm)
+		sfx.play("quest")
 	hud.say("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
 	roll_loot(m)
 	quest_kill(m)
 	gain_xp(xp)
 
-func roll_loot(m) -> void:
-	m.loot = []
+func _normal_loot(m) -> void:
 	m.loot_money = 4 + m.lvl * 5 + randi() % 6
 	var junk := {"Kurt": "j_wolf", "Yaban Domuzu": "j_boar", "Dağ Ayısı": "j_bear"}
 	if randf() < 0.55:
@@ -1192,7 +1339,18 @@ func roll_loot(m) -> void:
 		var pl: Array = Items.pool(rar, 1 if rar == 4 else maxi(1, m.lvl - 2), 10 if rar == 4 else m.lvl + 2)
 		if not pl.is_empty():
 			m.loot.append({"id": pl[randi() % pl.size()], "n": 1})
-	m.fade_t = T + 25.0
+
+func roll_loot(m) -> void:
+	m.loot = []
+	if m.boss != "":
+		_boss_loot(m)
+	elif m.temp:
+		m.loot_money = 6 + m.lvl * 4
+		if randf() < 0.3:
+			m.loot.append({"id": "pot_heal", "n": 1})
+	else:
+		_normal_loot(m)
+	m.fade_t = T + (90.0 if m.boss != "" else 25.0)
 	var sp := MeshInstance3D.new()
 	var sm := SphereMesh.new()
 	sm.radius = 0.13
@@ -1206,10 +1364,23 @@ func roll_loot(m) -> void:
 	add_child(sp)
 	m.sparkle = sp
 
+func _boss_loot(m) -> void:
+	var d: Dictionary = BOSSES[m.boss]
+	m.loot_money = 300 + m.lvl * 120 + randi() % 200
+	var drops: Array = d["drops"]
+	var main_id: String = drops[randi() % drops.size()]
+	m.loot.append({"id": main_id, "n": 1})
+	for id in drops:
+		if id != main_id and randf() < 0.3:
+			m.loot.append({"id": id, "n": 1})
+	if m.boss == "ragnaros" and randf() < 0.15:
+		m.loot.append({"id": "hammer_sulf", "n": 1})
+	m.loot.append({"id": "pot_big", "n": 2})
+
 func open_loot(m) -> void:
 	if m.loot.is_empty() and m.loot_money <= 0:
 		return
-	if Vector2(m.x - P["x"], m.z - P["z"]).length() > 5.0:
+	if Vector2(m.x - P["x"], m.z - P["z"]).length() > 5.0 + (m.rad if m.boss != "" else 0.0):
 		hud.say("Çok uzaktasın.", Color("ff6a5a"))
 		return
 	loot_mob = m
@@ -1444,6 +1615,11 @@ func hurt_player(raw: float, m) -> void:
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
 		sfx.play("block", -6)
 		add_rage(5.0)
+	player_hp_loss(d)
+
+func player_hp_loss(d: int) -> void:
+	if P["dead"]:
+		return
 	P["hp"] -= d
 	P["combat_t"] = T
 	sfx.play("hurt", -4)
@@ -1451,6 +1627,8 @@ func hurt_player(raw: float, m) -> void:
 	float_text(Vector3(P["x"], P["y"] + 2.2, P["z"]), "-%d" % d, Color("ff6a5a"), false)
 	if P["hp"] <= 0.0 and not P["dead"]:
 		P["dead"] = true
+		P["dot_t"] = 0.0
+		P["slow_t"] = 0.0
 		sfx.play("die")
 		P["dead_t"] = T
 		P["auto"] = false
@@ -1710,8 +1888,19 @@ func step(dt: float) -> void:
 		ix = 0.0
 		iy = 0.0
 	_step_player(dt, ix, iy)
+	if P["slow_t"] > 0.0:
+		P["slow_t"] -= dt
+	if P["dot_t"] > 0.0 and not P["dead"]:
+		P["dot_t"] -= dt
+		P["dot_k"] -= dt
+		if P["dot_k"] <= 0.0:
+			P["dot_k"] += 1.0
+			player_hp_loss(maxi(1, roundi(P["dot_v"])))
 	for m in mobs:
 		_step_mob(m, dt)
+	for i in range(mobs.size() - 1, -1, -1):
+		if mobs[i].gc:
+			mobs.remove_at(i)
 	_step_npcs(dt)
 	_animate_player(dt)
 	_update_camera(dt)
@@ -1721,7 +1910,7 @@ func step(dt: float) -> void:
 func _check_windows() -> void:
 	if vendor_npc != null and Vector2(vendor_npc["x"] - P["x"], vendor_npc["z"] - P["z"]).length() > 7.0:
 		close_vendor()
-	if loot_mob != null and Vector2(loot_mob.x - P["x"], loot_mob.z - P["z"]).length() > 6.5:
+	if loot_mob != null and Vector2(loot_mob.x - P["x"], loot_mob.z - P["z"]).length() > 6.5 + (loot_mob.rad if loot_mob.boss != "" else 0.0):
 		close_loot()
 
 func _step_player(dt: float, ix: float, iy: float) -> void:
@@ -1732,7 +1921,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 		var fz := -cos(cam_yaw)
 		var rx := -fz
 		var rz := fx
-		var sp := 5.0
+		var sp := 5.0 * (0.5 if P["slow_t"] > 0.0 else 1.0)
 		var chm = P["charge"]
 		if chm != null and (chm.dead or P["charge_t"] > 2.0):
 			P["charge"] = null
@@ -1822,6 +2011,8 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 			P["x"] = 0.0
 			P["z"] = 7.0
 			P["combat_t"] = -99.0
+			P["dot_t"] = 0.0
+			P["slow_t"] = 0.0
 			hud.show_dead(false)
 			for m in mobs:
 				if m.state == "chase":
@@ -1829,27 +2020,247 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 			hud.say("Kamp ateşinde canlandın.", Color("6aa8ff"))
 	P["y"] = height_at(P["x"], P["z"]) + P["jy"]
 
+# ---------- boss yetenekleri ----------
+func _bpos(m) -> Vector3:
+	return Vector3(m.x, m.node.position.y + (7.0 if m.boss == "ragnaros" else 2.6 * m.sc), m.z)
+
+func _bready(m, key: String) -> bool:
+	return m.cd.get(key, 0.0) <= 0.0
+
+func _bset(m, key: String, t: float) -> void:
+	m.cd[key] = t
+
+func boss_say(m, text: String) -> void:
+	hud.say(text, Color("ffb050"))
+
+func boss_hit(m, mult: float, label: String) -> void:
+	hurt_player(m.dmg * mult * (0.9 + randf() * 0.2), m)
+	float_text(_bpos(m), label, Color("ffd060"), true)
+	m.lunge = 0.25
+	m.atk_t = maxf(m.atk_t, 1.2)
+
+## Büyü hasarı: zırh sayılmaz, bloklanmaz.
+func boss_spell(m, mult: float, label: String, col: Color) -> void:
+	var dmg := maxi(1, roundi(m.dmg * mult * (0.9 + randf() * 0.2) * 0.75))
+	player_hp_loss(dmg)
+	float_text(_bpos(m), label, col, true)
+	ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.8, col, 0.5)
+	m.atk_t = maxf(m.atk_t, 1.0)
+
+func knockback(m, dist: float) -> void:
+	var dx: float = P["x"] - m.x
+	var dz: float = P["z"] - m.z
+	var l := maxf(0.01, sqrt(dx * dx + dz * dz))
+	var c := collide(P["x"] + dx / l * dist, P["z"] + dz / l * dist, 0.5)
+	var rr := c.length()
+	if rr > WORLD_R:
+		c *= WORLD_R / rr
+	P["x"] = c.x
+	P["z"] = c.y
+
+func apply_dot(total_t: float, per_tick: float, label: String, col: Color) -> void:
+	P["dot_t"] = total_t
+	P["dot_v"] = per_tick
+	P["dot_k"] = 1.0
+	float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), label, col, false)
+
+func _boss_engage(m) -> void:
+	m.engaged = true
+	boss_say(m, BOSSES[m.boss]["say"])
+	hud.banner(m.nm.to_upper(), m.title)
+	sfx.play("shout")
+	match m.boss:
+		"hogger":
+			_bset(m, "sum", 0.0)
+		"ragnaros":
+			_bset(m, "wrath", 8.0)
+			_bset(m, "lava", 5.0)
+		"vancleef":
+			_bset(m, "stab", 5.0)
+			_bset(m, "poison", 6.0)
+		"choksul":
+			_bset(m, "slam", 5.0)
+		"grik":
+			_bset(m, "nova", 5.0)
+			_bset(m, "bolt", 2.0)
+		"arctikus":
+			_bset(m, "maul", 5.0)
+			_bset(m, "rend", 8.0)
+
+func _boss_reset(m) -> void:
+	m.engaged = false
+	m.cd = {}
+	m.flags = {}
+	m.eat_t = 0.0
+	m.dmg = m.base_dmg
+	m.spd = m.base_spd
+	m.atk_int = 2.4
+	for a in mobs:
+		if a.owner_m == m and not a.dead:
+			a.dead = true
+			a.died_at = T
+			a.fade_t = T
+			a.loot = []
+			a.loot_money = 0
+	if m.dead:
+		return
+	m.hp = minf(m.maxhp, m.hp)
+
+func _boss_summon(m, nm: String, model: String, n: int, hp: float, dmg: float, spd: float, sc: float, ring: float) -> void:
+	for i in n:
+		var a := float(i) / n * TAU + randf()
+		spawn_add(m, nm, model, m.lvl - 1, hp, dmg, spd, sc, Vector2(cos(a), sin(a)) * ring)
+
+## true: bu tur sıradan saldırı yapma.
+func _boss_ai(m, dt: float, d: float) -> bool:
+	for k in m.cd.keys():
+		m.cd[k] = maxf(0.0, m.cd[k] - dt)
+	var hpf: float = m.hp / m.maxhp
+	if m.eat_t > 0.0:
+		m.eat_t -= dt
+		m.hp = minf(m.maxhp, m.hp + m.maxhp * 0.06 * dt)
+		return true
+	var melee: bool = d <= m.rad + m.reach + 0.6
+	match m.boss:
+		"arctikus":
+			if hpf < 0.35 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.3
+				m.spd *= 1.25
+				boss_say(m, "Büyük Baba Arctikus öfkelendi!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if melee and _bready(m, "maul"):
+				_bset(m, "maul", 7.0)
+				boss_hit(m, 2.2, "Parçala!")
+				return true
+			if melee and _bready(m, "rend"):
+				_bset(m, "rend", 15.0)
+				apply_dot(8.0, m.dmg * 0.14, "Yırtma", Color("ff4a4a"))
+				m.atk_t = maxf(m.atk_t, 1.0)
+				return true
+		"grik":
+			if d <= 6.5 and _bready(m, "nova"):
+				_bset(m, "nova", 9.0)
+				boss_spell(m, 1.3, "Don Dalgası", Color("8ae0ff"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 6.0, Color("8ae0ff"), 0.6)
+				P["slow_t"] = 4.0
+				return true
+			if d > 5.0 and d < 17.0 and _bready(m, "bolt"):
+				_bset(m, "bolt", 5.0)
+				boss_spell(m, 0.9, "Buz Oku", Color("b8f0ff"))
+		"choksul":
+			if hpf < 0.3 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.35
+				m.atk_int = 1.8
+				boss_say(m, "Chok'sul: EZİN!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+			if d <= 7.0 and _bready(m, "slam"):
+				_bset(m, "slam", 9.0)
+				boss_spell(m, 1.5, "Yer Yarığı", Color("d8b070"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 7.0, Color("d8b070"), 0.6)
+				knockback(m, 7.0)
+				sfx.play("thunder", -4)
+				return true
+		"hogger":
+			if not m.flags.has("s0"):
+				m.flags["s0"] = true
+				boss_say(m, "Hogger gnoll çıraklarını çağırdı!")
+				_boss_summon(m, "Gnoll Çırağı", "gnoll", 2, 100.0, 9.0, 4.0, 0.9, 3.0)
+			if hpf < 0.5 and not m.flags.has("s1"):
+				m.flags["s1"] = true
+				boss_say(m, "Hogger: Yiiipe! Gelin, gelin!")
+				_boss_summon(m, "Gnoll Çırağı", "gnoll", 2, 100.0, 9.0, 4.0, 0.9, 3.0)
+			if hpf < 0.4 and not m.flags.has("eat"):
+				m.flags["eat"] = true
+				m.eat_t = 4.0
+				boss_say(m, "Hogger yemek yiyor ve canını yeniliyor!")
+				float_text(_bpos(m), "Yiyor...", Color("43d17f"), true)
+				return true
+			if melee and _bready(m, "cleave"):
+				_bset(m, "cleave", 8.0)
+				boss_hit(m, 1.7, "Pençe!")
+				return true
+		"vancleef":
+			for t in [0.75, 0.5, 0.25]:
+				var key := "w%d" % roundi(t * 100.0)
+				if hpf < t and not m.flags.has(key):
+					m.flags[key] = true
+					boss_say(m, "VanCleef: Muhafızlar! Şunları öldürün!")
+					_boss_summon(m, "Defias Haydudu", "defias", 2, 150.0, 11.0, 4.2, 1.0, 3.0)
+			if hpf < 0.5 and not m.flags.has("thrash"):
+				m.flags["thrash"] = true
+				m.atk_int = 1.5
+				boss_say(m, "VanCleef: Hiçbir şey beni durduramaz!")
+				float_text(_bpos(m), "Çılgınlık!", Color("ff6a3a"), true)
+			if melee and _bready(m, "stab"):
+				_bset(m, "stab", 8.0)
+				boss_hit(m, 2.0, "Sırttan Bıçak!")
+				return true
+			if melee and _bready(m, "poison"):
+				_bset(m, "poison", 12.0)
+				apply_dot(10.0, m.dmg * 0.1, "Ölümcül Zehir", Color("7be85a"))
+		"ragnaros":
+			if hpf < 0.5 and not m.flags.has("s1"):
+				m.flags["s1"] = true
+				boss_say(m, "Ragnaros: ALEV OĞULLARIM, ÖNÜNÜZE ÇIKIN!")
+				_boss_summon(m, "Alev Oğlu", "ember", 4, 220.0, 22.0, 3.8, 1.0, 8.0)
+			if hpf < 0.25 and not m.flags.has("s2"):
+				m.flags["s2"] = true
+				boss_say(m, "Ragnaros: ÇOK ERKEN GELDİNİZ!")
+				_boss_summon(m, "Alev Oğlu", "ember", 4, 220.0, 22.0, 3.8, 1.0, 8.0)
+			if _bready(m, "wrath"):
+				_bset(m, "wrath", 22.0)
+				boss_say(m, "Ragnaros: Ateşin gazabını tadın!")
+				boss_spell(m, 1.8, "Ragnaros'un Gazabı", Color("ff7a30"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z) + 1.5, m.z), 14.0, Color("ff7a30"), 0.8)
+				knockback(m, 12.0)
+				sfx.play("thunder", -2)
+				return true
+			if melee and _bready(m, "lava"):
+				_bset(m, "lava", 12.0)
+				boss_hit(m, 2.2, "Lav Patlaması")
+				return true
+			if d > m.rad + m.reach + 1.5 and d < 34.0 and _bready(m, "magma"):
+				_bset(m, "magma", 3.0)
+				boss_spell(m, 1.0, "Magma Topu", Color("ff9a40"))
+	return false
+
 func _step_mob(m, dt: float) -> void:
 	var node: Node3D = m.node
 	if m.dead:
 		var k: float = T - m.died_at
 		var kf: float = T - m.fade_t if m.fade_t > 0.0 else k - 0.8
-		if k < 0.8:
+		var gy: float = height_at(m.x, m.z) + m.yoff
+		if m.boss == "ragnaros":
+			node.rotation.z = 0.0
+			node.position.y = gy - minf(k, 2.5) * 1.2
+			if kf >= 0.0:
+				node.visible = false
+		elif k < 0.8:
 			node.rotation.z = lerpf(0.0, 1.5, k / 0.8)
-			node.position.y = height_at(m.x, m.z) + 0.1
+			node.position.y = gy + 0.1
 		elif kf < 0.0:
 			node.rotation.z = 1.5
-			node.position.y = height_at(m.x, m.z) + 0.1
+			node.position.y = gy + 0.1
 		elif kf < 0.8:
 			node.scale = Vector3.ONE * m.sc * maxf(0.001, 1.0 - kf / 0.8)
 		else:
 			node.visible = false
+		if m.temp and kf >= 0.8 and not m.gc:
+			m.gc = true
+			node.queue_free()
+			hud.plate_hide(m.id)
+			if loot_mob == m:
+				close_loot()
+			return
 		if m.sparkle != null:
 			m.sparkle.position.y = height_at(m.x, m.z) + 0.8 + sin(T * 4.0) * 0.1
 			if kf >= 0.0 or loot_mob == null and m.loot.is_empty():
 				m.sparkle.queue_free()
 				m.sparkle = null
-		if k > 32.0:
+		if k > m.respawn and not m.temp:
 			m.dead = false
 			m.hp = m.maxhp
 			m.x = m.hx
@@ -1868,6 +2279,8 @@ func _step_mob(m, dt: float) -> void:
 			node.visible = true
 			node.rotation.z = 0.0
 			node.scale = Vector3.ONE * m.sc
+			node.position.y = height_at(m.x, m.z) + m.yoff
+			_boss_reset(m)
 		return
 	var dx: float = P["x"] - m.x
 	var dz: float = P["z"] - m.z
@@ -1889,6 +2302,13 @@ func _step_mob(m, dt: float) -> void:
 				return
 	if mode == "play" and not P["dead"] and m.state == "idle" and d < m.aggro:
 		m.state = "chase"
+	if m.boss != "":
+		if m.state == "chase" and not m.engaged:
+			_boss_engage(m)
+		elif m.state != "chase" and m.engaged:
+			_boss_reset(m)
+		if m.state == "chase" and m.spd == 0.0 and d > 40.0:
+			m.state = "return"
 	if P["dead"] and m.state == "chase":
 		m.state = "return"
 	if m.stun > 0.0:
@@ -1897,15 +2317,18 @@ func _step_mob(m, dt: float) -> void:
 		var hd := Vector2(m.x - m.hx, m.z - m.hz).length()
 		if hd > 38.0:
 			m.state = "return"
-		elif d > m.rad + 0.9:
+		elif d > m.rad + 0.9 and m.eat_t <= 0.0:
 			var c := collide(m.x + dx / d * msp * dt, m.z + dz / d * msp * dt, m.rad * 0.6)
 			m.x = c.x
 			m.z = c.y
 			moving = true
 		m.yaw = atan2(dx, dz)
 		m.atk_t -= dt
-		if d <= m.rad + 1.3 and m.atk_t <= 0.0:
-			m.atk_t = 2.0
+		var busy := false
+		if m.boss != "":
+			busy = _boss_ai(m, dt, d)
+		if not busy and d <= m.rad + m.reach and m.atk_t <= 0.0:
+			m.atk_t = m.atk_int
 			hurt_player(m.dmg * (0.85 + randf() * 0.3), m)
 			m.lunge = 0.2
 	elif m.state == "return":
@@ -1938,7 +2361,7 @@ func _step_mob(m, dt: float) -> void:
 			moving = true
 	if m.lunge > 0.0:
 		m.lunge -= dt
-	var y := height_at(m.x, m.z)
+	var y: float = height_at(m.x, m.z) + m.yoff
 	node.position = Vector3(m.x, y, m.z)
 	node.rotation = Vector3(0, m.yaw, 0)
 	if m.lunge > 0.0:
@@ -2031,6 +2454,10 @@ func _lvl_color(l: int) -> Color:
 	return Color("a8a8a8")
 
 func _mob_kind(m) -> String:
+	if m.kind in ["skull", "dwarf", "bear"] and m.boss != "":
+		return m.kind
+	if m.temp:
+		return "skull"
 	if m.nm == "Kurt":
 		return "wolf"
 	if m.nm == "Yaban Domuzu":
@@ -2065,10 +2492,10 @@ func _update_hud() -> void:
 	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np})
 	# isim levhaları
 	for m in mobs:
-		var show: bool = mode == "play" and not m.dead and Vector2(m.x - P["x"], m.z - P["z"]).length() < 22.0
-		var wp := Vector3(m.x, m.node.position.y + 1.7 * m.sc + 0.3, m.z)
+		var show: bool = mode == "play" and not m.dead and Vector2(m.x - P["x"], m.z - P["z"]).length() < (40.0 if m.boss != "" else 22.0)
+		var wp := Vector3(m.x, m.node.position.y + (1.7 * m.sc + 0.3 if m.boss != "ragnaros" else 8.8), m.z)
 		if show and not cam.is_position_behind(wp):
-			hud.plate(m.id, cam.unproject_position(wp), "%s %d" % [m.nm, m.lvl], _lvl_color(m.lvl), m.hp / m.maxhp, "", "", P["target"] == m)
+			hud.plate(m.id, cam.unproject_position(wp), "%s %d" % [m.nm, m.lvl], _lvl_color(m.lvl), m.hp / m.maxhp, ("<" + m.title + ">") if m.boss != "" else "", "", P["target"] == m)
 		else:
 			hud.plate_hide(m.id)
 	for n in npcs:

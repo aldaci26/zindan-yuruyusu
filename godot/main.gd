@@ -30,11 +30,13 @@ const CAMPS := [
 	{"kind": "darkiron", "x": -78.0, "z": 8.0, "n": 5},
 ]
 
+const MAX_LVL := 20
+
 const SWAMP_MTYPES := {
-	"murloc": {"name": "Murloc", "lo": 8, "hi": 10, "hp": 40.0, "dmg": 2.8, "spd": 4.2, "aggro": 9.0, "rad": 0.6, "sc": 1.05},
-	"shaman": {"name": "Murloc Şamanı", "lo": 9, "hi": 10, "hp": 34.0, "dmg": 2.7, "spd": 3.4, "aggro": 13.0, "rad": 0.6, "sc": 1.05, "ranged": 12.0},
-	"croc": {"name": "Timsah", "lo": 8, "hi": 10, "hp": 52.0, "dmg": 3.0, "spd": 3.9, "aggro": 8.0, "rad": 1.0, "sc": 1.15},
-	"bog": {"name": "Bataklık Canavarı", "lo": 9, "hi": 10, "hp": 64.0, "dmg": 3.2, "spd": 3.2, "aggro": 8.0, "rad": 1.0, "sc": 1.2},
+	"murloc": {"name": "Murloc", "lo": 8, "hi": 11, "hp": 40.0, "dmg": 2.8, "spd": 4.2, "aggro": 9.0, "rad": 0.6, "sc": 1.05},
+	"shaman": {"name": "Murloc Şamanı", "lo": 10, "hi": 12, "hp": 34.0, "dmg": 2.7, "spd": 3.4, "aggro": 13.0, "rad": 0.6, "sc": 1.05, "ranged": 12.0},
+	"croc": {"name": "Timsah", "lo": 9, "hi": 12, "hp": 52.0, "dmg": 3.0, "spd": 3.9, "aggro": 8.0, "rad": 1.0, "sc": 1.15},
+	"bog": {"name": "Bataklık Canavarı", "lo": 11, "hi": 13, "hp": 64.0, "dmg": 3.2, "spd": 3.2, "aggro": 8.0, "rad": 1.0, "sc": 1.2},
 }
 
 const SWAMP_CAMPS := [
@@ -60,9 +62,9 @@ const QUESTS := {
 		"text": "Murloc şamanları doğuda kara bir ayin yapıyor. Dördünü durdur.", "done": "Ayin bozuldu! İşte ödülün."},
 	"q_croc": {"title": "Timsah Avı", "kill": "Timsah", "n": 5, "lvl": 8, "xp": 740, "money": 2700, "rew": ["lg_marsh", "sh_marsh", "wt_marsh"],
 		"text": "Timsahlar kervan yolunu kapatıyor. Beşini avla.", "done": "Yol açıldı. Seç bakalım."},
-	"q_bog": {"title": "Bataklığın Bekçileri", "kill": "Bataklık Canavarı", "n": 4, "lvl": 9, "xp": 900, "money": 3200, "rew": ["axe_marsh", "ch_marsh", "ft_marsh"],
+	"q_bog": {"title": "Bataklığın Bekçileri", "kill": "Bataklık Canavarı", "n": 4, "lvl": 10, "xp": 900, "money": 3200, "rew": ["axe_marsh", "ch_marsh", "ft_marsh"],
 		"text": "Yosunlu devler gölün kıyısında dolaşıyor. Dördünü yık.", "done": "Devler yıkıldı. Ödülünü al."},
-	"q_gruff": {"title": "Gruff Swiftbite", "kill": "Gruff Swiftbite", "n": 1, "lvl": 10, "xp": 1300, "money": 5000, "rew": ["axe_gruff", "bk_gruff", "tr_gruff"],
+	"q_gruff": {"title": "Gruff Swiftbite", "kill": "Gruff Swiftbite", "n": 1, "lvl": 12, "xp": 1300, "money": 5000, "rew": ["axe_gruff", "bk_gruff", "tr_gruff"],
 		"text": "Dev timsah Gruff Swiftbite gölün dibinden çıkıp köyleri yutuyor. Onu bitir.", "done": "Gruff devrildi! Bataklık sana minnettar."},
 	"q_trogg": {"title": "Trogg Tehdidi", "kill": "Trogg", "n": 5, "lvl": 3, "xp": 220, "money": 600, "rew": ["sh_gate", "wt_iron", "axe_forge"],
 		"text": "Doğudaki trogglar sürülerimize saldırıyor. Beş tanesini temizle.", "done": "Doğu yolu rahatladı. Al, hak ettin."},
@@ -110,7 +112,7 @@ const BOSSES := {
 	"vancleef": {"name": "Edwin VanCleef", "title": "Defias Elebaşı", "lvl": 9, "hp": 6500.0, "dmg": 30.0, "spd": 4.4, "rad": 0.9, "sc": 1.3, "aggro": 12.0,
 		"x": -40.0, "z": 70.0, "model": "vancleef", "kind": "dwarf", "respawn": 360.0, "xp": 400,
 		"say": "VanCleef: Beni durduramazsınız! Muhafızlar, saldırın!", "drops": ["sword_cruel", "helm_defias", "bk_edwin", "rg_vc"]},
-	"gruff": {"name": "Gruff Swiftbite", "title": "Bataklık Devi", "lvl": 10, "hp": 9000.0, "dmg": 34.0, "spd": 4.2, "rad": 1.5, "sc": 2.0, "aggro": 12.0, "map": "swamp",
+	"gruff": {"name": "Gruff Swiftbite", "title": "Bataklık Devi", "lvl": 14, "hp": 9000.0, "dmg": 34.0, "spd": 4.2, "rad": 1.5, "sc": 2.0, "aggro": 12.0, "map": "swamp",
 		"x": -26.0, "z": -66.0, "model": "gruff", "kind": "skull", "respawn": 420.0, "xp": 600,
 		"say": "Gruff Swiftbite çamurdan fırlayıp kükredi!", "drops": ["axe_gruff", "bk_gruff", "tr_gruff", "wt_gruff"]},
 	"ragnaros": {"name": "Ragnaros", "title": "Ateş Efendisi", "lvl": 10, "hp": 24000.0, "dmg": 60.0, "spd": 0.0, "rad": 4.6, "sc": 1.0, "aggro": 0.0, "reach": 1.9, "yoff": 1.3,
@@ -1074,7 +1076,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
@@ -1094,7 +1096,7 @@ func max_hp() -> int:
 
 func atk() -> float:
 	var wd: float = (G["wmin"] + G["wmax"]) * 0.5 / G["wspd"] * 1.5
-	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0)
+	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0) * (1.5 if P["rk_t"] > 0.0 else 1.0)
 
 func crit_chance() -> float:
 	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01
@@ -1114,6 +1116,8 @@ func inv_changed() -> void:
 		invui.refresh()
 
 func xp_need(l: int) -> float:
+	if l >= 10:
+		return 450.0 + (l - 9) * 180.0
 	return 50.0 + 40.0 * l
 
 const NPCDEF := [
@@ -1839,11 +1843,11 @@ func _unhandled_input(ev: InputEvent) -> void:
 		match ev.keycode:
 			KEY_SPACE: jump()
 			KEY_R: toggle_auto()
-			KEY_1: ability(0)
-			KEY_2: ability(1)
-			KEY_3: ability(2)
-			KEY_4: ability(3)
-			KEY_5: ability(4)
+			KEY_1: ability(9 if ev.shift_pressed else 0)
+			KEY_2: ability(10 if ev.shift_pressed else 1)
+			KEY_3: ability(11 if ev.shift_pressed else 2)
+			KEY_4: ability(12 if ev.shift_pressed else 3)
+			KEY_5: ability(13 if ev.shift_pressed else 4)
 			KEY_6: ability(5)
 			KEY_7: ability(6)
 			KEY_8: ability(7)
@@ -2090,10 +2094,10 @@ func take_loot(i: int) -> void:
 		close_loot()
 
 func gain_xp(n: float) -> void:
-	if P["lvl"] >= 10:
+	if P["lvl"] >= MAX_LVL:
 		return
 	P["xp"] += n
-	while P["lvl"] < 10 and P["xp"] >= xp_need(P["lvl"]):
+	while P["lvl"] < MAX_LVL and P["xp"] >= xp_need(P["lvl"]):
 		P["xp"] -= xp_need(P["lvl"])
 		P["lvl"] += 1
 		P["hp"] = float(max_hp())
@@ -2134,7 +2138,7 @@ func _face(m) -> void:
 func ability(i: int) -> void:
 	if mode != "play" or P["dead"] or dlg_open:
 		return
-	if i == 9:
+	if i == HudScript.POT:
 		use_potion()
 		return
 	var a: Dictionary = HudScript.ABIL[i]
@@ -2150,7 +2154,7 @@ func ability(i: int) -> void:
 	var kind: String = a["kind"]
 	var m = P["target"] if (P["target"] != null and not P["target"].dead) else null
 	var pp := Vector3(P["x"], P["y"], P["z"])
-	var melee := kind in ["strike", "rend", "execute", "mortal"]
+	var melee := kind in ["strike", "rend", "execute", "mortal", "slam"]
 	if melee or kind == "charge":
 		if m == null:
 			m = nearest_mob(25.0 if kind == "charge" else 6.0)
@@ -2181,6 +2185,42 @@ func ability(i: int) -> void:
 		"strike":
 			swing()
 			hit_mob(m, roll(atk() * 2.3), Color("ffd8a0"))
+		"slam":
+			swing()
+			sfx.play("thunder", -4)
+			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.6, Color("bfc8e0"), 0.45)
+			hit_mob(m, roll(atk() * 2.8), Color("dfe6ff"))
+			m.stun = 2.0
+			float_text(Vector3(m.x, 2.6 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), "Sersem!", Color("ffe45c"), false)
+		"fear":
+			sfx.play("shout")
+			ring_fx(pp, 8.0, Color("b07aff"), 0.6)
+			var feared := 0
+			for o in mobs:
+				if not o.dead and o.boss == "" and dist_to(o) <= 8.0:
+					o.stun = 4.0
+					feared += 1
+			float_text(pp + Vector3(0, 2.6, 0), "Yıldırtıcı Nara!", Color("d0a8ff"), true)
+			if feared == 0:
+				hud.say("Yakında düşman yok.", Color("ff9a8a"))
+		"reck":
+			sfx.play("shout")
+			P["rk_t"] = 12.0
+			ring_fx(pp, 3.4, Color("ff7a2a"), 0.6)
+			float_text(pp + Vector3(0, 2.6, 0), "Delice Öfke!", Color("ff9a4a"), true)
+		"laststand":
+			sfx.play("level", -4)
+			var heal := float(max_hp()) * 0.35
+			P["hp"] = minf(float(max_hp()), P["hp"] + heal)
+			add_rage(30.0)
+			ring_fx(pp, 2.4, Color("5ae07a"), 0.7)
+			float_text(pp + Vector3(0, 2.6, 0), "+%d" % roundi(heal), Color("5ae07a"), true)
+		"bstorm":
+			sfx.play("whirl")
+			P["bst_t"] = 6.0
+			P["bst_tick"] = 0.0
+			ring_fx(pp, 5.0, Color("d0d8e8"), 0.6)
+			float_text(pp + Vector3(0, 2.6, 0), "Kılıç Fırtınası!", Color("e8eeff"), true)
 		"mortal":
 			swing()
 			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.6, Color("ff5040"), 0.45)
@@ -2276,7 +2316,7 @@ func toggle_auto() -> void:
 
 func hurt_player(raw: float, m) -> void:
 	var arm: float = armor_total()
-	var d := maxi(1, roundi(raw * (1.0 - minf(0.75, arm / (arm + 30.0 + m.lvl * 4.0)))))
+	var d := maxi(1, roundi(raw * (1.0 - minf(0.75, arm / (arm + 30.0 + m.lvl * 4.0))) * (1.2 if P["rk_t"] > 0.0 else 1.0)))
 	if P["sb_t"] > 0.0:
 		d = maxi(1, roundi(d * 0.3))
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
@@ -2663,8 +2703,20 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 		P["atk_t"] = maxf(0.0, P["atk_t"] - dt)
 		P["gcd"] = maxf(0.0, P["gcd"] - dt)
 		P["pot_cd"] = maxf(0.0, P["pot_cd"] - dt)
-		for i in 9:
+		for i in P["cd"].size():
 			P["cd"][i] = maxf(0.0, P["cd"][i] - dt)
+		P["rk_t"] = maxf(0.0, P["rk_t"] - dt)
+		if P["bst_t"] > 0.0:
+			P["bst_t"] -= dt
+			P["bst_tick"] -= dt
+			P["spin"] = 0.3
+			if P["bst_tick"] <= 0.0:
+				P["bst_tick"] = 0.8
+				var ppb := Vector3(P["x"], P["y"], P["z"])
+				ring_fx(ppb, 5.0, Color("c8d4e8"), 0.35)
+				for o in mobs:
+					if not o.dead and dist_to(o) <= 5.0:
+						hit_mob(o, roll(atk() * 1.3), Color("d8e4ff"))
 		P["bs_t"] = maxf(0.0, P["bs_t"] - dt)
 		P["sb_t"] = maxf(0.0, P["sb_t"] - dt)
 		P["spin"] = maxf(0.0, P["spin"] - dt)
@@ -3195,6 +3247,10 @@ func _update_hud() -> void:
 		buffs.append({"kind": "shout", "t": P["bs_t"]})
 	if P["sb_t"] > 0.0:
 		buffs.append({"kind": "shield", "t": P["sb_t"]})
+	if P["rk_t"] > 0.0:
+		buffs.append({"kind": "reck", "t": P["rk_t"]})
+	if P["bst_t"] > 0.0:
+		buffs.append({"kind": "bstorm", "t": P["bst_t"]})
 	var t0 = P["target"]
 	var exec_ok: bool = t0 != null and not t0.dead and t0.hp <= t0.maxhp * 0.2 and P["lvl"] >= 4
 	hud.update_player({"lvl": P["lvl"], "hp": P["hp"], "maxhp": max_hp(), "rage": P["rage"], "xp": P["xp"], "xpneed": xp_need(P["lvl"]),

@@ -12,6 +12,11 @@ const BG := {
 	"mortal": [Color("6a1414"), Color("160505")],
 	"whirl": [Color("2a7a8a"), Color("0a2a30")],
 	"potion": [Color("3a2a2a"), Color("120c0c")],
+	"slam": [Color("5a5a6a"), Color("181820")],
+	"fear": [Color("5a2a6a"), Color("1a0a24")],
+	"reck": [Color("a82a1a"), Color("3a0a05")],
+	"laststand": [Color("2a7a3a"), Color("0a2a10")],
+	"bstorm": [Color("7a7a8a"), Color("20202a")],
 }
 
 static func pt(r: Rect2, x: float, y: float) -> Vector2:
@@ -93,6 +98,30 @@ static func draw(ci: CanvasItem, kind: String, r: Rect2) -> void:
 			arc(ci, r, 0.5, 0.5, 0.19, 3.4, 7.7, Color("bfe6ee"), 0.07)
 			poly(ci, r, [[0.8, 0.46], [0.94, 0.62], [0.68, 0.62]], steel)
 			poly(ci, r, [[0.4, 0.42], [0.54, 0.34], [0.52, 0.52]], Color("bfe6ee"))
+		"slam":
+			poly(ci, r, [[0.2, 0.2], [0.8, 0.2], [0.8, 0.62], [0.5, 0.86], [0.2, 0.62]], steel)
+			poly(ci, r, [[0.28, 0.28], [0.72, 0.28], [0.72, 0.58], [0.5, 0.76], [0.28, 0.58]], Color("5a6a8a"))
+			line(ci, r, [0.6, 0.1], [0.4, 0.5], Color("ffe45c"), 0.06)
+			line(ci, r, [0.4, 0.5], [0.6, 0.5], Color("ffe45c"), 0.06)
+			line(ci, r, [0.6, 0.5], [0.38, 0.9], Color("ffe45c"), 0.06)
+		"fear":
+			circ(ci, r, 0.5, 0.42, 0.26, Color("d8d0e8"))
+			poly(ci, r, [[0.3, 0.55], [0.7, 0.55], [0.64, 0.82], [0.36, 0.82]], Color("d8d0e8"))
+			circ(ci, r, 0.4, 0.42, 0.07, Color("2a0a3a"))
+			circ(ci, r, 0.6, 0.42, 0.07, Color("2a0a3a"))
+			line(ci, r, [0.44, 0.7], [0.44, 0.82], Color("2a0a3a"), 0.03)
+			line(ci, r, [0.56, 0.7], [0.56, 0.82], Color("2a0a3a"), 0.03)
+		"reck":
+			poly(ci, r, [[0.5, 0.06], [0.7, 0.4], [0.62, 0.38], [0.78, 0.7], [0.5, 0.94], [0.22, 0.7], [0.36, 0.4], [0.3, 0.42]], Color("ff8a2a"))
+			poly(ci, r, [[0.5, 0.34], [0.62, 0.58], [0.5, 0.84], [0.38, 0.58]], Color("ffe45c"))
+		"laststand":
+			poly(ci, r, [[0.42, 0.14], [0.58, 0.14], [0.58, 0.42], [0.86, 0.42], [0.86, 0.58], [0.58, 0.58], [0.58, 0.86], [0.42, 0.86], [0.42, 0.58], [0.14, 0.58], [0.14, 0.42], [0.42, 0.42]], Color("5ae07a"))
+			arc(ci, r, 0.5, 0.5, 0.4, 0, TAU, Color("c8ffd0"), 0.04)
+		"bstorm":
+			for k in 4:
+				var a := float(k) * PI / 2.0
+				poly(ci, r, [[0.5 + cos(a) * 0.05, 0.5 + sin(a) * 0.05], [0.5 + cos(a) * 0.42, 0.5 + sin(a) * 0.42], [0.5 + cos(a + 0.5) * 0.3, 0.5 + sin(a + 0.5) * 0.3]], steel)
+			circ(ci, r, 0.5, 0.5, 0.08, gold)
 		"potion":
 			poly(ci, r, [[0.43, 0.22], [0.57, 0.22], [0.57, 0.42], [0.78, 0.8], [0.22, 0.8], [0.43, 0.42]], Color(0.8, 0.9, 1.0, 0.85))
 			poly(ci, r, [[0.34, 0.6], [0.66, 0.6], [0.78, 0.8], [0.22, 0.8]], Color("e02a3a"))

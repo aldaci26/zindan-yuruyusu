@@ -19,7 +19,7 @@ const GOLD := Color("f2c75c")
 const PARCH := Color("d8c192")
 const INK := Color("3a2410")
 
-## Savaşçı yetenekleri. 0-8 = tuş 1-9, 9 = iksir (tuş 0 / F)
+## Savaşçı yetenekleri. 0-8 = tuş 1-9, 9-13 = Shift+1-5, iksir (tuş 0 / F)
 const ABIL := [
 	{"name": "Kahramanlık Darbesi", "kind": "strike", "cost": 15, "cd": 0.0, "lvl": 1, "rng": "Yakın menzil", "desc": "Hedefe silahınla güçlü bir darbe indirir."},
 	{"name": "Hamle", "kind": "charge", "cost": 0, "cd": 14.0, "lvl": 1, "rng": "8-25 metre", "desc": "Hedefe atılır, onu 1,5 sn sersemletir ve 15 öfke verir."},
@@ -30,7 +30,13 @@ const ABIL := [
 	{"name": "İnfaz", "kind": "execute", "cost": 15, "cd": 0.0, "lvl": 4, "rng": "Yakın menzil", "desc": "Yalnızca canı %20'nin altındaki hedefe kullanılır. Çok büyük hasar verir."},
 	{"name": "Ölümcül Darbe", "kind": "mortal", "cost": 30, "cd": 6.0, "lvl": 5, "rng": "Yakın menzil", "desc": "Hedefe devasa bir vuruş indirir."},
 	{"name": "Kasırga", "kind": "whirl", "cost": 25, "cd": 10.0, "lvl": 6, "rng": "5 metre", "desc": "Dönerek çevrendeki tüm düşmanlara vurur."},
+	{"name": "Sarsıcı Darbe", "kind": "slam", "cost": 20, "cd": 9.0, "lvl": 8, "rng": "Yakın menzil", "desc": "Kalkanınla vurur, hedefi 2 sn sersemletir."},
+	{"name": "Yıldırtıcı Nara", "kind": "fear", "cost": 15, "cd": 30.0, "lvl": 10, "rng": "8 metre", "desc": "Yakındaki düşmanlar 4 sn boyunca şaşkına döner."},
+	{"name": "Delice Öfke", "kind": "reck", "cost": 0, "cd": 60.0, "lvl": 12, "rng": "Kendin", "desc": "12 sn boyunca vuruşların %50 güçlenir, ama aldığın hasar %20 artar."},
+	{"name": "Son Direniş", "kind": "laststand", "cost": 0, "cd": 90.0, "lvl": 15, "rng": "Kendin", "desc": "Canının %35'ini anında geri verir ve 30 öfke kazandırır."},
+	{"name": "Kılıç Fırtınası", "kind": "bstorm", "cost": 25, "cd": 60.0, "lvl": 18, "rng": "5 metre", "desc": "6 sn boyunca dönerek çevrendeki herkese durmadan vurur."},
 ]
+const POT := 99
 
 var root: Control
 var pf_name: Label
@@ -52,6 +58,7 @@ var banner_lbl: Label
 var banner_sub: Label
 var banner_tween: Tween
 var slots: Array = []
+var pot_slot
 var tip: PanelContainer
 var tip_name: Label
 var tip_cost: Label
@@ -165,7 +172,7 @@ func _ready() -> void:
 	_build_pause()
 	_build_title()
 	talk_lbl = _label("", 18, Color("9be8a8"))
-	_place(talk_lbl, 0.5, 1.0, 0.5, 1.0, -200, -150, 200, -126)
+	_place(talk_lbl, 0.5, 1.0, 0.5, 1.0, -200, -192, 200, -168)
 	talk_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(talk_lbl)
 	dead_lbl = _label("Öldün… Kamp ateşinde canlanıyorsun", 34, Color("ffb0a0"), 8)
@@ -306,19 +313,40 @@ func _build_actionbar() -> void:
 	var wr = Parts.Wing.new()
 	wr.position = Vector2(512, -8)
 	holder.add_child(wr)
-	for i in 10:
+	for i in 9:
 		var s = Parts.Slot.new()
 		s.idx = i
 		s.position = Vector2(8 + i * 50, 9)
-		s.key_text = str((i + 1) % 10)
-		if i < 9:
-			s.kind = ABIL[i]["kind"]
-		else:
-			s.kind = "potion"
+		s.key_text = str(i + 1)
+		s.kind = ABIL[i]["kind"]
 		s.clicked.connect(func(k): ability_pressed.emit(k))
 		s.hovered.connect(_on_slot_hover)
 		holder.add_child(s)
 		slots.append(s)
+	pot_slot = Parts.Slot.new()
+	pot_slot.idx = POT
+	pot_slot.position = Vector2(8 + 9 * 50, 9)
+	pot_slot.key_text = "0"
+	pot_slot.kind = "potion"
+	pot_slot.clicked.connect(func(k): ability_pressed.emit(k))
+	pot_slot.hovered.connect(_on_slot_hover)
+	holder.add_child(pot_slot)
+	# ikinci çubuk (Shift + 1-5)
+	var h2 := Control.new()
+	_place(h2, 0.5, 1.0, 0.5, 1.0, -133, -160, 133, -102)
+	h2.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_reg(h2))
+	h2.add_child(_wood_panel(Rect2(0, 0, 266, 58), 0.92))
+	for j in 5:
+		var s2 = Parts.Slot.new()
+		s2.idx = 9 + j
+		s2.position = Vector2(8 + j * 50, 6)
+		s2.key_text = "⇧%d" % (j + 1)
+		s2.kind = ABIL[9 + j]["kind"]
+		s2.clicked.connect(func(k): ability_pressed.emit(k))
+		s2.hovered.connect(_on_slot_hover)
+		h2.add_child(s2)
+		slots.append(s2)
 	# tecrübe çubuğu
 	xp_bar = _bar(Color("8a3ad8"), 11.0, 516.0)
 	xp_bar.position = Vector2(0, 68)
@@ -478,7 +506,7 @@ func _build_help() -> void:
 	var rows := [
 		["W A S D", "Yürü"], ["Boşluk", "Zıpla"], ["Sağ tık basılı", "Kamerayı çevir"], ["Sol tık", "Hedef seç"],
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
-		["1 - 9", "Yetenekler"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
+		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
 		["G", "NPC ile konuş / ganimeti al"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 	]
 	for r in rows:
@@ -535,7 +563,7 @@ func _on_slot_hover(i: int, on: bool) -> void:
 			tip_idx = -1
 		return
 	tip_idx = i
-	if i == 9:
+	if i == POT:
 		tip_name.text = "Can İksiri"
 		tip_name.add_theme_color_override("font_color", Color("43d17f"))
 		tip_cost.text = "Bekleme: 20 sn"
@@ -556,7 +584,7 @@ func _on_slot_hover(i: int, on: bool) -> void:
 	await get_tree().process_frame
 	if tip_idx != i:
 		return
-	var s: Control = slots[i]
+	var s: Control = pot_slot if i == POT else slots[i]
 	tip.position = Vector2(clampf(s.global_position.x - 100, 8, 1000), s.global_position.y - tip.size.y - 8)
 
 # ---------- dışarıdan çağrılanlar ----------
@@ -574,10 +602,10 @@ func update_player(d: Dictionary) -> void:
 	hp_lbl.text = "%d / %d" % [maxi(0, roundi(d["hp"])), d["maxhp"]]
 	rage_bar.value = d["rage"]
 	rage_lbl.text = "Öfke %d" % roundi(d["rage"])
-	xp_bar.value = 100.0 if d["lvl"] >= 10 else d["xp"] / d["xpneed"] * 100.0
-	xp_lbl.text = "Seviye 10 (en yüksek)" if d["lvl"] >= 10 else "Tecrübe %d / %d" % [roundi(d["xp"]), roundi(d["xpneed"])]
+	xp_bar.value = 100.0 if d["lvl"] >= 20 else d["xp"] / d["xpneed"] * 100.0
+	xp_lbl.text = "Seviye 20 (en yüksek)" if d["lvl"] >= 20 else "Tecrübe %d / %d" % [roundi(d["xp"]), roundi(d["xpneed"])]
 	var gcd: float = d["gcd"]
-	for i in 9:
+	for i in ABIL.size():
 		var s = slots[i]
 		var a: Dictionary = ABIL[i]
 		var cd: float = d["cd"][i]
@@ -594,7 +622,7 @@ func update_player(d: Dictionary) -> void:
 		s.norage = d["rage"] < a["cost"]
 		s.glow = (i == 6 and d["exec_ok"])
 		s.queue_redraw()
-	var ps = slots[9]
+	var ps = pot_slot
 	ps.count = str(d["pot"])
 	var pc: float = d["potcd"]
 	ps.frac = pc / 20.0 if pc > 0.0 else 0.0

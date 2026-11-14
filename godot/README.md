@@ -72,3 +72,6 @@ Taş-metal çerçeveli oyuncu/hedef/aksiyon çubuğu, altın grifon kanatları, 
 
 ## Üçüncü taraf varlıklar
 Köydeki evler, çadırlar, variller, sandıklar, çit, tezgâh ve araba modelleri **Kenney** (www.kenney.nl) tarafından hazırlanmış, CC0 (kamu malı) lisanslı Fantasy Town ve Survival kitlerindendir (`godot/assets/kenney/`, lisans dosyası orada).
+
+## İkinci harita: Sisli Bataklık
+Demirkazan plazasındaki mavi portaldan (ve bataklıktaki turuncu portaldan geri) geçilir. Seviye 8–10: Murloc, Murloc Şamanı, Timsah, Bataklık Canavarı, boss Gruff Swiftbite. Bataklık Karakolu'nda 2 görev veren NPC ve bir tüccar var; 5 yeni görev, yeni eşyalar ve takas edilebilir ganimetler eklendi. Oyun kaydı hangi haritada olduğunu hatırlar.

@@ -144,7 +144,22 @@ static func _build() -> void:
 	_eq("ch_rag", "Kor Zırhı", "chest", 4, 10, 96, 8, 0, 9, 3000, "Plaka", "dark")
 	_eq("tr_core", "Çekirdek Yüreği", "trinket", 4, 10, 0, 6, 6, 0, 2400, "", "gold")
 	_wp("hammer_sulf", "Sulfuras, Ragnaros'un Eli", 5, 10, 88, 132, 3.7, 18, 0, 12, 20000, "gold", 2)
-	for bid in ["wt_arc", "hd_arc", "bk_arc", "axe_grik", "nk_grik", "hammer_chok", "wt_chok", "lg_hogger", "wr_hogger", "tr_hogger", "sword_cruel", "helm_defias", "bk_edwin", "rg_vc", "helm_rag", "ch_rag", "tr_core", "hammer_sulf"]:
+	# bataklık
+	_eq("ch_marsh", "Bataklık Gözcüsü Zırhı", "chest", 3, 8, 80, 3, 0, 6, 780, "Zincir", "green")
+	_eq("hd_marsh", "Murloc Pençe Eldiveni", "hands", 3, 8, 22, 3, 2, 3, 520, "Zincir", "mith")
+	_eq("ft_marsh", "Çamurlu Savaş Çizmeleri", "feet", 3, 8, 28, 2, 0, 4, 520, "Zincir", "brown")
+	_eq("sh_marsh", "Timsah Derisi Kalkan", "offhand", 3, 8, 70, 0, 0, 5, 640, "Kalkan", "green")
+	_wp("axe_marsh", "Bataklık Yarıcı", 3, 8, 27, 42, 2.3, 4, 2, 0, 860, "green", 1)
+	_eq("rg_marsh", "Yosun Yüzük", "ring", 3, 8, 0, 3, 3, 3, 560, "", "green")
+	_eq("nk_marsh", "Murloc Tılsımı", "neck", 3, 8, 0, 3, 0, 5, 560, "", "mith")
+	_eq("lg_marsh", "Timsah Pantolonu", "legs", 3, 8, 54, 3, 0, 5, 700, "Zincir", "green")
+	_eq("wt_marsh", "Sazlık Kuşağı", "waist", 3, 8, 22, 2, 2, 3, 500, "Deri", "tan")
+	_eq("helm_marsh", "Şaman Maskesi", "head", 3, 8, 30, 3, 0, 5, 640, "Zincir", "mith")
+	_wp("axe_gruff", "Gruff'ın Çenesi", 4, 10, 36, 56, 2.5, 9, 4, 4, 2400, "bone", 2)
+	_eq("bk_gruff", "Timsah Postu Pelerin", "back", 4, 10, 12, 4, 3, 6, 1800, "Kumaş", "green")
+	_eq("tr_gruff", "Bataklık Yüreği", "trinket", 4, 10, 0, 6, 4, 4, 2100, "", "green")
+	_eq("wt_gruff", "Pullu Bel Zinciri", "waist", 4, 10, 34, 5, 0, 7, 1900, "Plaka", "iron")
+	for bid in ["axe_gruff", "bk_gruff", "tr_gruff", "wt_gruff", "wt_arc", "hd_arc", "bk_arc", "axe_grik", "nk_grik", "hammer_chok", "wt_chok", "lg_hogger", "wr_hogger", "tr_hogger", "sword_cruel", "helm_defias", "bk_edwin", "rg_vc", "helm_rag", "ch_rag", "tr_core", "hammer_sulf"]:
 		_db[bid]["boss"] = true
 	# tüketilenler ve çerçöp
 	_misc("pot_heal", "Can İksiri", 1, 1, 20, 20, "potion", 0.45, "red")
@@ -155,6 +170,9 @@ static func _build() -> void:
 	_misc("j_gnoll", "Gnoll Pençesi", 0, 1, 22, 20, "claw", 0.0, "brown")
 	_misc("j_defias", "Defias Bandanası", 0, 1, 30, 20, "pelt", 0.0, "red")
 	_misc("j_dark", "Kara Demir Külçesi", 0, 1, 40, 20, "pelt", 0.0, "dark")
+	_misc("j_murloc", "Murloc Yüzgeci", 0, 1, 44, 20, "claw", 0.0, "mith")
+	_misc("j_croc", "Timsah Dişi", 0, 1, 50, 20, "claw", 0.0, "bone")
+	_misc("j_bog", "Yosunlu Taş", 0, 1, 56, 20, "pelt", 0.0, "green")
 	_misc("j_bear", "Ayı Pençesi", 0, 1, 28, 20, "claw", 0.0, "bone")
 
 # ---------- yardımcılar ----------

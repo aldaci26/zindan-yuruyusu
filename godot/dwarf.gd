@@ -393,3 +393,86 @@ static func make_ragnaros() -> Node3D:
 	g.add_child(light)
 	g.set_meta("legs", _fake_legs(g))
 	return g
+
+
+## Murloc: balık yüzlü, iri gözlü, yüzgeçli. shaman: mor tenli, asalı
+static func make_murloc(shaman: bool = false) -> Node3D:
+	var g := Node3D.new()
+	var skin = mat(Color.html("5a6fa8") if shaman else Color.html("4f9aa8"), 0.0, 0.7)
+	var belly = mat(Color.html("d8d4a8"), 0.0, 0.8)
+	var fin = mat(Color.html("a05aa8") if shaman else Color.html("e0a040"), 0.0, 0.7)
+	var eye = mat(Color.html("ffe060"), 0.0, 0.4, Color.html("ffd030"), 0.8)
+	var dk = mat(Color.html("20282e"), 0.0, 0.8)
+	box(g, Vector3(0.5, 0.62, 0.34), skin, Vector3(0, 0.98, 0))
+	box(g, Vector3(0.36, 0.45, 0.06), belly, Vector3(0, 0.98, 0.18))
+	sph(g, 0.3, skin, Vector3(0, 1.52, 0.05), Vector3(1.0, 0.9, 1.1))
+	box(g, Vector3(0.34, 0.14, 0.2), skin, Vector3(0, 1.4, 0.34))
+	box(g, Vector3(0.3, 0.04, 0.12), dk, Vector3(0, 1.38, 0.42))
+	for s in [-1.0, 1.0]:
+		sph(g, 0.1, eye, Vector3(s * 0.22, 1.62, 0.2))
+		sph(g, 0.04, dk, Vector3(s * 0.23, 1.62, 0.29))
+		var arm := box(g, Vector3(0.14, 0.5, 0.14), skin, Vector3(s * 0.34, 0.95, 0.05))
+		arm.rotation.z = s * 0.2
+		var f := cone(g, 0.09, 0.4, fin, Vector3(s * 0.16, 1.9, -0.05), 4)
+		f.rotation.z = s * 0.4
+	var fb := cone(g, 0.18, 0.5, fin, Vector3(0, 1.65, -0.3), 4)
+	fb.rotation.x = -0.9
+	var tl := cone(g, 0.12, 0.45, fin, Vector3(0, 0.62, -0.32), 4)
+	tl.rotation.x = -2.0
+	if shaman:
+		cyl(g, 0.04, 0.04, 1.7, mat(Color.html("5a3a20"), 0.0, 0.9), Vector3(0.5, 0.95, 0.3), 6)
+		sph(g, 0.14, mat(Color.html("b070ff"), 0.0, 0.4, Color.html("9a50ff"), 3.0), Vector3(0.5, 1.9, 0.3))
+	else:
+		var sp := cyl(g, 0.035, 0.035, 1.6, mat(Color.html("6a4a2a"), 0.0, 0.9), Vector3(0.5, 0.95, 0.3), 6)
+		sp.rotation.x = 0.0
+		cone(g, 0.07, 0.3, mat(Color.html("c8d0d8"), 0.7, 0.4), Vector3(0.5, 1.9, 0.3), 5)
+	g.set_meta("legs", _biped_legs(g, 0.13, 0.7, Vector3(0.16, 0.7, 0.2), skin))
+	return g
+
+## Timsah: uzun gövdeli, sivri burunlu bataklık yaratığı
+static func make_croc(big: bool = false) -> Node3D:
+	var g := Node3D.new()
+	var hide_c = mat(Color.html("6a5a2a") if big else Color.html("4f6e3a"), 0.0, 0.9)
+	var dk = mat(Color.html("3a4a28") if not big else Color.html("463a1c"), 0.0, 0.9)
+	var belly = mat(Color.html("c8c08a"), 0.0, 0.9)
+	var eye = mat(Color.html("ffcf3a"), 0.0, 0.5, Color.html("ff9a00"), 1.2)
+	var tooth = mat(Color.html("f4f0dc"), 0.0, 0.6)
+	box(g, Vector3(0.85, 0.5, 1.9), hide_c, Vector3(0, 0.55, 0))
+	box(g, Vector3(0.6, 0.12, 1.5), belly, Vector3(0, 0.3, 0.1))
+	box(g, Vector3(0.62, 0.34, 0.9), hide_c, Vector3(0, 0.62, 1.2))
+	box(g, Vector3(0.44, 0.2, 0.9), hide_c, Vector3(0, 0.55, 1.85))
+	box(g, Vector3(0.4, 0.1, 0.85), belly, Vector3(0, 0.4, 1.85))
+	for s in [-1.0, 1.0]:
+		sph(g, 0.09, eye, Vector3(s * 0.2, 0.86, 1.3))
+		for k in 3:
+			cone(g, 0.025, 0.1, tooth, Vector3(s * 0.19, 0.46, 1.6 + k * 0.28), 4).rotation.x = PI
+	for k in 6:
+		var sc_ := cone(g, 0.09, 0.2, dk, Vector3(0, 0.86, 0.7 - k * 0.32), 4)
+		sc_.scale = Vector3(1, 1, 1.2)
+	var t1 := box(g, Vector3(0.5, 0.32, 1.0), hide_c, Vector3(0, 0.5, -1.35))
+	t1.rotation.x = 0.1
+	var t2 := cone(g, 0.22, 1.1, hide_c, Vector3(0, 0.45, -2.2), 5)
+	t2.rotation.x = -PI / 2.0 - 0.1
+	g.set_meta("legs", _legs(g, [[-0.5, 0.65, 0.4], [0.5, 0.65, 0.4], [-0.5, -0.65, 0.4], [0.5, -0.65, 0.4]], Vector3(0.2, 0.4, 0.26), dk))
+	return g
+
+## Bataklık Canavarı: yosun kaplı, kambur taş-çamur dev
+static func make_bogbeast() -> Node3D:
+	var g := Node3D.new()
+	var mud = mat(Color.html("5a5a3a"), 0.0, 0.95)
+	var moss = mat(Color.html("4f7a34"), 0.0, 0.95)
+	var dk = mat(Color.html("3a3a26"), 0.0, 0.95)
+	var eye = mat(Color.html("c8ff60"), 0.0, 0.4, Color.html("a0ff30"), 2.5)
+	box(g, Vector3(1.1, 1.2, 0.8), mud, Vector3(0, 1.6, 0))
+	box(g, Vector3(1.3, 0.4, 0.9), moss, Vector3(0, 2.25, -0.05))
+	sph(g, 0.34, mud, Vector3(0, 2.45, 0.35), Vector3(1.0, 0.9, 1.0))
+	for s in [-1.0, 1.0]:
+		sph(g, 0.07, eye, Vector3(s * 0.14, 2.5, 0.64))
+		box(g, Vector3(0.38, 1.1, 0.4), mud, Vector3(s * 0.8, 1.7, 0.1))
+		sph(g, 0.3, moss, Vector3(s * 0.8, 2.25, 0.05))
+		box(g, Vector3(0.4, 0.4, 0.45), dk, Vector3(s * 0.8, 1.05, 0.2))
+	for k in 5:
+		var tu := cone(g, 0.16, 0.5, moss, Vector3(-0.4 + k * 0.2, 2.5, -0.35), 5)
+		tu.rotation.x = -0.3
+	g.set_meta("legs", _biped_legs(g, 0.3, 1.05, Vector3(0.4, 1.05, 0.45), dk))
+	return g

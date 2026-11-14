@@ -198,6 +198,7 @@ class Minimap extends Control:
 	var city := Vector3(0, -58, 24)
 	var mobs: Array = []
 	var npcs: Array = []
+	var swamp := false
 	const Glyph = preload("res://glyph.gd")
 	const RANGE := 42.0
 
@@ -241,14 +242,15 @@ class Minimap extends Control:
 	func _draw() -> void:
 		var c := size * 0.5
 		var R := size.x * 0.5 - 3.0
-		draw_circle(c, R, Color("c7d6e6"))
-		_disc(0.0, 0.0, 16.0, Color("e4ecf4"))
-		_disc(city.x, city.y, city.z, Color("b9a98c"))
-		_disc(city.x, city.y, city.z - 3.0, Color("d6c6a4"))
-		# yol
-		var a := _clamp(_w2s(0.0, -6.0), R)
-		var b := _clamp(_w2s(0.0, city.y + city.z), R)
-		draw_line(a, b, Color("b09870"), 4.0, true)
+		draw_circle(c, R, Color("7f9468") if swamp else Color("c7d6e6"))
+		_disc(0.0, 0.0, 16.0, Color("9a8c5a") if swamp else Color("e4ecf4"))
+		if not swamp:
+			_disc(city.x, city.y, city.z, Color("b9a98c"))
+			_disc(city.x, city.y, city.z - 3.0, Color("d6c6a4"))
+			# yol
+			var a := _clamp(_w2s(0.0, -6.0), R)
+			var b := _clamp(_w2s(0.0, city.y + city.z), R)
+			draw_line(a, b, Color("b09870"), 4.0, true)
 		for m in mobs:
 			var p := _w2s(m.x, m.y)
 			if (p - c).length() < R - 3.0:

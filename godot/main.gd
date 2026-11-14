@@ -30,7 +30,40 @@ const CAMPS := [
 	{"kind": "darkiron", "x": -78.0, "z": 8.0, "n": 5},
 ]
 
+const SWAMP_MTYPES := {
+	"murloc": {"name": "Murloc", "lo": 8, "hi": 10, "hp": 40.0, "dmg": 2.8, "spd": 4.2, "aggro": 9.0, "rad": 0.6, "sc": 1.05},
+	"shaman": {"name": "Murloc Şamanı", "lo": 9, "hi": 10, "hp": 34.0, "dmg": 2.7, "spd": 3.4, "aggro": 13.0, "rad": 0.6, "sc": 1.05, "ranged": 12.0},
+	"croc": {"name": "Timsah", "lo": 8, "hi": 10, "hp": 52.0, "dmg": 3.0, "spd": 3.9, "aggro": 8.0, "rad": 1.0, "sc": 1.15},
+	"bog": {"name": "Bataklık Canavarı", "lo": 9, "hi": 10, "hp": 64.0, "dmg": 3.2, "spd": 3.2, "aggro": 8.0, "rad": 1.0, "sc": 1.2},
+}
+
+const SWAMP_CAMPS := [
+	{"kind": "murloc", "x": -56.0, "z": 26.0, "n": 7},
+	{"kind": "shaman", "x": 52.0, "z": -30.0, "n": 5},
+	{"kind": "murloc", "x": 42.0, "z": 56.0, "n": 6},
+	{"kind": "bog", "x": -46.0, "z": -44.0, "n": 4},
+]
+
+const SWAMP_NPCS := [
+	{"id": "muck", "name": "Bekçi Muck", "title": "Karakol Komutanı", "role": "quest", "qs": ["q_murloc", "q_shaman", "q_croc"], "x": -5.0, "z": 5.0, "face": 0.6,
+		"o": {"beard": Color("6a4a2a"), "cloth": Color("3a5a2a"), "metal": Color("7a8070"), "helm": true, "prop": "spear"}},
+	{"id": "brenna", "name": "Kaşif Brenna", "title": "Bataklık Avcısı", "role": "quest", "qs": ["q_bog", "q_gruff"], "x": 6.0, "z": 4.0, "face": -0.5,
+		"o": {"beard": Color("c46a2a"), "cloth": Color("5a3a22"), "metal": Color("8a7a5a"), "helm": false, "prop": "axe"}},
+	{"id": "fenn", "name": "Tüccar Fenn", "title": "Tüccar", "role": "vendor", "x": 0.0, "z": -7.0, "face": 0.0,
+		"o": {"beard": Color("dbb46a"), "cloth": Color("2f6a6a"), "metal": Color("b09060"), "helm": false, "prop": "none"}},
+]
+
 const QUESTS := {
+	"q_murloc": {"title": "Murloc Akını", "kill": "Murloc", "n": 6, "lvl": 8, "xp": 700, "money": 2600, "rew": ["ch_marsh", "hd_marsh", "ft_marsh"],
+		"text": "Murlocalar karakolun balık göllerini bastı. Altı tanesini temizle.", "done": "Göller sakinleşti. Al, hak ettin."},
+	"q_shaman": {"title": "Şaman Ayini", "kill": "Murloc Şamanı", "n": 4, "lvl": 8, "xp": 760, "money": 2800, "rew": ["helm_marsh", "nk_marsh", "rg_marsh"],
+		"text": "Murloc şamanları doğuda kara bir ayin yapıyor. Dördünü durdur.", "done": "Ayin bozuldu! İşte ödülün."},
+	"q_croc": {"title": "Timsah Avı", "kill": "Timsah", "n": 5, "lvl": 8, "xp": 740, "money": 2700, "rew": ["lg_marsh", "sh_marsh", "wt_marsh"],
+		"text": "Timsahlar kervan yolunu kapatıyor. Beşini avla.", "done": "Yol açıldı. Seç bakalım."},
+	"q_bog": {"title": "Bataklığın Bekçileri", "kill": "Bataklık Canavarı", "n": 4, "lvl": 9, "xp": 900, "money": 3200, "rew": ["axe_marsh", "ch_marsh", "ft_marsh"],
+		"text": "Yosunlu devler gölün kıyısında dolaşıyor. Dördünü yık.", "done": "Devler yıkıldı. Ödülünü al."},
+	"q_gruff": {"title": "Gruff Swiftbite", "kill": "Gruff Swiftbite", "n": 1, "lvl": 10, "xp": 1300, "money": 5000, "rew": ["axe_gruff", "bk_gruff", "tr_gruff"],
+		"text": "Dev timsah Gruff Swiftbite gölün dibinden çıkıp köyleri yutuyor. Onu bitir.", "done": "Gruff devrildi! Bataklık sana minnettar."},
 	"q_trogg": {"title": "Trogg Tehdidi", "kill": "Trogg", "n": 5, "lvl": 3, "xp": 220, "money": 600, "rew": ["sh_gate", "wt_iron", "axe_forge"],
 		"text": "Doğudaki trogglar sürülerimize saldırıyor. Beş tanesini temizle.", "done": "Doğu yolu rahatladı. Al, hak ettin."},
 	"q_grik": {"title": "Soğuğun Reisi", "kill": "Grik'nir the Cold", "n": 1, "lvl": 5, "xp": 400, "money": 1200, "rew": ["ch_mail", "hd_iron", "rg_sig"],
@@ -77,12 +110,16 @@ const BOSSES := {
 	"vancleef": {"name": "Edwin VanCleef", "title": "Defias Elebaşı", "lvl": 9, "hp": 6500.0, "dmg": 30.0, "spd": 4.4, "rad": 0.9, "sc": 1.3, "aggro": 12.0,
 		"x": -40.0, "z": 70.0, "model": "vancleef", "kind": "dwarf", "respawn": 360.0, "xp": 400,
 		"say": "VanCleef: Beni durduramazsınız! Muhafızlar, saldırın!", "drops": ["sword_cruel", "helm_defias", "bk_edwin", "rg_vc"]},
+	"gruff": {"name": "Gruff Swiftbite", "title": "Bataklık Devi", "lvl": 10, "hp": 9000.0, "dmg": 34.0, "spd": 4.2, "rad": 1.5, "sc": 2.0, "aggro": 12.0, "map": "swamp",
+		"x": -26.0, "z": -66.0, "model": "gruff", "kind": "skull", "respawn": 420.0, "xp": 600,
+		"say": "Gruff Swiftbite çamurdan fırlayıp kükredi!", "drops": ["axe_gruff", "bk_gruff", "tr_gruff", "wt_gruff"]},
 	"ragnaros": {"name": "Ragnaros", "title": "Ateş Efendisi", "lvl": 10, "hp": 24000.0, "dmg": 60.0, "spd": 0.0, "rad": 4.6, "sc": 1.0, "aggro": 0.0, "reach": 1.9, "yoff": 1.3,
 		"x": 0.0, "z": -64.0, "model": "ragnaros", "kind": "skull", "respawn": 600.0, "xp": 900,
 		"say": "Ragnaros: SİZİ KÜÇÜK FANİLER! ATEŞİMDE YANACAKSINIZ!", "drops": ["helm_rag", "ch_rag", "tr_core"]},
 }
 
 const VENDORS := {
+	"fenn": ["pot_heal", "pot_big", "helm_iron", "helm_ward", "ch_mail", "ch_plate", "lg_mail", "ft_iron", "hd_iron", "sh_rein", "wt_iron", "rg_iron", "nk_tooth", "axe_forge"],
 	"hilda": ["pot_heal", "pot_big", "helm_cap", "helm_iron", "so_pad", "so_iron", "bk_cloak", "ch_leather", "ch_mail", "wr_cloth", "wr_iron",
 		"hd_glove", "hd_iron", "wt_belt", "wt_iron", "lg_leather", "lg_mail", "ft_hide", "ft_iron", "rg_iron", "nk_tooth"],
 	"borga": ["axe_iron", "axe_forge", "axe_boar", "hammer_smith", "sword_gate", "sh_iron", "sh_gate", "sh_rein", "tr_whet"],
@@ -178,6 +215,16 @@ var zone_now := ""
 var swing_t := 0.0
 var walk_ph := 0.0
 var snow_node: GPUParticles3D
+var swamp_fx: GPUParticles3D
+var map := "snow"
+var portals: Array = []
+var traveling := false
+var portal_cd := 0.0
+var camps_now: Array = CAMPS
+var env_res: Environment
+var sky_psm: ProceduralSkyMaterial
+var we_node: WorldEnvironment
+var m_thatch: StandardMaterial3D
 var lava_mat: StandardMaterial3D
 var fire_light: OmniLight3D
 var forge_light: OmniLight3D
@@ -211,7 +258,18 @@ func vn(x: float, y: float) -> float:
 	var d := hash2(xi + 1.0, yi + 1.0)
 	return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v
 
+func _swamp_h(x: float, z: float) -> float:
+	var h := vn(x * 0.04 + 40.0, z * 0.04 - 17.0) * 7.0 + vn(x * 0.11, z * 0.11) * 1.8 + vn(x * 0.27, z * 0.27) * 0.4 - 3.6
+	h = maxf(h, -1.7)
+	var d := sqrt(x * x + z * z)
+	var flat := clampf((d - 14.0) / 16.0, 0.0, 1.0)
+	flat = flat * flat * (3.0 - 2.0 * flat)
+	var edge := maxf(0.0, (d - 78.0) / 20.0)
+	return lerpf(0.5, h, flat) + edge * edge * 16.0
+
 func height_at(x: float, z: float) -> float:
+	if map == "swamp":
+		return _swamp_h(x, z)
 	var h := vn(x * 0.03, z * 0.03) * 16.0 + vn(x * 0.08, z * 0.08) * 4.5 + vn(x * 0.21, z * 0.21) * 0.9 - 9.0
 	var d := sqrt(x * x + z * z)
 	var flat := clampf((d - 13.0) / 18.0, 0.0, 1.0)
@@ -235,18 +293,10 @@ func _ready() -> void:
 	m_snow = Dwarf.mat(Color.html("e6eefa"), 0.0, 0.9)
 	m_blue = Dwarf.mat(Color.html("2a55b8"), 0.0, 0.85)
 	m_blue.cull_mode = BaseMaterial3D.CULL_DISABLED
+	m_thatch = Dwarf.mat(Color.html("8a7a3a"), 0.0, 0.95)
 	_setup_environment()
-	_build_terrain()
-	_build_mountains()
-	_build_forest()
-	_build_village()
-	_build_city()
 	_spawn_player()
-	_spawn_npcs()
-	_spawn_mobs()
-	_spawn_bosses()
-	_spawn_camps()
-	_setup_snow()
+	_build_world()
 	hud = HudScript.new()
 	add_child(hud)
 	invui = InvUI.new()
@@ -272,6 +322,150 @@ func _ready() -> void:
 	get_tree().set_auto_accept_quit(false)
 	_update_camera(0.0)
 
+func _build_world() -> void:
+	if map == "swamp":
+		camps_now = SWAMP_CAMPS
+		_build_terrain()
+		_build_swamp()
+		_spawn_npcs()
+		_spawn_mobs()
+		_spawn_bosses()
+		_spawn_camps()
+		_setup_swamp_fx()
+	else:
+		camps_now = CAMPS
+		_build_terrain()
+		_build_mountains()
+		_build_forest()
+		_build_village()
+		_build_city()
+		_spawn_npcs()
+		_spawn_mobs()
+		_spawn_bosses()
+		_spawn_camps()
+		_setup_snow()
+	_apply_env()
+
+func _clear_world() -> void:
+	if loot_mob != null:
+		close_loot()
+	if dlg_open:
+		close_dialog()
+	if vendor_npc != null:
+		close_vendor()
+	for mb in mobs:
+		hud.plate_hide(mb.id)
+	for n in npcs:
+		hud.plate_hide("npc_" + n["id"])
+	var keep: Array = [player, cam, sun, we_node, hud, sfx]
+	for c in get_children():
+		if not keep.has(c):
+			c.queue_free()
+	mobs.clear()
+	npcs.clear()
+	obs.clear()
+	flame_nodes.clear()
+	rings.clear()
+	portals.clear()
+	snow_node = null
+	swamp_fx = null
+	lava_mat = null
+	fire_light = null
+	forge_light = null
+	gate_light = null
+	P["target"] = null
+	P["auto"] = false
+	cur_npc = null
+
+func _enter_map(name: String) -> void:
+	_clear_world()
+	map = name
+	zone_now = ""
+	_build_world()
+
+## Portaldan haritalar arası geçiş (kararma ile)
+func _travel(to: String, x: float, z: float, yaw: float) -> void:
+	if traveling or mode != "play":
+		return
+	traveling = true
+	mode = "travel"
+	P["auto"] = false
+	var cl := CanvasLayer.new()
+	cl.layer = 100
+	var cr := ColorRect.new()
+	cr.color = Color(0, 0, 0, 0)
+	cr.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cl.add_child(cr)
+	get_tree().root.add_child(cl)
+	var tw := create_tween()
+	tw.tween_property(cr, "color:a", 1.0, 0.45)
+	await tw.finished
+	await get_tree().process_frame
+	_enter_map(to)
+	P["x"] = x
+	P["z"] = z
+	P["y"] = height_at(x, z)
+	P["yaw"] = yaw
+	cam_yaw = yaw - PI
+	portal_cd = 4.0
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var tw2 := create_tween()
+	tw2.tween_property(cr, "color:a", 0.0, 0.6)
+	await tw2.finished
+	cl.queue_free()
+	mode = "play"
+	traveling = false
+	save_game()
+
+func _make_portal(x: float, z: float, col: Color, to: String, tx: float, tz: float, tyaw: float, label: String) -> void:
+	var g := Node3D.new()
+	g.position = Vector3(x, height_at(x, z), z)
+	add_child(g)
+	var stone := Dwarf.mat(Color.html("5a5a66"), 0.0, 0.9)
+	Dwarf.cyl(g, 2.8, 3.1, 0.5, stone, Vector3(0, 0.25, 0), 20)
+	for sd in [-1.0, 1.0]:
+		Dwarf.box(g, Vector3(0.6, 4.2, 0.6), stone, Vector3(sd * 2.1, 2.3, 0))
+		Dwarf.sph(g, 0.3, Dwarf.mat(col, 0.0, 0.4, col, 2.5), Vector3(sd * 2.1, 4.6, 0))
+	Dwarf.box(g, Vector3(4.8, 0.6, 0.6), stone, Vector3(0, 4.5, 0))
+	var em := Dwarf.mat(col, 0.0, 0.4, col, 3.0)
+	var ring := Dwarf.torus(g, 1.9, 0.14, em, Vector3(0, 2.3, 0))
+	ring.rotation.x = PI / 2.0
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var dm := StandardMaterial3D.new()
+	dm.albedo_color = Color(col.r, col.g, col.b, 0.35)
+	dm.emission_enabled = true
+	dm.emission = col
+	dm.emission_energy_multiplier = 1.6
+	dm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	dm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var disc := Dwarf.cyl(g, 1.8, 1.8, 0.05, dm, Vector3(0, 2.3, 0), 24)
+	disc.rotation.x = PI / 2.0
+	disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var li := OmniLight3D.new()
+	li.light_color = col
+	li.omni_range = 9.0
+	li.light_energy = 1.1
+	li.position = Vector3(0, 2.5, 0.5)
+	g.add_child(li)
+	_add_obs(x - 2.1, z, 0.6)
+	_add_obs(x + 2.1, z, 0.6)
+	portals.append({"x": x, "z": z, "to": to, "tx": tx, "tz": tz, "tyaw": tyaw, "label": label, "disc": disc, "ring": ring})
+
+func _step_portals(dt: float) -> void:
+	portal_cd = maxf(0.0, portal_cd - dt)
+	for p in portals:
+		(p["disc"] as Node3D).rotation.y += dt * 1.5
+		(p["ring"] as Node3D).rotation.z += dt * 0.8
+	if mode != "play" or P["dead"] or portal_cd > 0.0:
+		return
+	for p in portals:
+		if Vector2(p["x"] - P["x"], p["z"] - P["z"]).length() < 2.0:
+			hud.banner(String(p["label"]).to_upper(), "Portal")
+			_travel(p["to"], p["tx"], p["tz"], p["tyaw"])
+			return
+
 func _tmat(tex: Texture2D, scale: float, metal: float, rough: float) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_texture = tex
@@ -285,8 +479,10 @@ func _tmat(tex: Texture2D, scale: float, metal: float, rough: float) -> Standard
 
 func _setup_environment() -> void:
 	var env := Environment.new()
+	env_res = env
 	var sky := Sky.new()
 	var psm := ProceduralSkyMaterial.new()
+	sky_psm = psm
 	psm.sky_top_color = Color("2f5fb0")
 	psm.sky_horizon_color = Color("d9d2dc")
 	psm.ground_horizon_color = Color("c8c9d6")
@@ -319,6 +515,7 @@ func _setup_environment() -> void:
 	env.adjustment_contrast = 1.12
 	var we := WorldEnvironment.new()
 	we.environment = env
+	we_node = we
 	add_child(we)
 	sun = DirectionalLight3D.new()
 	sun.light_color = Color("ffd9a0")
@@ -334,6 +531,34 @@ func _setup_environment() -> void:
 	cam.far = 600.0
 	cam.current = true
 	add_child(cam)
+
+func _apply_env() -> void:
+	if env_res == null:
+		return
+	if map == "swamp":
+		sky_psm.sky_top_color = Color("4f6f66")
+		sky_psm.sky_horizon_color = Color("b6c29a")
+		sky_psm.ground_horizon_color = Color("8a9a74")
+		sky_psm.ground_bottom_color = Color("4a5a40")
+		env_res.ambient_light_color = Color("86a088")
+		env_res.ambient_light_energy = 0.7
+		env_res.fog_light_color = Color("7f9478")
+		env_res.fog_density = 0.024
+		env_res.adjustment_saturation = 1.05
+		sun.light_color = Color("d8dca8")
+		sun.light_energy = 0.7
+	else:
+		sky_psm.sky_top_color = Color("2f5fb0")
+		sky_psm.sky_horizon_color = Color("d9d2dc")
+		sky_psm.ground_horizon_color = Color("c8c9d6")
+		sky_psm.ground_bottom_color = Color("7f93b8")
+		env_res.ambient_light_color = Color("9db4dc")
+		env_res.ambient_light_energy = 0.8
+		env_res.fog_light_color = Color("c5d0e6")
+		env_res.fog_density = 0.0075
+		env_res.adjustment_saturation = 1.12
+		sun.light_color = Color("ffd9a0")
+		sun.light_energy = 1.05
 
 func _build_terrain() -> void:
 	var seg := 160
@@ -380,7 +605,22 @@ func _build_terrain() -> void:
 	mi.material_override = m
 	add_child(mi)
 
+func _swamp_color(x: float, z: float, y: float) -> Color:
+	var s := maxf(absf(height_at(x + 1.2, z) - y), absf(height_at(x, z + 1.2) - y)) / 1.2
+	var n := vn(x * 0.09, z * 0.09)
+	var n2 := vn(x * 0.31 + 5.0, z * 0.31 - 8.0)
+	var c := Color("46562a").lerp(Color("66663a"), clampf(n * 1.3 - 0.2, 0.0, 1.0))
+	c = c.lerp(Color("3f5a30"), clampf(n2 * 1.1 - 0.3, 0.0, 0.6))
+	c = c.lerp(Color("3a3322"), clampf((-0.1 - y) * 1.4, 0.0, 0.9))
+	c = c.lerp(Color("5a6a46"), clampf((y - 5.0) / 8.0, 0.0, 0.7))
+	c = c.lerp(Color("5c5a4a"), clampf((s - 0.6) * 2.0, 0.0, 1.0))
+	var d := sqrt(x * x + z * z)
+	c = c.lerp(Color("8a7a52"), clampf((15.0 - d) / 6.0, 0.0, 1.0) * 0.85)
+	return c
+
 func _terrain_color(x: float, z: float, y: float) -> Color:
+	if map == "swamp":
+		return _swamp_color(x, z, y)
 	var s := maxf(absf(height_at(x + 1.2, z) - y), absf(height_at(x, z + 1.2) - y)) / 1.2
 	var n := vn(x * 0.11, z * 0.11)
 	var n2 := vn(x * 0.37 + 9.0, z * 0.37 - 4.0)
@@ -570,7 +810,7 @@ func _flame(parent: Node, pos: Vector3, size: float) -> void:
 	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	flame_nodes.append(f)
 
-func _house(x: float, z: float, rot: float, w: float, d: float) -> void:
+func _house(x: float, z: float, rot: float, w: float, d: float, bog: bool = false) -> void:
 	var g := Node3D.new()
 	g.position = Vector3(x, height_at(x, z), z)
 	g.rotation.y = rot
@@ -578,6 +818,16 @@ func _house(x: float, z: float, rot: float, w: float, d: float) -> void:
 	var tw := maxi(2, roundi(w / 2.2))
 	var td := maxi(2, roundi(d / 2.2))
 	var s := 2.2
+	if bog:
+		var hb := Kit.house(g, tw, td, s, Color(0.78, 0.8, 0.6), m_thatch)
+		hb.scale = Vector3(1.0, 1.1, 1.0)
+		hb.position.y = 1.1
+		for px in [-1.0, 1.0]:
+			for pz in [-1.0, 1.0]:
+				Dwarf.cyl(g, 0.2, 0.26, 1.6, m_wood, Vector3(px * tw * s * 0.48, 0.5, pz * td * s * 0.48), 6)
+		Kit.spawn(g, "fantasy-town", "stairs-wood", Vector3(0, 0, td * s * 0.5 + 0.9), PI / 2.0, 2.0, Color(0.8, 0.8, 0.6))
+		_add_obs(x, z, maxf(tw, td) * s * 0.55)
+		return
 	var hs := Kit.house(g, tw, td, s, Color(1.0, 0.93, 0.84), m_roof)
 	hs.scale = Vector3(1.0, 1.15, 1.0)
 	var sn := Dwarf.box(g, Vector3(tw * s * 1.05, 0.25, td * s * 0.7), m_snow, Vector3(0, s * 1.15 + 1.05, 0))
@@ -771,6 +1021,7 @@ func _build_city() -> void:
 	for p in [[-26, -112], [0, -118], [28, -110]]:
 		_cone_mi(30.0, 62.0, back, Vector3(p[0], 24, p[1]), false, 7)
 		_cone_mi(12.0, 22.0, m_snow, Vector3(p[0], 48, p[1]), false, 7)
+	_make_portal(cx + 16.0, cz + 10.0, Color("6aa0ff"), "swamp", 0.0, 17.0, PI, "Sisli Bataklık (Sv 8+)")
 	_prop("castle", "siege-catapult", cx - 14.0, cz + 15.0, 0.6, 4.2, 2.0, Color(1.0, 0.95, 0.9))
 	_prop("castle", "siege-ballista", cx + 14.0, cz + 15.0, -0.6, 4.2, 1.5, Color(1.0, 0.95, 0.9))
 	_prop("survival", "barrel", cx - 8.0, cz + 17.0, 0.0, 3.6, 0.6)
@@ -881,10 +1132,10 @@ const NPCDEF := [
 ]
 
 func _spawn_npcs() -> void:
-	for d in NPCDEF:
+	for d in (SWAMP_NPCS if map == "swamp" else NPCDEF):
 		var n: Dictionary = d.duplicate()
 		var node := Dwarf.make_dwarf(d["o"])
-		var inside_city: bool = d["z"] < CITY.z + 22.0
+		var inside_city: bool = map == "snow" and d["z"] < CITY.z + 22.0
 		n["y"] = height_at(d["x"], d["z"]) + (0.05 if inside_city else 0.0)
 		node.position = Vector3(d["x"], n["y"], d["z"])
 		node.rotation.y = d["face"]
@@ -896,6 +1147,9 @@ func _spawn_npcs() -> void:
 func _spawn_mobs() -> void:
 	var rnd := RandomNumberGenerator.new()
 	rnd.seed = 77
+	if map == "swamp":
+		_spawn_swamp_mobs(rnd)
+		return
 	var kinds := ["wolf", "wolf", "boar", "wolf", "boar", "bear"]
 	var n := 0
 	var tries := 0
@@ -946,6 +1200,59 @@ func _spawn_mobs() -> void:
 		mobs.append(m)
 		n += 1
 
+func _mtype(kind: String) -> Dictionary:
+	return SWAMP_MTYPES[kind] if SWAMP_MTYPES.has(kind) else MTYPES[kind]
+
+func _spawn_swamp_mobs(rnd: RandomNumberGenerator) -> void:
+	var kinds := ["croc", "croc", "bog", "croc", "murloc", "bog"]
+	var n := 0
+	var tries := 0
+	while n < 26 and tries < 2000:
+		tries += 1
+		var a := rnd.randf() * TAU
+		var r := 24.0 + rnd.randf() * 58.0
+		var x := cos(a) * r
+		var z := sin(a) * r
+		var blocked := false
+		for o in obs:
+			if Vector2(o.x - x, o.y - z).length() < o.z + 1.5:
+				blocked = true
+				break
+		if blocked:
+			continue
+		var kind: String = kinds[rnd.randi() % kinds.size()]
+		var ty: Dictionary = SWAMP_MTYPES[kind]
+		var lvl := rnd.randi_range(ty["lo"], ty["hi"])
+		var mb := Mob.new()
+		mb.kind = kind
+		mb.nm = ty["name"]
+		mb.lvl = lvl
+		mb.x = x
+		mb.z = z
+		mb.hx = x
+		mb.hz = z
+		mb.wx = x
+		mb.wz = z
+		mb.yaw = rnd.randf() * 6.0
+		mb.maxhp = round(ty["hp"] * (1.0 + (lvl - 1) * 0.55))
+		mb.hp = mb.maxhp
+		mb.dmg = ty["dmg"] * (1.0 + lvl * 0.55)
+		mb.spd = ty["spd"]
+		mb.aggro = ty["aggro"]
+		mb.rad = ty["rad"]
+		mb.sc = ty["sc"]
+		mb.ranged = ty.get("ranged", 0.0)
+		mb.w_t = rnd.randf() * 4.0
+		mb.ph = rnd.randf() * 6.0
+		mb.id = n
+		mb.node = _camp_model(kind)
+		mb.node.scale = Vector3.ONE * mb.sc
+		mb.legs = _humanoid_legs(mb.node)
+		add_child(mb.node)
+		mb.node.position = Vector3(mb.x, height_at(mb.x, mb.z), mb.z)
+		mobs.append(mb)
+		n += 1
+
 func _free_spot(x: float, z: float) -> Vector2:
 	for i in 60:
 		var a := float(i) * 2.4
@@ -968,6 +1275,7 @@ func _make_boss_model(id: String) -> Node3D:
 		"choksul": return Dwarf.make_ogre()
 		"hogger": return Dwarf.make_gnoll(true)
 		"vancleef": return Dwarf.make_dwarf({"skin": Color("e8c0a0"), "metal": Color("5a2a2a"), "cloth": Color("a32a2a"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
+		"gruff": return Dwarf.make_croc(true)
 		_: return Dwarf.make_ragnaros()
 
 func _humanoid_legs(node: Node3D) -> Array:
@@ -980,6 +1288,8 @@ func _spawn_bosses() -> void:
 	var i := 0
 	for id in BOSSES:
 		var d: Dictionary = BOSSES[id]
+		if d.get("map", "snow") != map:
+			continue
 		var m := Mob.new()
 		var sp := Vector2(d["x"], d["z"]) if id == "ragnaros" else _free_spot(d["x"], d["z"])
 		m.boss = id
@@ -1020,12 +1330,17 @@ func _camp_model(kind: String) -> Node3D:
 	match kind:
 		"trogg": return Dwarf.make_trogg(false)
 		"gnoll": return Dwarf.make_gnoll(false)
+		"murloc": return Dwarf.make_murloc(false)
+		"shaman": return Dwarf.make_murloc(true)
+		"croc": return Dwarf.make_croc(false)
+		"bog": return Dwarf.make_bogbeast()
 		"defias": return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 		_: return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"})
 
 func _camp_props() -> void:
-	var tints := {"trogg": Color(0.8, 0.75, 0.7), "gnoll": Color(0.9, 0.8, 0.65), "defias": Color(0.85, 0.5, 0.45), "darkiron": Color(0.55, 0.5, 0.6)}
-	for c in CAMPS:
+	var tints := {"trogg": Color(0.8, 0.75, 0.7), "gnoll": Color(0.9, 0.8, 0.65), "defias": Color(0.85, 0.5, 0.45), "darkiron": Color(0.55, 0.5, 0.6),
+		"murloc": Color(0.6, 0.8, 0.8), "shaman": Color(0.7, 0.6, 0.85), "bog": Color(0.6, 0.7, 0.5)}
+	for c in camps_now:
 		var cx: float = c["x"]
 		var cz: float = c["z"]
 		var t: Color = tints.get(c["kind"], Color(0.9, 0.85, 0.8))
@@ -1049,8 +1364,8 @@ func _spawn_camps() -> void:
 	rnd.seed = 311
 	var cid := 200
 	_camp_props()
-	for c in CAMPS:
-		var ty: Dictionary = MTYPES[c["kind"]]
+	for c in camps_now:
+		var ty: Dictionary = _mtype(c["kind"])
 		for i in c["n"]:
 			var a := rnd.randf() * TAU
 			var sp := _free_spot(c["x"] + cos(a) * (2.0 + rnd.randf() * 7.0), c["z"] + sin(a) * (2.0 + rnd.randf() * 7.0))
@@ -1111,6 +1426,7 @@ func spawn_add(owner_m, nm: String, model: String, lvl: int, hp: float, dmg: flo
 	match model:
 		"gnoll": m.node = Dwarf.make_gnoll(false)
 		"ember": m.node = Dwarf.make_ember()
+		"croc": m.node = Dwarf.make_croc(false)
 		_: m.node = Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 	m.node.scale = Vector3.ONE * sc
 	m.legs = _humanoid_legs(m.node)
@@ -1118,6 +1434,162 @@ func spawn_add(owner_m, nm: String, model: String, lvl: int, hp: float, dmg: flo
 	m.node.position = Vector3(m.x, height_at(m.x, m.z), m.z)
 	mobs.append(m)
 	ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.5, Color("ffb060") if model == "ember" else Color("c9b8a0"), 0.5)
+
+func _kit_mm(kit: String, nm: String, xfs: Array, tint: Color) -> void:
+	var path := "res://assets/kenney/%s/%s.glb" % [kit, nm]
+	if not ResourceLoader.exists(path):
+		return
+	var root: Node3D = (load(path) as PackedScene).instantiate()
+	for mi in root.find_children("*", "MeshInstance3D", true, false):
+		var t: Transform3D = (mi as Node3D).transform
+		var p = mi.get_parent()
+		while p != null and p != root:
+			t = (p as Node3D).transform * t
+			p = p.get_parent()
+		var lx: Array = []
+		for x in xfs:
+			lx.append((x as Transform3D) * t)
+		var mat := (mi as MeshInstance3D).get_active_material(0)
+		var m2: Material = mat
+		if mat is StandardMaterial3D:
+			var sm: StandardMaterial3D = mat.duplicate()
+			sm.albedo_color = sm.albedo_color * tint
+			sm.roughness = 0.95
+			m2 = sm
+		_add_multimesh((mi as MeshInstance3D).mesh, m2, lx)
+	root.free()
+
+func _build_swamp() -> void:
+	var rnd := RandomNumberGenerator.new()
+	rnd.seed = 4242
+	# su
+	var wm := StandardMaterial3D.new()
+	wm.albedo_color = Color(0.14, 0.26, 0.22, 0.8)
+	wm.roughness = 0.12
+	wm.metallic = 0.25
+	wm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(340, 340)
+	var water := MeshInstance3D.new()
+	water.mesh = pm
+	water.material_override = wm
+	water.position = Vector3(0, -0.75, 0)
+	water.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(water)
+	# uzak tepeler
+	var hm := Dwarf.mat(Color.html("3a4a38"), 0.0, 0.95)
+	var hm2 := Dwarf.mat(Color.html("4a5a46"), 0.0, 0.95)
+	for i in 30:
+		var a := float(i) / 30.0 * TAU + hash2(i, 3) * 0.2
+		var far := i % 2 == 1
+		var r := (160.0 if far else 130.0) + hash2(i, 9) * 20.0
+		var h := 22.0 + hash2(i, 5) * 26.0
+		var w := 30.0 + hash2(i, 7) * 18.0
+		_cone_mi(w, h, hm2 if far else hm, Vector3(cos(a) * r, h / 2.0 - 8.0, sin(a) * r), false, 6)
+	# ağaçlar
+	var crooked: Array = []
+	var tall: Array = []
+	var tries := 0
+	while crooked.size() + tall.size() < 190 and tries < 3000:
+		tries += 1
+		var a2 := rnd.randf() * TAU
+		var r2 := 10.0 + rnd.randf() * 80.0
+		var x := cos(a2) * r2
+		var z := sin(a2) * r2
+		if Vector2(x, z).length() < 18.0 or Vector2(x, z - 22.0).length() < 7.0:
+			continue
+		var y := height_at(x, z)
+		var s := 3.0 + rnd.randf() * 2.0
+		var xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * s), Vector3(x, y - 0.1, z))
+		if rnd.randf() < 0.35:
+			tall.append(xf)
+		else:
+			crooked.append(xf)
+		_add_obs(x, z, 0.8)
+	_kit_mm("fantasy-town", "tree-crooked", crooked, Color(0.46, 0.52, 0.34))
+	_kit_mm("fantasy-town", "tree-high-crooked", tall, Color(0.42, 0.48, 0.32))
+	# sazlar ve kayalar
+	var reeds: Array = []
+	tries = 0
+	while reeds.size() < 320 and tries < 4000:
+		tries += 1
+		var x3 := rnd.randf_range(-88.0, 88.0)
+		var z3 := rnd.randf_range(-88.0, 88.0)
+		var y3 := height_at(x3, z3)
+		if y3 < -1.0 or y3 > 0.9 or Vector2(x3, z3).length() < 15.0:
+			continue
+		reeds.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * (2.4 + rnd.randf() * 1.6)), Vector3(x3, y3, z3)))
+	_kit_mm("survival", "grass-large", reeds, Color(0.66, 0.72, 0.38))
+	for rn in ["rock-a", "rock-b", "rock-c"]:
+		var rx: Array = []
+		for i in 12:
+			var x4 := rnd.randf_range(-85.0, 85.0)
+			var z4 := rnd.randf_range(-85.0, 85.0)
+			if Vector2(x4, z4).length() < 18.0:
+				continue
+			rx.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * (3.0 + rnd.randf() * 3.0)), Vector3(x4, height_at(x4, z4) - 0.1, z4)))
+			_add_obs(x4, z4, 1.4)
+		_kit_mm("survival", rn, rx, Color(0.7, 0.72, 0.62))
+	# karakol
+	_house(-13.0, -4.0, 0.5, 6.6, 4.4, true)
+	_house(13.0, -5.0, -0.5, 6.6, 4.4, true)
+	_house(-12.0, 11.0, PI - 0.3, 6.6, 4.4, true)
+	_house(12.0, 10.0, PI + 0.4, 6.6, 4.4, true)
+	var fy := height_at(0, 0)
+	_prop("survival", "campfire-pit", 0.0, 0.0, 0.0, 6.0, 1.2)
+	_flame(self, Vector3(0, fy + 0.5, 0), 0.6)
+	fire_light = OmniLight3D.new()
+	fire_light.light_color = Color("ffb060")
+	fire_light.omni_range = 22.0
+	fire_light.light_energy = 2.2
+	fire_light.position = Vector3(0, fy + 1.6, 0)
+	add_child(fire_light)
+	_prop("survival", "tent", -6.0, -9.0, 0.4, 4.2, 1.5)
+	_prop("survival", "tent", 6.5, -10.0, -0.5, 4.2, 1.5)
+	_prop("survival", "barrel", 3.5, -3.0, 0.0, 3.6, 0.6)
+	_prop("survival", "barrel", 4.3, -2.2, 0.0, 3.6, 0.6)
+	_prop("survival", "box-large", -3.0, -4.0, 0.4, 3.6, 0.7)
+	_prop("survival", "chest", 8.5, 1.0, -1.2, 3.4, 0.6)
+	_prop("survival", "signpost", 3.0, 15.0, 0.3, 3.8)
+	_prop("fantasy-town", "lantern", -3.0, 3.0, 0.0, 3.2)
+	_prop("fantasy-town", "lantern", 3.0, 8.5, 0.0, 3.2)
+	_prop("fantasy-town", "cart", -7.0, 15.0, 0.7, 3.4, 1.3)
+	for i in 6:
+		_prop("fantasy-town", "fence", -8.0 + i * 2.0, 17.5, PI / 2.0, 2.2)
+	_make_portal(0.0, 22.0, Color("ffa040"), "snow", 16.0, -44.0, 0.0, "Demirkazan")
+
+func _setup_swamp_fx() -> void:
+	var pm := ParticleProcessMaterial.new()
+	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	pm.emission_box_extents = Vector3(30, 3.0, 30)
+	pm.direction = Vector3(0, 1, 0)
+	pm.spread = 180.0
+	pm.initial_velocity_min = 0.1
+	pm.initial_velocity_max = 0.5
+	pm.gravity = Vector3.ZERO
+	pm.scale_min = 0.6
+	pm.scale_max = 1.4
+	var q := QuadMesh.new()
+	q.size = Vector2(0.16, 0.16)
+	var qm := StandardMaterial3D.new()
+	qm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	qm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	qm.albedo_color = Color(0.8, 1.0, 0.4, 0.9)
+	qm.emission_enabled = true
+	qm.emission = Color(0.7, 1.0, 0.3)
+	qm.emission_energy_multiplier = 2.0
+	qm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	q.material = qm
+	swamp_fx = GPUParticles3D.new()
+	swamp_fx.amount = 160
+	swamp_fx.lifetime = 7.0
+	swamp_fx.preprocess = 7.0
+	swamp_fx.process_material = pm
+	swamp_fx.draw_pass_1 = q
+	swamp_fx.visibility_aabb = AABB(Vector3(-34, -8, -34), Vector3(68, 16, 68))
+	swamp_fx.local_coords = false
+	swamp_fx.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(swamp_fx)
 
 func _setup_snow() -> void:
 	var pm := ParticleProcessMaterial.new()
@@ -1287,7 +1759,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "qs": qs, "inv": inv.to_dict()}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
@@ -1304,6 +1776,11 @@ func load_game() -> bool:
 	for k in ["x", "z", "yaw", "lvl", "xp", "wep_b", "wep_lvl", "hp"]:
 		if not d.has(k) or typeof(d[k]) != TYPE_FLOAT:
 			return false
+	var want_map: String = str(d.get("map", "snow"))
+	if want_map != "snow" and want_map != "swamp":
+		want_map = "snow"
+	if want_map != map:
+		_enter_map(want_map)
 	P["x"] = clampf(d["x"], -WORLD_R, WORLD_R)
 	P["z"] = clampf(d["z"], -WORLD_R, WORLD_R)
 	P["yaw"] = d["yaw"]
@@ -1508,7 +1985,7 @@ func kill_mob(m) -> void:
 func _normal_loot(m) -> void:
 	m.loot_money = 4 + m.lvl * 5 + randi() % 6
 	var junk := {"Kurt": "j_wolf", "Yaban Domuzu": "j_boar", "Dağ Ayısı": "j_bear", "Trogg": "j_trogg", "Gnoll": "j_gnoll",
-		"Defias Haydudu": "j_defias", "Kara Demir Büyücüsü": "j_dark"}
+		"Defias Haydudu": "j_defias", "Kara Demir Büyücüsü": "j_dark", "Murloc": "j_murloc", "Murloc Şamanı": "j_murloc", "Timsah": "j_croc", "Bataklık Canavarı": "j_bog"}
 	if randf() < 0.55 and junk.has(m.nm):
 		m.loot.append({"id": junk[m.nm], "n": 1})
 	if randf() < 0.2:
@@ -2102,6 +2579,7 @@ func step(dt: float) -> void:
 		if mobs[i].gc:
 			mobs.remove_at(i)
 	_step_npcs(dt)
+	_step_portals(dt)
 	_animate_player(dt)
 	_update_camera(dt)
 	_step_effects(dt)
@@ -2286,6 +2764,10 @@ func _boss_engage(m) -> void:
 		"arctikus":
 			_bset(m, "maul", 5.0)
 			_bset(m, "rend", 8.0)
+		"gruff":
+			_bset(m, "roll", 6.0)
+			_bset(m, "snap", 3.0)
+			_bset(m, "mud", 4.0)
 
 func _boss_reset(m) -> void:
 	m.engaged = false
@@ -2322,6 +2804,31 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 		return true
 	var melee: bool = d <= m.rad + m.reach + 0.6
 	match m.boss:
+		"gruff":
+			if hpf < 0.4 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.3
+				m.spd *= 1.2
+				boss_say(m, "Gruff Swiftbite çılgına döndü!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if hpf < 0.7 and not m.flags.has("pups"):
+				m.flags["pups"] = true
+				boss_say(m, "Gruff yavrularını çağırdı!")
+				_boss_summon(m, "Yavru Timsah", "croc", 3, 160.0, 7.0, 4.4, 0.8, 3.0)
+			if melee and _bready(m, "roll"):
+				_bset(m, "roll", 9.0)
+				boss_hit(m, 2.4, "Ölüm Kıvrımı")
+				knockback(m, 5.0)
+				return true
+			if melee and _bready(m, "snap"):
+				_bset(m, "snap", 5.0)
+				boss_hit(m, 1.6, "Çene Kilidi")
+				return true
+			if d > m.rad + m.reach + 1.0 and d < 26.0 and _bready(m, "mud"):
+				_bset(m, "mud", 6.0)
+				boss_spell(m, 0.9, "Çamur Püskürtme", Color("6a5a30"))
+				return true
 		"arctikus":
 			if hpf < 0.35 and not m.flags.has("rage"):
 				m.flags["rage"] = true
@@ -2638,6 +3145,8 @@ func _update_camera(_dt: float) -> void:
 		snow_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 
 func _step_effects(_dt: float) -> void:
+	if swamp_fx:
+		swamp_fx.position = Vector3(P["x"], P["y"] + 3.0, P["z"])
 	for f in flame_nodes:
 		f.scale = Vector3(1.0 + sin(T * 14.0) * 0.12, 1.0 + sin(T * 11.0 + 1.0) * 0.2, 1.0 + sin(T * 13.0) * 0.12)
 	if fire_light:
@@ -2666,7 +3175,7 @@ func _mob_kind(m) -> String:
 		return m.kind
 	if m.temp:
 		return "skull"
-	if m.kind in ["trogg", "gnoll"]:
+	if m.kind in ["trogg", "gnoll", "murloc", "shaman", "croc", "bog"]:
 		return "skull"
 	if m.kind in ["defias", "darkiron"]:
 		return "dwarf"
@@ -2701,7 +3210,7 @@ func _update_hud() -> void:
 	var np: Array = []
 	for n in npcs:
 		np.append({"p": Vector2(n["x"], n["z"]), "mark": npc_mark(n)})
-	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np})
+	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np, "swamp": map == "swamp"})
 	# isim levhaları
 	for m in mobs:
 		var show: bool = mode == "play" and not m.dead and Vector2(m.x - P["x"], m.z - P["z"]).length() < (40.0 if m.boss != "" else 22.0)
@@ -2718,20 +3227,33 @@ func _update_hud() -> void:
 		else:
 			hud.plate_hide("npc_" + n["id"])
 	var nn = near_npc()
-	hud.set_prompt(("G — Konuş: " + nn["name"]) if (nn != null and not dlg_open and mode == "play" and not P["dead"]) else "")
+	var ptxt := ""
+	if nn != null and not dlg_open and mode == "play" and not P["dead"]:
+		ptxt = "G — Konuş: " + nn["name"]
+	elif mode == "play" and not P["dead"]:
+		for pt in portals:
+			if Vector2(pt["x"] - P["x"], pt["z"] - P["z"]).length() < 9.0:
+				ptxt = "Portalın içinden geç: " + pt["label"]
+	hud.set_prompt(ptxt)
 	# bölge
 	var dc := Vector2(P["x"] - CITY.x, P["z"] - CITY.z).length()
 	var dv := Vector2(P["x"], P["z"]).length()
 	var z := "c" if dc < 27.0 else ("v" if dv < 16.0 else "w")
+	if map == "swamp":
+		z = "sv" if dv < 16.0 else "sw"
 	if z != zone_now:
 		zone_now = z
 		if mode == "play":
-			if z == "c":
+			if z == "sv":
+				hud.banner("BATAKLIK KARAKOLU", "Güvenli sığınak")
+			elif z == "sw":
+				hud.banner("SİSLİ BATAKLIK", "Karanlık göller")
+			elif z == "c":
 				hud.banner("DEMİRKAZAN", "Cüce başkenti")
 			elif z == "v":
 				hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 			else:
 				hud.banner("KAR DAĞI VADİSİ", "Cüce toprakları")
-		hud.set_zone("Demirkazan" if z == "c" else ("Kar Dağı Köyü" if z == "v" else "Kar Dağı Vadisi"))
+		hud.set_zone({"c": "Demirkazan", "v": "Kar Dağı Köyü", "w": "Kar Dağı Vadisi", "sv": "Bataklık Karakolu", "sw": "Sisli Bataklık"}[z])
 
 # ---------- kendi kendine test ----------

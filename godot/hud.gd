@@ -640,6 +640,7 @@ func update_minimap(d: Dictionary) -> void:
 	minimap.pyaw = d["pyaw"]
 	minimap.mobs = d["mobs"]
 	minimap.npcs = d["npcs"]
+	minimap.swamp = d.get("swamp", false)
 	minimap.queue_redraw()
 	coord_lbl.text = "%d, %d   %s" % [roundi(d["px"]), roundi(-d["pz"]), Time.get_time_string_from_system().substr(0, 5)]
 

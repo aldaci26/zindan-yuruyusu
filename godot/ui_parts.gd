@@ -3,7 +3,6 @@ extends RefCounted
 
 const Glyph = preload("res://glyph.gd")
 const GOLD := Color("f2c75c")
-const DARK := Color("120c06")
 
 ## Aksiyon çubuğu kutusu
 class Slot extends Control:

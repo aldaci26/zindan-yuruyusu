@@ -1,50 +1,19 @@
-# Zindan Yürüyüşü
+# Zindan Yürüyüşü: 3D Cüce Savaşçı
 
-Tarayıcıda oynanan, World of Warcraft'tan esinlenmiş açık dünya mini RPG. Tek dosya (`index.html`), kurulum ve sunucu gerekmez. iPhone dikey ekranına sığacak şekilde tasarlandı.
+World of Warcraft'tan esinlenmiş 3D bir cüce savaşçı oyunu. Godot 4.3 ile yapıldı. Windows, Mac ve Linux için hazır sürüm her güncellemede otomatik derlenir.
 
-## 🎮 3D Cüce Savaşçı (bilgisayar sürümü)
+## İndir
 
-Aynı depoda ayrıca Godot 4 ile yapılmış 3D bir oyun var: karlı vadi, Demirkazan cüce şehri, NPC'ler, görevler ve WoW tarzı savaşçı yetenekleri. Windows, Mac ve Linux için [Releases](../../releases) sayfasından indir. Kontroller ve yetenekler: [godot/README.md](godot/README.md)
+[Releases](../../releases) sayfasındaki "son-surum" altından işletim sistemine uygun dosyayı indir. Kontroller, yetenekler, eşyalar, bosslar ve görevler: [godot/README.md](godot/README.md)
 
-## 📱 Tarayıcı oyunu (2D)
+## Oyun
 
-## Özellikler
+- İki harita: karlı Kar Dağı Vadisi (Demirkazan şehri) ve Sisli Bataklık, aralarında portal
+- WoW tarzı arayüz, eşya sistemi (nadirlik, setler, satıcılar), 7 boss, 18 görev
+- Savaşçı yetenekleri, öfke, ganimet penceresi, çanta ve karakter ekranı
 
-- **Açık dünya:** 80x80 karelik harita, 4 bölge (Yeşilvadi, Karaorman, Kızıl Çöl, Buzdağı), 4 köy, yollar
-- **4 sınıf:** Savaşçı, Büyücü, Rahip, Avcı. Her sınıfın 4 yeteneği var, yetenekler seviye atladıkça açılır
-- **Avcı'nın kurdu:** sadık bir kurt seni takip eder ve hedefine saldırır
-- **Büyü süresi:** Ateş Topu, Meteor, Şifa gibi büyüler birkaç saniye hazırlanır, yürürsen iptal olur
-- **Seviye 1-20**, dinlenmiş tecrübe (köyde dinlenince bir sonraki öldürmeler çift tecrübe verir)
-- **Görevler:** 17 görev, "!" ve "?" işaretleri, görev takibi, mektup teslim görevleri
-- **Elit canavarlar, bölge patronları ve final patronu** (Buz Ejderhası)
-- **Ganimet:** Sıradan, Nadir, Üstün, Destansı eşyalar
-- **Köylerde:** şifacı, tüccar, görev veren, **uçuş ustası** (keşfettiğin köylere hızlı seyahat)
-- **Binek**, şifalı otlar, iksirler
-- **Yetenek puanları:** her seviyede 1 puan. Güç, Dayanıklılık, Zihin, Keskin Göz (kritik şansı) ve Çeviklik (hız) arasında dağıt, her biri 5 kademe
-- **Ev Taşı:** 8 saniye hazırlanır, savaş dışında son girdiğin köye ışınlar. 5 dakika bekleme süresi
-- **Maden damarları:** haritada ⛏️ taşlar, üzerinden geç, altın topla. Ara sıra parlak mücevher çıkar
-- **Başarımlar**, gece-gündüz döngüsü, mini harita, dünya haritası, kar yağışı
-- Otomatik kayıt (`localStorage`)
+## Geliştirme
 
-## Kontroller
+Proje `godot/` klasöründe. Godot 4.3 ile aç ve çalıştır. Derleme `.github/workflows/godot-export.yml` ile yapılır.
 
-| Dokunmatik | Klavye |
-| --- | --- |
-| Ekranın sol tarafına dokun ve sürükle: yürü | Ok tuşları / WASD |
-| Düşmana dokun: hedef seç | `Tab`: en yakın hedef |
-| Kılıç düğmesi: otomatik saldırı | `Boşluk` |
-| Yetenek düğmeleri | `1` `2` `3` `4` |
-| İksir / binek / Ev Taşı | `F` / `Z` / `H` |
-| Konuş düğmesi (NPC yakınında çıkar) | `E` |
-| Karakter / görevler / harita | `C` / `Q` / `M` |
-
-## Oynamak
-
-1. `index.html` dosyasını bir tarayıcıda aç, veya
-2. GitHub Pages ile yayınla: **Settings → Pages → Branch: `main` / `/ (root)`**. Adres `https://KULLANICI.github.io/zindan-yuruyusu/` olur.
-
-iPhone'da Safari'de aç, Paylaş düğmesi → **Ana Ekrana Ekle** ile tam ekran uygulama gibi kullan.
-
-## Teknik
-
-Saf HTML, CSS ve JavaScript, dış kütüphane yok. Yazı tipleri Google Fonts'tan yüklenir, yüklenemezse sistem yazı tipine düşer. Dünya sabit bir tohumdan üretilir.
+Üçüncü taraf varlıklar: Kenney (CC0) modelleri, `godot/assets/kenney/LICENSE.txt`.

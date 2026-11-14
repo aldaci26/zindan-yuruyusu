@@ -2,14 +2,12 @@ extends RefCounted
 ## Eşya veritabanı (WoW Classic mantığı: nadirlik renkleri, yuvalar, istatistikler, satış fiyatı).
 
 const RARITY_COL := [Color("9d9d9d"), Color("ffffff"), Color("1eff00"), Color("0070dd"), Color("a335ee"), Color("ff8000")]
-const RARITY_NAME := ["Düşük Kalite", "Sıradan", "Sıradışı", "Nadir", "Destansı", "Efsanevi"]
 const SLOTS := ["head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "ring1", "ring2", "trinket1", "trinket2", "mainhand", "offhand"]
 const SLOT_NAME := {
 	"head": "Baş", "neck": "Boyun", "shoulder": "Omuz", "back": "Sırt", "chest": "Göğüs", "wrist": "Bilek", "hands": "Eller",
 	"waist": "Bel", "legs": "Bacaklar", "feet": "Ayaklar", "ring": "Yüzük", "trinket": "Mücevher", "mainhand": "Ana El", "offhand": "Yan El",
 	"ring1": "Yüzük", "ring2": "Yüzük", "trinket1": "Mücevher", "trinket2": "Mücevher",
 }
-const TIER := {"Kumaş": 0, "Deri": 1, "Zincir": 2, "Plaka": 3}
 const COLS := {
 	"brown": "7a5230", "tan": "b89a6a", "iron": "8a919c", "steel": "c3cfdf", "bronze": "b8782e", "gold": "e6b440", "mith": "7fb8e8",
 	"fur": "d8d0c0", "bone": "eadfc8", "dark": "4a4a54", "red": "a32a2a", "blue": "2a55b8", "wood": "8a6238", "green": "3f7a4a",
@@ -202,15 +200,6 @@ static func money_plain(c: int) -> String:
 	if sv > 0 or g > 0:
 		out += "%d gümüş " % sv
 	return out + "%d bakır" % k
-
-static func money_short(c: int) -> String:
-	var g := c / 10000
-	var sv := (c / 100) % 100
-	if g > 0:
-		return "%dg %ds %dc" % [g, sv, c % 100]
-	if sv > 0:
-		return "%ds %dc" % [sv, c % 100]
-	return "%dc" % c
 
 static func money_bb(c: int) -> String:
 	var g := c / 10000

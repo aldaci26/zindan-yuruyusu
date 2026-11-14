@@ -105,7 +105,6 @@ static func text(ci: CanvasItem, s: String, pos: Vector2, w: float, size: int, c
 	ci.draw_string(f, pos, s, HORIZONTAL_ALIGNMENT_CENTER, w, size, col)
 
 ## ---------- eşya simgeleri ----------
-const SLOT_BG := Color("1a1814")
 
 static func item(ci: CanvasItem, it: Dictionary, r: Rect2) -> void:
 	var c: Color = it["col"]

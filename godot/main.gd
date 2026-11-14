@@ -830,7 +830,7 @@ func _house(x: float, z: float, rot: float, w: float, d: float, bog: bool = fals
 		return
 	var hs := Kit.house(g, tw, td, s, Color(1.0, 0.93, 0.84), m_roof)
 	hs.scale = Vector3(1.0, 1.15, 1.0)
-	var sn := Dwarf.box(g, Vector3(tw * s * 1.05, 0.25, td * s * 0.7), m_snow, Vector3(0, s * 1.15 + 1.05, 0))
+	Dwarf.box(g, Vector3(tw * s * 1.05, 0.25, td * s * 0.7), m_snow, Vector3(0, s * 1.15 + 1.05, 0))
 	Kit.spawn(g, "fantasy-town", "chimney", Vector3(-tw * s * 0.25, s * 1.15, 0), 0.0, s, Color(1.0, 0.93, 0.84))
 	_add_obs(x, z, maxf(tw, td) * s * 0.55)
 
@@ -1666,6 +1666,8 @@ func ui_vendor_click(idx: int, _button: int) -> void:
 		return
 	var err: String = ""
 	if vendor_tab == 0:
+		if idx < 0 or idx >= VENDORS[vendor_npc["id"]].size():
+			return
 		var id: String = VENDORS[vendor_npc["id"]][idx]
 		err = inv.buy(id, 1, Items.buy_price(Items.get_item(id)))
 	else:

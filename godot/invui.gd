@@ -370,7 +370,6 @@ func show_tip(it: Dictionary, at: Vector2, compare: Dictionary = {}) -> void:
 	tip_lbl.text = Items.tip_bb(it, game.P["lvl"], game.inv.eq)
 	tip.visible = true
 	tip.reset_size()
-	var cmp_w := 0.0
 	if not compare.is_empty():
 		tip2_lbl.text = "[color=#9aa7b4]Şu an takılı[/color]\n" + Items.tip_bb(compare, game.P["lvl"], game.inv.eq)
 		tip2.visible = true
@@ -421,10 +420,6 @@ func _on_slot_hover(kind: String, key, on: bool) -> void:
 			it = Items.get_item(id)
 	if not it.is_empty():
 		show_tip(it, get_viewport().get_mouse_position(), cmp)
-
-func tip_for_id(id: String) -> void:
-	var it := Items.get_item(id)
-	show_tip(it, get_viewport().get_mouse_position())
 
 # ---------- yenileme ----------
 func refresh() -> void:

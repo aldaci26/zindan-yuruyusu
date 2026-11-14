@@ -175,6 +175,8 @@ func buy(id: String, n: int, cost: int) -> String:
 	return ""
 
 func rebuy(bi: int) -> String:
+	if bi < 0 or bi >= buyback.size():
+		return ""
 	var b: Dictionary = buyback[bi]
 	if money < b["price"]:
 		return "Yeterli paran yok."

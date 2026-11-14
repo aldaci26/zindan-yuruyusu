@@ -10,7 +10,6 @@ signal quit_pressed
 signal volume_changed(v: float)
 signal fullscreen_pressed
 signal ability_pressed(i: int)
-signal talk_pressed
 signal bag_pressed
 signal menu_pressed
 signal help_pressed

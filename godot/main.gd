@@ -771,6 +771,12 @@ func _build_city() -> void:
 	for p in [[-26, -112], [0, -118], [28, -110]]:
 		_cone_mi(30.0, 62.0, back, Vector3(p[0], 24, p[1]), false, 7)
 		_cone_mi(12.0, 22.0, m_snow, Vector3(p[0], 48, p[1]), false, 7)
+	_prop("castle", "siege-catapult", cx - 14.0, cz + 15.0, 0.6, 4.2, 2.0, Color(1.0, 0.95, 0.9))
+	_prop("castle", "siege-ballista", cx + 14.0, cz + 15.0, -0.6, 4.2, 1.5, Color(1.0, 0.95, 0.9))
+	_prop("survival", "barrel", cx - 8.0, cz + 17.0, 0.0, 3.6, 0.6)
+	_prop("survival", "barrel", cx + 8.0, cz + 17.0, 0.0, 3.6, 0.6)
+	_prop("survival", "box-large", cx + 17.0, cz + 2.0, 0.3, 3.6, 0.7)
+	_prop("fantasy-town", "cart", cx - 17.0, cz - 3.0, 1.2, 3.6, 1.4)
 	# tezgâhlar
 	_stall(cx - 10.0, cz + 4.0, 0.35, Color.html("b8302a"), Color.html("e6d3a0"))
 	_stall(cx + 11.0, cz + 3.0, -0.35, Color.html("2a55b8"), Color.html("e6d3a0"))
@@ -1017,10 +1023,32 @@ func _camp_model(kind: String) -> Node3D:
 		"defias": return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 		_: return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"})
 
+func _camp_props() -> void:
+	var tints := {"trogg": Color(0.8, 0.75, 0.7), "gnoll": Color(0.9, 0.8, 0.65), "defias": Color(0.85, 0.5, 0.45), "darkiron": Color(0.55, 0.5, 0.6)}
+	for c in CAMPS:
+		var cx: float = c["x"]
+		var cz: float = c["z"]
+		var t: Color = tints.get(c["kind"], Color(0.9, 0.85, 0.8))
+		_prop("survival", "campfire-pit", cx, cz, 0.0, 6.0, 1.0, t)
+		_flame(self, Vector3(cx, height_at(cx, cz) + 0.5, cz), 0.5)
+		for i in 3:
+			var a := 0.6 + i * 2.1
+			_prop("survival", "tent", cx + cos(a) * 11.0, cz + sin(a) * 11.0, -a + PI / 2.0, 4.6, 1.6, t)
+		_prop("survival", "barrel", cx + 4.5, cz + 3.0, 0.0, 3.6, 0.6, t)
+		_prop("survival", "barrel", cx + 5.2, cz + 2.2, 0.0, 3.6, 0.6, t)
+		_prop("survival", "box-large", cx - 4.0, cz + 4.5, 0.5, 3.6, 0.7, t)
+		_prop("survival", "chest", cx - 3.0, cz - 5.0, 2.0, 3.4, 0.6, t)
+		_prop("survival", "signpost", cx - 14.0, cz, 0.0, 4.0, 0.0, t)
+		if c["kind"] == "gnoll" or c["kind"] == "darkiron":
+			for i in 6:
+				var fa := float(i) / 6.0 * TAU
+				_prop("survival", "fence-fortified", cx + cos(fa) * 16.0, cz + sin(fa) * 16.0, -fa, 3.2, 0.0, t)
+
 func _spawn_camps() -> void:
 	var rnd := RandomNumberGenerator.new()
 	rnd.seed = 311
 	var cid := 200
+	_camp_props()
 	for c in CAMPS:
 		var ty: Dictionary = MTYPES[c["kind"]]
 		for i in c["n"]:

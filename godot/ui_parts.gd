@@ -376,6 +376,9 @@ class MicroBtn extends Control:
 			"char":
 				draw_circle(c + Vector2(0, -6), 4.5, g)
 				draw_colored_polygon(PackedVector2Array([c + Vector2(-8, 10), c + Vector2(-6, 0), c + Vector2(6, 0), c + Vector2(8, 10)]), g)
+			"tal":
+				draw_colored_polygon(PackedVector2Array([c + Vector2(0, -10), c + Vector2(8, 6), c + Vector2(-8, 6)]), g)
+				draw_rect(Rect2(c.x - 1.5, c.y + 6, 3, 4), g)
 			"help":
 				draw_string(ThemeDB.fallback_font, c + Vector2(-5, 8), "?", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, g)
 			"menu":

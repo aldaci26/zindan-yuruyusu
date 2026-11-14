@@ -13,6 +13,7 @@ signal ability_pressed(i: int)
 signal bag_pressed
 signal menu_pressed
 signal help_pressed
+signal tal_pressed
 signal char_pressed
 
 const GOLD := Color("f2c75c")
@@ -358,12 +359,12 @@ func _build_actionbar() -> void:
 
 func _build_bag() -> void:
 	var holder := Control.new()
-	_place(holder, 1.0, 1.0, 1.0, 1.0, -244, -60, -14, -14)
+	_place(holder, 1.0, 1.0, 1.0, 1.0, -270, -60, -14, -14)
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(holder))
-	var kinds := ["char", "help", "menu"]
-	var tips := ["Karakter (C)", "Yardım (H)", "Menü (Esc)"]
-	for i in 3:
+	var kinds := ["char", "tal", "help", "menu"]
+	var tips := ["Karakter (C)", "Yetenekler (N)", "Yardım (H)", "Menü (Esc)"]
+	for i in 4:
 		var mb = Parts.MicroBtn.new()
 		mb.kind = kinds[i]
 		mb.position = Vector2(i * 24, 6)
@@ -372,12 +373,14 @@ func _build_bag() -> void:
 			if i == 0:
 				char_pressed.emit()
 			elif i == 1:
+				tal_pressed.emit()
+			elif i == 2:
 				help_pressed.emit()
 			else:
 				menu_pressed.emit())
 		holder.add_child(mb)
 	var bb = Parts.BagBar.new()
-	bb.position = Vector2(80, 3)
+	bb.position = Vector2(106, 3)
 	bb.tooltip_text = "Çanta (B)"
 	bb.pressed.connect(func(): bag_pressed.emit())
 	holder.add_child(bb)
@@ -506,7 +509,7 @@ func _build_help() -> void:
 	var rows := [
 		["W A S D", "Yürü"], ["Boşluk", "Zıpla"], ["Sağ tık basılı", "Kamerayı çevir"], ["Sol tık", "Hedef seç"],
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
-		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
+		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
 		["G", "NPC ile konuş / ganimeti al"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 	]
 	for r in rows:

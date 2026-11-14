@@ -8,6 +8,7 @@ const SfxScript = preload("res://sfx.gd")
 const Items = preload("res://items.gd")
 const Inv = preload("res://inv.gd")
 const InvUI = preload("res://invui.gd")
+const TalentUI = preload("res://talentui.gd")
 
 const WORLD_R := 92.0
 const CITY := {"x": 0.0, "z": -58.0, "r": 24.0, "y": 3.0}
@@ -31,6 +32,22 @@ const CAMPS := [
 ]
 
 const MAX_LVL := 20
+
+## Yetenek ağacı. tree: 0 Silahlar, 1 Öfke, 2 Koruma. row: sıra (daldan 2*row puan gerekir). v: rütbe başına değer.
+const TALENTS := [
+	{"id": "arm_dmg", "tree": 0, "row": 0, "name": "Keskin Savruluş", "max": 5, "v": 3, "icon": "strike", "fmt": "Saldırı gücü %%%d artar."},
+	{"id": "arm_crit", "tree": 0, "row": 1, "name": "Ölümcül Hedef", "max": 3, "v": 2, "icon": "mortal", "fmt": "Kritik vuruş şansı %%%d artar."},
+	{"id": "arm_rend", "tree": 0, "row": 2, "name": "Derin Yaralar", "max": 2, "v": 25, "icon": "rend", "fmt": "Yaralama hasarı %%%d artar."},
+	{"id": "arm_exec", "tree": 0, "row": 3, "name": "Cellat", "max": 2, "v": 20, "icon": "execute", "fmt": "İnfaz hasarı %%%d artar."},
+	{"id": "fur_rage", "tree": 1, "row": 0, "name": "Öfke Seli", "max": 3, "v": 10, "icon": "shout", "fmt": "Kazandığın öfke %%%d artar."},
+	{"id": "fur_speed", "tree": 1, "row": 1, "name": "Ani Hamleler", "max": 5, "v": 4, "icon": "charge", "fmt": "Otomatik saldırı %%%d hızlanır."},
+	{"id": "fur_cleave", "tree": 1, "row": 2, "name": "Biçici", "max": 3, "v": 10, "icon": "whirl", "fmt": "Alan hasarı (Gök Gürültüsü, Kasırga, Kılıç Fırtınası) %%%d artar."},
+	{"id": "fur_reck", "tree": 1, "row": 3, "name": "Kızıl Sis", "max": 2, "v": 10, "icon": "reck", "fmt": "Delice Öfke bekleme süresi %d sn kısalır."},
+	{"id": "pro_hp", "tree": 2, "row": 0, "name": "Demir Beden", "max": 5, "v": 3, "icon": "laststand", "fmt": "En yüksek can %%%d artar."},
+	{"id": "pro_armor", "tree": 2, "row": 1, "name": "Katman Katman", "max": 5, "v": 5, "icon": "shield", "fmt": "Zırh %%%d artar."},
+	{"id": "pro_shield", "tree": 2, "row": 2, "name": "Kalkan Ustası", "max": 3, "v": 1, "icon": "slam", "fmt": "Kalkan Bloğu %d sn daha uzun sürer."},
+	{"id": "pro_dr", "tree": 2, "row": 3, "name": "Dağ Gibi", "max": 3, "v": 2, "icon": "clap", "fmt": "Aldığın hasar %%%d azalır."},
+]
 
 const SWAMP_MTYPES := {
 	"murloc": {"name": "Murloc", "lo": 8, "hi": 11, "hp": 40.0, "dmg": 2.8, "spd": 4.2, "aggro": 9.0, "rad": 0.6, "sc": 1.05},
@@ -187,6 +204,7 @@ var sfx
 var paused := false
 var inv
 var invui
+var talui
 var held = null
 var G := {}
 var vendor_npc = null
@@ -304,10 +322,14 @@ func _ready() -> void:
 	invui = InvUI.new()
 	invui.game = self
 	hud.add_child(invui)
+	talui = TalentUI.new()
+	talui.game = self
+	hud.add_child(talui)
 	hud.bag_pressed.connect(func(): toggle_win("bag"))
 	hud.char_pressed.connect(func(): toggle_win("char"))
 	hud.menu_pressed.connect(toggle_pause)
 	hud.help_pressed.connect(hud.toggle_help)
+	hud.tal_pressed.connect(func(): toggle_win("tal"))
 	inv_changed()
 	hud.start_pressed.connect(_on_start)
 	hud.ability_pressed.connect(ability)
@@ -1076,7 +1098,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
@@ -1092,17 +1114,17 @@ func base_sta() -> int:
 	return 10 + 2 * P["lvl"]
 
 func max_hp() -> int:
-	return 110 + 28 * (P["lvl"] - 1) + 7 * G["sta"]
+	return roundi((110 + 28 * (P["lvl"] - 1) + 7 * G["sta"]) * (1.0 + 0.03 * trk("pro_hp")))
 
 func atk() -> float:
 	var wd: float = (G["wmin"] + G["wmax"]) * 0.5 / G["wspd"] * 1.5
-	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0) * (1.5 if P["rk_t"] > 0.0 else 1.0)
+	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0) * (1.5 if P["rk_t"] > 0.0 else 1.0) * (1.0 + 0.03 * trk("arm_dmg"))
 
 func crit_chance() -> float:
-	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01
+	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01 + 0.02 * trk("arm_crit")
 
 func armor_total() -> float:
-	return G["armor"] * 0.5 + P["lvl"] * 1.5
+	return (G["armor"] * 0.5 + P["lvl"] * 1.5) * (1.0 + 0.05 * trk("pro_armor"))
 
 func potion_count() -> int:
 	return inv.count("pot_heal") + inv.count("pot_big")
@@ -1114,6 +1136,58 @@ func inv_changed() -> void:
 		P["hp"] = minf(P["hp"], float(max_hp()))
 	if invui != null:
 		invui.refresh()
+	if talui != null:
+		talui.refresh()
+
+func talent_def(id: String) -> Dictionary:
+	for td in TALENTS:
+		if td["id"] == id:
+			return td
+	return {}
+
+func trk(id: String) -> int:
+	return int(P["tal"].get(id, 0))
+
+func tal_tree_pts(tree: int) -> int:
+	var n := 0
+	for td in TALENTS:
+		if td["tree"] == tree:
+			n += trk(td["id"])
+	return n
+
+func tal_spent() -> int:
+	return tal_tree_pts(0) + tal_tree_pts(1) + tal_tree_pts(2)
+
+func tal_points() -> int:
+	return maxi(0, P["lvl"] - 9) - tal_spent()
+
+func tal_can(id: String) -> bool:
+	var td := talent_def(id)
+	return tal_points() > 0 and trk(id) < td["max"] and tal_tree_pts(td["tree"]) >= td["row"] * 2
+
+func tal_learn(id: String) -> void:
+	if not tal_can(id):
+		return
+	P["tal"][id] = trk(id) + 1
+	sfx.play("click", -4)
+	inv_changed()
+	save_game()
+
+func tal_reset_cost() -> int:
+	return P["lvl"] * 1500
+
+func tal_reset() -> void:
+	if tal_spent() == 0:
+		return
+	var cost := tal_reset_cost()
+	if inv.money < cost:
+		hud.say("Sıfırlamak için yeterli paran yok.", Color("ff6a5a"))
+		return
+	inv.money -= cost
+	P["tal"] = {}
+	sfx.play("coin")
+	inv_changed()
+	save_game()
 
 func xp_need(l: int) -> float:
 	if l >= 10:
@@ -1641,7 +1715,7 @@ func _on_start(cont: bool) -> void:
 func toggle_win(name: String) -> void:
 	if mode != "play":
 		return
-	var w: Control = invui.bag_win if name == "bag" else invui.char_win
+	var w: Control = talui.win if name == "tal" else (invui.bag_win if name == "bag" else invui.char_win)
 	w.visible = not w.visible
 	if w.visible and name == "char" and vendor_npc != null:
 		close_vendor()
@@ -1657,6 +1731,7 @@ func ui_close(name: String) -> void:
 	match name:
 		"bag": invui.bag_win.visible = false
 		"char": invui.char_win.visible = false
+		"tal": talui.win.visible = false
 		"vendor": close_vendor()
 		"loot": close_loot()
 	invui.refresh()
@@ -1765,7 +1840,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
@@ -1790,7 +1865,15 @@ func load_game() -> bool:
 	P["x"] = clampf(d["x"], -WORLD_R, WORLD_R)
 	P["z"] = clampf(d["z"], -WORLD_R, WORLD_R)
 	P["yaw"] = d["yaw"]
-	P["lvl"] = clampi(int(d["lvl"]), 1, 10)
+	P["lvl"] = clampi(int(d["lvl"]), 1, MAX_LVL)
+	P["tal"] = {}
+	if typeof(d.get("tal")) == TYPE_DICTIONARY:
+		for k in d["tal"]:
+			var td := talent_def(str(k))
+			if not td.is_empty():
+				P["tal"][str(k)] = clampi(int(d["tal"][k]), 0, td["max"])
+	if tal_points() < 0:
+		P["tal"] = {}
 	P["xp"] = maxf(0.0, d["xp"])
 	if typeof(d.get("inv")) == TYPE_DICTIONARY and inv.from_dict(d["inv"]):
 		pass
@@ -1857,6 +1940,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_H: hud.toggle_help()
 			KEY_B: toggle_win("bag")
 			KEY_C: toggle_win("char")
+			KEY_N: toggle_win("tal")
 			KEY_G:
 				if loot_mob != null:
 					while loot_mob != null and not loot_mob.loot.is_empty():
@@ -1932,7 +2016,7 @@ func in_combat() -> bool:
 	return T - P["combat_t"] < 5.0
 
 func add_rage(n: float) -> void:
-	P["rage"] = minf(100.0, P["rage"] + n)
+	P["rage"] = minf(100.0, P["rage"] + n * (1.0 + 0.1 * trk("fur_rage")))
 
 func roll(base: float) -> Dictionary:
 	var crit := randf() < crit_chance()
@@ -2106,6 +2190,8 @@ func gain_xp(n: float) -> void:
 		sfx.play("level")
 		hud.banner("SEVİYE %d" % P["lvl"], "Can doldu")
 		hud.say("Seviye atladın! Sv %d" % P["lvl"], Color("f2c75c"))
+		if P["lvl"] >= 10:
+			hud.say("Yetenek puanı kazandın! (N)", Color("9be8a8"))
 		for a in HudScript.ABIL:
 			if a["lvl"] == P["lvl"]:
 				hud.say("Yeni yetenek: %s" % a["name"], Color("7fb8ff"))
@@ -2121,7 +2207,7 @@ func auto_attack() -> void:
 		return
 	if dist_to(m) > 2.0:
 		return
-	P["atk_t"] = 1.5
+	P["atk_t"] = 1.5 * (1.0 - 0.04 * trk("fur_speed"))
 	swing()
 	P["yaw"] = atan2(m.x - P["x"], m.z - P["z"])
 	hit_mob(m, roll(atk()))
@@ -2179,7 +2265,7 @@ func ability(i: int) -> void:
 		_face(m)
 	P["rage"] -= cost
 	P["gcd"] = 1.0
-	P["cd"][i] = a["cd"]
+	P["cd"][i] = a["cd"] - (10.0 * trk("fur_reck") if kind == "reck" else 0.0)
 	P["combat_t"] = T
 	match kind:
 		"strike":
@@ -2228,12 +2314,12 @@ func ability(i: int) -> void:
 		"execute":
 			swing()
 			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.8, Color("ffe45c"), 0.5)
-			hit_mob(m, roll(atk() * 5.0), Color("ffe08a"))
+			hit_mob(m, roll(atk() * 5.0 * (1.0 + 0.2 * trk("arm_exec"))), Color("ffe08a"))
 		"rend":
 			swing()
 			m.bleed_t = 8.0
 			m.bleed_tick = 2.0
-			m.bleed_v = atk() * 0.55
+			m.bleed_v = atk() * 0.55 * (1.0 + 0.25 * trk("arm_rend"))
 			float_text(Vector3(m.x, 2.4 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), "Kanama", Color("ff6a5a"), false)
 			hit_mob(m, roll(atk() * 0.5), Color("ffb0a0"))
 		"charge":
@@ -2249,7 +2335,7 @@ func ability(i: int) -> void:
 			float_text(pp + Vector3(0, 2.6, 0), "Savaş Narası!", Color("ffe08a"), true)
 		"shield":
 			sfx.play("block")
-			P["sb_t"] = 5.0
+			P["sb_t"] = 5.0 + trk("pro_shield")
 			ring_fx(pp, 1.8, Color("59a9ff"), 0.5)
 			float_text(pp + Vector3(0, 2.6, 0), "Kalkan Bloğu", Color("8ec9ff"), false)
 		"clap":
@@ -2261,7 +2347,7 @@ func ability(i: int) -> void:
 				if not o.dead and dist_to(o) <= 6.0:
 					any = true
 					o.slow = 8.0
-					hit_mob(o, roll(atk() * 1.0), Color("bfe0ff"))
+					hit_mob(o, roll(atk() * 1.0 * (1.0 + 0.1 * trk("fur_cleave"))), Color("bfe0ff"))
 			if not any:
 				hud.say("Yakında düşman yok.", Color("ff9a8a"))
 		"whirl":
@@ -2271,7 +2357,7 @@ func ability(i: int) -> void:
 			ring_fx(pp, 5.0, Color("c8f0f8"), 0.55)
 			for o in mobs:
 				if not o.dead and dist_to(o) <= 5.0:
-					hit_mob(o, roll(atk() * 1.7), Color("d8f4ff"))
+					hit_mob(o, roll(atk() * 1.7 * (1.0 + 0.1 * trk("fur_cleave"))), Color("d8f4ff"))
 	if melee and not P["auto"] and P["target"] != null:
 		P["auto"] = true
 
@@ -2316,7 +2402,7 @@ func toggle_auto() -> void:
 
 func hurt_player(raw: float, m) -> void:
 	var arm: float = armor_total()
-	var d := maxi(1, roundi(raw * (1.0 - minf(0.75, arm / (arm + 30.0 + m.lvl * 4.0))) * (1.2 if P["rk_t"] > 0.0 else 1.0)))
+	var d := maxi(1, roundi(raw * (1.0 - minf(0.75, arm / (arm + 30.0 + m.lvl * 4.0))) * (1.2 if P["rk_t"] > 0.0 else 1.0) * (1.0 - 0.02 * trk("pro_dr"))))
 	if P["sb_t"] > 0.0:
 		d = maxi(1, roundi(d * 0.3))
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
@@ -2716,7 +2802,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 				ring_fx(ppb, 5.0, Color("c8d4e8"), 0.35)
 				for o in mobs:
 					if not o.dead and dist_to(o) <= 5.0:
-						hit_mob(o, roll(atk() * 1.3), Color("d8e4ff"))
+						hit_mob(o, roll(atk() * 1.3 * (1.0 + 0.1 * trk("fur_cleave"))), Color("d8e4ff"))
 		P["bs_t"] = maxf(0.0, P["bs_t"] - dt)
 		P["sb_t"] = maxf(0.0, P["sb_t"] - dt)
 		P["spin"] = maxf(0.0, P["spin"] - dt)

@@ -63,6 +63,25 @@ const SWAMP_CAMPS := [
 	{"kind": "bog", "x": -46.0, "z": -44.0, "n": 4},
 ]
 
+## Kara Demir Madeni: odalar [x, z, yarıçap], yan odalar [x, z, yarıçap, bağlı oda]
+const MINE_ROOMS := [[0.0, 79.0, 9.0], [-8.0, 48.0, 14.0], [8.0, 11.0, 15.0], [-8.0, -26.0, 14.0], [0.0, -68.0, 20.0]]
+const MINE_ALC := [[-26.0, 48.0, 5.0, 1], [26.0, 11.0, 5.0, 2], [-30.0, -26.0, 5.0, 3]]
+const MINE_MTYPES := {
+	"miner": {"name": "Kara Demir Madencisi", "lo": 12, "hi": 13, "hp": 70.0, "dmg": 3.2, "spd": 3.6, "aggro": 9.0, "rad": 0.6, "sc": 1.0},
+	"spider": {"name": "Mağara Örümceği", "lo": 12, "hi": 14, "hp": 55.0, "dmg": 3.0, "spd": 4.6, "aggro": 10.0, "rad": 0.7, "sc": 1.15},
+	"golem": {"name": "Taş Golem", "lo": 13, "hi": 14, "hp": 100.0, "dmg": 3.4, "spd": 2.6, "aggro": 7.0, "rad": 1.0, "sc": 1.3},
+	"guard": {"name": "Kara Demir Muhafızı", "lo": 14, "hi": 15, "hp": 90.0, "dmg": 3.6, "spd": 3.4, "aggro": 9.0, "rad": 0.7, "sc": 1.1},
+}
+const MINE_CAMPS := [
+	{"kind": "miner", "x": -8.0, "z": 48.0, "n": 5, "sp": 9.0},
+	{"kind": "spider", "x": -8.0, "z": 48.0, "n": 3, "sp": 10.0},
+	{"kind": "golem", "x": 8.0, "z": 11.0, "n": 2, "sp": 10.0},
+	{"kind": "spider", "x": -8.0, "z": -26.0, "n": 4, "sp": 10.0},
+	{"kind": "miner", "x": -8.0, "z": -26.0, "n": 3, "sp": 9.0},
+	{"kind": "guard", "x": -8.0, "z": -26.0, "n": 2, "sp": 8.0},
+	{"kind": "guard", "x": 0.0, "z": -58.0, "n": 2, "sp": 6.0},
+]
+
 const SWAMP_NPCS := [
 	{"id": "muck", "name": "Bekçi Muck", "title": "Karakol Komutanı", "role": "quest", "qs": ["q_murloc", "q_shaman", "q_croc"], "x": -5.0, "z": 5.0, "face": 0.6,
 		"o": {"beard": Color("6a4a2a"), "cloth": Color("3a5a2a"), "metal": Color("7a8070"), "helm": true, "prop": "spear"}},
@@ -104,6 +123,12 @@ const QUESTS := {
 	"q_rag": {"title": "Ateşin Efendisi", "kill": "Ragnaros", "n": 1, "lvl": 10, "xp": 1500, "money": 8000, "rew": ["helm_king", "rg_king", "tr_eye"],
 		"text": "Demirkazan'ın büyük ocağında Ateş Efendisi Ragnaros uyuyor. Onu uyandırıp yen. Çok iyi donan.", "done": "Ragnaros devrildi! Krallar bile bunu başaramadı."},
 
+	"q_mine1": {"title": "Madenci Kâbusu", "kill": "Kara Demir Madencisi", "n": 6, "lvl": 12, "xp": 1100, "money": 4200, "rew": ["ch_mine", "lg_mine", "helm_mine"],
+		"text": "Kara Demir madencileri eski madenimizi ele geçirdi. Portaldan gir, altısını temizle.", "done": "Maden nefes aldı. Zırhlardan birini seç."},
+	"q_mine2": {"title": "Taşın Yüreği", "kill": "Gorduk Taşyürek", "n": 1, "lvl": 13, "xp": 1500, "money": 6000, "rew": ["hd_mine", "sh_mine", "axe_mine"],
+		"text": "Madenin ortasında Gorduk Taşyürek adında bir granit dev duruyor. Yerinden oynat.", "done": "Gorduk yıkıldı! Bu ödül senin."},
+	"q_mine3": {"title": "Maden Lordu", "kill": "Vurgan", "n": 1, "lvl": 15, "xp": 2400, "money": 9500, "rew": ["tr_vurgan", "helm_vurgan", "ch_vurgan"],
+		"text": "Madenin en dibinde Maden Lordu Vurgan oturuyor. Onu devirmeden Demirkazan rahat edemez.", "done": "Vurgan düştü! Madenin lordu artık sensin."},
 	"q_wolf": {"title": "Kurt Sürüsü", "kill": "Kurt", "n": 4, "lvl": 1, "xp": 90, "money": 250, "rew": ["axe_wolf", "bk_fur", "nk_tooth"],
 		"text": "Vadide kurtlar çoğaldı, sürüler köye yaklaşıyor. Dört kurdu avla, köy sana minnettar kalır.", "done": "Sürü dağıldı, teşekkürler. İşte ödülün."},
 	"q_boar": {"title": "Domuz İstilası", "kill": "Yaban Domuzu", "n": 4, "lvl": 2, "xp": 170, "money": 450, "rew": ["axe_boar", "so_boar", "ft_iron"],
@@ -132,6 +157,12 @@ const BOSSES := {
 	"gruff": {"name": "Gruff Swiftbite", "title": "Bataklık Devi", "lvl": 14, "hp": 9000.0, "dmg": 34.0, "spd": 4.2, "rad": 1.5, "sc": 2.0, "aggro": 12.0, "map": "swamp",
 		"x": -26.0, "z": -66.0, "model": "gruff", "kind": "skull", "respawn": 420.0, "xp": 600,
 		"say": "Gruff Swiftbite çamurdan fırlayıp kükredi!", "drops": ["axe_gruff", "bk_gruff", "tr_gruff", "wt_gruff"]},
+	"gorduk": {"name": "Gorduk Taşyürek", "title": "Granit Muhafız", "lvl": 15, "hp": 12500.0, "dmg": 40.0, "spd": 3.4, "rad": 1.7, "sc": 1.9, "aggro": 12.0, "map": "mine",
+		"x": 8.0, "z": 8.0, "model": "gorduk", "kind": "skull", "respawn": 480.0, "xp": 800,
+		"say": "Gorduk Taşyürek: Yer sarsılıyor... Geri dönün!", "drops": ["hammer_gorduk", "lg_gorduk", "nk_gorduk"]},
+	"vurgan": {"name": "Vurgan", "title": "Kara Demir Maden Lordu", "lvl": 17, "hp": 19000.0, "dmg": 48.0, "spd": 3.8, "rad": 1.2, "sc": 1.6, "aggro": 12.0, "map": "mine",
+		"x": 0.0, "z": -73.0, "model": "vurgan", "kind": "skull", "respawn": 600.0, "xp": 1400,
+		"say": "Vurgan: Madenim benim! Kazın, kazın!", "drops": ["axe_vurgan", "ch_vurgan", "helm_vurgan", "tr_vurgan"]},
 	"ragnaros": {"name": "Ragnaros", "title": "Ateş Efendisi", "lvl": 10, "hp": 24000.0, "dmg": 60.0, "spd": 0.0, "rad": 4.6, "sc": 1.0, "aggro": 0.0, "reach": 1.9, "yoff": 1.3,
 		"x": 0.0, "z": -64.0, "model": "ragnaros", "kind": "skull", "respawn": 600.0, "xp": 900,
 		"say": "Ragnaros: SİZİ KÜÇÜK FANİLER! ATEŞİMDE YANACAKSINIZ!", "drops": ["helm_rag", "ch_rag", "tr_core"]},
@@ -246,6 +277,8 @@ var sky_psm: ProceduralSkyMaterial
 var we_node: WorldEnvironment
 var m_thatch: StandardMaterial3D
 var lava_mat: StandardMaterial3D
+var mine_lantern: OmniLight3D
+var _mine_torch_cache: Array = []
 var fire_light: OmniLight3D
 var forge_light: OmniLight3D
 var gate_light: OmniLight3D
@@ -287,7 +320,77 @@ func _swamp_h(x: float, z: float) -> float:
 	var edge := maxf(0.0, (d - 78.0) / 20.0)
 	return lerpf(0.5, h, flat) + edge * edge * 16.0
 
+## Madenin işaretli mesafe alanı: eksi = boş (yürünebilir), artı = kaya
+func _mine_sd(x: float, z: float) -> float:
+	var p := Vector2(x, z)
+	var best := 1000.0
+	for i in MINE_ROOMS.size():
+		var r: Array = MINE_ROOMS[i]
+		var c := Vector2(r[0], r[1])
+		best = minf(best, p.distance_to(c) - float(r[2]))
+		if i > 0:
+			var pr: Array = MINE_ROOMS[i - 1]
+			var q := Geometry2D.get_closest_point_to_segment(p, Vector2(pr[0], pr[1]), c)
+			best = minf(best, p.distance_to(q) - 3.4)
+	for a in MINE_ALC:
+		var ar: Array = a
+		var ac := Vector2(ar[0], ar[1])
+		best = minf(best, p.distance_to(ac) - float(ar[2]))
+		var rc: Array = MINE_ROOMS[int(ar[3])]
+		var q2 := Geometry2D.get_closest_point_to_segment(p, Vector2(rc[0], rc[1]), ac)
+		best = minf(best, p.distance_to(q2) - 2.4)
+	return best
+
+func _mine_h(x: float, z: float) -> float:
+	var sd := _mine_sd(x, z)
+	var w := clampf((sd + 0.3) / 3.2, 0.0, 1.0)
+	w = w * w * (3.0 - 2.0 * w)
+	var rough := vn(x * 0.35, z * 0.35) * 0.5 + vn(x * 0.9, z * 0.9) * 0.2
+	return vn(x * 0.15 + 7.0, z * 0.15) * 0.35 + w * (11.0 + rough * 2.5)
+
+func _mine_torches() -> Array:
+	if not _mine_torch_cache.is_empty():
+		return _mine_torch_cache
+	for r in MINE_ROOMS:
+		var rr: float = r[2]
+		for k in 7:
+			var a := float(k) / 7.0 * TAU + 0.3
+			var dx := cos(a)
+			var dz := sin(a)
+			if _mine_sd(r[0] + dx * (rr + 2.0), r[1] + dz * (rr + 2.0)) < -0.2:
+				continue
+			_mine_torch_cache.append(Vector2(r[0] + dx * (rr - 1.0), r[1] + dz * (rr - 1.0)))
+	for a2 in MINE_ALC:
+		var al: Array = a2
+		var ap := Vector2(al[0], al[1])
+		for sd2 in [-1.0, 1.0]:
+			_mine_torch_cache.append(ap + Vector2(0.0, sd2 * (float(al[2]) - 1.0)))
+	return _mine_torch_cache
+
+func _mine_color(x: float, z: float, _y: float) -> Color:
+	var sd := _mine_sd(x, z)
+	var n := vn(x * 0.2, z * 0.2)
+	var n2 := vn(x * 0.6 + 3.0, z * 0.6 - 5.0)
+	var fl := Color("5a4e44").lerp(Color("453c36"), clampf(n * 1.4 - 0.2, 0.0, 1.0))
+	fl = fl.lerp(Color("6a5a48"), clampf((n2 - 0.6) * 3.0, 0.0, 0.5))
+	var wl := Color("3a3438").lerp(Color("2a2428"), n)
+	var c := fl.lerp(wl, clampf((sd + 0.2) / 2.0, 0.0, 1.0))
+	if n2 > 0.8 and sd > -0.5:
+		c = c.lerp(Color("c8a050"), 0.55)
+	var g := 0.0
+	for t in _mine_torches():
+		var d := Vector2(x - t.x, z - t.y).length()
+		var f := clampf(1.0 - d / 9.0, 0.0, 1.0)
+		g += f * f
+	for lp in [Vector2(-13.0, -77.0), Vector2(13.0, -77.0)]:
+		var f2 := clampf(1.0 - Vector2(x - lp.x, z - lp.y).length() / 11.0, 0.0, 1.0)
+		g += f2 * f2 * 1.6
+	g = minf(g, 1.4)
+	return Color(c.r + g * 0.5, c.g + g * 0.27, c.b + g * 0.08)
+
 func height_at(x: float, z: float) -> float:
+	if map == "mine":
+		return _mine_h(x, z)
 	if map == "swamp":
 		return _swamp_h(x, z)
 	var h := vn(x * 0.03, z * 0.03) * 16.0 + vn(x * 0.08, z * 0.08) * 4.5 + vn(x * 0.21, z * 0.21) * 0.9 - 9.0
@@ -347,7 +450,15 @@ func _ready() -> void:
 	_update_camera(0.0)
 
 func _build_world() -> void:
-	if map == "swamp":
+	if map == "mine":
+		camps_now = MINE_CAMPS
+		_build_terrain()
+		_build_mine()
+		_spawn_npcs()
+		_spawn_mobs()
+		_spawn_bosses()
+		_spawn_camps()
+	elif map == "swamp":
 		camps_now = SWAMP_CAMPS
 		_build_terrain()
 		_build_swamp()
@@ -394,6 +505,7 @@ func _clear_world() -> void:
 	snow_node = null
 	swamp_fx = null
 	lava_mat = null
+	mine_lantern = null
 	fire_light = null
 	forge_light = null
 	gate_light = null
@@ -559,7 +671,19 @@ func _setup_environment() -> void:
 func _apply_env() -> void:
 	if env_res == null:
 		return
-	if map == "swamp":
+	if map == "mine":
+		sky_psm.sky_top_color = Color("060507")
+		sky_psm.sky_horizon_color = Color("0a0809")
+		sky_psm.ground_horizon_color = Color("0a0809")
+		sky_psm.ground_bottom_color = Color("060507")
+		env_res.ambient_light_color = Color("7a6a80")
+		env_res.ambient_light_energy = 0.85
+		env_res.fog_light_color = Color("14100f")
+		env_res.fog_density = 0.022
+		env_res.adjustment_saturation = 1.0
+		sun.light_color = Color("403040")
+		sun.light_energy = 0.0
+	elif map == "swamp":
 		sky_psm.sky_top_color = Color("4f6f66")
 		sky_psm.sky_horizon_color = Color("b6c29a")
 		sky_psm.ground_horizon_color = Color("8a9a74")
@@ -643,6 +767,8 @@ func _swamp_color(x: float, z: float, y: float) -> Color:
 	return c
 
 func _terrain_color(x: float, z: float, y: float) -> Color:
+	if map == "mine":
+		return _mine_color(x, z, y)
 	if map == "swamp":
 		return _swamp_color(x, z, y)
 	var s := maxf(absf(height_at(x + 1.2, z) - y), absf(height_at(x, z + 1.2) - y)) / 1.2
@@ -1046,6 +1172,7 @@ func _build_city() -> void:
 		_cone_mi(30.0, 62.0, back, Vector3(p[0], 24, p[1]), false, 7)
 		_cone_mi(12.0, 22.0, m_snow, Vector3(p[0], 48, p[1]), false, 7)
 	_make_portal(cx + 16.0, cz + 10.0, Color("6aa0ff"), "swamp", 0.0, 17.0, PI, "Sisli Bataklık (Sv 8+)")
+	_make_portal(cx - 16.0, cz + 10.0, Color("ff9a3a"), "mine", 0.0, 76.0, PI, "Kara Demir Madeni (Sv 12+)")
 	_prop("castle", "siege-catapult", cx - 14.0, cz + 15.0, 0.6, 4.2, 2.0, Color(1.0, 0.95, 0.9))
 	_prop("castle", "siege-ballista", cx + 14.0, cz + 15.0, -0.6, 4.2, 1.5, Color(1.0, 0.95, 0.9))
 	_prop("survival", "barrel", cx - 8.0, cz + 17.0, 0.0, 3.6, 0.6)
@@ -1205,12 +1332,14 @@ const NPCDEF := [
 		"o": {"beard": Color("dbb46a"), "cloth": Color("8e2f4a"), "metal": Color("b09060"), "helm": false, "prop": "none"}},
 	{"id": "borga", "name": "Demirci Borga", "title": "Silah Ustası", "role": "smith", "x": 5.2, "z": -59.5, "face": -2.4,
 		"o": {"beard": Color("2e2018"), "cloth": Color("5a3a22"), "metal": Color("6a6f78"), "helm": false, "prop": "hammer", "skin": Color("d69a74")}},
+	{"id": "durin", "name": "Madenci Başı Durin", "title": "Kara Demir Madeni", "role": "quest", "qs": ["q_mine1", "q_mine2", "q_mine3"], "x": -10.5, "z": -46.0, "face": 0.8,
+		"o": {"beard": Color("5a3a22"), "cloth": Color("6a4a22"), "metal": Color("8a8a90"), "helm": true, "prop": "hammer"}},
 	{"id": "thrum", "name": "Komutan Thrum", "title": "Dağ Komutanı", "role": "quest", "qs": ["q_bear", "q_defias", "q_dark", "q_vc", "q_rag"], "x": -4.0, "z": -73.5, "face": 0.0,
 		"o": {"beard": Color("aab0b8"), "cloth": Color("8a1f1f"), "metal": Color("c0c8d4"), "helm": true, "prop": "axe"}},
 ]
 
 func _spawn_npcs() -> void:
-	for d in (SWAMP_NPCS if map == "swamp" else NPCDEF):
+	for d in ([] if map == "mine" else (SWAMP_NPCS if map == "swamp" else NPCDEF)):
 		var n: Dictionary = d.duplicate()
 		var node := Dwarf.make_dwarf(d["o"])
 		var inside_city: bool = map == "snow" and d["z"] < CITY.z + 22.0
@@ -1225,6 +1354,8 @@ func _spawn_npcs() -> void:
 func _spawn_mobs() -> void:
 	var rnd := RandomNumberGenerator.new()
 	rnd.seed = 77
+	if map == "mine":
+		return
 	if map == "swamp":
 		_spawn_swamp_mobs(rnd)
 		return
@@ -1279,6 +1410,8 @@ func _spawn_mobs() -> void:
 		n += 1
 
 func _mtype(kind: String) -> Dictionary:
+	if MINE_MTYPES.has(kind):
+		return MINE_MTYPES[kind]
 	return SWAMP_MTYPES[kind] if SWAMP_MTYPES.has(kind) else MTYPES[kind]
 
 func _spawn_swamp_mobs(rnd: RandomNumberGenerator) -> void:
@@ -1354,6 +1487,8 @@ func _make_boss_model(id: String) -> Node3D:
 		"hogger": return Dwarf.make_gnoll(true)
 		"vancleef": return Dwarf.make_dwarf({"skin": Color("e8c0a0"), "metal": Color("5a2a2a"), "cloth": Color("a32a2a"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 		"gruff": return Dwarf.make_croc(true)
+		"gorduk": return Dwarf.make_golem(true)
+		"vurgan": return Dwarf.make_dwarf({"skin": Color("8a7060"), "metal": Color("2a2a30"), "cloth": Color("a32a1a"), "beard": Color("c8402a"), "helm": true, "prop": "hammer"})
 		_: return Dwarf.make_ragnaros()
 
 func _humanoid_legs(node: Node3D) -> Array:
@@ -1412,6 +1547,10 @@ func _camp_model(kind: String) -> Node3D:
 		"shaman": return Dwarf.make_murloc(true)
 		"croc": return Dwarf.make_croc(false)
 		"bog": return Dwarf.make_bogbeast()
+		"miner": return Dwarf.make_dwarf({"skin": Color("6a5448"), "metal": Color("3a3238"), "cloth": Color("4a3a2a"), "beard": Color("1a1410"), "helm": true, "prop": "hammer"})
+		"golem": return Dwarf.make_golem(false)
+		"spider": return Dwarf.make_spider()
+		"guard": return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"})
 		"defias": return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 		_: return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"})
 
@@ -1441,12 +1580,14 @@ func _spawn_camps() -> void:
 	var rnd := RandomNumberGenerator.new()
 	rnd.seed = 311
 	var cid := 200
-	_camp_props()
+	if map != "mine":
+		_camp_props()
 	for c in camps_now:
 		var ty: Dictionary = _mtype(c["kind"])
 		for i in c["n"]:
 			var a := rnd.randf() * TAU
-			var sp := _free_spot(c["x"] + cos(a) * (2.0 + rnd.randf() * 7.0), c["z"] + sin(a) * (2.0 + rnd.randf() * 7.0))
+			var spr: float = c.get("sp", 9.0)
+			var sp := _free_spot(c["x"] + cos(a) * (2.0 + rnd.randf() * (spr - 2.0)), c["z"] + sin(a) * (2.0 + rnd.randf() * (spr - 2.0)))
 			var lvl: int = rnd.randi_range(ty["lo"], ty["hi"])
 			var m := Mob.new()
 			m.kind = c["kind"]
@@ -1505,6 +1646,8 @@ func spawn_add(owner_m, nm: String, model: String, lvl: int, hp: float, dmg: flo
 		"gnoll": m.node = Dwarf.make_gnoll(false)
 		"ember": m.node = Dwarf.make_ember()
 		"croc": m.node = Dwarf.make_croc(false)
+		"golem": m.node = Dwarf.make_golem(false)
+		"guard": m.node = Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"})
 		_: m.node = Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 	m.node.scale = Vector3.ONE * sc
 	m.legs = _humanoid_legs(m.node)
@@ -1536,6 +1679,98 @@ func _kit_mm(kit: String, nm: String, xfs: Array, tint: Color) -> void:
 			m2 = sm
 		_add_multimesh((mi as MeshInstance3D).mesh, m2, lx)
 	root.free()
+
+## Kara Demir Madeni: meşaleler, destek kirişleri, sarkıtlar, lav havuzları
+func _build_mine() -> void:
+	var rnd := RandomNumberGenerator.new()
+	rnd.seed = 909
+	var rock := Dwarf.mat(Color.html("3c3640"), 0.0, 0.95)
+	var wood := Dwarf.mat(Color.html("6a4a2c"), 0.0, 0.9)
+	var iron := Dwarf.mat(Color.html("3a3a42"), 0.4, 0.6)
+	for t in _mine_torches():
+		var tp := Vector3(t.x, height_at(t.x, t.y), t.y)
+		Dwarf.box(self, Vector3(0.14, 1.5, 0.14), wood, tp + Vector3(0, 0.75, 0))
+		Dwarf.box(self, Vector3(0.3, 0.12, 0.3), iron, tp + Vector3(0, 1.5, 0))
+		_flame(self, tp + Vector3(0, 1.75, 0), 0.22)
+	for i in range(1, MINE_ROOMS.size()):
+		var r: Array = MINE_ROOMS[i]
+		var li := OmniLight3D.new()
+		li.light_color = Color("ffb070")
+		li.omni_range = float(r[2]) * 1.9
+		li.light_energy = 1.1
+		li.position = Vector3(r[0], 5.0, r[1])
+		add_child(li)
+	mine_lantern = OmniLight3D.new()
+	mine_lantern.light_color = Color("ffd9a0")
+	mine_lantern.omni_range = 15.0
+	mine_lantern.light_energy = 1.7
+	add_child(mine_lantern)
+	# lav havuzları (son oda)
+	lava_mat = Dwarf.mat(Color.html("ff7a1f"), 0.0, 0.6, Color.html("ff6a10"), 3.5)
+	for lp in [Vector2(-13.0, -77.0), Vector2(13.0, -77.0)]:
+		var ly := height_at(lp.x, lp.y)
+		Dwarf.cyl(self, 4.1, 4.3, 0.2, rock, Vector3(lp.x, ly + 0.05, lp.y), 20)
+		var disc := Dwarf.cyl(self, 3.6, 3.6, 0.12, lava_mat, Vector3(lp.x, ly + 0.14, lp.y), 20)
+		disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_add_obs(lp.x, lp.y, 4.0)
+		var ll := OmniLight3D.new()
+		ll.light_color = Color("ff6a20")
+		ll.omni_range = 14.0
+		ll.light_energy = 1.6
+		ll.position = Vector3(lp.x, 2.0, lp.y)
+		add_child(ll)
+	# duvar kenarında sarkıt ve dikitler
+	for i in MINE_ROOMS.size():
+		var r2: Array = MINE_ROOMS[i]
+		for k in 9:
+			var ang := rnd.randf() * TAU
+			var rr := float(r2[2]) - 1.2 - rnd.randf() * 3.0
+			var px := float(r2[0]) + cos(ang) * rr
+			var pz := float(r2[1]) + sin(ang) * rr
+			if _mine_sd(px + cos(ang) * 3.5, pz + sin(ang) * 3.5) < -0.3:
+				continue
+			var h := 1.2 + rnd.randf() * 2.6
+			var w := 0.45 + rnd.randf() * 0.5
+			Dwarf.cone(self, w, h, rock, Vector3(px, height_at(px, pz) + h / 2.0 - 0.1, pz), 5)
+			_add_obs(px, pz, w * 0.8)
+	# koridor destek çerçeveleri
+	for i in range(1, MINE_ROOMS.size()):
+		var ra: Array = MINE_ROOMS[i - 1]
+		var rb: Array = MINE_ROOMS[i]
+		var pa := Vector2(ra[0], ra[1])
+		var pb := Vector2(rb[0], rb[1])
+		var dir := (pb - pa).normalized()
+		for tt in [0.34, 0.5, 0.66]:
+			var p := pa.lerp(pb, tt)
+			if p.distance_to(pa) < float(ra[2]) + 1.8 or p.distance_to(pb) < float(rb[2]) + 1.8:
+				continue
+			var g := Node3D.new()
+			g.position = Vector3(p.x, height_at(p.x, p.y), p.y)
+			g.rotation.y = atan2(-dir.x, -dir.y)
+			add_child(g)
+			for sd in [-1.0, 1.0]:
+				Dwarf.box(g, Vector3(0.5, 4.4, 0.5), wood, Vector3(sd * 3.0, 2.2, 0))
+			Dwarf.box(g, Vector3(7.2, 0.55, 0.55), wood, Vector3(0, 4.3, 0))
+	# eşyalar
+	_prop("survival", "barrel", -6.0, 84.0, 0.0, 3.6, 0.6)
+	_prop("survival", "barrel", -5.2, 84.8, 0.0, 3.6, 0.6)
+	_prop("survival", "box-large", 6.0, 84.0, 0.4, 3.6, 0.7)
+	_prop("fantasy-town", "lantern", -3.0, 82.0, 0.0, 3.2)
+	_prop("fantasy-town", "lantern", 3.0, 82.0, 0.0, 3.2)
+	_prop("fantasy-town", "cart", -2.0, 52.0, 0.5, 3.4, 1.3)
+	_prop("survival", "box-large", -14.0, 43.0, 0.2, 3.6, 0.7)
+	_prop("survival", "barrel", -13.0, 53.0, 0.0, 3.6, 0.6)
+	_prop("survival", "barrel", -12.3, 53.8, 0.0, 3.6, 0.6)
+	_prop("survival", "box-large", 16.0, 2.0, 0.6, 3.6, 0.7)
+	_prop("survival", "barrel", 17.0, 18.0, 0.0, 3.6, 0.6)
+	_prop("fantasy-town", "cart", -1.0, -20.0, -0.4, 3.4, 1.3)
+	_prop("survival", "box-large", -15.0, -31.0, 0.3, 3.6, 0.7)
+	_prop("survival", "barrel", -14.0, -21.0, 0.0, 3.6, 0.6)
+	_prop("survival", "box-large", -10.0, -52.0, 0.5, 3.6, 0.7)
+	_prop("survival", "box-large", 10.0, -52.0, -0.5, 3.6, 0.7)
+	for a in MINE_ALC:
+		_prop("survival", "chest", float(a[0]), float(a[1]), 1.6, 3.4, 0.8)
+	_make_portal(0.0, 85.0, Color("6aa0ff"), "snow", -16.0, -44.0, 0.0, "Demirkazan")
 
 func _build_swamp() -> void:
 	var rnd := RandomNumberGenerator.new()
@@ -1858,7 +2093,7 @@ func load_game() -> bool:
 		if not d.has(k) or typeof(d[k]) != TYPE_FLOAT:
 			return false
 	var want_map: String = str(d.get("map", "snow"))
-	if want_map != "snow" and want_map != "swamp":
+	if want_map != "snow" and want_map != "swamp" and want_map != "mine":
 		want_map = "snow"
 	if want_map != map:
 		_enter_map(want_map)
@@ -2075,7 +2310,8 @@ func kill_mob(m) -> void:
 func _normal_loot(m) -> void:
 	m.loot_money = 4 + m.lvl * 5 + randi() % 6
 	var junk := {"Kurt": "j_wolf", "Yaban Domuzu": "j_boar", "Dağ Ayısı": "j_bear", "Trogg": "j_trogg", "Gnoll": "j_gnoll",
-		"Defias Haydudu": "j_defias", "Kara Demir Büyücüsü": "j_dark", "Murloc": "j_murloc", "Murloc Şamanı": "j_murloc", "Timsah": "j_croc", "Bataklık Canavarı": "j_bog"}
+		"Defias Haydudu": "j_defias", "Kara Demir Büyücüsü": "j_dark", "Murloc": "j_murloc", "Murloc Şamanı": "j_murloc", "Timsah": "j_croc", "Bataklık Canavarı": "j_bog",
+		"Kara Demir Madencisi": "j_miner", "Taş Golem": "j_golem", "Mağara Örümceği": "j_spider", "Kara Demir Muhafızı": "j_dark"}
 	if randf() < 0.55 and junk.has(m.nm):
 		m.loot.append({"id": junk[m.nm], "n": 1})
 	if randf() < 0.2:
@@ -2662,6 +2898,19 @@ func collide(x: float, z: float, r: float) -> Vector2:
 			var d := sqrt(d2)
 			x = o.x + dx / d * rr
 			z = o.y + dz / d * rr
+	if map == "mine":
+		for _it in 3:
+			var sd := _mine_sd(x, z)
+			if sd <= -r:
+				break
+			var gx := _mine_sd(x + 0.1, z) - sd
+			var gz := _mine_sd(x, z + 0.1) - sd
+			var gl := sqrt(gx * gx + gz * gz)
+			if gl < 0.0001:
+				break
+			var push := sd + r
+			x -= gx / gl * push
+			z -= gz / gl * push
 	return Vector2(x, z)
 
 func step(dt: float) -> void:
@@ -2827,7 +3076,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 			P["hp"] = max_hp() * 0.6
 			P["rage"] = 0.0
 			P["x"] = 0.0
-			P["z"] = 7.0
+			P["z"] = 76.0 if map == "mine" else 7.0
 			P["combat_t"] = -99.0
 			P["dot_t"] = 0.0
 			P["slow_t"] = 0.0
@@ -2835,7 +3084,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 			for m in mobs:
 				if m.state == "chase":
 					m.state = "return"
-			hud.say("Kamp ateşinde canlandın.", Color("6aa8ff"))
+			hud.say("Madenin girişinde canlandın." if map == "mine" else "Kamp ateşinde canlandın.", Color("6aa8ff"))
 	P["y"] = height_at(P["x"], P["z"]) + P["jy"]
 
 # ---------- boss yetenekleri ----------
@@ -2904,6 +3153,14 @@ func _boss_engage(m) -> void:
 		"arctikus":
 			_bset(m, "maul", 5.0)
 			_bset(m, "rend", 8.0)
+		"gorduk":
+			_bset(m, "stomp", 4.0)
+			_bset(m, "quake", 8.0)
+			_bset(m, "rocks", 3.0)
+		"vurgan":
+			_bset(m, "cleave", 4.0)
+			_bset(m, "bolt", 3.0)
+			_bset(m, "flame", 8.0)
 		"gruff":
 			_bset(m, "roll", 6.0)
 			_bset(m, "snap", 3.0)
@@ -2944,6 +3201,62 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 		return true
 	var melee: bool = d <= m.rad + m.reach + 0.6
 	match m.boss:
+		"gorduk":
+			if hpf < 0.25 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.3
+				m.spd *= 1.2
+				boss_say(m, "Gorduk'un çatlakları kızıl parlıyor!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if hpf < 0.6 and not m.flags.has("shards"):
+				m.flags["shards"] = true
+				boss_say(m, "Gorduk'un gövdesinden taş parçaları koptu!")
+				_boss_summon(m, "Taş Parçası", "golem", 3, 260.0, 14.0, 3.2, 0.8, 3.5)
+			if d <= 8.0 and _bready(m, "quake"):
+				_bset(m, "quake", 10.0)
+				boss_spell(m, 1.4, "Deprem", Color("d8b070"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 8.0, Color("d8b070"), 0.6)
+				knockback(m, 6.0)
+				sfx.play("thunder", -4)
+				return true
+			if melee and _bready(m, "stomp"):
+				_bset(m, "stomp", 6.0)
+				boss_hit(m, 2.0, "Taş Yumruk")
+				return true
+			if d > m.rad + m.reach + 1.5 and d < 22.0 and _bready(m, "rocks"):
+				_bset(m, "rocks", 7.0)
+				boss_spell(m, 0.9, "Kaya Fırlatma", Color("8a8070"))
+				return true
+		"vurgan":
+			for t in [0.7, 0.4]:
+				var key := "w%d" % roundi(t * 100.0)
+				if hpf < t and not m.flags.has(key):
+					m.flags[key] = true
+					boss_say(m, "Vurgan: Muhafızlar, kazın şunları!")
+					_boss_summon(m, "Kara Demir Muhafızı", "guard", 2, 300.0, 16.0, 3.8, 1.0, 3.5)
+			if hpf < 0.3 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.3
+				m.spd *= 1.15
+				m.atk_int = 1.9
+				boss_say(m, "Vurgan: Madeni başınıza yıkacağım!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if d <= 7.5 and _bready(m, "flame"):
+				_bset(m, "flame", 9.0)
+				boss_spell(m, 1.3, "Kor Dalgası", Color("ff7a2a"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 7.5, Color("ff7a2a"), 0.6)
+				apply_dot(6.0, m.dmg * 0.12, "Yanık", Color("ff6a2a"))
+				return true
+			if melee and _bready(m, "cleave"):
+				_bset(m, "cleave", 6.0)
+				boss_hit(m, 1.8, "Kazma Darbesi")
+				return true
+			if d > 6.0 and d < 20.0 and _bready(m, "bolt"):
+				_bset(m, "bolt", 5.0)
+				boss_spell(m, 0.9, "Kızgın Cevher", Color("ff9a3a"))
+				return true
 		"gruff":
 			if hpf < 0.4 and not m.flags.has("rage"):
 				m.flags["rage"] = true
@@ -3276,6 +3589,15 @@ func _update_camera(_dt: float) -> void:
 	var cp := cos(cam_pitch)
 	var tgt := Vector3(P["x"], P["y"] + 1.6, P["z"])
 	var pos := Vector3(P["x"] + sin(cam_yaw) * cp * cam_dist, P["y"] + 1.9 + sin(cam_pitch) * cam_dist, P["z"] + cos(cam_yaw) * cp * cam_dist)
+	if map == "mine":
+		var best := 0.0
+		for k in range(1, 11):
+			var t := float(k) / 10.0
+			var q := tgt.lerp(pos, t)
+			if _mine_sd(q.x, q.z) > -0.9 or q.y > 8.5:
+				break
+			best = t
+		pos = tgt.lerp(pos, maxf(best, 0.12))
 	var gh := height_at(pos.x, pos.z) + 1.0
 	if pos.y < gh:
 		pos.y = gh
@@ -3285,6 +3607,9 @@ func _update_camera(_dt: float) -> void:
 		snow_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 
 func _step_effects(_dt: float) -> void:
+	if mine_lantern:
+		mine_lantern.position = Vector3(P["x"], P["y"] + 2.4, P["z"])
+		mine_lantern.light_energy = 1.7 + sin(T * 13.0) * 0.08
 	if swamp_fx:
 		swamp_fx.position = Vector3(P["x"], P["y"] + 3.0, P["z"])
 	for f in flame_nodes:
@@ -3354,7 +3679,7 @@ func _update_hud() -> void:
 	var np: Array = []
 	for n in npcs:
 		np.append({"p": Vector2(n["x"], n["z"]), "mark": npc_mark(n)})
-	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np, "swamp": map == "swamp"})
+	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np, "swamp": map == "swamp", "mine": map == "mine"})
 	# isim levhaları
 	for m in mobs:
 		var show: bool = mode == "play" and not m.dead and Vector2(m.x - P["x"], m.z - P["z"]).length() < (40.0 if m.boss != "" else 22.0)
@@ -3385,10 +3710,14 @@ func _update_hud() -> void:
 	var z := "c" if dc < 27.0 else ("v" if dv < 16.0 else "w")
 	if map == "swamp":
 		z = "sv" if dv < 16.0 else "sw"
+	elif map == "mine":
+		z = "mn"
 	if z != zone_now:
 		zone_now = z
 		if mode == "play":
-			if z == "sv":
+			if z == "mn":
+				hud.banner("KARA DEMİR MADENİ", "Demirkazan'ın altı")
+			elif z == "sv":
 				hud.banner("BATAKLIK KARAKOLU", "Güvenli sığınak")
 			elif z == "sw":
 				hud.banner("SİSLİ BATAKLIK", "Karanlık göller")
@@ -3398,6 +3727,6 @@ func _update_hud() -> void:
 				hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 			else:
 				hud.banner("KAR DAĞI VADİSİ", "Cüce toprakları")
-		hud.set_zone({"c": "Demirkazan", "v": "Kar Dağı Köyü", "w": "Kar Dağı Vadisi", "sv": "Bataklık Karakolu", "sw": "Sisli Bataklık"}[z])
+		hud.set_zone({"c": "Demirkazan", "v": "Kar Dağı Köyü", "w": "Kar Dağı Vadisi", "sv": "Bataklık Karakolu", "sw": "Sisli Bataklık", "mn": "Kara Demir Madeni"}[z])
 
 # ---------- kendi kendine test ----------

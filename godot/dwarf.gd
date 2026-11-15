@@ -456,6 +456,57 @@ static func make_croc(big: bool = false) -> Node3D:
 	g.set_meta("legs", _legs(g, [[-0.5, 0.65, 0.4], [0.5, 0.65, 0.4], [-0.5, -0.65, 0.4], [0.5, -0.65, 0.4]], Vector3(0.2, 0.4, 0.26), dk))
 	return g
 
+## Taş Golem: yontulmamış granit bloklardan, parlayan göz ve çatlaklı dev
+static func make_golem(big: bool = false) -> Node3D:
+	var g := Node3D.new()
+	var rock = mat(Color.html("5a5660") if not big else Color.html("4a4650"), 0.0, 0.95)
+	var rock2 = mat(Color.html("6e6a74"), 0.0, 0.95)
+	var dk = mat(Color.html("34303a"), 0.0, 0.95)
+	var glow = mat(Color.html("ff8a2a"), 0.0, 0.5, Color.html("ff6a10"), 2.6)
+	box(g, Vector3(1.3, 1.3, 0.9), rock, Vector3(0, 1.75, 0))
+	box(g, Vector3(0.7, 0.9, 0.5), glow, Vector3(0, 1.7, 0.4)).scale = Vector3(1, 1, 0.12)
+	box(g, Vector3(1.6, 0.5, 1.0), rock2, Vector3(0, 2.5, 0))
+	box(g, Vector3(0.6, 0.5, 0.55), rock, Vector3(0, 2.95, 0.1))
+	for s in [-1.0, 1.0]:
+		sph(g, 0.07, glow, Vector3(s * 0.15, 3.0, 0.4))
+		box(g, Vector3(0.5, 1.2, 0.55), rock2, Vector3(s * 1.05, 1.9, 0.05))
+		box(g, Vector3(0.6, 0.55, 0.65), dk, Vector3(s * 1.05, 1.15, 0.1))
+		var sp := cone(g, 0.18, 0.6, dk, Vector3(s * 0.6, 2.9, -0.2), 4)
+		sp.rotation.z = -s * 0.4
+	g.set_meta("legs", _biped_legs(g, 0.4, 1.1, Vector3(0.55, 1.1, 0.6), dk))
+	return g
+
+## Mağara Örümceği: yassı gövde, sekiz bacak
+static func make_spider() -> Node3D:
+	var g := Node3D.new()
+	var body = mat(Color.html("2a2430"), 0.0, 0.8)
+	var mark = mat(Color.html("8a2a3a"), 0.0, 0.6)
+	var eye = mat(Color.html("ff3a3a"), 0.0, 0.4, Color.html("ff2020"), 2.2)
+	var fang = mat(Color.html("d8d0c0"), 0.0, 0.6)
+	sph(g, 0.5, body, Vector3(0, 0.55, -0.45), Vector3(1, 0.85, 1.3))
+	sph(g, 0.3, mark, Vector3(0, 0.78, -0.55), Vector3(1.2, 0.5, 1.2))
+	sph(g, 0.3, body, Vector3(0, 0.5, 0.35))
+	for s in [-1.0, 1.0]:
+		for k in 2:
+			sph(g, 0.05, eye, Vector3(s * (0.09 + k * 0.08), 0.62 + k * 0.05, 0.6))
+		cone(g, 0.04, 0.2, fang, Vector3(s * 0.1, 0.3, 0.62), 4).rotation.x = PI
+	var defs: Array = []
+	for k in 4:
+		var zz := 0.4 - k * 0.38
+		defs.append([-0.4, zz, 0.55])
+		defs.append([0.4, zz, 0.55])
+	var legs: Array = []
+	for d in defs:
+		var l := pivot(g, Vector3(d[0], d[2], d[1]))
+		var side := -1.0 if d[0] < 0.0 else 1.0
+		var up := box(l, Vector3(0.7, 0.07, 0.07), body, Vector3(side * 0.35, 0.05, 0))
+		up.rotation.z = side * 0.35
+		var lo := box(l, Vector3(0.07, 0.55, 0.07), body, Vector3(side * 0.78, -0.2, 0))
+		lo.rotation.z = side * 0.15
+		legs.append(l)
+	g.set_meta("legs", [legs[0], legs[3], legs[4], legs[7]])
+	return g
+
 ## Bataklık Canavarı: yosun kaplı, kambur taş-çamur dev
 static func make_bogbeast() -> Node3D:
 	var g := Node3D.new()

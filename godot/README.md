@@ -75,3 +75,6 @@ Köydeki evler, çadırlar, variller, sandıklar, çit, tezgâh ve araba modelle
 
 ## İkinci harita: Sisli Bataklık
 Demirkazan plazasındaki mavi portaldan (ve bataklıktaki turuncu portaldan geri) geçilir. Seviye 8–10: Murloc, Murloc Şamanı, Timsah, Bataklık Canavarı, boss Gruff Swiftbite. Bataklık Karakolu'nda 2 görev veren NPC ve bir tüccar var; 5 yeni görev, yeni eşyalar ve takas edilebilir ganimetler eklendi. Oyun kaydı hangi haritada olduğunu hatırlar.
+
+## Zindan: Kara Demir Madeni
+Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odalı tek kişilik bir zindandır: madenciler, örümcekler, golemler ve muhafızlar. Ortada **Gorduk Taşyürek** (ara boss: deprem, kaya fırlatma, taş parçaları), en dipte **Vurgan** (son boss: kor dalgası, muhafız çağırma, öfke) bulunur. Giriş odasındaki mavi portal Demirkazan'a döndürür. Madenci Başı Durin'in üç görevi vardır. Ölürsen madenin girişinde canlanırsın.

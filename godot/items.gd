@@ -159,6 +159,22 @@ static func _build() -> void:
 	_eq("wt_gruff", "Pullu Bel Zinciri", "waist", 4, 10, 34, 5, 0, 7, 1900, "Plaka", "iron")
 	for bid in ["axe_gruff", "bk_gruff", "tr_gruff", "wt_gruff", "wt_arc", "hd_arc", "bk_arc", "axe_grik", "nk_grik", "hammer_chok", "wt_chok", "lg_hogger", "wr_hogger", "tr_hogger", "sword_cruel", "helm_defias", "bk_edwin", "rg_vc", "helm_rag", "ch_rag", "tr_core", "hammer_sulf"]:
 		_db[bid]["boss"] = true
+	# Kara Demir Madeni
+	_eq("ch_mine", "Madenci Plaka Zırhı", "chest", 3, 12, 108, 5, 0, 8, 1500, "Plaka", "dark")
+	_eq("lg_mine", "Madenci Dizlikleri", "legs", 3, 12, 74, 4, 0, 7, 1250, "Plaka", "dark")
+	_eq("helm_mine", "Lambalı Madenci Miğferi", "head", 3, 12, 54, 4, 0, 6, 1200, "Plaka", "iron")
+	_eq("hd_mine", "Taş Kıran Eldivenler", "hands", 3, 13, 34, 4, 2, 4, 1000, "Plaka", "iron")
+	_eq("sh_mine", "Galeri Kalkanı", "offhand", 3, 13, 98, 0, 0, 7, 1350, "Kalkan", "wood")
+	_wp("axe_mine", "Kazma Baltası", 3, 12, 34, 52, 2.4, 6, 2, 3, 1500, "iron", 1)
+	_wp("hammer_gorduk", "Taşyürek Çekici", 4, 14, 44, 66, 2.6, 10, 3, 6, 3800, "bone", 2)
+	_eq("lg_gorduk", "Granit Pantolon", "legs", 4, 14, 86, 6, 0, 9, 3200, "Plaka", "iron")
+	_eq("nk_gorduk", "Maden Kalbi", "neck", 4, 14, 0, 5, 2, 8, 3000, "", "bronze")
+	_wp("axe_vurgan", "Kara Demir Yıkıcı", 4, 16, 52, 80, 2.5, 12, 4, 8, 5600, "dark", 2)
+	_eq("ch_vurgan", "Maden Lordu Zırhı", "chest", 4, 16, 130, 9, 0, 13, 5200, "Plaka", "red")
+	_eq("helm_vurgan", "Lord Miğferi", "head", 4, 16, 70, 7, 0, 9, 4600, "Plaka", "dark")
+	_eq("tr_vurgan", "Kor Kalp", "trinket", 4, 16, 0, 8, 5, 7, 4800, "", "red")
+	for bid in ["hammer_gorduk", "lg_gorduk", "nk_gorduk", "axe_vurgan", "ch_vurgan", "helm_vurgan", "tr_vurgan"]:
+		_db[bid]["boss"] = true
 	# tüketilenler ve çerçöp
 	_misc("pot_heal", "Can İksiri", 1, 1, 20, 20, "potion", 0.45, "red")
 	_misc("pot_big", "Büyük Can İksiri", 1, 5, 60, 20, "potion", 0.7, "red")
@@ -171,6 +187,9 @@ static func _build() -> void:
 	_misc("j_murloc", "Murloc Yüzgeci", 0, 1, 44, 20, "claw", 0.0, "mith")
 	_misc("j_croc", "Timsah Dişi", 0, 1, 50, 20, "claw", 0.0, "bone")
 	_misc("j_bog", "Yosunlu Taş", 0, 1, 56, 20, "pelt", 0.0, "green")
+	_misc("j_miner", "Paslı Kazma Ucu", 0, 1, 62, 20, "claw", 0.0, "iron")
+	_misc("j_golem", "Parlak Maden Taşı", 0, 1, 70, 20, "pelt", 0.0, "bronze")
+	_misc("j_spider", "Örümcek İpeği", 0, 1, 58, 20, "pelt", 0.0, "bone")
 	_misc("j_bear", "Ayı Pençesi", 0, 1, 28, 20, "claw", 0.0, "bone")
 
 # ---------- yardımcılar ----------

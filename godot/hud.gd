@@ -14,6 +14,7 @@ signal bag_pressed
 signal menu_pressed
 signal help_pressed
 signal tal_pressed
+signal prog_pressed
 signal char_pressed
 
 const GOLD := Color("f2c75c")
@@ -359,12 +360,12 @@ func _build_actionbar() -> void:
 
 func _build_bag() -> void:
 	var holder := Control.new()
-	_place(holder, 1.0, 1.0, 1.0, 1.0, -270, -60, -14, -14)
+	_place(holder, 1.0, 1.0, 1.0, 1.0, -294, -60, -14, -14)
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(holder))
-	var kinds := ["char", "tal", "help", "menu"]
-	var tips := ["Karakter (C)", "Yetenekler (N)", "Yardım (H)", "Menü (Esc)"]
-	for i in 4:
+	var kinds := ["char", "tal", "prog", "help", "menu"]
+	var tips := ["Karakter (C)", "Yetenekler (N)", "Meslekler, itibar ve başarımlar (K)", "Yardım (H)", "Menü (Esc)"]
+	for i in 5:
 		var mb = Parts.MicroBtn.new()
 		mb.kind = kinds[i]
 		mb.position = Vector2(i * 24, 6)
@@ -375,12 +376,14 @@ func _build_bag() -> void:
 			elif i == 1:
 				tal_pressed.emit()
 			elif i == 2:
+				prog_pressed.emit()
+			elif i == 3:
 				help_pressed.emit()
 			else:
 				menu_pressed.emit())
 		holder.add_child(mb)
 	var bb = Parts.BagBar.new()
-	bb.position = Vector2(106, 3)
+	bb.position = Vector2(130, 3)
 	bb.tooltip_text = "Çanta (B)"
 	bb.pressed.connect(func(): bag_pressed.emit())
 	holder.add_child(bb)
@@ -509,8 +512,8 @@ func _build_help() -> void:
 	var rows := [
 		["W A S D", "Yürü"], ["Boşluk", "Zıpla"], ["Sağ tık basılı", "Kamerayı çevir"], ["Sol tık", "Hedef seç"],
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
-		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
-		["G", "NPC ile konuş / ganimeti al"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
+		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
+		["G", "Konuş, ganimet al, maden damarı topla"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 	]
 	for r in rows:
 		var h := HBoxContainer.new()

@@ -175,6 +175,22 @@ static func _build() -> void:
 	_eq("tr_vurgan", "Kor Kalp", "trinket", 4, 16, 0, 8, 5, 7, 4800, "", "red")
 	for bid in ["hammer_gorduk", "lg_gorduk", "nk_gorduk", "axe_vurgan", "ch_vurgan", "helm_vurgan", "tr_vurgan"]:
 		_db[bid]["boss"] = true
+	# meslek malzemeleri ve üretim ürünleri
+	_misc("ore_iron", "Demir Cevheri", 1, 1, 30, 20, "ore", 0.0, "iron")
+	_misc("ore_dark", "Kara Demir Cevheri", 2, 1, 80, 20, "ore", 0.0, "dark")
+	_misc("hide_raw", "Ham Deri", 1, 1, 26, 20, "pelt", 0.0, "tan")
+	_misc("hide_cured", "İşlenmiş Deri", 1, 1, 64, 20, "pelt", 0.0, "brown")
+	_misc("bar_iron", "Demir Külçe", 1, 1, 90, 20, "bar", 0.0, "iron")
+	_misc("bar_dark", "Kara Demir Külçe", 2, 1, 240, 20, "bar", 0.0, "dark")
+	_wp("axe_craft1", "Cüce Savaş Baltası", 2, 5, 17, 27, 2.3, 3, 0, 1, 420, "iron", 1)
+	_eq("bk_hunter", "Avcı Pelerini", "back", 2, 8, 9, 2, 3, 3, 520, "Kumaş", "brown")
+	_eq("ch_craft1", "Dövme Demir Göğüslük", "chest", 2, 8, 70, 4, 0, 5, 760, "Plaka", "iron")
+	_eq("wt_craft", "Sağlam Savaş Kemeri", "waist", 3, 12, 30, 4, 0, 6, 1100, "Deri", "brown")
+	_eq("ch_craft2", "Kara Demir Göğüslük", "chest", 3, 13, 118, 6, 0, 9, 1900, "Plaka", "dark")
+	_eq("sh_craft", "Kara Demir Kalkan", "offhand", 3, 13, 102, 0, 0, 8, 1500, "Kalkan", "dark")
+	_wp("axe_craft2", "Kara Demir Balta", 3, 14, 38, 58, 2.4, 7, 2, 4, 1800, "dark", 2)
+	for cid in ["axe_craft1", "bk_hunter", "ch_craft1", "wt_craft", "ch_craft2", "sh_craft", "axe_craft2"]:
+		_db[cid]["craft"] = true
 	# tüketilenler ve çerçöp
 	_misc("pot_heal", "Can İksiri", 1, 1, 20, 20, "potion", 0.45, "red")
 	_misc("pot_big", "Büyük Can İksiri", 1, 5, 60, 20, "potion", 0.7, "red")
@@ -183,7 +199,7 @@ static func _build() -> void:
 	_misc("j_trogg", "Trogg Dişi", 0, 1, 18, 20, "claw", 0.0, "bone")
 	_misc("j_gnoll", "Gnoll Pençesi", 0, 1, 22, 20, "claw", 0.0, "brown")
 	_misc("j_defias", "Defias Bandanası", 0, 1, 30, 20, "pelt", 0.0, "red")
-	_misc("j_dark", "Kara Demir Külçesi", 0, 1, 40, 20, "pelt", 0.0, "dark")
+	_misc("j_dark", "Kara Demir Parçası", 0, 1, 40, 20, "pelt", 0.0, "dark")
 	_misc("j_murloc", "Murloc Yüzgeci", 0, 1, 44, 20, "claw", 0.0, "mith")
 	_misc("j_croc", "Timsah Dişi", 0, 1, 50, 20, "claw", 0.0, "bone")
 	_misc("j_bog", "Yosunlu Taş", 0, 1, 56, 20, "pelt", 0.0, "green")
@@ -206,8 +222,10 @@ static func slot_fits(it: Dictionary, slot: String) -> bool:
 static func is_equip(it: Dictionary) -> bool:
 	return it.get("slot", "") != ""
 
+static var disc := 0.0
+
 static func buy_price(it: Dictionary) -> int:
-	return maxi(1, it["price"] * 4)
+	return maxi(1, roundi(it["price"] * 4 * (1.0 - disc)))
 
 static func money_plain(c: int) -> String:
 	var g := c / 10000
@@ -333,6 +351,6 @@ static func pool(rar: int, lo: int, hi: int) -> Array:
 	var out: Array = []
 	for id in db():
 		var it: Dictionary = db()[id]
-		if it["slot"] != "" and not it.get("boss", false) and it["rar"] == rar and it["req"] >= lo and it["req"] <= hi:
+		if it["slot"] != "" and not it.get("boss", false) and not it.get("craft", false) and it["rar"] == rar and it["req"] >= lo and it["req"] <= hi:
 			out.append(id)
 	return out

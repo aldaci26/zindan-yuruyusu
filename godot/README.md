@@ -78,3 +78,10 @@ Demirkazan plazasındaki mavi portaldan (ve bataklıktaki turuncu portaldan geri
 
 ## Zindan: Kara Demir Madeni
 Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odalı tek kişilik bir zindandır: madenciler, örümcekler, golemler ve muhafızlar. Ortada **Gorduk Taşyürek** (ara boss: deprem, kaya fırlatma, taş parçaları), en dipte **Vurgan** (son boss: kor dalgası, muhafız çağırma, öfke) bulunur. Giriş odasındaki mavi portal Demirkazan'a döndürür. Madenci Başı Durin'in üç görevi vardır. Ölürsen madenin girişinde canlanırsın.
+
+## Meslekler, itibar ve başarımlar (K)
+- **Madencilik** (Madenci Başı Durin): Kar Dağı'ndaki ve madendeki damarlara yaklaşıp G'ye bas. Demir ve Kara Demir cevheri verir. Damarlar 150 sn sonra yeniden çıkar.
+- **Deri İşleme** (Avcı Başı Ragna): Hayvanlardan ham deri düşer; deriyi işleyip pelerin ve kemer yaparsın.
+- **Demircilik** (Demirci Borga): Cevheri külçeye çevirir, külçe ve deriden silah ve zırh dökersin. Üretim Demirkazan içinde yapılır.
+- **İtibar**: Demirkazan Kalesi, Bataklık Karakolu ve Maden Loncası. Görev teslimi ve düşman öldürmek itibar kazandırır; Dost ve üstünde o gruptaki satıcılar %5-20 indirim yapar.
+- **Başarımlar**: 27 başarım; boss, görev, meslek, itibar ve seviye hedefleri.

@@ -9,6 +9,10 @@ const Items = preload("res://items.gd")
 const Inv = preload("res://inv.gd")
 const InvUI = preload("res://invui.gd")
 const TalentUI = preload("res://talentui.gd")
+const ProgUI = preload("res://progui.gd")
+const Prog = preload("res://prog.gd")
+const SWAMP_QS := ["q_murloc", "q_shaman", "q_croc", "q_bog", "q_gruff"]
+const BEASTS := ["Kurt", "Yaban Domuzu", "Dağ Ayısı", "Timsah", "Mağara Örümceği"]
 
 const WORLD_R := 92.0
 const CITY := {"x": 0.0, "z": -58.0, "r": 24.0, "y": 3.0}
@@ -236,6 +240,8 @@ var paused := false
 var inv
 var invui
 var talui
+var progui
+var res_nodes: Array = []
 var held = null
 var G := {}
 var vendor_npc = null
@@ -428,8 +434,12 @@ func _ready() -> void:
 	talui = TalentUI.new()
 	talui.game = self
 	hud.add_child(talui)
+	progui = ProgUI.new()
+	progui.game = self
+	hud.add_child(progui)
 	hud.bag_pressed.connect(func(): toggle_win("bag"))
 	hud.char_pressed.connect(func(): toggle_win("char"))
+	hud.prog_pressed.connect(func(): toggle_win("prog"))
 	hud.menu_pressed.connect(toggle_pause)
 	hud.help_pressed.connect(hud.toggle_help)
 	hud.tal_pressed.connect(func(): toggle_win("tal"))
@@ -458,6 +468,7 @@ func _build_world() -> void:
 		_spawn_mobs()
 		_spawn_bosses()
 		_spawn_camps()
+		_spawn_nodes()
 	elif map == "swamp":
 		camps_now = SWAMP_CAMPS
 		_build_terrain()
@@ -479,6 +490,7 @@ func _build_world() -> void:
 		_spawn_bosses()
 		_spawn_camps()
 		_setup_snow()
+		_spawn_nodes()
 	_apply_env()
 
 func _clear_world() -> void:
@@ -502,6 +514,7 @@ func _clear_world() -> void:
 	flame_nodes.clear()
 	rings.clear()
 	portals.clear()
+	res_nodes.clear()
 	snow_node = null
 	swamp_fx = null
 	lava_mat = null
@@ -1225,7 +1238,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
@@ -1265,6 +1278,10 @@ func inv_changed() -> void:
 		invui.refresh()
 	if talui != null:
 		talui.refresh()
+	if progui != null:
+		progui.refresh()
+	if hud != null and mode == "play" and P.has("ach"):
+		ach_check()
 
 func talent_def(id: String) -> Dictionary:
 	for td in TALENTS:
@@ -1950,7 +1967,11 @@ func _on_start(cont: bool) -> void:
 func toggle_win(name: String) -> void:
 	if mode != "play":
 		return
-	var w: Control = talui.win if name == "tal" else (invui.bag_win if name == "bag" else invui.char_win)
+	var w: Control = invui.char_win
+	match name:
+		"tal": w = talui.win
+		"prog": w = progui.win
+		"bag": w = invui.bag_win
 	w.visible = not w.visible
 	if w.visible and name == "char" and vendor_npc != null:
 		close_vendor()
@@ -1967,6 +1988,7 @@ func ui_close(name: String) -> void:
 		"bag": invui.bag_win.visible = false
 		"char": invui.char_win.visible = false
 		"tal": talui.win.visible = false
+		"prog": progui.win.visible = false
 		"vendor": close_vendor()
 		"loot": close_loot()
 	invui.refresh()
@@ -2075,7 +2097,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if f:
 		f.store_string(JSON.stringify(d))
@@ -2109,6 +2131,26 @@ func load_game() -> bool:
 				P["tal"][str(k)] = clampi(int(d["tal"][k]), 0, td["max"])
 	if tal_points() < 0:
 		P["tal"] = {}
+	P["prof"] = {}
+	P["rep"] = {}
+	P["stats"] = {}
+	P["ach"] = {}
+	if typeof(d.get("prof")) == TYPE_DICTIONARY:
+		for k in d["prof"]:
+			if Prog.PROFS.has(str(k)):
+				P["prof"][str(k)] = clampi(int(d["prof"][k]), 1, Prog.SKILL_MAX)
+	if typeof(d.get("rep")) == TYPE_DICTIONARY:
+		for k in d["rep"]:
+			if Prog.FACTIONS.has(str(k)):
+				P["rep"][str(k)] = clampi(int(d["rep"][k]), 0, 10000)
+	if typeof(d.get("stats")) == TYPE_DICTIONARY:
+		for k in d["stats"]:
+			if str(k).length() < 40:
+				P["stats"][str(k)] = maxi(0, int(d["stats"][k]))
+	if typeof(d.get("ach")) == TYPE_DICTIONARY:
+		for a in Prog.ACHS:
+			if d["ach"].has(a["id"]):
+				P["ach"][a["id"]] = true
 	P["xp"] = maxf(0.0, d["xp"])
 	if typeof(d.get("inv")) == TYPE_DICTIONARY and inv.from_dict(d["inv"]):
 		pass
@@ -2176,6 +2218,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_B: toggle_win("bag")
 			KEY_C: toggle_win("char")
 			KEY_N: toggle_win("tal")
+			KEY_K: toggle_win("prog")
 			KEY_G:
 				if loot_mob != null:
 					while loot_mob != null and not loot_mob.loot.is_empty():
@@ -2188,10 +2231,14 @@ func _unhandled_input(ev: InputEvent) -> void:
 				elif near_npc() != null:
 					open_talk()
 				else:
+					var looted := false
 					for m in mobs:
 						if m.dead and (not m.loot.is_empty() or m.loot_money > 0) and Vector2(m.x - P["x"], m.z - P["z"]).length() < 4.0 + (m.rad if m.boss != "" else 0.0):
 							open_loot(m)
+							looted = true
 							break
+					if not looted:
+						try_gather()
 			KEY_TAB:
 				var m = nearest_mob(14.0)
 				if m:
@@ -2204,9 +2251,11 @@ func _unhandled_input(ev: InputEvent) -> void:
 					close_loot()
 				elif vendor_npc != null:
 					close_vendor()
-				elif invui.bag_win.visible or invui.char_win.visible:
+				elif invui.bag_win.visible or invui.char_win.visible or talui.win.visible or progui.win.visible:
 					invui.bag_win.visible = false
 					invui.char_win.visible = false
+					talui.win.visible = false
+					progui.win.visible = false
 					invui.hide_tip()
 				elif dlg_open:
 					close_dialog()
@@ -2305,6 +2354,12 @@ func kill_mob(m) -> void:
 	hud.say("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
 	roll_loot(m)
 	quest_kill(m)
+	if not m.temp:
+		stat_add("kills")
+		rep_add({"snow": "dem", "swamp": "kar", "mine": "mad"}[map], 120 if m.boss != "" else 4)
+	if m.boss != "":
+		stat_add("boss_" + m.boss)
+		stat_add("bosses")
 	gain_xp(xp)
 
 func _normal_loot(m) -> void:
@@ -2314,6 +2369,8 @@ func _normal_loot(m) -> void:
 		"Kara Demir Madencisi": "j_miner", "Taş Golem": "j_golem", "Mağara Örümceği": "j_spider", "Kara Demir Muhafızı": "j_dark"}
 	if randf() < 0.55 and junk.has(m.nm):
 		m.loot.append({"id": junk[m.nm], "n": 1})
+	if P["prof"].has("skin") and BEASTS.has(m.nm) and randf() < 0.7:
+		m.loot.append({"id": "hide_raw", "n": 1})
 	if randf() < 0.2:
 		m.loot.append({"id": "pot_big" if (m.lvl >= 4 and randf() < 0.4) else "pot_heal", "n": 1})
 	var r := randf()
@@ -2407,6 +2464,10 @@ func take_loot(i: int) -> void:
 		return
 	var it := Items.get_item(e["id"])
 	hud.say("Ganimet: " + it["name"], Items.RARITY_COL[it["rar"]])
+	if e["id"] == "hide_raw":
+		stat_add("skinned")
+		if P["prof"].get("skin", 0) < 50:
+			prof_gain("skin")
 	sfx.play("click", -4)
 	m.loot.remove_at(i)
 	inv_changed()
@@ -2656,6 +2717,7 @@ func player_hp_loss(d: int) -> void:
 	float_text(Vector3(P["x"], P["y"] + 2.2, P["z"]), "-%d" % d, Color("ff6a5a"), false)
 	if P["hp"] <= 0.0 and not P["dead"]:
 		P["dead"] = true
+		stat_add("deaths")
 		P["dot_t"] = 0.0
 		P["slow_t"] = 0.0
 		sfx.play("die")
@@ -2751,6 +2813,243 @@ func npc_mark(n: Dictionary) -> String:
 		return "?"
 	return "!" if q_avail(id) else ""
 
+# ---------- meslekler, itibar, başarımlar ----------
+func stat_add(k: String, n: int = 1) -> void:
+	P["stats"][k] = int(P["stats"].get(k, 0)) + n
+	ach_check()
+
+func quests_done() -> int:
+	var c := 0
+	for id in qs:
+		if qs[id]["st"] == "done":
+			c += 1
+	return c
+
+func ach_value(a: Dictionary) -> int:
+	match a["stat"]:
+		"level": return P["lvl"]
+		"money": return inv.money
+		"quests_all": return 1 if quests_done() >= QUESTS.size() else 0
+		"profs": return P["prof"].size()
+		"skill_max":
+			var mx := 0
+			for k in P["prof"]:
+				mx = maxi(mx, int(P["prof"][k]))
+			return mx
+		"rep_friend":
+			var c := 0
+			for f in Prog.FACTIONS:
+				if Prog.rank_of(P["rep"].get(f, 0)) >= 2:
+					c += 1
+			return c
+		"rep_exalted":
+			var c2 := 0
+			for f in Prog.FACTIONS:
+				if Prog.rank_of(P["rep"].get(f, 0)) >= 5:
+					c2 += 1
+			return c2
+		"quests": return quests_done()
+		_: return int(P["stats"].get(a["stat"], 0))
+
+func ach_check() -> void:
+	for a in Prog.ACHS:
+		if P["ach"].has(a["id"]):
+			continue
+		if ach_value(a) >= int(a["goal"]):
+			P["ach"][a["id"]] = true
+			hud.banner("BAŞARIM", a["name"])
+			hud.say("Başarım: %s (+%d puan)" % [a["name"], a["pts"]], Color("ffe45c"))
+			sfx.play("quest")
+			if progui != null:
+				progui.refresh()
+
+func rep_add(fid: String, n: int) -> void:
+	var old: int = P["rep"].get(fid, 0)
+	var nv := mini(10000, old + n)
+	if nv == old:
+		return
+	P["rep"][fid] = nv
+	var r0 := Prog.rank_of(old)
+	var r1 := Prog.rank_of(nv)
+	if r1 > r0:
+		hud.banner("İTİBAR", "%s: %s" % [Prog.FACTIONS[fid]["name"], Prog.RANKS[r1][0]])
+		hud.say("%s itibarın yükseldi: %s" % [Prog.FACTIONS[fid]["name"], Prog.RANKS[r1][0]], Prog.FACTIONS[fid]["col"])
+		sfx.play("level")
+		ach_check()
+	if progui != null:
+		progui.refresh()
+
+func vendor_discount(vid: String) -> float:
+	var f: String = Prog.VENDOR_FACTION.get(vid, "")
+	if f == "":
+		return 0.0
+	return Prog.DISCOUNT[Prog.rank_of(P["rep"].get(f, 0))]
+
+func learn_prof(pid: String) -> void:
+	if P["prof"].has(pid):
+		return
+	P["prof"][pid] = 1
+	hud.say("Yeni meslek: %s" % Prog.PROFS[pid]["name"], Color("7fb8ff"))
+	hud.banner("MESLEK", Prog.PROFS[pid]["name"])
+	sfx.play("quest")
+	ach_check()
+	inv_changed()
+	save_game()
+
+func prof_gain(pid: String, n: int = 1) -> void:
+	var old: int = P["prof"].get(pid, 0)
+	if old <= 0 or old >= Prog.SKILL_MAX:
+		return
+	var nv := mini(Prog.SKILL_MAX, old + n)
+	P["prof"][pid] = nv
+	if Prog.skill_rank(nv) != Prog.skill_rank(old):
+		hud.say("%s: %s oldun!" % [Prog.PROFS[pid]["name"], Prog.skill_rank(nv)], Color("ffe45c"))
+	ach_check()
+	if progui != null:
+		progui.refresh()
+
+func can_craft_here() -> bool:
+	return map == "snow" and Vector2(P["x"] - CITY.x, P["z"] - CITY.z).length() < 27.0
+
+func craft_error(rid: String) -> String:
+	var r := Prog.recipe(rid)
+	if r.is_empty():
+		return "Bilinmeyen tarif."
+	if not P["prof"].has(r["prof"]):
+		return "Bu mesleği bilmiyorsun."
+	if P["prof"][r["prof"]] < r["skill"]:
+		return "Beceri yetersiz."
+	if not can_craft_here():
+		return "Üretmek için Demirkazan'a gelmelisin."
+	for mid in r["mats"]:
+		if inv.count(mid) < r["mats"][mid]:
+			return "Malzeme eksik."
+	if inv.free_slots() < 1:
+		return "Çantan dolu."
+	return ""
+
+func craft(rid: String) -> void:
+	var err := craft_error(rid)
+	if err != "":
+		hud.say(err, Color("ff6a5a"))
+		return
+	var r := Prog.recipe(rid)
+	for mid in r["mats"]:
+		inv.remove(mid, r["mats"][mid])
+	inv.add(r["out"], r["n"])
+	var it := Items.get_item(r["out"])
+	if P["prof"][r["prof"]] < r["skill"] + 20:
+		prof_gain(r["prof"])
+	stat_add("crafts")
+	sfx.play("block")
+	ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.6, Color("ffb040"), 0.5)
+	hud.say("Üretildi: " + it["name"], Items.RARITY_COL[it["rar"]])
+	inv_changed()
+
+func near_node() -> Dictionary:
+	for n in res_nodes:
+		if n["on"] and Vector2(n["x"] - P["x"], n["z"] - P["z"]).length() < 3.2:
+			return n
+	return {}
+
+func try_gather() -> void:
+	var n: Dictionary = near_node()
+	if n.is_empty():
+		return
+	var nd: Dictionary = Prog.NODES[n["kind"]]
+	if not P["prof"].has("mine"):
+		hud.say("Madencilik öğrenmen gerek (Madenci Başı Durin).", Color("ff6a5a"))
+		return
+	var sk: int = P["prof"]["mine"]
+	if sk < nd["skill"]:
+		hud.say("Bu damar için Madencilik %d gerekli." % nd["skill"], Color("ff6a5a"))
+		return
+	var cnt := randi_range(1, 2)
+	var left: int = inv.add(nd["item"], cnt)
+	if left >= cnt:
+		hud.say("Çantan dolu.", Color("ff6a5a"))
+		return
+	n["on"] = false
+	n["t"] = T + 150.0
+	n["node"].visible = false
+	var got := cnt - left
+	hud.say("Topladın: %d %s" % [got, Items.get_item(nd["item"])["name"]], Color("e0e0e0"))
+	float_text(Vector3(n["x"], P["y"] + 1.8, n["z"]), "+%d %s" % [got, Items.get_item(nd["item"])["name"]], nd["glow"], false)
+	ring_fx(Vector3(n["x"], height_at(n["x"], n["z"]), n["z"]), 1.4, nd["glow"], 0.4)
+	sfx.play("block")
+	stat_add("ore", got)
+	if sk < nd["cap"]:
+		prof_gain("mine")
+	inv_changed()
+
+func _make_node(kind: String, x: float, z: float) -> void:
+	var nd: Dictionary = Prog.NODES[kind]
+	var g := Node3D.new()
+	g.position = Vector3(x, height_at(x, z), z)
+	add_child(g)
+	var rock := Dwarf.mat(nd["col"], 0.2, 0.8)
+	var glow := Dwarf.mat(nd["glow"], 0.0, 0.4, nd["glow"], 1.8)
+	for k in 3:
+		var a := float(k) / 3.0 * TAU
+		var h := 0.9 + hash2(x + k, z) * 0.7
+		var c := Dwarf.cone(g, 0.5, h, rock, Vector3(cos(a) * 0.35, h / 2.0 - 0.05, sin(a) * 0.35), 5)
+		c.rotation.y = a
+	for k in 5:
+		var a2 := float(k) / 5.0 * TAU + 0.4
+		var cr := Dwarf.box(g, Vector3(0.14, 0.4, 0.14), glow, Vector3(cos(a2) * 0.5, 0.55, sin(a2) * 0.5))
+		cr.rotation = Vector3(cos(a2) * 0.5, a2, sin(a2) * 0.5)
+	_add_obs(x, z, 0.9)
+	res_nodes.append({"kind": kind, "x": x, "z": z, "node": g, "t": 0.0, "on": true})
+
+func _spawn_nodes() -> void:
+	res_nodes.clear()
+	var rnd := RandomNumberGenerator.new()
+	rnd.seed = 555
+	if map == "snow":
+		var n := 0
+		var tries := 0
+		while n < 9 and tries < 500:
+			tries += 1
+			var a := rnd.randf() * TAU
+			var r := 28.0 + rnd.randf() * 52.0
+			var x := cos(a) * r
+			var z := sin(a) * r
+			if Vector2(x - CITY.x, z - CITY.z).length() < CITY.r + 8.0:
+				continue
+			var blocked := false
+			for o in obs:
+				if Vector2(o.x - x, o.y - z).length() < o.z + 2.5:
+					blocked = true
+					break
+			if blocked:
+				continue
+			_make_node("iron", x, z)
+			n += 1
+	elif map == "mine":
+		var kinds := [["iron", "iron"], ["iron", "dark"], ["dark", "dark"], ["dark", "dark"]]
+		for i in kinds.size():
+			var rm: Array = MINE_ROOMS[i + 1]
+			for k in 2:
+				for tr in 40:
+					var ang := rnd.randf() * TAU
+					var rr := float(rm[2]) - 2.0
+					var px := float(rm[0]) + cos(ang) * rr
+					var pz := float(rm[1]) + sin(ang) * rr
+					if _mine_sd(px + cos(ang) * 3.5, pz + sin(ang) * 3.5) < -0.3:
+						continue
+					var bl := false
+					for o in obs:
+						if Vector2(o.x - px, o.y - pz).length() < o.z + 2.0:
+							bl = true
+							break
+					if bl:
+						continue
+					_make_node(kinds[i][k], px, pz)
+					break
+		for a2 in MINE_ALC:
+			var al: Array = a2
+			_make_node("dark", float(al[0]) + 2.2, float(al[1]) + 1.6)
+
 func near_npc():
 	var best = null
 	var bd := 4.2
@@ -2791,6 +3090,8 @@ func reward_pick(qid: String) -> void:
 		var it := Items.get_item(id)
 		buttons.append({"label": "%s  (%s)" % [it["name"], item_brief(it)], "disabled": inv.free_slots() < 1, "cb": func():
 			qs[qid]["st"] = "done"
+			stat_add("quests")
+			rep_add(Prog.faction_of_quest(qid, SWAMP_QS), (300 + q["lvl"] * 20) * (2 if q["n"] == 1 else 1))
 			inv.add(id, 1)
 			inv.money += q["money"]
 			sfx.play("coin")
@@ -2808,6 +3109,9 @@ func open_vendor(n: Dictionary) -> void:
 	close_dialog()
 	vendor_npc = n
 	vendor_tab = 0
+	Items.disc = vendor_discount(n["id"])
+	if Items.disc > 0.0:
+		hud.say("İtibar indirimi: %%%d" % roundi(Items.disc * 100.0), Color("9be8a8"))
 	invui.char_win.visible = false
 	invui.vend_win.visible = true
 	invui.bag_win.visible = true
@@ -2815,6 +3119,7 @@ func open_vendor(n: Dictionary) -> void:
 
 func close_vendor() -> void:
 	vendor_npc = null
+	Items.disc = 0.0
 	invui.vend_win.visible = false
 	invui.hide_tip()
 
@@ -2878,6 +3183,15 @@ func render_dialog() -> void:
 				P["rage"] = 0.0
 				last_rest = T
 				hud.say("Dinlendin, canın doldu.", Color("43d17f"))
+				render_dialog()})
+	var tp: String = {"durin": "mine", "ragna": "skin", "borga": "smith"}.get(n["id"], "")
+	if tp != "":
+		var pdn: String = Prog.PROFS[tp]["name"]
+		if P["prof"].has(tp):
+			body += "\n\n%s: %s %d/%d (K)" % [pdn, Prog.skill_rank(P["prof"][tp]), P["prof"][tp], Prog.SKILL_MAX]
+		else:
+			buttons.append({"label": "Mesleği öğren: " + pdn + " (ücretsiz)", "cb": func():
+				learn_prof(tp)
 				render_dialog()})
 	buttons.append({"label": "Kapat", "cb": close_dialog})
 	hud.show_dialog(n["name"], n["title"], body, buttons)
@@ -3607,6 +3921,10 @@ func _update_camera(_dt: float) -> void:
 		snow_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 
 func _step_effects(_dt: float) -> void:
+	for n in res_nodes:
+		if not n["on"] and T >= n["t"]:
+			n["on"] = true
+			n["node"].visible = true
 	if mine_lantern:
 		mine_lantern.position = Vector3(P["x"], P["y"] + 2.4, P["z"])
 		mine_lantern.light_energy = 1.7 + sin(T * 13.0) * 0.08
@@ -3699,6 +4017,9 @@ func _update_hud() -> void:
 	var ptxt := ""
 	if nn != null and not dlg_open and mode == "play" and not P["dead"]:
 		ptxt = "G — Konuş: " + nn["name"]
+	elif mode == "play" and not P["dead"] and not near_node().is_empty():
+		var nd: Dictionary = Prog.NODES[near_node()["kind"]]
+		ptxt = ("G — Topla: " + nd["name"]) if P["prof"].has("mine") else (nd["name"] + " (Madencilik gerekli)")
 	elif mode == "play" and not P["dead"]:
 		for pt in portals:
 			if Vector2(pt["x"] - P["x"], pt["z"] - P["z"]).length() < 9.0:

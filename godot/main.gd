@@ -280,6 +280,7 @@ var mode := "title"
 var cam_yaw := 0.0
 var cam_pitch := 0.34
 var cam_dist := 8.5
+var cam_dist_t := 8.5
 var rmb := false
 var dlg_open := false
 var cur_npc = null
@@ -2530,9 +2531,9 @@ func _unhandled_input(ev: InputEvent) -> void:
 		elif ev.button_index == MOUSE_BUTTON_LEFT and ev.pressed and mode == "play":
 			_select_at(ev.position)
 		elif ev.button_index == MOUSE_BUTTON_WHEEL_UP:
-			cam_dist = clampf(cam_dist - 0.7, 4.0, 16.0)
+			cam_dist_t = clampf(cam_dist_t - 0.9, 3.0, 18.0)
 		elif ev.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			cam_dist = clampf(cam_dist + 0.7, 4.0, 16.0)
+			cam_dist_t = clampf(cam_dist_t + 0.9, 3.0, 18.0)
 	elif ev is InputEventMouseMotion and rmb:
 		cam_yaw -= ev.relative.x * 0.005
 		cam_pitch = clampf(cam_pitch + ev.relative.y * 0.004, 0.05, 1.25)
@@ -4309,7 +4310,8 @@ func _animate_player(dt: float) -> void:
 	else:
 		player.rotation.x = lerpf(player.rotation.x, 0.0, minf(1.0, dt * 10.0))
 
-func _update_camera(_dt: float) -> void:
+func _update_camera(dt: float) -> void:
+	cam_dist = lerpf(cam_dist, cam_dist_t, minf(1.0, dt * 10.0))
 	var cp := cos(cam_pitch)
 	var tgt := Vector3(P["x"], P["y"] + 1.6, P["z"])
 	var pos := Vector3(P["x"] + sin(cam_yaw) * cp * cam_dist, P["y"] + 1.9 + sin(cam_pitch) * cam_dist, P["z"] + cos(cam_yaw) * cp * cam_dist)

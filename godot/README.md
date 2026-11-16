@@ -93,8 +93,12 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 - **Tuş atama**: Esc menüsünde "Tuş atama" ile hareket, zıplama, pencere tuşları vb. değiştirilir; aynı tuşu başka işleme verirsen iki işlem yer değiştirir.
 - **Kısayol çubuğu**: yetenek simgelerini fareyle sürükleyip başka kutuya bırakarak yerlerini değiştirirsin; düzen kaydedilir.
 
-## Güvenlik ve oynanış (entegrasyon)
+## Güvenlik ve oynanış sistemleri
 - Kayıt dosyası sürümlüdür ve her kayıtta yedeklenir; ana dosya bozulursa yedekten yüklenir.
 - Savaş: art arda vuruşlarda küçük kombo bonusu, çeviklikle düşman saldırısından kaçınma ("Kaçındın").
 - Kamplarda nadiran **Nadir** düşmanlar doğar (daha çok can/hasar, daha iyi ödül). Boss başına en çok 8 yardımcı çıkar; uzaktaki sıradan düşmanlar daha seyrek güncellenir.
 - NPC'ler seni hatırlar; "Söylentiler" ve "Bölge tehlikeleri" konuşmaları vardır. Ayrıntılar: `godot/systems/README.md`.
+
+## Notlar
+
+- Kamera yakınlaştırması (fare tekerleği) yumuşak geçişlidir; fikir Reia'nın (AGPL-3.0) kamera betiğinden esinlenmiştir, kod kopyalanmamıştır.

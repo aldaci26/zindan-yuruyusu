@@ -704,17 +704,17 @@ func _apply_env() -> void:
 		sun.light_color = Color("403040")
 		sun.light_energy = 0.0
 	elif map == "swamp":
-		sky_psm.sky_top_color = Color("4f6f66")
-		sky_psm.sky_horizon_color = Color("b6c29a")
-		sky_psm.ground_horizon_color = Color("8a9a74")
-		sky_psm.ground_bottom_color = Color("4a5a40")
-		env_res.ambient_light_color = Color("86a088")
-		env_res.ambient_light_energy = 0.7
-		env_res.fog_light_color = Color("7f9478")
-		env_res.fog_density = 0.024
-		env_res.adjustment_saturation = 1.05
-		sun.light_color = Color("d8dca8")
-		sun.light_energy = 0.7
+		sky_psm.sky_top_color = Color("34504a")
+		sky_psm.sky_horizon_color = Color("7a8868")
+		sky_psm.ground_horizon_color = Color("5e6c50")
+		sky_psm.ground_bottom_color = Color("303c2a")
+		env_res.ambient_light_color = Color("667c6a")
+		env_res.ambient_light_energy = 0.5
+		env_res.fog_light_color = Color("56694f")
+		env_res.fog_density = 0.028
+		env_res.adjustment_saturation = 0.95
+		sun.light_color = Color("c0c694")
+		sun.light_energy = 0.5
 	else:
 		sky_psm.sky_top_color = Color("2f5fb0")
 		sky_psm.sky_horizon_color = Color("d9d2dc")

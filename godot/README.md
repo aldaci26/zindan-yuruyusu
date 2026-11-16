@@ -3,7 +3,7 @@
 Karlı vadide kurt, domuz ve ayı avla; Demirkazan cüce şehrinde görev al, demirciden silah, tüccardan iksir al.
 
 ## İndir ve oyna
-**Releases** sayfasından `CuceSavasci-Windows.zip` dosyasını indir (kararlı sürüm: *son-surum*, deneme sürümü: *entegrasyon-surum*), aç ve `CuceSavasci.exe` çalıştır. ("Windows bilgisayarını korudu" çıkarsa: *Ek bilgi → Yine de çalıştır*.) Sürüm imzasızdır, bu yüzden Windows bir kez uyarı verir.
+**Releases** sayfasından `CuceSavasci-Windows.zip` dosyasını indir (*son-surum* altında), aç ve `CuceSavasci.exe` çalıştır. ("Windows bilgisayarını korudu" çıkarsa: *Ek bilgi → Yine de çalıştır*.) Sürüm imzasızdır, bu yüzden Windows bir kez uyarı verir.
 
 ## Kontroller
 | Tuş | İşlev |

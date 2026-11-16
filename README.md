@@ -4,12 +4,7 @@ World of Warcraft'tan esinlenmiş 3D bir cüce savaşçı oyunu. Godot 4.3 ile y
 
 ## İndir
 
-[Releases](../../releases) sayfasında iki sürüm var:
-
-- **son-surum**: `main` dalının kararlı sürümü
-- **entegrasyon-surum**: `entegrasyon` dalının deneme sürümü (güvenli kayıt/yedek, savaş kuralları, nadir düşmanlar, NPC hafızası)
-
-`CuceSavasci-Windows.zip` dosyasını aç, `CuceSavasci.exe` çalıştır. Sürüm imzasızdır; "Windows bilgisayarını korudu" çıkarsa *Ek bilgi → Yine de çalıştır*. Kontroller, yetenekler, eşyalar, bosslar ve görevler: [godot/README.md](godot/README.md)
+[Releases](../../releases) sayfasındaki **son-surum** altından `CuceSavasci-Windows.zip` dosyasını indir, aç ve `CuceSavasci.exe` çalıştır. Sürüm imzasızdır; "Windows bilgisayarını korudu" çıkarsa *Ek bilgi → Yine de çalıştır*. Kontroller, yetenekler, eşyalar, bosslar ve görevler: [godot/README.md](godot/README.md)
 
 ## Oyun
 

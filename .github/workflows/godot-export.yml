@@ -2,7 +2,7 @@ name: Windows derlemesi
 
 on:
   push:
-    branches: [main, entegrasyon]
+    branches: [main]
     paths: ["godot/**", ".github/workflows/godot-export.yml"]
   workflow_dispatch:
 
@@ -15,8 +15,7 @@ jobs:
     container:
       image: barichello/godot-ci:4.3
     env:
-      # main -> son-surum, entegrasyon -> entegrasyon-surum
-      TAG: ${{ github.ref_name == 'main' && 'son-surum' || format('{0}-surum', github.ref_name) }}
+      TAG: son-surum
     steps:
       - uses: actions/checkout@v4
       - name: Şablonları kur
@@ -41,6 +40,5 @@ jobs:
           name: Cüce Savaşçı (${{ github.ref_name }})
           body: "Windows için indirilebilir oyun (${{ github.ref_name }} dalı). İmzasız olduğundan Windows ilk açılışta uyarı verebilir; ayrıntı: godot/README.md."
           target_commitish: ${{ github.sha }}
-          prerelease: ${{ github.ref_name != 'main' }}
-          make_latest: ${{ github.ref_name == 'main' }}
+          make_latest: true
           files: godot/build/CuceSavasci-Windows.zip

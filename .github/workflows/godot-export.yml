@@ -1,62 +1,46 @@
-name: Oyunu derle (Windows / Mac / Linux)
+name: Windows derlemesi
 
 on:
   push:
-    branches: [main]
+    branches: [main, entegrasyon]
     paths: ["godot/**", ".github/workflows/godot-export.yml"]
-    tags: ["v*"]
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  export:
+  windows:
     runs-on: ubuntu-latest
     container:
       image: barichello/godot-ci:4.3
+    env:
+      # main -> son-surum, entegrasyon -> entegrasyon-surum
+      TAG: ${{ github.ref_name == 'main' && 'son-surum' || format('{0}-surum', github.ref_name) }}
     steps:
       - uses: actions/checkout@v4
       - name: Şablonları kur
         run: |
           mkdir -p "$HOME/.local/share/godot/export_templates"
-          ls /root/.local/share/godot/export_templates/ || true
           cp -r /root/.local/share/godot/export_templates/* "$HOME/.local/share/godot/export_templates/"
-          ls "$HOME/.local/share/godot/export_templates/"
       - name: Derle
         working-directory: godot
         run: |
-          mkdir -p build/windows build/linux build/mac
-          godot --headless --verbose --import || true
-          godot --headless --verbose --export-release "Windows" build/windows/CuceSavasci.exe
-          godot --headless --verbose --export-release "Linux" build/linux/CuceSavasci.x86_64
-          godot --headless --verbose --export-release "macOS" build/mac/CuceSavasci.zip
-          chmod +x build/linux/CuceSavasci.x86_64
-          cd build
-          cd windows && zip -r ../CuceSavasci-Windows.zip . && cd ..
-          cd linux && tar -czf ../CuceSavasci-Linux.tar.gz . && cd ..
-          mv mac/CuceSavasci.zip CuceSavasci-Mac.zip
+          mkdir -p build/windows
+          godot --headless --import || true
+          godot --headless --export-release "Windows" build/windows/CuceSavasci.exe
+          cd build/windows && zip -r ../CuceSavasci-Windows.zip .
       - uses: actions/upload-artifact@v4
         with:
           name: CuceSavasci-Windows
           path: godot/build/CuceSavasci-Windows.zip
-      - uses: actions/upload-artifact@v4
-        with:
-          name: CuceSavasci-Linux
-          path: godot/build/CuceSavasci-Linux.tar.gz
-      - uses: actions/upload-artifact@v4
-        with:
-          name: CuceSavasci-Mac
-          path: godot/build/CuceSavasci-Mac.zip
       - name: Sürüm yayınla
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'son-surum' }}
-          name: Cüce Savaşçı ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '(son sürüm)' }}
-          body: "Windows, Mac ve Linux için indirilebilir oyun. İmzasız olduğundan işletim sistemi ilk açılışta uyarı verebilir (ayrıntı: godot/README.md)."
+          tag_name: ${{ env.TAG }}
+          name: Cüce Savaşçı (${{ github.ref_name }})
+          body: "Windows için indirilebilir oyun (${{ github.ref_name }} dalı). İmzasız olduğundan Windows ilk açılışta uyarı verebilir; ayrıntı: godot/README.md."
           target_commitish: ${{ github.sha }}
-          make_latest: true
-          files: |
-            godot/build/CuceSavasci-Windows.zip
-            godot/build/CuceSavasci-Linux.tar.gz
-            godot/build/CuceSavasci-Mac.zip
+          prerelease: ${{ github.ref_name != 'main' }}
+          make_latest: ${{ github.ref_name == 'main' }}
+          files: godot/build/CuceSavasci-Windows.zip

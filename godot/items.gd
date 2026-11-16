@@ -153,11 +153,13 @@ static func _build() -> void:
 	_eq("lg_marsh", "Timsah Pantolonu", "legs", 3, 8, 54, 3, 0, 5, 700, "Zincir", "green")
 	_eq("wt_marsh", "Sazlık Kuşağı", "waist", 3, 8, 22, 2, 2, 3, 500, "Deri", "tan")
 	_eq("helm_marsh", "Şaman Maskesi", "head", 3, 8, 30, 3, 0, 5, 640, "Zincir", "mith")
+	_eq("sh_thokk", "Buzul Devi'nin Kalkanı", "offhand", 4, 9, 70, 3, 0, 6, 1900, "Kalkan", "steel")
+	_eq("bk_thokk", "Don Pelerini", "back", 3, 9, 10, 3, 2, 4, 900, "Kumaş", "steel")
 	_wp("axe_gruff", "Gruff'ın Çenesi", 4, 10, 36, 56, 2.5, 9, 4, 4, 2400, "bone", 2)
 	_eq("bk_gruff", "Timsah Postu Pelerin", "back", 4, 10, 12, 4, 3, 6, 1800, "Kumaş", "green")
 	_eq("tr_gruff", "Bataklık Yüreği", "trinket", 4, 10, 0, 6, 4, 4, 2100, "", "green")
 	_eq("wt_gruff", "Pullu Bel Zinciri", "waist", 4, 10, 34, 5, 0, 7, 1900, "Plaka", "iron")
-	for bid in ["axe_gruff", "bk_gruff", "tr_gruff", "wt_gruff", "wt_arc", "hd_arc", "bk_arc", "axe_grik", "nk_grik", "hammer_chok", "wt_chok", "lg_hogger", "wr_hogger", "tr_hogger", "sword_cruel", "helm_defias", "bk_edwin", "rg_vc", "helm_rag", "ch_rag", "tr_core", "hammer_sulf"]:
+	for bid in ["axe_gruff", "bk_gruff", "tr_gruff", "wt_gruff", "wt_arc", "hd_arc", "bk_arc", "axe_grik", "nk_grik", "hammer_chok", "wt_chok", "lg_hogger", "wr_hogger", "tr_hogger", "sword_cruel", "helm_defias", "bk_edwin", "rg_vc", "helm_rag", "ch_rag", "tr_core", "hammer_sulf", "sh_thokk", "bk_thokk"]:
 		_db[bid]["boss"] = true
 	# Kara Demir Madeni
 	_eq("ch_mine", "Madenci Plaka Zırhı", "chest", 3, 12, 108, 5, 0, 8, 1500, "Plaka", "dark")

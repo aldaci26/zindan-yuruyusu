@@ -171,6 +171,9 @@ const BOSSES := {
 	"vurgan": {"name": "Vurgan", "title": "Kara Demir Maden Lordu", "lvl": 17, "hp": 19000.0, "dmg": 48.0, "spd": 3.8, "rad": 1.2, "sc": 1.6, "aggro": 12.0, "map": "mine",
 		"x": 0.0, "z": -73.0, "model": "vurgan", "kind": "skull", "respawn": 600.0, "xp": 1400,
 		"say": "Vurgan: Madenim benim! Kazın, kazın!", "drops": ["axe_vurgan", "ch_vurgan", "helm_vurgan", "tr_vurgan"]},
+	"thokk": {"name": "Buzul Devi Thokk", "title": "Gezgin Dünya Canavarı", "lvl": 9, "hp": 7800.0, "dmg": 32.0, "spd": 3.8, "rad": 1.5, "sc": 2.7, "aggro": 14.0,
+		"x": 72.0, "z": 8.0, "model": "thokk", "kind": "skull", "respawn": 420.0, "xp": 450,
+		"say": "Thokk: Buzul uyanıyor... Donun!", "drops": ["sh_thokk", "bk_thokk"]},
 	"ragnaros": {"name": "Ragnaros", "title": "Ateş Efendisi", "lvl": 10, "hp": 24000.0, "dmg": 60.0, "spd": 0.0, "rad": 4.6, "sc": 1.0, "aggro": 0.0, "reach": 1.9, "yoff": 1.3,
 		"x": 0.0, "z": -64.0, "model": "ragnaros", "kind": "skull", "respawn": 600.0, "xp": 900,
 		"say": "Ragnaros: SİZİ KÜÇÜK FANİLER! ATEŞİMDE YANACAKSINIZ!", "drops": ["helm_rag", "ch_rag", "tr_core"]},
@@ -1234,6 +1237,23 @@ func _build_city() -> void:
 		Dwarf.box(self, Vector3(1.8, 6.0, 0.05), m_blue, Vector3(px, cy + 8.0, pz + 3.45))
 		Dwarf.box(self, Vector3(0.35, 5.6, 0.06), m_gold, Vector3(px, cy + 8.0, pz + 3.5))
 		_add_obs(px, pz, 3.4)
+	# sur üstü gözetleme kuleleri
+	for sd2 in [-1.0, 1.0]:
+		for off in [1.15, 2.0]:
+			var a2: float = PI / 2.0 + sd2 * off
+			var tx2 := cx + cos(a2) * R
+			var tz2 := cz + sin(a2) * R
+			Dwarf.cyl(self, 2.1, 2.4, 9.5, m_stone, Vector3(tx2, cy + 4.75, tz2), 12)
+			Dwarf.cyl(self, 2.35, 2.35, 0.4, m_gold, Vector3(tx2, cy + 8.6, tz2), 12)
+			Dwarf.cone(self, 2.8, 3.8, m_bronze, Vector3(tx2, cy + 11.4, tz2), 12)
+			Dwarf.sph(self, 0.3, m_gold, Vector3(tx2, cy + 13.5, tz2))
+			var tlight := OmniLight3D.new()
+			tlight.light_color = Color("ffb060")
+			tlight.omni_range = 7.0
+			tlight.light_energy = 0.8
+			tlight.position = Vector3(tx2, cy + 7.5, tz2)
+			add_child(tlight)
+			_add_obs(tx2, tz2, 2.6)
 	var gz := cz + R
 	Dwarf.box(self, Vector3(10.5, 2.6, 2.8), m_stone, Vector3(cx, cy + 9.6, gz))
 	Dwarf.box(self, Vector3(11.0, 0.45, 3.1), m_gold, Vector3(cx, cy + 8.2, gz))
@@ -1648,6 +1668,7 @@ func _make_boss_model(id: String) -> Node3D:
 		"vancleef": return Dwarf.make_dwarf({"skin": Color("e8c0a0"), "metal": Color("5a2a2a"), "cloth": Color("a32a2a"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 		"gruff": return Dwarf.make_croc(true)
 		"gorduk": return Dwarf.make_golem(true)
+		"thokk": return Dwarf.make_frost()
 		"vurgan": return Dwarf.make_dwarf({"skin": Color("8a7060"), "metal": Color("2a2a30"), "cloth": Color("a32a1a"), "beard": Color("c8402a"), "helm": true, "prop": "hammer"})
 		_: return Dwarf.make_ragnaros()
 
@@ -3725,6 +3746,10 @@ func _boss_engage(m) -> void:
 		"grik":
 			_bset(m, "nova", 5.0)
 			_bset(m, "bolt", 2.0)
+		"thokk":
+			_bset(m, "nova", 5.0)
+			_bset(m, "smash", 3.0)
+			_bset(m, "spike", 2.0)
 		"arctikus":
 			_bset(m, "maul", 5.0)
 			_bset(m, "rend", 8.0)
@@ -3802,6 +3827,32 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 			if d > m.rad + m.reach + 1.5 and d < 22.0 and _bready(m, "rocks"):
 				_bset(m, "rocks", 7.0)
 				boss_spell(m, 0.9, "Kaya Fırlatma", Color("8a8070"))
+				return true
+		"thokk":
+			if hpf < 0.5 and not m.flags.has("ele"):
+				m.flags["ele"] = true
+				boss_say(m, "Thokk buzdan hizmetkârlarını çağırdı!")
+				_boss_summon(m, "Buz Hizmetkârı", "frost", 3, 240.0, 12.0, 3.6, 0.8, 3.0)
+			if hpf < 0.25 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.3
+				m.spd *= 1.2
+				boss_say(m, "Thokk'un buzları çatırdıyor!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if d <= 9.0 and _bready(m, "nova"):
+				_bset(m, "nova", 11.0)
+				boss_spell(m, 1.4, "Buz Dalgası", Color("8ad0ff"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 9.0, Color("8ad0ff"), 0.6)
+				P["slow_t"] = 4.0
+				return true
+			if melee and _bready(m, "smash"):
+				_bset(m, "smash", 6.0)
+				boss_hit(m, 1.9, "Buzul Yumruğu")
+				return true
+			if d > m.rad + m.reach + 1.5 and d < 22.0 and _bready(m, "spike"):
+				_bset(m, "spike", 7.0)
+				boss_spell(m, 0.9, "Buz Mızrağı", Color("a8e0ff"))
 				return true
 		"vurgan":
 			for t in [0.7, 0.4]:

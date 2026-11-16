@@ -58,6 +58,7 @@ Dünyada 6 WoW bossu var, hepsi yüksek canlı ve kendine özel yeteneklidir; ö
 - **Grik'nir the Cold** (Sv 5, doğu): Don Dalgası (yavaşlatır), Buz Oku.
 - **Chok'sul** (Sv 7, batı): Yer Yarığı (geri savurur), öfke.
 - **Hogger** (Sv 8, doğu): gnoll çırakları çağırır, canı azalınca yemek yiyip iyileşir.
+- **Buzul Devi Thokk** (Sv 9, doğu, dünya canavarı): Buz Dalgası ile yavaşlatır, canı yarıya inince buz hizmetkârları çağırır; Buzul Devi'nin Kalkanı ve Don Pelerini düşürür.
 - **Edwin VanCleef** (Sv 9, güneybatı): Defias haydutları çağırır, Sırttan Bıçak, zehir.
 - **Ragnaros** (Sv 10, Demirkazan'daki büyük ocakta): Gazap (geri savurur), Magma Topu, Alev Oğulları. Kendiliğinden saldırmaz; sen saldırınca uyanır. Ona yaklaşmadan önce iyi eşya topla.
 
@@ -88,3 +89,9 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 
 ## Otomatik test
 `godot/tests/run_smoke.sh /yol/Godot_v4.3-stable_linux.x86_64` komutu üç haritayı kurar, oyunu birkaç saniye çalıştırır, hava döngüsünü, görev ödüllerini, kaydet/yükle işlemini ve grafik kalitesi ayarını dener. Başarılıysa son satır `SMOKE OK` olur. Linux'ta `xvfb` gerekir.
+
+## Banka, dünya haritası, ayarlar
+- **Bankacı Gundri** (Demirkazan): 28 yuvalık depo; "Banka" ve "Çantam" sekmeleriyle eşya koyup alırsın, çantada sağ tık da bankaya koyar. Banka kayda dahildir.
+- **M**: dünya haritası (kamplar, bosslar, portallar, `!`/`?` NPC'ler).
+- **Esc menüsü**: grafik kalitesi (Düşük/Orta/Yüksek) ve ses; seçimler `user://ayarlar.cfg` dosyasına kaydedilir.
+- Kar Dağı ve Bataklık'ta gece-gündüz, kar fırtınası ve yağmur vardır.

@@ -54,7 +54,6 @@ var pts_lbl: Label
 var desc: RichTextLabel
 var reset_btn: Button
 var btns := {}
-var tree_pts: Array = []
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)

@@ -3,12 +3,7 @@
 Karlı vadide kurt, domuz ve ayı avla; Demirkazan cüce şehrinde görev al, demirciden silah, tüccardan iksir al.
 
 ## İndir ve oyna
-**Releases** sayfasından işletim sistemine uygun dosyayı indir:
-- **Windows**: `CuceSavasci-Windows.zip` → aç → `CuceSavasci.exe`. ("Windows bilgisayarını korudu" çıkarsa: *Ek bilgi → Yine de çalıştır*.)
-- **Mac**: `CuceSavasci-Mac.zip` → aç → uygulamaya sağ tık → *Aç*. Yine engellenirse: *Sistem Ayarları → Gizlilik ve Güvenlik* → aşağıda "CuceSavasci engellendi" yanındaki **Yine de aç**.
-- **Linux**: `CuceSavasci-Linux.tar.gz` → aç → `./CuceSavasci.x86_64`.
-
-Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
+**Releases** sayfasından `CuceSavasci-Windows.zip` dosyasını indir (kararlı sürüm: *son-surum*, deneme sürümü: *entegrasyon-surum*), aç ve `CuceSavasci.exe` çalıştır. ("Windows bilgisayarını korudu" çıkarsa: *Ek bilgi → Yine de çalıştır*.) Sürüm imzasızdır, bu yüzden Windows bir kez uyarı verir.
 
 ## Kontroller
 | Tuş | İşlev |
@@ -47,13 +42,13 @@ Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.
 WoW Classic mantığıyla: nadirlik renkleri (gri, beyaz, yeşil, mavi, mor), 16 ekipman yuvası, 16 gözlü çanta, bakır/gümüş/altın parası, eşya ipuçları ve giyili eşyayla karşılaştırma. Canavarlar ceset üzerinde ganimet bırakır (sol tık veya G). Tüccar Hilda ve Demirci Borga eşya satar, sattıklarını geri alabilirsin. Görev ödüllerinde eşya seçersin. İki takım vardır: Derin Ocak Takımı ve Dağ Kralının Mirası; parça sayısına göre ek güç verir. Eşyalar sadece istatistik değiştirir, görünüm değişmez.
 
 ## Görevler
-Üç görev vericisi (Avcı Başı Ragna, Muhafız Dorn, Komutan Thrum) birer görev zinciri verir; biri bitince sıradaki açılır. Toplam 13 görev var: trogg, gnoll, Defias ve Kara Demir avları ile Grik'nir, Arctikus, Chok'sul, Hogger, VanCleef ve Ragnaros boss görevleri. Her görev tecrübe, para ve üç eşyadan birini seçme hakkı verir. Görev vericisinin üstündeki `!` yeni görev, `?` teslim demektir.
+Üç görev vericisi (Avcı Başı Ragna, Muhafız Dorn, Komutan Thrum) birer görev zinciri verir; biri bitince sıradaki açılır. Toplam 21 görev var (Kar Dağı, Bataklık ve Madenin görevleri dahil). Her görev tecrübe, para ve üç eşyadan birini seçme hakkı verir. Görev vericisinin üstündeki `!` yeni görev, `?` teslim demektir.
 
 ## Düşmanlar
 Kurt, yaban domuzu ve dağ ayısına ek olarak dört kamp vardır: **Troggar** (doğu, Sv 3-6), **Gnoll'lar** (doğu-güney, Sv 4-7), **Defias haydutları** (güneybatı, Sv 6-8) ve **Kara Demir büyücüleri** (batı, Sv 7-9; uzaktan ateş okuyla vururlar). Her türün kendine özel çerçöpü düşer.
 
 ## Bosslar
-Dünyada 6 WoW bossu var, hepsi yüksek canlı ve kendine özel yeteneklidir; ölünce mor/mavi eşya bırakır ve beş-on dakikada yeniden doğar:
+Dünyada 10 boss var, hepsi yüksek canlı ve kendine özel yeteneklidir; ölünce mor/mavi eşya bırakır ve beş-on dakikada yeniden doğar:
 - **Büyük Baba Arctikus** (Sv 6, batı ormanı): Parçala, Yırtma (kanama), canı azalınca öfke.
 - **Grik'nir the Cold** (Sv 5, doğu): Don Dalgası (yavaşlatır), Buz Oku.
 - **Chok'sul** (Sv 7, batı): Yer Yarığı (geri savurur), öfke.
@@ -88,7 +83,7 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 - **Başarımlar**: 27 başarım; boss, görev, meslek, itibar ve seviye hedefleri.
 
 ## Otomatik test
-`godot/tests/run_smoke.sh /yol/Godot_v4.3-stable_linux.x86_64` komutu üç haritayı kurar, oyunu birkaç saniye çalıştırır, hava döngüsünü, görev ödüllerini, kaydet/yükle işlemini ve grafik kalitesi ayarını dener. Başarılıysa son satır `SMOKE OK` olur. Linux'ta `xvfb` gerekir.
+`godot/tests/run_smoke.sh /yol/Godot_v4.3-stable_linux.x86_64` komutu üç haritayı kurar, oyunu birkaç saniye çalıştırır, hava döngüsünü, görev ödüllerini, kaydet/yükle işlemini ve grafik kalitesi ayarını dener. Başarılıysa son satır `SMOKE OK` olur. Linux ve `xvfb` gerekir (geliştirme aracıdır, oyunu oynamak için gerekmez).
 
 ## Banka, dünya haritası, ayarlar
 - **Bankacı Gundri** (Demirkazan): 28 yuvalık depo; "Banka" ve "Çantam" sekmeleriyle eşya koyup alırsın, çantada sağ tık da bankaya koyar. Banka kayda dahildir.

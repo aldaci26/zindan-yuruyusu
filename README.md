@@ -17,3 +17,4 @@ World of Warcraft'tan esinlenmiş 3D bir cüce savaşçı oyunu. Godot 4.3 ile y
 Proje `godot/` klasöründe. Godot 4.3 ile aç ve çalıştır. Derleme `.github/workflows/godot-export.yml` ile yapılır.
 
 Üçüncü taraf varlıklar: Kenney (CC0) modelleri, `godot/assets/kenney/LICENSE.txt`.
+[![pages-build-deployment](https://github.com/aldaci26/zindan-yuruyusu/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/aldaci26/zindan-yuruyusu/actions/workflows/pages/pages-build-deployment)

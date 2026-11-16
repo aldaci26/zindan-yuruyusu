@@ -2438,6 +2438,7 @@ func hit_mob(m, r: Dictionary, col: Color = Color.WHITE) -> void:
 	if m.dead:
 		return
 	m.hp -= r["v"]
+	hud.clog("%s%s hedefine %d hasar verdin." % ["KRİTİK! " if r["crit"] else "", m.nm, r["v"]], Color("ffd23a") if r["crit"] else Color("e9eef2"))
 	sfx.play("crit" if r["crit"] else "hit", -4)
 	float_text(Vector3(m.x, 1.9 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), str(r["v"]), Color("ffd23a") if r["crit"] else col, r["crit"])
 	P["combat_t"] = T
@@ -2462,6 +2463,7 @@ func kill_mob(m) -> void:
 		hud.banner("BOSS ÖLDÜ", m.nm)
 		sfx.play("quest")
 	hud.say("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
+	hud.clog("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
 	roll_loot(m)
 	quest_kill(m)
 	if not m.temp:
@@ -2822,6 +2824,7 @@ func player_hp_loss(d: int) -> void:
 		return
 	P["hp"] -= d
 	P["combat_t"] = T
+	hud.clog("Sen %d hasar aldın." % d, Color("ff6a5a"))
 	sfx.play("hurt", -4)
 	add_rage(4.0)
 	float_text(Vector3(P["x"], P["y"] + 2.2, P["z"]), "-%d" % d, Color("ff6a5a"), false)
@@ -4100,6 +4103,8 @@ func _update_hud() -> void:
 	var t = P["target"]
 	if t != null and not t.dead:
 		hud.update_target({"name": t.nm, "lvl": t.lvl, "hp": t.hp, "maxhp": t.maxhp, "color": _lvl_color(t.lvl), "kind": _mob_kind(t),
+			"hint": "Kanıyor" if t.bleed_t > 0.0 else ("Yavaş" if t.slow > 0.0 else ""),
+			"tot": "Sen", "tot_hp": P["hp"] / max_hp() * 100.0} if t.state == "chase" else {"name": t.nm, "lvl": t.lvl, "hp": t.hp, "maxhp": t.maxhp, "color": _lvl_color(t.lvl), "kind": _mob_kind(t),
 			"hint": "Kanıyor" if t.bleed_t > 0.0 else ("Yavaş" if t.slow > 0.0 else "")})
 	else:
 		hud.update_target({})

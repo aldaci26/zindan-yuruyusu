@@ -238,6 +238,19 @@ func _build_target_frame() -> void:
 	hint.position = Vector2(16, 47)
 	hint.name = "hint"
 	tf.add_child(hint)
+	tot = Control.new()
+	tot.position = Vector2(236, 22)
+	tot.size = Vector2(110, 34)
+	tot.visible = false
+	tot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tf.add_child(tot)
+	tot.add_child(_wood_panel(Rect2(0, 0, 110, 34)))
+	tot_name = _label("", 11, Color("e9eef2"), 3)
+	tot_name.position = Vector2(8, 2)
+	tot.add_child(tot_name)
+	tot_bar = _bar(Color("2fb552"), 9.0, 94.0)
+	tot_bar.position = Vector2(8, 19)
+	tot.add_child(tot_bar)
 
 func _build_minimap() -> void:
 	var zr = Parts.Frame.new()
@@ -280,9 +293,12 @@ func _build_chat() -> void:
 		tab.add_theme_stylebox_override("panel", _box(Color(0.08, 0.07, 0.05, 0.9 if i == 0 else 0.55), Color("6a5528") if i == 0 else Color("3a3020"), 1, 2))
 		tab.position = Vector2(2 + i * 84, -22)
 		tab.size = Vector2(82, 20)
-		tab.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tab.mouse_filter = Control.MOUSE_FILTER_STOP
+		tab.gui_input.connect(_on_chat_tab.bind(i))
+		chat_tabs.append(tab)
 		p.add_child(tab)
 		var tl := _label("Genel" if i == 0 else "Savaş Kaydı", 11, GOLD if i == 0 else Color("8a8270"), 3)
+		tl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tl.set_anchors_preset(Control.PRESET_FULL_RECT)
 		tl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		tl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -300,6 +316,44 @@ func _build_chat() -> void:
 	log_box.offset_right = -6
 	log_box.offset_bottom = -4
 	p.add_child(log_box)
+	clog_box = VBoxContainer.new()
+	clog_box.alignment = BoxContainer.ALIGNMENT_END
+	clog_box.add_theme_constant_override("separation", 0)
+	clog_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	clog_box.clip_contents = true
+	clog_box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	clog_box.offset_left = 6
+	clog_box.offset_top = 4
+	clog_box.offset_right = -6
+	clog_box.offset_bottom = -4
+	clog_box.visible = false
+	p.add_child(clog_box)
+
+var chat_tabs: Array = []
+var tot: Control
+var tot_name: Label
+var tot_bar
+var clog_box: VBoxContainer
+
+func _on_chat_tab(ev: InputEvent, i: int) -> void:
+	if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+		log_box.visible = i == 0
+		clog_box.visible = i == 1
+		for k in chat_tabs.size():
+			var t: Panel = chat_tabs[k]
+			t.add_theme_stylebox_override("panel", _box(Color(0.08, 0.07, 0.05, 0.9 if k == i else 0.55), Color("6a5528") if k == i else Color("3a3020"), 1, 2))
+			(t.get_child(0) as Label).add_theme_color_override("font_color", GOLD if k == i else Color("8a8270"))
+
+## Savaş Kaydı: vuruşlar, alınan hasar, iyileşme
+func clog(text: String, color: Color = Color("e9eef2")) -> void:
+	var l := _label(text, 12, color, 3)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size = Vector2(350, 0)
+	clog_box.add_child(l)
+	while clog_box.get_child_count() > 10:
+		var old := clog_box.get_child(0)
+		clog_box.remove_child(old)
+		old.queue_free()
 
 func _build_actionbar() -> void:
 	var holder := Control.new()
@@ -665,6 +719,10 @@ func update_target(d: Dictionary) -> void:
 	tf_bar.value = clampf(d["hp"] / d["maxhp"] * 100.0, 0.0, 100.0)
 	tf_lbl.text = "%d / %d" % [maxi(0, roundi(d["hp"])), roundi(d["maxhp"])]
 	(tf.get_node("hint") as Label).text = d.get("hint", "")
+	tot.visible = d.has("tot")
+	if d.has("tot"):
+		tot_name.text = d["tot"]
+		tot_bar.value = clampf(d["tot_hp"], 0.0, 100.0)
 
 func update_minimap(d: Dictionary) -> void:
 	minimap.px = d["px"]

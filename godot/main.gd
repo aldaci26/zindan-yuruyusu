@@ -7,6 +7,11 @@ const HudScript = preload("res://hud.gd")
 const SfxScript = preload("res://sfx.gd")
 const Items = preload("res://items.gd")
 const Inv = preload("res://inv.gd")
+const SaveManager = preload("res://systems/save_manager.gd")
+const CombatRules = preload("res://systems/combat_rules.gd")
+const SpawnDirector = preload("res://systems/spawn_director.gd")
+const NavSteer = preload("res://systems/navigation_steering.gd")
+const NPCDialogue = preload("res://systems/npc_dialogue.gd")
 const InvUI = preload("res://invui.gd")
 const TalentUI = preload("res://talentui.gd")
 const ProgUI = preload("res://progui.gd")
@@ -236,6 +241,8 @@ class Mob:
 	var base_dmg := 0.0
 	var base_spd := 0.0
 	var owner_m = null
+	var rare := false
+	var thr := 0.0
 	var node: Node3D
 	var legs: Array = []
 	var id: int
@@ -257,6 +264,8 @@ var loot_mob = null
 var next_id := 100
 var save_t := 0.0
 const SAVE_PATH := "user://cuce_save.json"
+var npc_mem: Dictionary = {}
+var dlg_extra := ""
 var cam: Camera3D
 var sun: DirectionalLight3D
 var player: Node3D
@@ -477,7 +486,7 @@ func _ready() -> void:
 	hud.volume_changed.connect(func(_x): save_settings())
 	sfx.set_volume(0.8)
 	load_settings()
-	hud.set_has_save(FileAccess.file_exists(SAVE_PATH))
+	hud.set_has_save(FileAccess.file_exists(SAVE_PATH) or FileAccess.file_exists(SAVE_PATH + SaveManager.BACKUP_SUFFIX))
 	get_tree().set_auto_accept_quit(false)
 	_update_camera(0.0)
 
@@ -1394,7 +1403,7 @@ func _spawn_player() -> void:
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
 		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
-		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0}
+		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
 	P["hp"] = float(max_hp())
@@ -1803,14 +1812,15 @@ func _spawn_camps() -> void:
 			m.ph = rnd.randf() * 6.0
 			m.id = cid
 			cid += 1
-			if rnd.randf() < 0.17:
-				m.nm = "Elit " + m.nm
-				m.maxhp = round(m.maxhp * 3.5)
+			if SpawnDirector.is_rare_spawn(rnd.randf() * 0.7, P["lvl"]):
+				m.rare = true
+				m.title = "Nadir"
+				m.maxhp = round(m.maxhp * SpawnDirector.rare_hp_multiplier())
 				m.hp = m.maxhp
-				m.dmg *= 1.5
+				m.dmg *= SpawnDirector.rare_damage_multiplier()
 				m.lvl += 1
-				m.sc *= 1.35
-				m.rad *= 1.3
+				m.sc *= 1.3
+				m.rad *= 1.25
 				m.aggro += 3.0
 			m.node = _camp_model(c["kind"])
 			m.node.scale = Vector3.ONE * m.sc
@@ -2169,8 +2179,8 @@ func _on_start(cont: bool) -> void:
 	if cont and load_game():
 		hud.say("Kayıtlı oyun yüklendi.", Color("f2c75c"))
 		return
-	if FileAccess.file_exists(SAVE_PATH):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
+	SaveManager.delete_path(SAVE_PATH)
+	npc_mem = {}
 	hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 	hud.say("Kurtlar ve domuzlar vadide dolaşıyor. İyi avlar!", Color("f2c75c"))
 
@@ -2426,19 +2436,18 @@ func save_game() -> void:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
 		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "qs": qs, "inv": inv.to_dict(), "map": map}
-	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
-	if f:
-		f.store_string(JSON.stringify(d))
+	d["npc_mem"] = npc_mem
+	SaveManager.write(SAVE_PATH, d)
 
 func load_game() -> bool:
-	if not FileAccess.file_exists(SAVE_PATH):
+	var res: Dictionary = SaveManager.read(SAVE_PATH)
+	if not res.ok:
 		return false
-	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
-	if f == null:
-		return false
-	var d = JSON.parse_string(f.get_as_text())
-	if typeof(d) != TYPE_DICTIONARY:
-		return false
+	var d: Dictionary = res.data
+	if res.get("used_backup", false):
+		hud.say("Ana kayıt bozuktu; yedekten yüklendi.", Color("ffd23a"))
+	if typeof(d.get("npc_mem")) == TYPE_DICTIONARY:
+		npc_mem = d["npc_mem"]
 	for k in ["x", "z", "yaw", "lvl", "xp", "wep_b", "wep_lvl", "hp"]:
 		if not d.has(k) or typeof(d[k]) != TYPE_FLOAT:
 			return false
@@ -2633,10 +2642,10 @@ func add_rage(n: float) -> void:
 
 func roll(base: float) -> Dictionary:
 	var crit := randf() < crit_chance()
-	var v: float = base * (0.85 + randf() * 0.3) * (1.0 + G["dmg"])
-	if crit:
-		v *= 1.8
-	return {"v": maxi(1, roundi(v)), "crit": crit}
+	P["combo"] = (P["combo"] + 1) if T - P["combo_t"] < 3.0 else 1
+	P["combo_t"] = T
+	var v := CombatRules.outgoing_damage(base * CombatRules.combo_multiplier(P["combo"]), G["dmg"], 0.85 + randf() * 0.3, crit)
+	return {"v": v, "crit": crit}
 
 func dist_to(m) -> float:
 	return Vector2(m.x - P["x"], m.z - P["z"]).length() - m.rad
@@ -2681,9 +2690,14 @@ func kill_mob(m) -> void:
 		_boss_reset(m)
 		hud.banner("BOSS ÖLDÜ", m.nm)
 		sfx.play("quest")
+	if m.rare:
+		xp = roundi(xp * SpawnDirector.rare_reward_multiplier())
 	hud.say("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
 	hud.clog("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
 	roll_loot(m)
+	if m.rare:
+		m.loot_money = roundi(m.loot_money * SpawnDirector.rare_reward_multiplier()) + 20
+		hud.say("Nadir düşman düştü!", Color("ffd23a"))
 	quest_kill(m)
 	if not m.temp:
 		stat_add("kills")
@@ -3030,9 +3044,12 @@ func toggle_auto() -> void:
 
 func hurt_player(raw: float, m) -> void:
 	var arm: float = armor_total()
-	var d := maxi(1, roundi(raw * (1.0 - minf(0.75, arm / (arm + 30.0 + m.lvl * 4.0))) * (1.2 if P["rk_t"] > 0.0 else 1.0) * (1.0 - 0.02 * trk("pro_dr"))))
-	if P["sb_t"] > 0.0:
-		d = maxi(1, roundi(d * 0.3))
+	if CombatRules.should_evade(randf(), base_agi() + G["agi"], m.lvl - P["lvl"]):
+		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Kaçındın", Color("b8f0ff"), false)
+		return
+	var blocked: bool = P["sb_t"] > 0.0
+	var d := CombatRules.incoming_damage(raw, arm, m.lvl, (1.2 if P["rk_t"] > 0.0 else 1.0) * (1.0 - 0.02 * trk("pro_dr")), blocked)
+	if blocked:
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
 		sfx.play("block", -6)
 		add_rage(5.0)
@@ -3401,11 +3418,15 @@ func open_talk() -> void:
 	dlg_open = true
 	cur_npc = n
 	P["auto"] = false
+	npc_mem = NPCDialogue.record_interaction(npc_mem, n["id"], T)
+	var rk: String = {"snow": "dem", "swamp": "kar", "mine": "mad"}[map]
+	dlg_extra = NPCDialogue.greeting(n["name"], int(NPCDialogue.memory_entry(npc_mem, n["id"]).get("interactions", 1)), int(P["rep"].get(rk, 0)))
 	render_dialog()
 
 func close_dialog() -> void:
 	dlg_open = false
 	cur_npc = null
+	dlg_extra = ""
 	hud.hide_dialog()
 
 func item_brief(it: Dictionary) -> String:
@@ -3519,6 +3540,14 @@ func render_dialog() -> void:
 				last_rest = T
 				hud.say("Dinlendin, canın doldu.", Color("43d17f"))
 				render_dialog()})
+	if dlg_extra != "":
+		body = "<%s>\n\n%s" % [dlg_extra, body]
+	for tpc in [["rumors", "Söylentiler"], ["danger", "Bölge tehlikeleri"]]:
+		buttons.append({"label": tpc[1], "cb": func():
+			var rc := NPCDialogue.topic_count(npc_mem, n["id"], tpc[0])
+			npc_mem = NPCDialogue.remember_topic(npc_mem, n["id"], tpc[0], T)
+			dlg_extra = NPCDialogue.topic_response(n["name"], tpc[0], map, rc)
+			render_dialog()})
 	var tp: String = {"durin": "mine", "ragna": "skin", "borga": "smith"}.get(n["id"], "")
 	if tp != "":
 		var pdn: String = Prog.PROFS[tp]["name"]
@@ -3600,6 +3629,13 @@ func step(dt: float) -> void:
 			P["dot_k"] += 1.0
 			player_hp_loss(maxi(1, roundi(P["dot_v"])))
 	for m in mobs:
+		if not m.dead and SpawnDirector.should_throttle(Vector2(m.x - P["x"], m.z - P["z"]).length(), m.boss != "", m.temp):
+			m.thr += dt
+			if m.thr < SpawnDirector.FAR_AI_INTERVAL:
+				continue
+			_step_mob(m, m.thr)
+			m.thr = 0.0
+			continue
 		_step_mob(m, dt)
 	for i in range(mobs.size() - 1, -1, -1):
 		if mobs[i].gc:
@@ -3840,6 +3876,8 @@ func _boss_reset(m) -> void:
 
 func _boss_summon(m, nm: String, model: String, n: int, hp: float, dmg: float, spd: float, sc: float, ring: float) -> void:
 	for i in n:
+		if not SpawnDirector.can_spawn_add(mobs, m):
+			break
 		var a := float(i) / n * TAU + randf()
 		spawn_add(m, nm, model, m.lvl - 1, hp, dmg, spd, sc, Vector2(cos(a), sin(a)) * ring)
 
@@ -4099,7 +4137,8 @@ func _step_mob(m, dt: float) -> void:
 			if kf >= 0.0 or loot_mob == null and m.loot.is_empty():
 				m.sparkle.queue_free()
 				m.sparkle = null
-		if k > m.respawn and not m.temp:
+		var pd := Vector2(m.hx - P["x"], m.hz - P["z"]).length()
+		if SpawnDirector.can_respawn(k, SpawnDirector.respawn_delay(m.respawn, m.lvl, m.boss != "", m.temp), pd, 16.0, m.temp):
 			m.dead = false
 			m.hp = m.maxhp
 			m.x = m.hx
@@ -4157,7 +4196,13 @@ func _step_mob(m, dt: float) -> void:
 		if hd > 38.0:
 			m.state = "return"
 		elif d > (m.rad + 0.9 if m.ranged <= 0.0 else m.ranged - 2.0) and m.eat_t <= 0.0:
-			var c := collide(m.x + dx / d * msp * dt, m.z + dz / d * msp * dt, m.rad * 0.6)
+			var near: Array = []
+			if m.boss == "":
+				for o in mobs:
+					if o != m and not o.dead and absf(o.x - m.x) < 2.4 and absf(o.z - m.z) < 2.4:
+						near.append(Vector2(o.x, o.z))
+			var dir := NavSteer.blend_direction(Vector2(dx, dz) / d, NavSteer.separation_vector(Vector2(m.x, m.z), near, 2.2), 0.55)
+			var c := collide(m.x + dir.x * msp * dt, m.z + dir.y * msp * dt, m.rad * 0.6)
 			m.x = c.x
 			m.z = c.y
 			moving = true
@@ -4382,7 +4427,7 @@ func _update_hud() -> void:
 		var show: bool = mode == "play" and not m.dead and Vector2(m.x - P["x"], m.z - P["z"]).length() < (40.0 if m.boss != "" else 22.0)
 		var wp := Vector3(m.x, m.node.position.y + (1.7 * m.sc + 0.3 if m.boss != "ragnaros" else 8.8), m.z)
 		if show and not cam.is_position_behind(wp):
-			hud.plate(m.id, cam.unproject_position(wp), "%s %d" % [m.nm, m.lvl], _lvl_color(m.lvl), m.hp / m.maxhp, ("<" + m.title + ">") if m.boss != "" else "", "", P["target"] == m)
+			hud.plate(m.id, cam.unproject_position(wp), "%s %d" % [m.nm, m.lvl], _lvl_color(m.lvl), m.hp / m.maxhp, ("<" + m.title + ">") if m.title != "" else "", "", P["target"] == m)
 		else:
 			hud.plate_hide(m.id)
 	for n in npcs:

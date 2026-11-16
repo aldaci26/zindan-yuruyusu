@@ -97,3 +97,9 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 - Kar Dağı ve Bataklık'ta gece-gündüz, kar fırtınası ve yağmur vardır.
 - **Tuş atama**: Esc menüsünde "Tuş atama" ile hareket, zıplama, pencere tuşları vb. değiştirilir; aynı tuşu başka işleme verirsen iki işlem yer değiştirir.
 - **Kısayol çubuğu**: yetenek simgelerini fareyle sürükleyip başka kutuya bırakarak yerlerini değiştirirsin; düzen kaydedilir.
+
+## Güvenlik ve oynanış (entegrasyon)
+- Kayıt dosyası sürümlüdür ve her kayıtta yedeklenir; ana dosya bozulursa yedekten yüklenir.
+- Savaş: art arda vuruşlarda küçük kombo bonusu, çeviklikle düşman saldırısından kaçınma ("Kaçındın").
+- Kamplarda nadiran **Nadir** düşmanlar doğar (daha çok can/hasar, daha iyi ödül). Boss başına en çok 8 yardımcı çıkar; uzaktaki sıradan düşmanlar daha seyrek güncellenir.
+- NPC'ler seni hatırlar; "Söylentiler" ve "Bölge tehlikeleri" konuşmaları vardır. Ayrıntılar: `godot/systems/README.md`.

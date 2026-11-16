@@ -1464,6 +1464,20 @@ func _spawn_npcs() -> void:
 		node.rotation.y = d["face"]
 		add_child(node)
 		n["node"] = node
+		if d["role"] == "quest":
+			var lb := Label3D.new()
+			lb.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			lb.font_size = 220
+			lb.pixel_size = 0.006
+			lb.outline_size = 36
+			lb.outline_modulate = Color("3a2a00")
+			lb.modulate = Color("ffd23a")
+			lb.no_depth_test = true
+			lb.fixed_size = false
+			lb.position = Vector3(0, 3.1, 0)
+			lb.visible = false
+			node.add_child(lb)
+			n["mark3d"] = lb
 		npcs.append(n)
 		_add_obs(d["x"], d["z"], 0.7)
 
@@ -4034,6 +4048,13 @@ func _update_camera(_dt: float) -> void:
 		snow_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 
 func _step_effects(_dt: float) -> void:
+	for n in npcs:
+		if n.has("mark3d"):
+			var mk := npc_mark(n)
+			var lb: Label3D = n["mark3d"]
+			lb.visible = mk != ""
+			lb.text = mk
+			lb.position.y = 3.1 + sin(T * 3.0) * 0.12
 	_step_daynight(_dt)
 	if rain_node:
 		rain_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])

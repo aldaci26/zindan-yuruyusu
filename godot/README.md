@@ -5,7 +5,7 @@ Karlı vadide kurt, domuz ve ayı avla; Demirkazan cüce şehrinde görev al, de
 ## İndir ve oyna
 **Releases** sayfasından işletim sistemine uygun dosyayı indir:
 - **Windows**: `CuceSavasci-Windows.zip` → aç → `CuceSavasci.exe`. ("Windows bilgisayarını korudu" çıkarsa: *Ek bilgi → Yine de çalıştır*.)
-- **Mac**: `CuceSavasci-Mac.zip` → aç → uygulamaya sağ tık → *Aç*.
+- **Mac**: `CuceSavasci-Mac.zip` → aç → uygulamaya sağ tık → *Aç*. Yine engellenirse: *Sistem Ayarları → Gizlilik ve Güvenlik* → aşağıda "CuceSavasci engellendi" yanındaki **Yine de aç**.
 - **Linux**: `CuceSavasci-Linux.tar.gz` → aç → `./CuceSavasci.x86_64`.
 
 Sürümler imzasızdır, bu yüzden işletim sistemi bir kez uyarı verir.

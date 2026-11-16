@@ -6,6 +6,10 @@ var streams := {}
 var pool: Array = []
 var next := 0
 var wind: AudioStreamPlayer
+var amb: AudioStreamPlayer
+var music: AudioStreamPlayer
+var loops := {}
+var cur_map := ""
 
 func _ready() -> void:
 	streams["swing"] = _make(0.2, func(t, n): return _noise_lp(n, 0.35) * sin(t / 0.2 * PI) * 0.5)
@@ -32,6 +36,12 @@ func _ready() -> void:
 	wind.stream = _wind()
 	wind.volume_db = -24.0
 	add_child(wind)
+	amb = AudioStreamPlayer.new()
+	amb.volume_db = -20.0
+	add_child(amb)
+	music = AudioStreamPlayer.new()
+	music.volume_db = -19.0
+	add_child(music)
 
 var _lp := 0.0
 
@@ -99,8 +109,77 @@ func play(name: String, vol: float = 0.0, pitch: float = 1.0) -> void:
 	p.play()
 
 func start_ambient() -> void:
-	if not wind.playing:
-		wind.play()
+	if cur_map == "":
+		set_map("snow")
+
+## Harita başına ortam sesi ve müzik; ilk kullanımda üretilip saklanır
+func set_map(name: String) -> void:
+	if name == cur_map and wind.playing:
+		return
+	cur_map = name
+	if not loops.has("m_" + name):
+		loops["m_" + name] = _pad(name)
+		if name == "swamp":
+			loops["a_swamp"] = _loop(8.0, func(t, n): return _noise_lp(n, 0.04) * 0.5 + _frog(t))
+		elif name == "mine":
+			loops["a_mine"] = _loop(8.0, func(t, n): return _noise_lp(n, 0.02) * 0.6 + sin(TAU * 55.0 * t) * 0.18 + _drip(t))
+	music.stream = loops["m_" + name]
+	music.play()
+	if name == "snow":
+		wind.volume_db = -24.0
+		if not wind.playing:
+			wind.play()
+		amb.stop()
+	else:
+		wind.volume_db = -34.0 if name == "swamp" else -40.0
+		if not wind.playing:
+			wind.play()
+		amb.stream = loops["a_" + name]
+		amb.play()
+
+func _frog(t: float) -> float:
+	var v := 0.0
+	for st in [0.7, 1.9, 2.4, 4.1, 5.6, 6.3]:
+		var s: float = t - st
+		if s > 0.0 and s < 0.25:
+			v += sin(TAU * (260.0 + 40.0 * sin(s * 60.0)) * s) * exp(-s * 12.0) * 0.35
+	for st2 in [1.2, 3.3, 5.0, 7.1]:
+		var s2: float = t - st2
+		if s2 > 0.0 and s2 < 0.2:
+			v += sin(TAU * 3200.0 * s2) * sin(s2 * 80.0) * exp(-s2 * 10.0) * 0.12
+	return v
+
+func _drip(t: float) -> float:
+	var v := 0.0
+	for st in [0.9, 2.8, 4.4, 6.5]:
+		var s: float = t - st
+		if s > 0.0 and s < 0.3:
+			v += sin(TAU * (1500.0 - 600.0 * s) * s) * exp(-s * 25.0) * 0.5
+	return v
+
+## Kesintisiz döngü: frekanslar tam sayı döngüye yuvarlanır
+func _loop(dur: float, fn: Callable) -> AudioStreamWAV:
+	var w := _make(dur, fn)
+	w.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	w.loop_end = int(dur * RATE)
+	return w
+
+func _pad(name: String) -> AudioStreamWAV:
+	var chords: Array = {
+		"snow": [[220.0, 261.6, 329.6], [196.0, 246.9, 293.7], [174.6, 220.0, 261.6], [196.0, 246.9, 293.7]],
+		"swamp": [[146.8, 174.6, 220.0], [130.8, 155.6, 196.0], [146.8, 174.6, 220.0], [116.5, 146.8, 174.6]],
+		"mine": [[110.0, 130.8, 164.8], [103.8, 123.5, 155.6], [110.0, 130.8, 164.8], [98.0, 116.5, 146.8]],
+	}[name]
+	var dur := 16.0
+	return _loop(dur, func(t, _n):
+		var ci: int = int(t / 4.0) % 4
+		var lt: float = fmod(t, 4.0)
+		var env: float = sin(lt / 4.0 * PI)
+		var v := 0.0
+		for f in chords[ci]:
+			var fr: float = roundf(f * 4.0) / 4.0
+			v += sin(TAU * fr * t) * 0.5 + sin(TAU * fr * 2.0 * t) * 0.12
+		return v * env * 0.22)
 
 func set_volume(v: float) -> void:
 	AudioServer.set_bus_volume_db(0, linear_to_db(clampf(v, 0.0, 1.0)))

@@ -735,6 +735,8 @@ func _apply_env() -> void:
 		sun.light_color = Color("ffd9a0")
 		sun.light_energy = 1.05
 	_capture_env_base()
+	if sfx:
+		sfx.set_map(map)
 
 ## Gece-gündüz ve hava: temel değerler _apply_env sonrası saklanır, _step_daynight her 0.2 sn'de ayarlar
 var env_base := {}

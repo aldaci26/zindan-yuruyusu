@@ -980,10 +980,21 @@ func _build_forest() -> void:
 	var tcols: Array = []
 	var radii := [2.3, 1.8, 1.35, 0.9]
 	var ys := [2.7, 4.2, 5.6, 6.9]
+	var dead_trunk: Array = []
+	var dead_branch: Array = []
 	for t in trees:
 		var tall := 0.85 + hash2(int(t.x * 3.0), int(t.z * 3.0)) * 0.5
 		var b := Basis(Vector3.UP, t.rot).scaled(Vector3(t.s, t.s * tall, t.s))
 		var p := Vector3(t.x, t.y, t.z)
+		if hash2(int(t.x * 11.0), int(t.z * 13.0)) < 0.2:
+			# kuru, yapraksız ağaç
+			dead_trunk.append(Transform3D(b.scaled(Vector3(0.8, 2.2, 0.8)), p + Vector3(0, 2.6 * t.s * tall, 0)))
+			for k in 3:
+				var ang: float = t.rot + k * 2.1
+				var br := Basis(Vector3.UP, ang) * Basis(Vector3(0, 0, 1), -0.9 + k * 0.15) * Basis.from_scale(Vector3(0.5, 0.9, 0.5) * t.s)
+				dead_branch.append(Transform3D(br, p + Vector3(0, (3.6 + k * 0.9) * t.s * tall, 0)))
+			_add_obs(t.x, t.z, 0.45 * t.s)
+			continue
 		trunk.append(Transform3D(b, p + Vector3(0, 1.2 * t.s * tall, 0)))
 		var tint := 0.82 + hash2(int(t.x * 5.0), int(t.z * 7.0)) * 0.32
 		tcols.append(Color(tint, tint * (0.96 + hash2(int(t.z), int(t.x)) * 0.1), tint))
@@ -1001,6 +1012,14 @@ func _build_forest() -> void:
 	var trunk_m := Dwarf.mat(Color.html("5a4030"), 0.0, 0.95)
 	trunk_m.vertex_color_use_as_albedo = true
 	_add_multimesh(tm, trunk_m, trunk, tcols)
+	var dead_m := Dwarf.mat(Color.html("4a3a34"), 0.0, 0.95)
+	_add_multimesh(tm, dead_m, dead_trunk)
+	var brm := CylinderMesh.new()
+	brm.top_radius = 0.05
+	brm.bottom_radius = 0.16
+	brm.height = 1.8
+	brm.radial_segments = 5
+	_add_multimesh(brm, dead_m, dead_branch)
 	var greens := ["1f4f46", "26604a", "2f7050", "3a8058"]
 	for k in 4:
 		var cm := CylinderMesh.new()
@@ -1983,6 +2002,33 @@ func _build_swamp() -> void:
 			continue
 		reeds.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * (2.4 + rnd.randf() * 1.6)), Vector3(x3, y3, z3)))
 	_kit_mm("survival", "grass-large", reeds, Color(0.66, 0.72, 0.38))
+	# rogoz: uzun sap + kahverengi başak
+	var stalks: Array = []
+	var heads: Array = []
+	tries = 0
+	while stalks.size() < 140 and tries < 3000:
+		tries += 1
+		var x5 := rnd.randf_range(-88.0, 88.0)
+		var z5 := rnd.randf_range(-88.0, 88.0)
+		var y5 := height_at(x5, z5)
+		if y5 < -0.6 or y5 > 0.5 or Vector2(x5, z5).length() < 15.0:
+			continue
+		var hh := 1.6 + rnd.randf() * 0.9
+		var bs := Basis(Vector3.UP, rnd.randf() * TAU) * Basis(Vector3(1, 0, 0), rnd.randf_range(-0.12, 0.12))
+		stalks.append(Transform3D(bs.scaled(Vector3(1, hh, 1)), Vector3(x5, y5 + hh * 0.5, z5)))
+		heads.append(Transform3D(bs, Vector3(x5, y5 + hh + 0.15, z5)))
+	var catstalk := CylinderMesh.new()
+	catstalk.top_radius = 0.025
+	catstalk.bottom_radius = 0.035
+	catstalk.height = 1.0
+	catstalk.radial_segments = 4
+	_add_multimesh(catstalk, Dwarf.mat(Color.html("6a7a3a"), 0.0, 0.9), stalks)
+	var cathead := CylinderMesh.new()
+	cathead.top_radius = 0.07
+	cathead.bottom_radius = 0.07
+	cathead.height = 0.38
+	cathead.radial_segments = 6
+	_add_multimesh(cathead, Dwarf.mat(Color.html("5a3a22"), 0.0, 0.9), heads)
 	for rn in ["rock-a", "rock-b", "rock-c"]:
 		var rx: Array = []
 		for i in 12:

@@ -85,3 +85,6 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 - **Demircilik** (Demirci Borga): Cevheri külçeye çevirir, külçe ve deriden silah ve zırh dökersin. Üretim Demirkazan içinde yapılır.
 - **İtibar**: Demirkazan Kalesi, Bataklık Karakolu ve Maden Loncası. Görev teslimi ve düşman öldürmek itibar kazandırır; Dost ve üstünde o gruptaki satıcılar %5-20 indirim yapar.
 - **Başarımlar**: 27 başarım; boss, görev, meslek, itibar ve seviye hedefleri.
+
+## Otomatik test
+`godot/tests/run_smoke.sh /yol/Godot_v4.3-stable_linux.x86_64` komutu üç haritayı kurar, oyunu birkaç saniye çalıştırır, hava döngüsünü, görev ödüllerini, kaydet/yükle işlemini ve grafik kalitesi ayarını dener. Başarılıysa son satır `SMOKE OK` olur. Linux'ta `xvfb` gerekir.

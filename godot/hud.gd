@@ -582,7 +582,7 @@ func _build_help() -> void:
 	var rows := [
 		["W A S D", "Yürü"], ["Boşluk", "Zıpla"], ["Sağ tık basılı", "Kamerayı çevir"], ["Sol tık", "Hedef seç"],
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
-		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"],
+		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"], ["M", "Dünya haritası"],
 		["G", "Konuş, ganimet al, maden damarı topla"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 	]
 	for r in rows:

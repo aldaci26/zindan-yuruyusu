@@ -282,6 +282,8 @@ var portals: Array = []
 var traveling := false
 var portal_cd := 0.0
 var camps_now: Array = CAMPS
+var worldmap: Control
+const WorldMap = preload("res://worldmap.gd")
 var env_res: Environment
 var sky_psm: ProceduralSkyMaterial
 var we_node: WorldEnvironment
@@ -441,6 +443,8 @@ func _ready() -> void:
 	progui = ProgUI.new()
 	progui.game = self
 	hud.add_child(progui)
+	worldmap = WorldMap.new()
+	hud.add_child(worldmap)
 	hud.bag_pressed.connect(func(): toggle_win("bag"))
 	hud.char_pressed.connect(func(): toggle_win("char"))
 	hud.prog_pressed.connect(func(): toggle_win("prog"))
@@ -2235,6 +2239,40 @@ func load_settings() -> void:
 	hud.set_volume_ui(v)
 	sfx.set_volume(v)
 
+func toggle_worldmap() -> void:
+	if mode != "play":
+		return
+	worldmap.visible = not worldmap.visible
+	if worldmap.visible:
+		var vs := get_viewport().get_visible_rect().size
+		worldmap.position = ((vs - worldmap.size) * 0.5).round()
+		_refresh_worldmap()
+
+func _refresh_worldmap() -> void:
+	var w := worldmap
+	w.map_name = map
+	w.title = {"snow": "Kar Dağı Vadisi", "swamp": "Sisli Bataklık", "mine": "Kara Demir Madeni"}[map]
+	w.mine_rooms = MINE_ROOMS
+	w.mine_alc = MINE_ALC
+	var cs: Array = []
+	for c in camps_now:
+		cs.append({"x": c["x"], "z": c["z"], "name": _mtype(c["kind"])["name"]})
+	w.camps = cs
+	var bs: Array = []
+	for mb in mobs:
+		if mb.boss != "" and not mb.temp:
+			bs.append({"x": mb.x, "z": mb.z, "name": mb.nm, "dead": mb.dead})
+	w.bosses = bs
+	w.portals = portals.map(func(p): return {"x": p["x"], "z": p["z"], "label": p["label"]})
+	var np: Array = []
+	for n in npcs:
+		np.append({"p": Vector2(n["x"], n["z"]), "mark": npc_mark(n)})
+	w.npcs = np
+	w.px = P["x"]
+	w.pz = P["z"]
+	w.pyaw = P["yaw"]
+	w.queue_redraw()
+
 func toggle_fullscreen() -> void:
 	var w := get_window()
 	w.mode = Window.MODE_WINDOWED if w.mode == Window.MODE_FULLSCREEN else Window.MODE_FULLSCREEN
@@ -2375,6 +2413,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_C: toggle_win("char")
 			KEY_N: toggle_win("tal")
 			KEY_K: toggle_win("prog")
+			KEY_M: toggle_worldmap()
 			KEY_G:
 				if loot_mob != null:
 					while loot_mob != null and not loot_mob.loot.is_empty():
@@ -4080,6 +4119,8 @@ func _update_camera(_dt: float) -> void:
 		snow_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 
 func _step_effects(_dt: float) -> void:
+	if worldmap and worldmap.visible:
+		_refresh_worldmap()
 	for n in npcs:
 		if n.has("mark3d"):
 			var mk := npc_mark(n)

@@ -491,6 +491,8 @@ func _build_world() -> void:
 		_spawn_camps()
 		_setup_snow()
 		_spawn_nodes()
+	if map != "mine":
+		_setup_rain()
 	_apply_env()
 
 func _clear_world() -> void:
@@ -516,6 +518,7 @@ func _clear_world() -> void:
 	portals.clear()
 	res_nodes.clear()
 	snow_node = null
+	rain_node = null
 	swamp_fx = null
 	lava_mat = null
 	mine_lantern = null
@@ -720,6 +723,98 @@ func _apply_env() -> void:
 		env_res.adjustment_saturation = 1.12
 		sun.light_color = Color("ffd9a0")
 		sun.light_energy = 1.05
+	_capture_env_base()
+
+## Gece-gündüz ve hava: temel değerler _apply_env sonrası saklanır, _step_daynight her 0.2 sn'de ayarlar
+var env_base := {}
+var day_k := 1.0
+var storm_k := 0.0
+var rain_node: GPUParticles3D
+var day_acc := 0.0
+
+func _capture_env_base() -> void:
+	env_base = {
+		"top": sky_psm.sky_top_color, "hor": sky_psm.sky_horizon_color,
+		"gh": sky_psm.ground_horizon_color, "gb": sky_psm.ground_bottom_color,
+		"amb": env_res.ambient_light_color, "ambe": env_res.ambient_light_energy,
+		"fog": env_res.fog_light_color, "fogd": env_res.fog_density,
+		"sun": sun.light_energy,
+	}
+
+func _step_daynight(dt: float) -> void:
+	if env_base.is_empty() or env_res == null:
+		return
+	day_acc += dt
+	if day_acc < 0.2:
+		return
+	var step_dt := day_acc
+	day_acc = 0.0
+	if map == "mine":
+		return
+	# 300 sn'lik tam gün; başlangıç sabah
+	var ph := fmod(T / 300.0 + 0.25, 1.0)
+	var sun_h := sin(ph * TAU)
+	day_k = clampf(smoothstep(-0.18, 0.35, sun_h), 0.0, 1.0)
+	# fırtına: kar haritasında kar fırtınası, bataklıkta yağmur; ~200 sn'de bir, 50 sn sürer
+	var wph := fmod(T, 200.0)
+	var want := 1.0 if wph > 140.0 and wph < 190.0 else 0.0
+	storm_k = move_toward(storm_k, want, step_dt * 0.25)
+	var night_sky := Color("0b1226")
+	var night_amb := Color("2a3a66")
+	var dusk := clampf(1.0 - absf(sun_h) * 3.0, 0.0, 1.0) * 0.5
+	var grey := Color("8a93a0")
+	var top: Color = env_base["top"].lerp(night_sky, 1.0 - day_k).lerp(grey * 0.7, storm_k * 0.5)
+	var hor: Color = env_base["hor"].lerp(Color("1a2038"), 1.0 - day_k).lerp(Color("e08a50"), dusk).lerp(grey, storm_k * 0.55)
+	sky_psm.sky_top_color = top
+	sky_psm.sky_horizon_color = hor
+	sky_psm.ground_horizon_color = hor
+	sky_psm.ground_bottom_color = env_base["gb"].lerp(night_sky, 1.0 - day_k)
+	env_res.ambient_light_color = env_base["amb"].lerp(night_amb, 1.0 - day_k)
+	env_res.ambient_light_energy = lerpf(0.5, env_base["ambe"], day_k) * (1.0 - storm_k * 0.2)
+	env_res.fog_light_color = env_base["fog"].lerp(Color("141a30"), 1.0 - day_k).lerp(grey, storm_k * 0.5)
+	env_res.fog_density = env_base["fogd"] * (1.0 + storm_k * (3.5 if map == "snow" else 1.8)) * (1.0 + (1.0 - day_k) * 0.3)
+	sun.light_energy = env_base["sun"] * day_k * (1.0 - storm_k * 0.55)
+	sun.rotation_degrees = Vector3(-clampf(sun_h * 70.0 + 8.0, 6.0, 78.0), -35.0 + ph * 40.0, 0)
+	if snow_node:
+		snow_node.visible = map == "snow"
+		snow_node.amount_ratio = lerpf(0.45, 1.0, storm_k)
+		var pm: ParticleProcessMaterial = snow_node.process_material
+		pm.gravity = Vector3(storm_k * 5.0, -0.3, storm_k * 1.5)
+	if rain_node:
+		rain_node.visible = map == "swamp"
+		rain_node.emitting = map == "swamp" and storm_k > 0.05
+		rain_node.amount_ratio = clampf(storm_k, 0.05, 1.0)
+	if swamp_fx:
+		swamp_fx.visible = map == "swamp" and storm_k < 0.5
+
+func _setup_rain() -> void:
+	var pm := ParticleProcessMaterial.new()
+	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	pm.emission_box_extents = Vector3(24, 0.5, 24)
+	pm.direction = Vector3(0.1, -1, 0)
+	pm.spread = 3.0
+	pm.initial_velocity_min = 22.0
+	pm.initial_velocity_max = 28.0
+	pm.gravity = Vector3(0, -6, 0)
+	var q := QuadMesh.new()
+	q.size = Vector2(0.03, 0.7)
+	var qm := StandardMaterial3D.new()
+	qm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	qm.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+	qm.albedo_color = Color(0.7, 0.8, 0.9, 0.45)
+	qm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	q.material = qm
+	rain_node = GPUParticles3D.new()
+	rain_node.amount = 1800
+	rain_node.lifetime = 1.0
+	rain_node.preprocess = 1.0
+	rain_node.process_material = pm
+	rain_node.draw_pass_1 = q
+	rain_node.visibility_aabb = AABB(Vector3(-26, -22, -26), Vector3(52, 44, 52))
+	rain_node.local_coords = false
+	rain_node.emitting = false
+	rain_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(rain_node)
 
 func _build_terrain() -> void:
 	var seg := 160
@@ -3921,6 +4016,9 @@ func _update_camera(_dt: float) -> void:
 		snow_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 
 func _step_effects(_dt: float) -> void:
+	_step_daynight(_dt)
+	if rain_node:
+		rain_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 	for n in res_nodes:
 		if not n["on"] and T >= n["t"]:
 			n["on"] = true

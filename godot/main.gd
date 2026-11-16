@@ -287,6 +287,8 @@ var portal_cd := 0.0
 var camps_now: Array = CAMPS
 var worldmap: Control
 const WorldMap = preload("res://worldmap.gd")
+const KeyUI = preload("res://keyui.gd")
+var keyui: Panel
 var env_res: Environment
 var sky_psm: ProceduralSkyMaterial
 var we_node: WorldEnvironment
@@ -448,6 +450,11 @@ func _ready() -> void:
 	hud.add_child(progui)
 	worldmap = WorldMap.new()
 	hud.add_child(worldmap)
+	keyui = KeyUI.new()
+	keyui.game = self
+	hud.add_child(keyui)
+	keyui.build()
+	hud.keys_pressed.connect(func(): keyui.open())
 	hud.bag_pressed.connect(func(): toggle_win("bag"))
 	hud.char_pressed.connect(func(): toggle_win("char"))
 	hud.prog_pressed.connect(func(): toggle_win("prog"))
@@ -2293,6 +2300,40 @@ func ui_slot_click(kind: String, key, button: int) -> void:
 
 const SETTINGS_PATH := "user://ayarlar.cfg"
 
+## Tuş atama: işlem -> tuş. Boş bırakılan her işlem varsayılan tuşunda çalışır.
+const BIND_NAMES := {"fwd": "İleri", "back": "Geri", "left": "Sola", "right": "Sağa", "turnl": "Sola dön", "turnr": "Sağa dön",
+	"jump": "Zıpla", "interact": "Konuş / topla", "potion": "İksir", "auto": "Otomatik saldırı", "target": "Hedef seç",
+	"bag": "Çanta", "char": "Karakter", "tal": "Yetenekler", "prog": "Meslek / başarım", "map": "Dünya haritası", "help": "Yardım"}
+const BIND_DEFAULTS := {"fwd": KEY_W, "back": KEY_S, "left": KEY_A, "right": KEY_D, "turnl": KEY_Q, "turnr": KEY_E,
+	"jump": KEY_SPACE, "interact": KEY_G, "potion": KEY_F, "auto": KEY_R, "target": KEY_TAB,
+	"bag": KEY_B, "char": KEY_C, "tal": KEY_N, "prog": KEY_K, "map": KEY_M, "help": KEY_H}
+var binds: Dictionary = BIND_DEFAULTS.duplicate()
+
+func reset_binds() -> void:
+	binds = BIND_DEFAULTS.duplicate()
+	save_settings()
+
+func set_bind(act: String, code: int) -> void:
+	# aynı tuş başka işlemdeyse yer değiştir
+	for a in binds:
+		if a != act and binds[a] == code:
+			binds[a] = binds[act]
+	binds[act] = code
+	save_settings()
+
+func kp(act: String) -> bool:
+	return Input.is_key_pressed(binds[act])
+
+## Basılan tuşu, işlemin varsayılan tuşuna çevirir; başka işleme atanmış varsayılan tuşlar devre dışı kalır (-1)
+func _xlate(kc: int) -> int:
+	for a in binds:
+		if binds[a] == kc:
+			return BIND_DEFAULTS[a]
+	for a in binds:
+		if BIND_DEFAULTS[a] == kc:
+			return -1
+	return kc
+
 ## Grafik kalitesi: 0 düşük (gölge/SSAO kapalı, %75 çözünürlük), 1 orta (gölge açık), 2 yüksek
 func apply_quality(q: int) -> void:
 	if sun:
@@ -2309,12 +2350,16 @@ func save_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.set_value("ayar", "kalite", hud.q_level)
 	cf.set_value("ayar", "ses", hud.vol_slider.value)
+	for a in binds:
+		cf.set_value("tus", a, binds[a])
 	cf.save(SETTINGS_PATH)
 
 func load_settings() -> void:
 	var cf := ConfigFile.new()
 	if cf.load(SETTINGS_PATH) != OK:
 		return
+	for a in binds:
+		binds[a] = int(cf.get_value("tus", a, BIND_DEFAULTS[a]))
 	apply_quality(int(cf.get_value("ayar", "kalite", 2)))
 	var v: float = float(cf.get_value("ayar", "ses", 0.8))
 	hud.set_volume_ui(v)
@@ -2475,7 +2520,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 		cam_yaw -= ev.relative.x * 0.005
 		cam_pitch = clampf(cam_pitch + ev.relative.y * 0.004, 0.05, 1.25)
 	elif ev is InputEventKey and ev.pressed and not ev.echo:
-		match ev.keycode:
+		match _xlate(ev.keycode):
 			KEY_SPACE: jump()
 			KEY_R: toggle_auto()
 			KEY_1: ability(9 if ev.shift_pressed else 0)
@@ -3520,17 +3565,17 @@ func step(dt: float) -> void:
 	var ix := 0.0
 	var iy := 0.0
 	if mode == "play" and not P["dead"]:
-		if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+		if kp("left") or Input.is_key_pressed(KEY_LEFT):
 			ix -= 1.0
-		if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+		if kp("right") or Input.is_key_pressed(KEY_RIGHT):
 			ix += 1.0
-		if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
+		if kp("fwd") or Input.is_key_pressed(KEY_UP):
 			iy += 1.0
-		if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
+		if kp("back") or Input.is_key_pressed(KEY_DOWN):
 			iy -= 1.0
-		if Input.is_key_pressed(KEY_Q):
+		if kp("turnl"):
 			cam_yaw += dt * 1.8
-		if Input.is_key_pressed(KEY_E):
+		if kp("turnr"):
 			cam_yaw -= dt * 1.8
 	if mode == "title":
 		cam_yaw += dt * 0.12

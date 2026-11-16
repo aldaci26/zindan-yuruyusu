@@ -9,6 +9,7 @@ signal resume_pressed
 signal quit_pressed
 signal volume_changed(v: float)
 signal fullscreen_pressed
+signal keys_pressed
 signal quality_changed(q: int)
 signal ability_pressed(i: int)
 signal bag_pressed
@@ -516,7 +517,7 @@ func _menu_button(text: String, size: int = 20) -> Button:
 func _build_pause() -> void:
 	pause_box = PanelContainer.new()
 	pause_box.add_theme_stylebox_override("panel", _box(Color(0.05, 0.04, 0.03, 0.96), Color("c9a24a"), 3, 8))
-	_place(pause_box, 0.5, 0.5, 0.5, 0.5, -160, -200, 160, 200)
+	_place(pause_box, 0.5, 0.5, 0.5, 0.5, -160, -230, 160, 230)
 	pause_box.visible = false
 	pause_box.z_index = 30
 	root.add_child(pause_box)
@@ -532,6 +533,9 @@ func _build_pause() -> void:
 	var fb := _menu_button("Tam ekran")
 	fb.pressed.connect(func(): fullscreen_pressed.emit())
 	v.add_child(fb)
+	var kb := _menu_button("Tuş atama")
+	kb.pressed.connect(func(): keys_pressed.emit())
+	v.add_child(kb)
 	q_btn = _menu_button("Grafik: Yüksek")
 	q_btn.pressed.connect(func():
 		set_quality((q_level + 2) % 3)

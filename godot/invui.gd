@@ -497,6 +497,26 @@ func refresh_vendor() -> void:
 	for i in 2:
 		(vend_tab_btns[i] as Button).disabled = (i == game.vendor_tab)
 	var lvl: int = game.P["lvl"]
+	var is_bank: bool = npc["role"] == "bank"
+	(vend_tab_btns[0] as Button).text = "Banka" if is_bank else "Satın al"
+	(vend_tab_btns[1] as Button).text = "Çantam" if is_bank else "Geri alım"
+	if is_bank:
+		var src: Array = []
+		if game.vendor_tab == 0:
+			src = game.inv.bank
+		else:
+			for bi in game.inv.bag.size():
+				if game.inv.bag[bi] != null:
+					src.append({"id": game.inv.bag[bi]["id"], "n": game.inv.bag[bi]["n"], "bi": bi})
+		for i in src.size():
+			var itb := Items.get_item(src[i]["id"])
+			var rb := _row(src[i].get("bi", i), itb, itb["name"], -1, src[i]["n"], false, Items.RARITY_COL[itb["rar"]])
+			rb.clicked.connect(func(idx, b): game.ui_vendor_click(idx, b))
+			rb.hovered.connect(func(idx, on): _row_hover(itb, on))
+			vend_list.add_child(rb)
+		if src.is_empty():
+			vend_list.add_child(_label("Burada eşya yok.", 13, Color("9aa7b4")))
+		return
 	if game.vendor_tab == 0:
 		var list: Array = game.VENDORS[npc["id"]]
 		for i in list.size():

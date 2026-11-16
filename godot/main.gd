@@ -1468,6 +1468,8 @@ func xp_need(l: int) -> float:
 const NPCDEF := [
 	{"id": "ragna", "name": "Avcı Başı Ragna", "title": "Kurt Avı", "role": "quest", "qs": ["q_wolf", "q_trogg", "q_grik", "q_arc"], "x": -3.5, "z": 6.5, "face": 0.9,
 		"o": {"beard": Color("8a5a2b"), "cloth": Color("2f6b3a"), "metal": Color("6f7d68"), "helm": false, "prop": "spear"}},
+	{"id": "gundri", "name": "Bankacı Gundri", "title": "Banka", "role": "bank", "x": 10.5, "z": -49.0, "face": -0.9,
+		"o": {"beard": Color("c9a24a"), "cloth": Color("2a4a6a"), "metal": Color("c9b068"), "helm": false, "prop": "none"}},
 	{"id": "kelda", "name": "Han Sahibi Kelda", "title": "Han", "role": "inn", "x": -5.2, "z": 14.5, "face": 0.3,
 		"o": {"beard": Color("e9e4d6"), "cloth": Color("7a5230"), "metal": Color("8d8472"), "helm": false, "prop": "none"}},
 	{"id": "dorn", "name": "Muhafız Dorn", "title": "Kapı Muhafızı", "role": "quest", "qs": ["q_boar", "q_gnoll", "q_chok", "q_hogger"], "x": 5.2, "z": -40.5, "face": 0.0,
@@ -2180,6 +2182,14 @@ func ui_vendor_click(idx: int, _button: int) -> void:
 	if vendor_npc == null:
 		return
 	var err: String = ""
+	if vendor_npc["role"] == "bank":
+		err = inv.bank_take(idx) if vendor_tab == 0 else inv.bank_put(idx)
+		if err != "":
+			hud.say(err, Color("ff6a5a"))
+		else:
+			sfx.play("click", -4)
+		inv_changed()
+		return
 	if vendor_tab == 0:
 		if idx < 0 or idx >= VENDORS[vendor_npc["id"]].size():
 			return
@@ -2208,7 +2218,9 @@ func ui_slot_click(kind: String, key, button: int) -> void:
 			if e == null:
 				return
 			var it := Items.get_item(e["id"])
-			if vendor_npc != null and invui.vend_win.visible:
+			if vendor_npc != null and invui.vend_win.visible and vendor_npc["role"] == "bank":
+				err = inv.bank_put(key)
+			elif vendor_npc != null and invui.vend_win.visible:
 				var gain: int = inv.sell(key)
 				hud.say("Sattın: %s (+%s)" % [it["name"], Items.money_plain(gain)], Color("f2c75c"))
 				sfx.play("coin", -6)
@@ -3401,6 +3413,9 @@ func render_dialog() -> void:
 	elif n["role"] == "vendor":
 		body = "Taze iksirler, sıcak çorba, sağlam zırhlar! Ne lazım?"
 		buttons.append({"label": "Alışveriş", "cb": func(): open_vendor(n)})
+	elif n["role"] == "bank":
+		body = "Eşyaların bende güvende, savaşçı. Banka %d yuvalık, şu an %d dolu." % [Inv.BANK_SIZE, inv.bank.size()]
+		buttons.append({"label": "Bankayı aç", "cb": func(): open_vendor(n)})
 	elif n["role"] == "smith":
 		var cost: int = 300 + 250 * P["wep_lvl"]
 		buttons.append({"label": "Alışveriş", "cb": func(): open_vendor(n)})

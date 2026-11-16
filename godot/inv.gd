@@ -8,6 +8,8 @@ var bag: Array = []
 var eq := {}
 var money := 0
 var buyback: Array = []
+const BANK_SIZE := 28
+var bank: Array = []
 
 func _init() -> void:
 	reset()
@@ -21,6 +23,7 @@ func reset() -> void:
 		eq[s] = ""
 	money = 0
 	buyback.clear()
+	bank.clear()
 	eq["mainhand"] = "axe_old"
 	eq["offhand"] = "sh_wood"
 	eq["chest"] = "ch_tunic"
@@ -187,11 +190,41 @@ func rebuy(bi: int) -> String:
 	buyback.remove_at(bi)
 	return ""
 
+## Banka: çantadan bankaya koy ("" = başarılı)
+func bank_put(i: int) -> String:
+	var e = bag[i]
+	if e == null:
+		return ""
+	var it := Items.get_item(e["id"])
+	for b in bank:
+		if b["id"] == e["id"] and b["n"] + e["n"] <= it["stack"]:
+			b["n"] += e["n"]
+			bag[i] = null
+			return ""
+	if bank.size() >= BANK_SIZE:
+		return "Banka dolu."
+	bank.append({"id": e["id"], "n": e["n"]})
+	bag[i] = null
+	return ""
+
+func bank_take(i: int) -> String:
+	if i < 0 or i >= bank.size():
+		return ""
+	var b: Dictionary = bank[i]
+	if not can_add(b["id"], b["n"]):
+		return "Çantan dolu."
+	add(b["id"], b["n"])
+	bank.remove_at(i)
+	return ""
+
 func to_dict() -> Dictionary:
 	var bg: Array = []
 	for e in bag:
 		bg.append(null if e == null else [e["id"], e["n"]])
-	return {"bag": bg, "eq": eq.duplicate(), "money": money}
+	var bk: Array = []
+	for b in bank:
+		bk.append([b["id"], b["n"]])
+	return {"bag": bg, "eq": eq.duplicate(), "money": money, "bank": bk}
 
 func from_dict(d: Dictionary) -> bool:
 	if typeof(d.get("bag")) != TYPE_ARRAY or typeof(d.get("eq")) != TYPE_DICTIONARY:
@@ -211,4 +244,9 @@ func from_dict(d: Dictionary) -> bool:
 		if eq.has(s) and Items.db().has(str(d["eq"][s])) and Items.slot_fits(Items.get_item(str(d["eq"][s])), s):
 			eq[s] = str(d["eq"][s])
 	money = maxi(0, int(d.get("money", 0)))
+	bank.clear()
+	if typeof(d.get("bank")) == TYPE_ARRAY:
+		for e2 in d["bank"]:
+			if typeof(e2) == TYPE_ARRAY and e2.size() == 2 and Items.db().has(str(e2[0])) and bank.size() < BANK_SIZE:
+				bank.append({"id": str(e2[0]), "n": clampi(int(e2[1]), 1, Items.get_item(str(e2[0]))["stack"])})
 	return true

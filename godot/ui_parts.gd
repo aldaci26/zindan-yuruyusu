@@ -23,9 +23,33 @@ class Slot extends Control:
 		size = Vector2(46, 46)
 		mouse_filter = Control.MOUSE_FILTER_STOP
 
+	signal swapped(from_pos: int, to_pos: int)
+	var pos := -1
+	var _dragged := false
+
 	func _gui_input(ev: InputEvent) -> void:
-		if ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
-			clicked.emit(idx)
+		if ev is InputEventMouseButton and ev.button_index == MOUSE_BUTTON_LEFT:
+			if ev.pressed:
+				_dragged = false
+			elif not _dragged:
+				clicked.emit(idx)
+
+	## Çubuktaki yetenekleri sürükle-bırak ile yer değiştir
+	func _get_drag_data(_at: Vector2) -> Variant:
+		if pos < 0:
+			return null
+		_dragged = true
+		var pv := ColorRect.new()
+		pv.color = Color(1, 0.85, 0.3, 0.6)
+		pv.size = Vector2(40, 40)
+		set_drag_preview(pv)
+		return {"bar_pos": pos}
+
+	func _can_drop_data(_at: Vector2, data: Variant) -> bool:
+		return pos >= 0 and typeof(data) == TYPE_DICTIONARY and data.has("bar_pos") and data["bar_pos"] != pos
+
+	func _drop_data(_at: Vector2, data: Variant) -> void:
+		swapped.emit(data["bar_pos"], pos)
 
 	func _notification(what: int) -> void:
 		if what == NOTIFICATION_MOUSE_ENTER:

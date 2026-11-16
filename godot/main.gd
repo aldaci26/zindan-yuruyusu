@@ -472,6 +472,7 @@ func _ready() -> void:
 	sfx = SfxScript.new()
 	add_child(sfx)
 	hud.volume_changed.connect(sfx.set_volume)
+	hud.order_changed.connect(save_settings)
 	hud.quality_changed.connect(func(q): apply_quality(q); save_settings())
 	hud.volume_changed.connect(func(_x): save_settings())
 	sfx.set_volume(0.8)
@@ -2352,6 +2353,7 @@ func save_settings() -> void:
 	cf.set_value("ayar", "ses", hud.vol_slider.value)
 	for a in binds:
 		cf.set_value("tus", a, binds[a])
+	cf.set_value("cubuk", "sira", hud.bar_order())
 	cf.save(SETTINGS_PATH)
 
 func load_settings() -> void:
@@ -2360,10 +2362,16 @@ func load_settings() -> void:
 		return
 	for a in binds:
 		binds[a] = int(cf.get_value("tus", a, BIND_DEFAULTS[a]))
+	var ord = cf.get_value("cubuk", "sira", [])
+	if typeof(ord) == TYPE_ARRAY:
+		hud.set_bar_order(ord)
 	apply_quality(int(cf.get_value("ayar", "kalite", 2)))
 	var v: float = float(cf.get_value("ayar", "ses", 0.8))
 	hud.set_volume_ui(v)
 	sfx.set_volume(v)
+
+func abil_at(p: int) -> void:
+	ability(hud.slots[p].idx)
 
 func toggle_worldmap() -> void:
 	if mode != "play":
@@ -2523,15 +2531,15 @@ func _unhandled_input(ev: InputEvent) -> void:
 		match _xlate(ev.keycode):
 			KEY_SPACE: jump()
 			KEY_R: toggle_auto()
-			KEY_1: ability(9 if ev.shift_pressed else 0)
-			KEY_2: ability(10 if ev.shift_pressed else 1)
-			KEY_3: ability(11 if ev.shift_pressed else 2)
-			KEY_4: ability(12 if ev.shift_pressed else 3)
-			KEY_5: ability(13 if ev.shift_pressed else 4)
-			KEY_6: ability(5)
-			KEY_7: ability(6)
-			KEY_8: ability(7)
-			KEY_9: ability(8)
+			KEY_1: abil_at(9 if ev.shift_pressed else 0)
+			KEY_2: abil_at(10 if ev.shift_pressed else 1)
+			KEY_3: abil_at(11 if ev.shift_pressed else 2)
+			KEY_4: abil_at(12 if ev.shift_pressed else 3)
+			KEY_5: abil_at(13 if ev.shift_pressed else 4)
+			KEY_6: abil_at(5)
+			KEY_7: abil_at(6)
+			KEY_8: abil_at(7)
+			KEY_9: abil_at(8)
 			KEY_0: use_potion()
 			KEY_F: use_potion()
 			KEY_H: hud.toggle_help()

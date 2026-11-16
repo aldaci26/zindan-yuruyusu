@@ -10,6 +10,7 @@ signal quit_pressed
 signal volume_changed(v: float)
 signal fullscreen_pressed
 signal keys_pressed
+signal order_changed
 signal quality_changed(q: int)
 signal ability_pressed(i: int)
 signal bag_pressed
@@ -377,6 +378,8 @@ func _build_actionbar() -> void:
 		s.position = Vector2(8 + i * 50, 9)
 		s.key_text = str(i + 1)
 		s.kind = ABIL[i]["kind"]
+		s.pos = i
+		s.swapped.connect(swap_slots)
 		s.clicked.connect(func(k): ability_pressed.emit(k))
 		s.hovered.connect(_on_slot_hover)
 		holder.add_child(s)
@@ -401,6 +404,8 @@ func _build_actionbar() -> void:
 		s2.position = Vector2(8 + j * 50, 6)
 		s2.key_text = "⇧%d" % (j + 1)
 		s2.kind = ABIL[9 + j]["kind"]
+		s2.pos = 9 + j
+		s2.swapped.connect(swap_slots)
 		s2.clicked.connect(func(k): ability_pressed.emit(k))
 		s2.hovered.connect(_on_slot_hover)
 		h2.add_child(s2)
@@ -560,6 +565,34 @@ func _build_pause() -> void:
 var q_btn: Button
 var q_level := 2
 
+## Kısayol çubuğu: konum -> yetenek numarası
+func bar_order() -> Array:
+	var o: Array = []
+	for s in slots:
+		o.append(s.idx)
+	return o
+
+func set_bar_order(o: Array) -> void:
+	if o.size() != slots.size():
+		return
+	var seen := {}
+	for v in o:
+		if typeof(v) != TYPE_INT and typeof(v) != TYPE_FLOAT or int(v) < 0 or int(v) >= ABIL.size() or seen.has(int(v)):
+			return
+		seen[int(v)] = true
+	for p in slots.size():
+		slots[p].idx = int(o[p])
+		slots[p].kind = ABIL[int(o[p])]["kind"]
+		slots[p].queue_redraw()
+
+func swap_slots(a: int, b: int) -> void:
+	var o := bar_order()
+	var t = o[a]
+	o[a] = o[b]
+	o[b] = t
+	set_bar_order(o)
+	order_changed.emit()
+
 func set_quality(q: int) -> void:
 	q_level = clampi(q, 0, 2)
 	q_btn.text = "Grafik: " + ["Düşük", "Orta", "Yüksek"][q_level]
@@ -664,7 +697,11 @@ func _on_slot_hover(i: int, on: bool) -> void:
 	await get_tree().process_frame
 	if tip_idx != i:
 		return
-	var s: Control = pot_slot if i == POT else slots[i]
+	var s: Control = pot_slot
+	if i != POT:
+		for sl in slots:
+			if sl.idx == i:
+				s = sl
 	tip.position = Vector2(clampf(s.global_position.x - 100, 8, 1000), s.global_position.y - tip.size.y - 8)
 
 # ---------- dışarıdan çağrılanlar ----------
@@ -685,8 +722,9 @@ func update_player(d: Dictionary) -> void:
 	xp_bar.value = 100.0 if d["lvl"] >= 20 else d["xp"] / d["xpneed"] * 100.0
 	xp_lbl.text = "Seviye 20 (en yüksek)" if d["lvl"] >= 20 else "Tecrübe %d / %d" % [roundi(d["xp"]), roundi(d["xpneed"])]
 	var gcd: float = d["gcd"]
-	for i in ABIL.size():
-		var s = slots[i]
+	for p in ABIL.size():
+		var s = slots[p]
+		var i: int = s.idx
 		var a: Dictionary = ABIL[i]
 		var cd: float = d["cd"][i]
 		var f := 0.0

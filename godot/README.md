@@ -95,3 +95,5 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 - **M**: dünya haritası (kamplar, bosslar, portallar, `!`/`?` NPC'ler).
 - **Esc menüsü**: grafik kalitesi (Düşük/Orta/Yüksek) ve ses; seçimler `user://ayarlar.cfg` dosyasına kaydedilir.
 - Kar Dağı ve Bataklık'ta gece-gündüz, kar fırtınası ve yağmur vardır.
+- **Tuş atama**: Esc menüsünde "Tuş atama" ile hareket, zıplama, pencere tuşları vb. değiştirilir; aynı tuşu başka işleme verirsen iki işlem yer değiştirir.
+- **Kısayol çubuğu**: yetenek simgelerini fareyle sürükleyip başka kutuya bırakarak yerlerini değiştirirsin; düzen kaydedilir.

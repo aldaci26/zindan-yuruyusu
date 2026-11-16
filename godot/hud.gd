@@ -9,6 +9,7 @@ signal resume_pressed
 signal quit_pressed
 signal volume_changed(v: float)
 signal fullscreen_pressed
+signal quality_changed(q: int)
 signal ability_pressed(i: int)
 signal bag_pressed
 signal menu_pressed
@@ -515,7 +516,7 @@ func _menu_button(text: String, size: int = 20) -> Button:
 func _build_pause() -> void:
 	pause_box = PanelContainer.new()
 	pause_box.add_theme_stylebox_override("panel", _box(Color(0.05, 0.04, 0.03, 0.96), Color("c9a24a"), 3, 8))
-	_place(pause_box, 0.5, 0.5, 0.5, 0.5, -160, -170, 160, 170)
+	_place(pause_box, 0.5, 0.5, 0.5, 0.5, -160, -200, 160, 200)
 	pause_box.visible = false
 	pause_box.z_index = 30
 	root.add_child(pause_box)
@@ -531,6 +532,11 @@ func _build_pause() -> void:
 	var fb := _menu_button("Tam ekran")
 	fb.pressed.connect(func(): fullscreen_pressed.emit())
 	v.add_child(fb)
+	q_btn = _menu_button("Grafik: Yüksek")
+	q_btn.pressed.connect(func():
+		set_quality((q_level + 2) % 3)
+		quality_changed.emit(q_level))
+	v.add_child(q_btn)
 	var vl := _label("Ses", 14, Color("e9eef2"), 3)
 	vl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(vl)
@@ -546,6 +552,16 @@ func _build_pause() -> void:
 	var qb := _menu_button("Kaydet ve çık")
 	qb.pressed.connect(func(): quit_pressed.emit())
 	v.add_child(qb)
+
+var q_btn: Button
+var q_level := 2
+
+func set_quality(q: int) -> void:
+	q_level = clampi(q, 0, 2)
+	q_btn.text = "Grafik: " + ["Düşük", "Orta", "Yüksek"][q_level]
+
+func set_volume_ui(x: float) -> void:
+	vol_slider.set_value_no_signal(x)
 
 func set_paused(v: bool) -> void:
 	pause_box.visible = v

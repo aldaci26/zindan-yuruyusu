@@ -458,7 +458,10 @@ func _ready() -> void:
 	sfx = SfxScript.new()
 	add_child(sfx)
 	hud.volume_changed.connect(sfx.set_volume)
+	hud.quality_changed.connect(func(q): apply_quality(q); save_settings())
+	hud.volume_changed.connect(func(_x): save_settings())
 	sfx.set_volume(0.8)
+	load_settings()
 	hud.set_has_save(FileAccess.file_exists(SAVE_PATH))
 	get_tree().set_auto_accept_quit(false)
 	_update_camera(0.0)
@@ -2202,6 +2205,35 @@ func ui_slot_click(kind: String, key, button: int) -> void:
 	if err != "":
 		hud.say(err, Color("ff6a5a"))
 	inv_changed()
+
+const SETTINGS_PATH := "user://ayarlar.cfg"
+
+## Grafik kalitesi: 0 düşük (gölge/SSAO kapalı, %75 çözünürlük), 1 orta (gölge açık), 2 yüksek
+func apply_quality(q: int) -> void:
+	if sun:
+		sun.shadow_enabled = q >= 1
+		sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS if q == 1 else DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS
+	if env_res:
+		env_res.ssao_enabled = q >= 2
+	var vp := get_viewport()
+	vp.scaling_3d_scale = 0.75 if q == 0 else 1.0
+	vp.msaa_3d = Viewport.MSAA_DISABLED if q == 0 else Viewport.MSAA_2X
+	hud.set_quality(q)
+
+func save_settings() -> void:
+	var cf := ConfigFile.new()
+	cf.set_value("ayar", "kalite", hud.q_level)
+	cf.set_value("ayar", "ses", hud.vol_slider.value)
+	cf.save(SETTINGS_PATH)
+
+func load_settings() -> void:
+	var cf := ConfigFile.new()
+	if cf.load(SETTINGS_PATH) != OK:
+		return
+	apply_quality(int(cf.get_value("ayar", "kalite", 2)))
+	var v: float = float(cf.get_value("ayar", "ses", 0.8))
+	hud.set_volume_ui(v)
+	sfx.set_volume(v)
 
 func toggle_fullscreen() -> void:
 	var w := get_window()

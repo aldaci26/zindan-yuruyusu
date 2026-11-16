@@ -527,3 +527,32 @@ static func make_bogbeast() -> Node3D:
 		tu.rotation.x = -0.3
 	g.set_meta("legs", _biped_legs(g, 0.3, 1.05, Vector3(0.4, 1.05, 0.45), dk))
 	return g
+
+## Kar Elementali: buzdan yontulmuş, parlayan çekirdekli
+static func make_frost() -> Node3D:
+	var g := Node3D.new()
+	var ice = mat(Color.html("a8d8f0"), 0.1, 0.25, Color.html("5ab0ff"), 0.6)
+	var core = mat(Color.html("e8faff"), 0.0, 0.3, Color.html("9ae0ff"), 3.0)
+	sph(g, 0.45, ice, Vector3(0, 1.0, 0), Vector3(1, 1.3, 1))
+	sph(g, 0.22, core, Vector3(0, 1.05, 0.1))
+	cone(g, 0.22, 0.7, ice, Vector3(0, 1.95, 0), 5)
+	for sd in [-1.0, 1.0]:
+		var sh := cone(g, 0.18, 0.6, ice, Vector3(sd * 0.55, 1.35, 0), 5)
+		sh.rotation.z = -sd * 0.5
+		box(g, Vector3(0.22, 0.7, 0.22), ice, Vector3(sd * 0.55, 0.8, 0))
+	var light := OmniLight3D.new()
+	light.light_color = Color("80c8ff")
+	light.omni_range = 5.0
+	light.light_energy = 0.9
+	light.position = Vector3(0, 1.0, 0)
+	g.add_child(light)
+	g.set_meta("legs", _biped_legs(g, 0.2, 0.6, Vector3(0.26, 0.6, 0.26), ice))
+	return g
+
+## İskelet: kemik renkli, paslı kılıçlı
+static func make_skeleton() -> Node3D:
+	var g := make_dwarf({"skin": Color("d8d2bc"), "metal": Color("8a8478"), "cloth": Color("5a5448"), "beard": Color("d8d2bc"), "helm": false, "prop": "axe"})
+	var eye = mat(Color.html("60ff90"), 0.0, 0.4, Color.html("40ff80"), 2.5)
+	for sd in [-1.0, 1.0]:
+		sph(g, 0.04, eye, Vector3(sd * 0.1, 1.62, 0.2))
+	return g

@@ -25,6 +25,8 @@ const MTYPES := {
 	"gnoll": {"name": "Gnoll", "lo": 4, "hi": 7, "hp": 38.0, "dmg": 2.7, "spd": 4.0, "aggro": 9.0, "rad": 0.7, "sc": 1.05},
 	"defias": {"name": "Defias Haydudu", "lo": 6, "hi": 8, "hp": 40.0, "dmg": 2.8, "spd": 4.0, "aggro": 9.0, "rad": 0.7, "sc": 1.0},
 	"darkiron": {"name": "Kara Demir Büyücüsü", "lo": 7, "hi": 9, "hp": 34.0, "dmg": 2.6, "spd": 3.4, "aggro": 13.0, "rad": 0.7, "sc": 1.05, "ranged": 12.0},
+	"frost": {"name": "Kar Elementali", "lo": 5, "hi": 8, "hp": 44.0, "dmg": 2.6, "spd": 3.3, "aggro": 11.0, "rad": 0.8, "sc": 1.1, "ranged": 10.0},
+	"skeleton": {"name": "Gezgin İskelet", "lo": 6, "hi": 9, "hp": 42.0, "dmg": 2.8, "spd": 3.9, "aggro": 9.0, "rad": 0.7, "sc": 1.0},
 }
 
 ## Düşman kampları: tür, merkez, sayı
@@ -33,6 +35,8 @@ const CAMPS := [
 	{"kind": "gnoll", "x": 58.0, "z": -22.0, "n": 6},
 	{"kind": "defias", "x": -30.0, "z": 62.0, "n": 6},
 	{"kind": "darkiron", "x": -78.0, "z": 8.0, "n": 5},
+	{"kind": "frost", "x": 62.0, "z": 52.0, "n": 5},
+	{"kind": "skeleton", "x": -58.0, "z": -22.0, "n": 5},
 ]
 
 const MAX_LVL := 20
@@ -1662,12 +1666,14 @@ func _camp_model(kind: String) -> Node3D:
 		"miner": return Dwarf.make_dwarf({"skin": Color("6a5448"), "metal": Color("3a3238"), "cloth": Color("4a3a2a"), "beard": Color("1a1410"), "helm": true, "prop": "hammer"})
 		"golem": return Dwarf.make_golem(false)
 		"spider": return Dwarf.make_spider()
+		"frost": return Dwarf.make_frost()
+		"skeleton": return Dwarf.make_skeleton()
 		"guard": return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"})
 		"defias": return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 		_: return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"})
 
 func _camp_props() -> void:
-	var tints := {"trogg": Color(0.8, 0.75, 0.7), "gnoll": Color(0.9, 0.8, 0.65), "defias": Color(0.85, 0.5, 0.45), "darkiron": Color(0.55, 0.5, 0.6),
+	var tints := {"trogg": Color(0.8, 0.75, 0.7), "gnoll": Color(0.9, 0.8, 0.65), "defias": Color(0.85, 0.5, 0.45), "darkiron": Color(0.55, 0.5, 0.6), "frost": Color(0.7, 0.85, 1.0), "skeleton": Color(0.85, 0.85, 0.8),
 		"murloc": Color(0.6, 0.8, 0.8), "shaman": Color(0.7, 0.6, 0.85), "bog": Color(0.6, 0.7, 0.5)}
 	for c in camps_now:
 		var cx: float = c["x"]
@@ -1724,6 +1730,15 @@ func _spawn_camps() -> void:
 			m.ph = rnd.randf() * 6.0
 			m.id = cid
 			cid += 1
+			if rnd.randf() < 0.17:
+				m.nm = "Elit " + m.nm
+				m.maxhp = round(m.maxhp * 3.5)
+				m.hp = m.maxhp
+				m.dmg *= 1.5
+				m.lvl += 1
+				m.sc *= 1.35
+				m.rad *= 1.3
+				m.aggro += 3.0
 			m.node = _camp_model(c["kind"])
 			m.node.scale = Vector3.ONE * m.sc
 			m.legs = _humanoid_legs(m.node)
@@ -4056,7 +4071,7 @@ func _mob_kind(m) -> String:
 		return m.kind
 	if m.temp:
 		return "skull"
-	if m.kind in ["trogg", "gnoll", "murloc", "shaman", "croc", "bog"]:
+	if m.kind in ["trogg", "gnoll", "murloc", "shaman", "croc", "bog", "frost", "skeleton"]:
 		return "skull"
 	if m.kind in ["defias", "darkiron"]:
 		return "dwarf"

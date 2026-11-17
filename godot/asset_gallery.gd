@@ -1,6 +1,8 @@
 extends Node3D
 ## Standalone inspection gallery for imported CC0 assets; main scene is untouched.
 
+const WowAssets = preload("res://wow_asset_runtime.gd")
+
 const ENTRIES := [
  {"label":"KayKit Knight","path":"res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb","scale":1.0},
  {"label":"KayKit Barbarian","path":"res://assets/third_party/kaykit/adventurers/Characters/gltf/Barbarian.glb","scale":1.0},
@@ -26,6 +28,17 @@ const ENTRIES := [
  {"label":"Medieval Hex Blacksmith","path":"res://assets/third_party/kaykit/medieval_hexagon/Assets/gltf/buildings/blue/building_blacksmith_blue.gltf","scale":1.2},
  {"label":"City Builder House","path":"res://assets/third_party/kaykit/city_builder/Assets/gltf/building_A.gltf","scale":1.2},
  {"label":"Halloween Arch","path":"res://assets/third_party/kaykit/halloween_bits/Assets/gltf/arch.gltf","scale":1.2},
+ {"label":"Gobkit Werewolf Captain","path":"res://assets/third_party/gobkit/human011/WerewolfCaptain.glb","kind":"gnoll","scale":1.0},
+ {"label":"Gobkit Orc Chain Brute","path":"res://assets/third_party/gobkit/human010/OrcChainBrute.glb","kind":"trogg","scale":1.0},
+ {"label":"Gobkit Stitched Brute","path":"res://assets/third_party/gobkit/human011/StitchedBrute.glb","kind":"ashogre","scale":1.0},
+ {"label":"Gobkit Bloodiron Knight","path":"res://assets/third_party/gobkit/human010/BloodironKnight.glb","kind":"darkiron","scale":1.0},
+ {"label":"Gobkit Bloodiron Smith","path":"res://assets/third_party/gobkit/human010/BloodironSmith.glb","kind":"miner","scale":1.0},
+ {"label":"Gobkit Footman","path":"res://assets/third_party/gobkit/human003/Footman.glb","kind":"guard","scale":1.0},
+ {"label":"Gobkit Orc War Shaman","path":"res://assets/third_party/gobkit/human006/OrcWarShaman.glb","kind":"shaman","scale":1.0},
+ {"label":"Gobkit Tomb Mummy","path":"res://assets/third_party/gobkit/human011/TombMummy.glb","kind":"ashbone","scale":1.0},
+ {"label":"Gobkit Wild Boar","path":"res://assets/third_party/gobkit/animal012/WildBoar.glb","kind":"boar","scale":1.2},
+ {"label":"Gobkit Doe","path":"res://assets/third_party/gobkit/animal006/Doe.glb","kind":"deer","scale":1.2},
+ {"label":"Gobkit Skull Deer","path":"res://assets/third_party/gobkit/animal011/SkullDeer.glb","kind":"stag","scale":1.2},
 ]
 func _ready() -> void:
  _build_environment()
@@ -77,11 +90,20 @@ func _build_gallery() -> void:
   if not ResourceLoader.exists(path):
    push_warning("Gallery asset not imported yet: "+path)
    continue
-  var packed:=load(path) as PackedScene
-  if packed==null:
-   push_warning("Gallery resource is not a PackedScene: "+path)
-   continue
-  var instance:=packed.instantiate() as Node3D
+  var instance:Node3D=null
+  if entry.has("kind"):
+   var fallback:=func() -> Node3D:
+    var fallback_scene:=load(path) as PackedScene
+    if fallback_scene==null:
+     return null
+    return fallback_scene.instantiate() as Node3D
+   instance=WowAssets.spawn_creature(str(entry["kind"]),fallback)
+  else:
+   var packed:=load(path) as PackedScene
+   if packed==null:
+    push_warning("Gallery resource is not a PackedScene: "+path)
+    continue
+   instance=packed.instantiate() as Node3D
   if instance==null:
    push_warning("Gallery root is not Node3D: "+path)
    continue
@@ -90,7 +112,7 @@ func _build_gallery() -> void:
   instance.position=Vector3(float(column)*4.5-6.75,0.0,float(row)*4.5-6.75)
   instance.scale=Vector3.ONE*float(entry.get("scale",1.0))
   add_child(instance)
-  _play_idle(instance)
+  WowAssets.update_locomotion(instance,false)
   var label:=Label3D.new()
   label.text=str(entry["label"])
   label.position=Vector3(0.0,2.8,0.0)
@@ -101,13 +123,3 @@ func _build_gallery() -> void:
   label.outline_modulate=Color("#1c252d")
   instance.add_child(label)
 
-func _play_idle(root: Node3D) -> void:
- for node in root.find_children("*","AnimationPlayer",true,false):
-  var player:=node as AnimationPlayer
-  if player==null:
-   continue
-  for animation_name in player.get_animation_list():
-   var key:=animation_name.to_lower()
-   if key.contains("idle") or key.contains("stand"):
-    player.play(animation_name)
-    return

@@ -1873,7 +1873,7 @@ func _spawn_mobs() -> void:
 			"boar": m.node = Dwarf.make_boar()
 			_: m.node = Dwarf.make_bear()
 		m.node.scale = Vector3.ONE * m.sc
-		m.legs = m.node.get_meta("legs")
+		m.legs = m.node.get_meta("legs", [])
 		add_child(m.node)
 		mobs.append(m)
 		n += 1

@@ -103,3 +103,23 @@ The project also generates an original 16-material painterly-style albedo,
 roughness and metallic atlas. The latter is procedural brush-stroke art, not
 human hand-painted artwork. It is not yet automatically applied to every
 model: each model's UV/material slots must be checked before replacement.
+
+
+## Further CC0 source expansion
+
+Additional KayKit repositories were checked at their pinned revisions. Their
+own READMEs and LICENSE.txt files state CC0 1.0 Universal:
+
+- Medieval Hexagon Pack — `84fa4e91af6a88989be7c99e0891cede11f2ca38`.
+- City Builder Bits — `63976910ca04d16f0fc531b9c614244be8128713`.
+- Halloween Bits — `6dc69bf6b2fa766a985754f35ec6a0324090e6c6`.
+
+Gobkit's repository README and LICENSE state CC0 1.0 Universal. Its pinned
+revision `4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b` contains 8 rigged minions,
+10 rigged animals and 41 nature/environment GLBs. The README documents a
+single baked animation track segmented by frame ranges; these segments are
+recorded in the manifest but are not yet split into runtime clips.
+
+The visual gallery includes representative Gobkit creatures and KayKit
+environment props. They are not assigned to unrelated mob species until their
+silhouettes and animations are reviewed in Godot.

@@ -55,3 +55,29 @@ Keep Godot 4.3. It already supports glTF/GLB, Skeleton3D, AnimationPlayer,
 shader materials and Windows CI. Blender is the free conversion/retargeting
 tool. Do not publish Blizzard client-derived M2/WMO/BLP/ADT, textures, maps,
 icons, UI, audio or fonts.
+
+
+## Gobkit — CC0-1.0
+
+- Source: https://github.com/Ariescar/gobkit-free-assets
+- Pinned revision: `4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b`
+- The repository README and LICENSE explicitly identify CC0 1.0 Universal.
+- Imported: 8 minions, 10 animals and 41 nature/environment GLBs, plus
+  README/LICENSE. Textures are baked into the GLBs.
+- The README documents a single baked animation track segmented into
+  idle/attack/dead (and walk for animals) at 24 fps. Segment metadata is
+  recorded in the generated manifest; runtime subclip playback remains a
+  separate integration task.
+- Destination: `assets/third_party/gobkit/`
+
+## Additional KayKit CC0 packs
+
+- Medieval Hexagon: 200+ medieval hex tiles, buildings, nature props and a
+  shared atlas; pinned to `84fa4e91af6a88989be7c99e0891cede11f2ca38`.
+- City Builder Bits: town props and buildings; pinned to
+  `63976910ca04d16f0fc531b9c614244be8128713`.
+- Halloween Bits: cemetery and spooky environment props; pinned to
+  `6dc69bf6b2fa766a985754f35ec6a0324090e6c6`.
+
+Each pack's README and LICENSE.txt state CC0 1.0 Universal. Their glTF files,
+external buffers and referenced texture maps are retained with original paths.

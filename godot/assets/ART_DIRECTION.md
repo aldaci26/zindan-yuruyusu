@@ -136,3 +136,16 @@ generator (albedo, roughness and metallic maps) and a Godot preview scene.
 This is procedural project art, not a hand-painted-by-human claim. The next
 step is to apply it per material/UV set and tune the surface response in the
 gallery before replacing existing model atlases.
+
+
+## Additional creature and world asset sources
+
+The CC0 library now includes Gobkit's 8 rigged minion variants, 10 rigged
+animals and 41 nature/environment models. Its README documents segmented
+single-track animation timing; those segments are catalogued but are not yet
+retargeted into the game's named locomotion/combat/death states.
+
+KayKit's Medieval Hexagon, City Builder Bits and Halloween Bits packs add
+medieval town buildings, hex terrain tiles, cemetery props and more shared
+texture atlases. These expand the environment kit for the first WotLK-style
+zone and town dressing.

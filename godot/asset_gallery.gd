@@ -18,6 +18,14 @@ const ENTRIES := [
  {"label":"Double Axe","path":"res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb","scale":1.8},
  {"label":"Heater Shield","path":"res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Heater.glb","scale":1.8},
  {"label":"KayKit Dungeon Chest","path":"res://assets/third_party/kaykit/dungeon/Assets/gltf/chest.glb","scale":1.8},
+ {"label":"Gobkit Minion A","path":"res://assets/third_party/gobkit/minion/minion-a01.glb","scale":1.0},
+ {"label":"Gobkit Minion C","path":"res://assets/third_party/gobkit/minion/minion-c01.glb","scale":1.0},
+ {"label":"Gobkit Bat","path":"res://assets/third_party/gobkit/animal/Bat.glb","scale":1.4},
+ {"label":"Gobkit Hippo","path":"res://assets/third_party/gobkit/animal/Hippo.glb","scale":1.2},
+ {"label":"Gobkit Shark","path":"res://assets/third_party/gobkit/animal/Shark.glb","scale":1.2},
+ {"label":"Medieval Hex Blacksmith","path":"res://assets/third_party/kaykit/medieval_hexagon/Assets/gltf/buildings/blue/building_blacksmith_blue.gltf","scale":1.2},
+ {"label":"City Builder House","path":"res://assets/third_party/kaykit/city_builder/Assets/gltf/building_A.gltf","scale":1.2},
+ {"label":"Halloween Arch","path":"res://assets/third_party/kaykit/halloween_bits/Assets/gltf/arch.gltf","scale":1.2},
 ]
 func _ready() -> void:
  _build_environment()
@@ -47,7 +55,7 @@ func _build_environment() -> void:
 func _build_ground() -> void:
  var ground:=MeshInstance3D.new()
  var mesh:=PlaneMesh.new()
- mesh.size=Vector2(34.0,34.0)
+ mesh.size=Vector2(46.0,46.0)
  ground.mesh=mesh
  var mat:=StandardMaterial3D.new()
  mat.albedo_color=Color("#56616a")
@@ -57,11 +65,11 @@ func _build_ground() -> void:
  add_child(ground)
 func _build_camera() -> void:
  var camera:=Camera3D.new()
- camera.position=Vector3(0.0,12.5,24.0)
- camera.fov=50.0
+ camera.position=Vector3(0.0,17.0,34.0)
+ camera.fov=55.0
  camera.current=true
  add_child(camera)
- camera.look_at(Vector3(0.0,1.0,0.0),Vector3.UP)
+ camera.look_at(Vector3(0.0,1.0,4.0),Vector3.UP)
 func _build_gallery() -> void:
  for index in range(ENTRIES.size()):
   var entry:Dictionary=ENTRIES[index]
@@ -82,6 +90,7 @@ func _build_gallery() -> void:
   instance.position=Vector3(float(column)*4.5-6.75,0.0,float(row)*4.5-6.75)
   instance.scale=Vector3.ONE*float(entry.get("scale",1.0))
   add_child(instance)
+  _play_idle(instance)
   var label:=Label3D.new()
   label.text=str(entry["label"])
   label.position=Vector3(0.0,2.8,0.0)
@@ -91,3 +100,14 @@ func _build_gallery() -> void:
   label.outline_size=8
   label.outline_modulate=Color("#1c252d")
   instance.add_child(label)
+
+func _play_idle(root: Node3D) -> void:
+ for node in root.find_children("*","AnimationPlayer",true,false):
+  var player:=node as AnimationPlayer
+  if player==null:
+   continue
+  for animation_name in player.get_animation_list():
+   var key:=animation_name.to_lower()
+   if key.contains("idle") or key.contains("stand"):
+    player.play(animation_name)
+    return

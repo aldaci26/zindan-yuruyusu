@@ -99,3 +99,18 @@ excluded.
 The painterly atlas is generated from project-authored procedural brush strokes
 and is a style foundation, not a claim of hand-painted human artwork. Its
 shader preview is separate; per-model UV/material assignment is the next step.
+
+
+## Additional CC0 libraries
+
+- `assets/third_party/gobkit/`: 8 rigged minions, 10 rigged animals and
+  41 nature/environment GLBs from Gobkit. The README/LICENSE state CC0 1.0.
+- `assets/third_party/kaykit/medieval_hexagon/`: modular medieval hex tiles,
+  buildings, rivers/roads/coasts and nature props.
+- `assets/third_party/kaykit/city_builder/`: extra town buildings and props.
+- `assets/third_party/kaykit/halloween_bits/`: cemetery, bones, tombstones
+  and spooky environmental dressing.
+
+Open `asset_gallery.tscn` to inspect the additional creature and environment
+models. Gobkit's animation ranges are catalogued but still need a dedicated
+runtime segment player before being used as named combat/locomotion clips.

@@ -46,8 +46,11 @@ under `assets/wotlk/third_party/quaternius/`:
 - Humanoid character models.
 - Medieval village props, modular dungeon pieces, weapons, RPG equipment,
   enemies and nature/environment models.
-- Textures are packaged inside the GLB files; each asset is size-checked and
-  GLB-header-checked during import.
+- GLB mesh/material data is imported; **not every pack includes image textures**.
+  Quaternius confirms that texture coverage varies by pack, and the Ultimate
+  Animated Animal and Ultimate Nature pages mark their models as untextured.
+  Texture-map coverage is therefore a separate audit/import task. Each file is
+  size-checked and GLB-header-checked during import.
 - Full per-file source, source-pack and upstream blob SHA records are in
   `third_party/quaternius/ASSET_MANIFEST.json`.
 

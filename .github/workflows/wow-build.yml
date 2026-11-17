@@ -65,7 +65,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if ! godot --headless --path . --quit-after 5 asset_gallery.tscn > /tmp/asset-gallery.log 2>&1; then
+          if ! godot --headless --rendering-method gl_compatibility --rendering-driver opengl3 --path . --quit-after 5 asset_gallery.tscn > /tmp/asset-gallery.log 2>&1; then
             cat /tmp/asset-gallery.log
             exit 1
           fi

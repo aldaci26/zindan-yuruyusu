@@ -1989,8 +1989,12 @@ func _tint_model(node: Node3D, col: Color, amt: float, glow: float = 0.0) -> Nod
 func _humanoid_legs(node: Node3D) -> Array:
 	if node.has_meta("legs"):
 		return node.get_meta("legs")
-	var r: Dictionary = node.get_meta("rig")
-	return [r["legL"], r["legR"], r["legR"], r["legL"]]
+	var rig: Dictionary = node.get_meta("rig", {})
+	if rig.has("legL") and rig.has("legR"):
+		return [rig["legL"], rig["legR"], rig["legR"], rig["legL"]]
+	# Imported Skeleton3D scenes animate themselves; they do not expose
+	# the procedural limb metadata used by the old hand-built models.
+	return []
 
 func _spawn_bosses() -> void:
 	var i := 0
@@ -2050,14 +2054,15 @@ func _camp_model(kind: String) -> Node3D:
 			return em
 		"slag": return _tint_model(Dwarf.make_golem(false), Color("8a3a22"), 0.5)
 		"ashogre": return _tint_model(Dwarf.make_ogre(), Color("5a3a34"), 0.55)
-		"ashbone": return _tint_model(Dwarf.make_skeleton(), Color("3a3030"), 0.6)
-		"miner": return Dwarf.make_dwarf({"skin": Color("6a5448"), "metal": Color("3a3238"), "cloth": Color("4a3a2a"), "beard": Color("1a1410"), "helm": true, "prop": "hammer"})
+		"ashbone": return WowAssets.spawn_creature("ashbone", func(): return _tint_model(Dwarf.make_skeleton(), Color("3a3030"), 0.6))
+		"miner": return WowAssets.spawn_creature("miner", func(): return Dwarf.make_dwarf({"skin": Color("6a5448"), "metal": Color("3a3238"), "cloth": Color("4a3a2a"), "beard": Color("1a1410"), "helm": true, "prop": "hammer"}))
 		"golem": return Dwarf.make_golem(false)
-		"spider": return Dwarf.make_spider()
+		"spider": return WowAssets.spawn_creature("spider", func(): return Dwarf.make_spider())
 		"frost": return Dwarf.make_frost()
-		"skeleton": return Dwarf.make_skeleton()
-		"guard": return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"})
-		"defias": return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
+		"skeleton": return WowAssets.spawn_creature("skeleton", func(): return Dwarf.make_skeleton())
+		"guard": return WowAssets.spawn_creature("guard", func(): return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"}))
+		"defias": return WowAssets.spawn_creature("defias", func(): return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"}))
+		"darkiron": return WowAssets.spawn_creature("darkiron", func(): return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"}))
 		_: return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"})
 
 func _camp_props() -> void:

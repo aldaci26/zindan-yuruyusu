@@ -3,9 +3,67 @@ extends RefCounted
 ## Missing assets always fall back to the existing procedural models.
 
 const CREATURE_SCENES := {
-	"wolf": ["res://assets/wotlk_local/creatures/wolf.glb", "res://assets/wotlk/creatures/wolf.glb"],
+	"wolf": ["res://assets/wotlk_local/creatures/wolf.glb", "res://assets/wotlk/creatures/wolf.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Wolf.glb"],
+	"spider": ["res://assets/wotlk_local/creatures/spider.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Spider.glb"],
+	"rat": ["res://assets/wotlk_local/creatures/rat.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Rat.glb"],
+	"frog": ["res://assets/wotlk_local/creatures/frog.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Frog.glb"],
+	"snake": ["res://assets/wotlk_local/creatures/snake.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Snake.glb"],
+	"fox": ["res://assets/wotlk_local/creatures/fox.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Fox.glb"],
+	"deer": ["res://assets/wotlk_local/creatures/deer.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Deer.glb"],
+	"stag": ["res://assets/wotlk_local/creatures/stag.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Stag.glb"],
+	"defias": ["res://assets/wotlk_local/creatures/defias.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Rogue_Hooded.glb"],
+	"darkiron": ["res://assets/wotlk_local/creatures/darkiron.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
+	"miner": ["res://assets/wotlk_local/creatures/miner.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Barbarian.glb"],
+	"guard": ["res://assets/wotlk_local/creatures/guard.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
+	"skeleton": ["res://assets/wotlk_local/creatures/skeleton.glb", "res://assets/third_party/kaykit/skeletons/Characters/gltf/Skeleton_Warrior.glb"],
+	"ashbone": ["res://assets/wotlk_local/creatures/ashbone.glb", "res://assets/third_party/kaykit/skeletons/Characters/gltf/Skeleton_Minion.glb"],
 	"frost_wolf": ["res://assets/wotlk_local/creatures/frost_wolf.glb", "res://assets/wotlk/creatures/frost_wolf.glb"],
 	"trogg": ["res://assets/wotlk_local/creatures/trogg.glb", "res://assets/wotlk/creatures/trogg.glb"],
+}
+const EQUIPMENT_ASSET_MAP := {
+	"axe_old": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Small.glb",
+	"axe_iron": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe.glb",
+	"axe_wolf": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe.glb",
+	"axe_boar": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
+	"axe_forge": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe.glb",
+	"axe_deepf": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Axe_Double_Golden.glb",
+	"axe_storm": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Axe_Double.glb",
+	"axe_king": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Axe_Double_Golden.glb",
+	"axe_grik": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
+	"axe_gruff": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
+	"axe_mine": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe.glb",
+	"axe_vurgan": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
+	"axe_ash": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
+	"axe_sulf": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Axe_Double_Golden.glb",
+	"axe_craft1": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe.glb",
+	"axe_craft2": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
+	"sword_gate": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Sword.glb",
+	"sword_cruel": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Claymore.glb",
+	"hammer_smith": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Hammer_Small.glb",
+	"hammer_chok": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Hammer_Double.glb",
+	"hammer_sulf": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Hammer_Double_Golden.glb",
+	"hammer_gorduk": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Hammer_Double.glb",
+	"hammer_ash": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Hammer_Double.glb",
+	"hammer_golemagg": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Hammer_Double_Golden.glb",
+	"sh_wood": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Round.glb",
+	"sh_iron": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Heater.glb",
+	"sh_gate": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Heater_2.glb",
+	"sh_rein": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Round_2.glb",
+	"sh_deep": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Celtic_Golden.glb",
+	"sh_king": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Celtic_Golden.glb",
+	"sh_marsh": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Round_2.glb",
+	"sh_mine": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Heater.glb",
+	"sh_ash": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Heater_2.glb",
+	"sh_sulf": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Celtic_Golden.glb",
+	"helm_cap": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet1.glb",
+	"helm_iron": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet2.glb",
+	"helm_horn": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
+	"helm_ward": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
+	"helm_king": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
+	"so_pad": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
+	"so_iron": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
+	"so_boar": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
+	"so_peak": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
 }
 const ANIMATION_ALIASES := {
 	"idle": ["idle", "stand", "breathing"],
@@ -98,8 +156,15 @@ static func refresh_equipment(character: Node3D, equipped: Dictionary) -> void:
 			continue
 		var local_path := "res://assets/wotlk_local/equipment/%s.glb" % item_id
 		var public_path := "res://assets/wotlk/equipment/%s.glb" % item_id
-		var path := local_path if ResourceLoader.exists(local_path) else public_path
-		if not ResourceLoader.exists(path):
+		var mapped_path := str(EQUIPMENT_ASSET_MAP.get(item_id, ""))
+		var path := ""
+		if ResourceLoader.exists(local_path):
+			path = local_path
+		elif ResourceLoader.exists(public_path):
+			path = public_path
+		elif not mapped_path.is_empty() and ResourceLoader.exists(mapped_path):
+			path = mapped_path
+		if path.is_empty():
 			continue
 		var packed := load(path) as PackedScene
 		if packed == null:

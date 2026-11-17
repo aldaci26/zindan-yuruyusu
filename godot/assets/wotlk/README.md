@@ -34,3 +34,29 @@ For each equipped item, the runtime looks for equipment/<item_id>.glb in wotlk_l
 7. The asset is tested in the live game with a procedural fallback still available.
 
 Do not commit Blizzard .m2, .wmo, .blp, .adt files, extracted textures or sounds to this public repository unless the applicable rights expressly permit redistribution.
+
+
+## Vendored CC0 graphics
+
+The `wow` branch now includes a curated Quaternius CC0-1.0 asset library
+under `assets/wotlk/third_party/quaternius/`:
+
+- 401 binary GLB models (approximately 43.69 MiB).
+- Animal and creature models, including the real rigged Wolf model.
+- Humanoid character models.
+- Medieval village props, modular dungeon pieces, weapons, RPG equipment,
+  enemies and nature/environment models.
+- Textures are packaged inside the GLB files; each asset is size-checked and
+  GLB-header-checked during import.
+- Full per-file source, source-pack and upstream blob SHA records are in
+  `third_party/quaternius/ASSET_MANIFEST.json`.
+
+The runtime wolf scene is available at `assets/wotlk/creatures/wolf.glb`.
+The isolated WotLK art lab now loads this imported model first and retains the
+procedural wolf as a fallback.
+
+See `QUATERNIUS_ASSET_CREDITS.md` for the exact pinned source revision,
+pack-by-pack license evidence and redistribution boundaries. These are
+independently licensed fantasy assets, not Blizzard/WoW client files; they
+provide a legal visual foundation but do not yet reproduce WoW's proprietary
+WotLK models or textures.

@@ -27,11 +27,6 @@ jobs:
         with:
           ref: wow
 
-      - name: Install Godot export templates
-        run: |
-          mkdir -p "$HOME/.local/share/godot/export_templates"
-          cp -r /root/.local/share/godot/export_templates/* "$HOME/.local/share/godot/export_templates/"
-
       - name: Import project resources
         working-directory: godot
         run: godot --headless --editor --path . --import

@@ -10,7 +10,7 @@ const InventoryService = preload("res://mmorpg/services/inventory_service.gd")
 
 var failures: Array[String] = []
 
-func _initialize() -> void:
+func _init() -> void:
 	_run()
 
 func _check(condition: bool, message: String) -> void:
@@ -19,6 +19,7 @@ func _check(condition: bool, message: String) -> void:
 		push_error("FAIL: " + message)
 
 func _run() -> void:
+	print("MMORPG CORE TESTS START")
 	var potion = ItemDefinition.new()
 	potion.id = &"healing_potion"
 	potion.display_name = "Healing Potion"

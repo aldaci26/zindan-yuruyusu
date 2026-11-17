@@ -4,21 +4,32 @@ extends RefCounted
 
 const CREATURE_SCENES := {
 	"wolf": ["res://assets/wotlk_local/creatures/wolf.glb", "res://assets/wotlk/creatures/wolf.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Wolf.glb"],
+	"boar": ["res://assets/wotlk_local/creatures/boar.glb", "res://assets/third_party/gobkit/animalB/Boar.glb", "res://assets/third_party/gobkit/animal012/WildBoar.glb"],
+	"rat": ["res://assets/wotlk_local/creatures/rat.glb", "res://assets/third_party/gobkit/animalB/Rat.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Rat.glb"],
+	"deer": ["res://assets/wotlk_local/creatures/deer.glb", "res://assets/third_party/gobkit/animal006/Doe.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Deer.glb"],
+	"stag": ["res://assets/wotlk_local/creatures/stag.glb", "res://assets/third_party/gobkit/animal011/SkullDeer.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Stag.glb"],
 	"spider": ["res://assets/wotlk_local/creatures/spider.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Spider.glb"],
-	"rat": ["res://assets/wotlk_local/creatures/rat.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Rat.glb"],
 	"frog": ["res://assets/wotlk_local/creatures/frog.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Frog.glb"],
 	"snake": ["res://assets/wotlk_local/creatures/snake.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Snake.glb"],
-	"fox": ["res://assets/wotlk_local/creatures/fox.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Fox.glb"],
-	"deer": ["res://assets/wotlk_local/creatures/deer.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Deer.glb"],
-	"stag": ["res://assets/wotlk_local/creatures/stag.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Stag.glb"],
+	"fox": ["res://assets/wotlk_local/creatures/fox.glb", "res://assets/third_party/gobkit/animal006/Fox.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Fox.glb"],
+	"gnoll": ["res://assets/wotlk_local/creatures/gnoll.glb", "res://assets/third_party/gobkit/human011/WerewolfCaptain.glb"],
+	"trogg": ["res://assets/wotlk_local/creatures/trogg.glb", "res://assets/third_party/gobkit/human010/OrcChainBrute.glb"],
+	"ashogre": ["res://assets/wotlk_local/creatures/ashogre.glb", "res://assets/third_party/gobkit/human011/StitchedBrute.glb"],
+	"darkiron": ["res://assets/wotlk_local/creatures/darkiron.glb", "res://assets/third_party/gobkit/human010/BloodironKnight.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
+	"miner": ["res://assets/wotlk_local/creatures/miner.glb", "res://assets/third_party/gobkit/human010/BloodironSmith.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Barbarian.glb"],
+	"guard": ["res://assets/wotlk_local/creatures/guard.glb", "res://assets/third_party/gobkit/human003/Footman.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
+	"shaman": ["res://assets/wotlk_local/creatures/shaman.glb", "res://assets/third_party/gobkit/human006/OrcWarShaman.glb"],
 	"defias": ["res://assets/wotlk_local/creatures/defias.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Rogue_Hooded.glb"],
-	"darkiron": ["res://assets/wotlk_local/creatures/darkiron.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
-	"miner": ["res://assets/wotlk_local/creatures/miner.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Barbarian.glb"],
-	"guard": ["res://assets/wotlk_local/creatures/guard.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
 	"skeleton": ["res://assets/wotlk_local/creatures/skeleton.glb", "res://assets/third_party/kaykit/skeletons/Characters/gltf/Skeleton_Warrior.glb"],
 	"ashbone": ["res://assets/wotlk_local/creatures/ashbone.glb", "res://assets/third_party/kaykit/skeletons/Characters/gltf/Skeleton_Minion.glb"],
 	"frost_wolf": ["res://assets/wotlk_local/creatures/frost_wolf.glb", "res://assets/wotlk/creatures/frost_wolf.glb"],
-	"trogg": ["res://assets/wotlk_local/creatures/trogg.glb", "res://assets/wotlk/creatures/trogg.glb"],
+	"murloc": ["res://assets/wotlk_local/creatures/murloc.glb", "res://assets/wotlk/creatures/murloc.glb"],
+	"croc": ["res://assets/wotlk_local/creatures/croc.glb", "res://assets/wotlk/creatures/croc.glb"],
+	"gobkit_minion_a": ["res://assets/third_party/gobkit/minion/minion-a01.glb"],
+	"gobkit_minion_c": ["res://assets/third_party/gobkit/minion/minion-c01.glb"],
+	"gobkit_bat": ["res://assets/third_party/gobkit/animal/Bat.glb"],
+	"gobkit_hippo": ["res://assets/third_party/gobkit/animal/Hippo.glb"],
+	"gobkit_shark": ["res://assets/third_party/gobkit/animal/Shark.glb"],
 }
 const EQUIPMENT_ASSET_MAP := {
 	"axe_old": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Small.glb",
@@ -69,8 +80,10 @@ const ANIMATION_ALIASES := {
 	"idle": ["idle", "stand", "breathing"],
 	"walk": ["walk", "run", "move"],
 	"attack": ["attack", "bite", "melee", "spell"],
-	"death": ["death", "die"],
+	"death": ["death", "dead", "die"],
 }
+static var _gobkit_segments_loaded := false
+static var _gobkit_segments: Dictionary = {}
 
 static func spawn_creature(kind: String, fallback: Callable) -> Node3D:
 	var paths: Array = CREATURE_SCENES.get(kind, [])
@@ -83,7 +96,9 @@ static func spawn_creature(kind: String, fallback: Callable) -> Node3D:
 			continue
 		var instance := packed.instantiate()
 		if instance is Node3D:
-			return instance as Node3D
+			var node := instance as Node3D
+			_configure_gobkit_animation_segments(node, path)
+			return node
 		instance.queue_free()
 	return fallback.call() as Node3D
 
@@ -94,12 +109,23 @@ static func update_locomotion(root: Node3D, moving: bool, attacking: bool = fals
 		var player := candidate as AnimationPlayer
 		if player == null:
 			continue
+		var previous_state := str(player.get_meta("wow_animation_state", ""))
+		if previous_state == "death" and player.is_playing():
+			continue
+		if previous_state == "attack" and player.is_playing():
+			var current_name := str(player.current_animation)
+			if not current_name.is_empty():
+				var current_clip := player.get_animation(current_name)
+				if current_clip != null and current_clip.loop_mode == Animation.LOOP_NONE:
+					continue
 		var state := "attack" if attacking else ("walk" if moving else "idle")
 		var clip := _find_clip(player, state)
 		if clip.is_empty() and state == "attack":
+			state = "idle"
 			clip = _find_clip(player, "idle")
-		if not clip.is_empty() and player.current_animation != clip:
+		if not clip.is_empty() and (str(player.current_animation) != clip or not player.is_playing()):
 			player.play(clip)
+			player.set_meta("wow_animation_state", state)
 
 static func play_death(root: Node3D) -> bool:
 	if root == null or not is_instance_valid(root):
@@ -112,8 +138,91 @@ static func play_death(root: Node3D) -> bool:
 		var clip := _find_clip(player, "death")
 		if not clip.is_empty():
 			player.play(clip)
+			player.set_meta("wow_animation_state", "death")
 			played = true
 	return played
+
+static func _load_gobkit_segments() -> void:
+	if _gobkit_segments_loaded:
+		return
+	_gobkit_segments_loaded = true
+	var manifest_path := "res://assets/third_party/gobkit/ANIMATION_SEGMENTS.json"
+	if not FileAccess.file_exists(manifest_path):
+		return
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path))
+	if parsed is Dictionary:
+		_gobkit_segments = parsed.get("assets", {})
+
+static func _configure_gobkit_animation_segments(root: Node3D, source_path: String) -> void:
+	const PREFIX := "res://assets/third_party/gobkit/"
+	if not source_path.begins_with(PREFIX):
+		return
+	_load_gobkit_segments()
+	var relative_path := source_path.trim_prefix(PREFIX)
+	var config: Dictionary = _gobkit_segments.get(relative_path, {})
+	if config.is_empty():
+		return
+	var fps := maxf(float(config.get("fps", 24.0)), 1.0)
+	var segments: Array = config.get("animations", [])
+	for candidate in root.find_children("*", "AnimationPlayer", true, false):
+		var player := candidate as AnimationPlayer
+		if player == null:
+			continue
+		var source_animation: Animation = null
+		var longest := 0.0
+		for animation_name in player.get_animation_list():
+			var candidate_animation := player.get_animation(animation_name)
+			if candidate_animation != null and candidate_animation.length > longest:
+				longest = candidate_animation.length
+				source_animation = candidate_animation
+		if source_animation == null:
+			continue
+		var library := player.get_animation_library("")
+		if library == null:
+			continue
+		for segment in segments:
+			if not segment is Dictionary or not segment.has("from") or not segment.has("to"):
+				continue
+			var clip_name := str(segment.get("name", "")).to_lower()
+			if clip_name.is_empty():
+				continue
+			var start_time := float(segment["from"]) / fps
+			var end_time := (float(segment["to"]) + 1.0) / fps
+			var subclip := _slice_animation(source_animation, start_time, end_time, bool(segment.get("loop", false)))
+			if subclip == null:
+				continue
+			if library.has_animation(clip_name):
+				library.remove_animation(clip_name)
+			var error := library.add_animation(clip_name, subclip)
+			if error != OK:
+				push_warning("Could not add Gobkit animation clip: " + clip_name)
+		player.clear_caches()
+	root.set_meta("wow_gobkit_segments_ready", true)
+
+static func _slice_animation(source: Animation, start_time: float, end_time: float, looped: bool) -> Animation:
+	if source == null or end_time <= start_time:
+		return null
+	var result := Animation.new()
+	result.length = end_time - start_time
+	result.step = source.step
+	result.loop_mode = Animation.LOOP_LINEAR if looped else Animation.LOOP_NONE
+	var copied_keys := 0
+	for track_index in range(source.get_track_count()):
+		if source.track_is_compressed(track_index):
+			return null
+		source.copy_track(track_index, result)
+		var target_track := result.get_track_count() - 1
+		result.track_set_imported(target_track, false)
+		for key_index in range(result.track_get_key_count(target_track) - 1, -1, -1):
+			var key_time := result.track_get_key_time(target_track, key_index)
+			if key_time < start_time or key_time >= end_time:
+				result.track_remove_key(target_track, key_index)
+			else:
+				result.track_set_key_time(target_track, key_index, key_time - start_time)
+				copied_keys += 1
+	if copied_keys == 0:
+		return null
+	return result
 
 static func attach_equipment(character: Node3D, slot: String, equipment_scene: PackedScene, bone_candidates: Array[String] = [], local_position: Vector3 = Vector3.ZERO, local_rotation_degrees: Vector3 = Vector3.ZERO, local_scale: Vector3 = Vector3.ONE) -> Node3D:
 	if character == null or equipment_scene == null:
@@ -251,10 +360,17 @@ static func _find_skeleton(root: Node) -> Skeleton3D:
 
 static func _find_clip(player: AnimationPlayer, state: String) -> String:
 	var aliases: Array = ANIMATION_ALIASES.get(state, [])
-	for animation_name in player.get_animation_list():
-		var normalized := String(animation_name).to_lower().replace(" ", "_").replace("-", "_")
-		for alias in aliases:
-			if normalized.contains(String(alias)):
+	var names := player.get_animation_list()
+	# Prefer exact semantic clips before compound names such as 2H_Melee_Idle.
+	for alias in aliases:
+		for animation_name in names:
+			var normalized := String(animation_name).to_lower().replace(" ", "_").replace("-", "_")
+			if normalized == String(alias).to_lower():
+				return String(animation_name)
+	for alias in aliases:
+		for animation_name in names:
+			var normalized := String(animation_name).to_lower().replace(" ", "_").replace("-", "_")
+			if normalized.contains(String(alias).to_lower()):
 				return String(animation_name)
 	return ""
 

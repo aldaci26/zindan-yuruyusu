@@ -1403,7 +1403,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
@@ -2546,8 +2546,8 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_3: abil_at(11 if ev.shift_pressed else 2)
 			KEY_4: abil_at(12 if ev.shift_pressed else 3)
 			KEY_5: abil_at(13 if ev.shift_pressed else 4)
-			KEY_6: abil_at(5)
-			KEY_7: abil_at(6)
+			KEY_6: abil_at(14 if ev.shift_pressed else 5)
+			KEY_7: abil_at(15 if ev.shift_pressed else 6)
 			KEY_8: abil_at(7)
 			KEY_9: abil_at(8)
 			KEY_0: use_potion()
@@ -2883,10 +2883,10 @@ func ability(i: int) -> void:
 	var kind: String = a["kind"]
 	var m = P["target"] if (P["target"] != null and not P["target"].dead) else null
 	var pp := Vector3(P["x"], P["y"], P["z"])
-	var melee := kind in ["strike", "rend", "execute", "mortal", "slam"]
-	if melee or kind == "charge":
+	var melee := kind in ["strike", "rend", "execute", "mortal", "slam", "pummel"]
+	if melee or kind == "charge" or kind == "throw":
 		if m == null:
-			m = nearest_mob(25.0 if kind == "charge" else 6.0)
+			m = nearest_mob(25.0 if kind == "charge" else (30.0 if kind == "throw" else 6.0))
 		if m == null:
 			hud.say("Hedef yok.", Color("ff9a8a"))
 			return
@@ -2902,6 +2902,13 @@ func ability(i: int) -> void:
 			if dd > 25.0:
 				hud.say("Hedef çok uzak.", Color("ff9a8a"))
 				return
+		if kind == "throw":
+			if dd < 4.0:
+				hud.say("Hedef çok yakın; yakın dövüş yeteneklerini kullan.", Color("ff9a8a"))
+				return
+			if dd > 30.0:
+				hud.say("Hedef çok uzak.", Color("ff9a8a"))
+				return
 		if kind == "execute" and m.hp > m.maxhp * 0.2:
 			hud.say("Hedef henüz yeterince yaralı değil.", Color("ff9a8a"))
 			return
@@ -2914,6 +2921,23 @@ func ability(i: int) -> void:
 		"strike":
 			swing()
 			hit_mob(m, roll(atk() * 2.3), Color("ffd8a0"))
+		"throw":
+			swing()
+			sfx.play("whirl", -2)
+			var tp := Vector3(m.x, height_at(m.x, m.z), m.z)
+			ring_fx(tp, 1.5, Color("ffd890"), 0.4)
+			hit_mob(m, roll(atk() * 1.9), Color("ffe0a8"))
+			float_text(tp + Vector3(0, 2.7 * m.sc, 0), "Fırlatma!", Color("ffd890"), false)
+		"pummel":
+			swing()
+			sfx.play("thunder", -4)
+			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.4, Color("ffe45c"), 0.4)
+			hit_mob(m, roll(atk() * 1.2), Color("fff0b0"))
+			m.stun = 1.0 if m.boss != "" else 3.0
+			var cut: bool = m.ranged > 0.0
+			if cut:
+				m.atk_t = maxf(m.atk_t, 0.0) + 3.5
+			float_text(Vector3(m.x, 2.6 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), "Yarıda kesildi!" if cut else "Sersem!", Color("ffe45c"), false)
 		"slam":
 			swing()
 			sfx.play("thunder", -4)

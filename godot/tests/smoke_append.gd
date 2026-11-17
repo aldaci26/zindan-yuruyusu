@@ -25,6 +25,27 @@ func _selftest() -> void:
 			if not Items.db().has(r):
 				print("EKSİK ÖDÜL ", qid, " ", r)
 				fails += 1
+	# yetenekler: bütün çubuk hatasız çalışmalı
+	P["lvl"] = MAX_LVL
+	for ai in HudScript.ABIL.size():
+		var tm = nearest_mob(60.0)
+		if tm == null:
+			break
+		var dk: String = HudScript.ABIL[ai]["kind"]
+		var off := 10.0 if dk in ["charge", "throw"] else 2.0
+		P["x"] = tm.x
+		P["z"] = tm.z - off
+		P["y"] = height_at(P["x"], P["z"])
+		P["rage"] = 100.0
+		P["gcd"] = 0.0
+		P["cd"][ai] = 0.0
+		P["target"] = tm
+		tm.hp = tm.maxhp
+		tm.dead = false
+		ability(ai)
+		for k in 6:
+			step(0.1)
+	print("YETENEKLER ", HudScript.ABIL.size())
 	# kayıt / yükleme
 	save_game()
 	if not load_game():

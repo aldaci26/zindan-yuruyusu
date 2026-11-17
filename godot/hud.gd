@@ -24,7 +24,7 @@ const GOLD := Color("f2c75c")
 const PARCH := Color("d8c192")
 const INK := Color("3a2410")
 
-## Savaşçı yetenekleri. 0-8 = tuş 1-9, 9-13 = Shift+1-5, iksir (tuş 0 / F)
+## Savaşçı yetenekleri. 0-8 = tuş 1-9, 9-15 = Shift+1-7, iksir (tuş 0 / F)
 const ABIL := [
 	{"name": "Kahramanlık Darbesi", "kind": "strike", "cost": 15, "cd": 0.0, "lvl": 1, "rng": "Yakın menzil", "desc": "Hedefe silahınla güçlü bir darbe indirir."},
 	{"name": "Hamle", "kind": "charge", "cost": 0, "cd": 14.0, "lvl": 1, "rng": "8-25 metre", "desc": "Hedefe atılır, onu 1,5 sn sersemletir ve 15 öfke verir."},
@@ -40,6 +40,8 @@ const ABIL := [
 	{"name": "Delice Öfke", "kind": "reck", "cost": 0, "cd": 60.0, "lvl": 12, "rng": "Kendin", "desc": "12 sn boyunca vuruşların %50 güçlenir, ama aldığın hasar %20 artar."},
 	{"name": "Son Direniş", "kind": "laststand", "cost": 0, "cd": 90.0, "lvl": 15, "rng": "Kendin", "desc": "Canının %35'ini anında geri verir ve 30 öfke kazandırır."},
 	{"name": "Kılıç Fırtınası", "kind": "bstorm", "cost": 25, "cd": 60.0, "lvl": 18, "rng": "5 metre", "desc": "6 sn boyunca dönerek çevrendeki herkese durmadan vurur."},
+	{"name": "Kahramanlık Fırlatması", "kind": "throw", "cost": 10, "cd": 8.0, "lvl": 7, "rng": "8-30 metre", "desc": "Baltanı hedefe fırlatır. Uzaktaki düşmanlara vurmanın tek yoludur."},
+	{"name": "Kafa Kırıcı", "kind": "pummel", "cost": 10, "cd": 10.0, "lvl": 9, "rng": "Yakın menzil", "desc": "Hedefi 3 sn sersemletir; büyücülerin ve okçuların saldırısını yarıda keser."},
 ]
 const POT := 99
 
@@ -392,13 +394,13 @@ func _build_actionbar() -> void:
 	pot_slot.clicked.connect(func(k): ability_pressed.emit(k))
 	pot_slot.hovered.connect(_on_slot_hover)
 	holder.add_child(pot_slot)
-	# ikinci çubuk (Shift + 1-5)
+	# ikinci çubuk (Shift + 1-7)
 	var h2 := Control.new()
-	_place(h2, 0.5, 1.0, 0.5, 1.0, -133, -160, 133, -102)
+	_place(h2, 0.5, 1.0, 0.5, 1.0, -183, -160, 183, -102)
 	h2.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(h2))
-	h2.add_child(_wood_panel(Rect2(0, 0, 266, 58), 0.92))
-	for j in 5:
+	h2.add_child(_wood_panel(Rect2(0, 0, 366, 58), 0.92))
+	for j in 7:
 		var s2 = Parts.Slot.new()
 		s2.idx = 9 + j
 		s2.position = Vector2(8 + j * 50, 6)
@@ -619,7 +621,7 @@ func _build_help() -> void:
 	var rows := [
 		["W A S D", "Yürü"], ["Boşluk", "Zıpla"], ["Sağ tık basılı", "Kamerayı çevir"], ["Sol tık", "Hedef seç"],
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
-		["1 - 9", "Yetenekler"], ["Shift + 1-5", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"], ["M", "Dünya haritası"],
+		["1 - 9", "Yetenekler"], ["Shift + 1-7", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"], ["M", "Dünya haritası"],
 		["G", "Konuş, ganimet al, maden damarı topla"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 	]
 	for r in rows:

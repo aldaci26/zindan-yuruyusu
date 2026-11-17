@@ -17,6 +17,8 @@ const BG := {
 	"reck": [Color("a82a1a"), Color("3a0a05")],
 	"laststand": [Color("2a7a3a"), Color("0a2a10")],
 	"bstorm": [Color("7a7a8a"), Color("20202a")],
+	"throw": [Color("7a5a2a"), Color("24180a")],
+	"pummel": [Color("6a4a2a"), Color("1c1208")],
 }
 
 static func pt(r: Rect2, x: float, y: float) -> Vector2:
@@ -122,6 +124,19 @@ static func draw(ci: CanvasItem, kind: String, r: Rect2) -> void:
 				var a := float(k) * PI / 2.0
 				poly(ci, r, [[0.5 + cos(a) * 0.05, 0.5 + sin(a) * 0.05], [0.5 + cos(a) * 0.42, 0.5 + sin(a) * 0.42], [0.5 + cos(a + 0.5) * 0.3, 0.5 + sin(a + 0.5) * 0.3]], steel)
 			circ(ci, r, 0.5, 0.5, 0.08, gold)
+		"throw":
+			line(ci, r, [0.16, 0.84], [0.62, 0.38], Color("8a5a2a"), 0.1)
+			poly(ci, r, [[0.52, 0.18], [0.86, 0.14], [0.82, 0.48], [0.62, 0.4]], steel)
+			arc(ci, r, 0.5, 0.5, 0.42, 3.6, 5.2, Color(1, 1, 1, 0.5), 0.04)
+			line(ci, r, [0.08, 0.5], [0.3, 0.5], Color(1, 1, 1, 0.4), 0.03)
+			line(ci, r, [0.12, 0.62], [0.28, 0.62], Color(1, 1, 1, 0.3), 0.03)
+		"pummel":
+			circ(ci, r, 0.46, 0.56, 0.26, Color("d8b890"))
+			poly(ci, r, [[0.3, 0.3], [0.62, 0.3], [0.7, 0.5], [0.34, 0.5]], Color("e8c8a0"))
+			line(ci, r, [0.34, 0.4], [0.64, 0.4], Color("8a6a4a"), 0.025)
+			line(ci, r, [0.34, 0.5], [0.66, 0.5], Color("8a6a4a"), 0.025)
+			line(ci, r, [0.8, 0.14], [0.66, 0.34], Color("ffe45c"), 0.05)
+			line(ci, r, [0.9, 0.4], [0.74, 0.46], Color("ffe45c"), 0.05)
 		"potion":
 			poly(ci, r, [[0.43, 0.22], [0.57, 0.22], [0.57, 0.42], [0.78, 0.8], [0.22, 0.8], [0.43, 0.42]], Color(0.8, 0.9, 1.0, 0.85))
 			poly(ci, r, [[0.34, 0.6], [0.66, 0.6], [0.78, 0.8], [0.22, 0.8]], Color("e02a3a"))

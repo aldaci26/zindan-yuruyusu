@@ -16,4 +16,4 @@ s = s.replace("\t_update_camera(0.0)\n\nfunc _build_world", "\t_update_camera(0.
 open(p, "w").write(s)
 PY
 "$GODOT" --headless --import --path "$TMP" >/dev/null 2>&1 || true
-xvfb-run -a "$GODOT" --rendering-driver opengl3 --path "$TMP" 2>&1 | grep -E 'MAP |SMOKE|EKSİK|KAYIT|SCRIPT ERROR|Parse' || true
+xvfb-run -a "$GODOT" --rendering-driver opengl3 --path "$TMP" 2>&1 | grep -E 'MAP |YETENEK|SMOKE|EKSİK|KAYIT|SCRIPT ERROR|Parse' || true

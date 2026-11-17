@@ -40,3 +40,13 @@ of `third_party/quaternius/animals_pack/Wolf.glb`.
   textures, maps, or other client-derived files to this public repository.
 - Every additional third-party pack must be checked against its own source
   page and exact license before it is allowlisted.
+
+
+## Texture coverage note
+
+CC0 status permits redistribution of the listed model files, but it does not
+mean every model includes image texture maps. Quaternius' FAQ says texture
+coverage varies by pack; the Ultimate Animated Animal and Ultimate Nature
+pages mark those packs as untextured. The imported GLBs retain their supplied
+mesh/material data, but the project still needs a separate, file-level texture
+audit and a consistent texture set before the art pass can be called complete.

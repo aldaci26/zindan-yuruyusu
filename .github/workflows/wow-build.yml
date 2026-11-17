@@ -65,7 +65,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if ! godot --headless --rendering-method gl_compatibility --rendering-driver opengl3 --path . --quit-after 5 asset_gallery.tscn > /tmp/asset-gallery.log 2>&1; then
+          if ! command -v xvfb-run >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
+          fi
+          if ! xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --rendering-method gl_compatibility --rendering-driver opengl3 --path . --quit-after 5 asset_gallery.tscn > /tmp/asset-gallery.log 2>&1; then
             cat /tmp/asset-gallery.log
             exit 1
           fi

@@ -63,3 +63,11 @@ pack-by-pack license evidence and redistribution boundaries. These are
 independently licensed fantasy assets, not Blizzard/WoW client files; they
 provide a legal visual foundation but do not yet reproduce WoW's proprietary
 WotLK models or textures.
+
+
+## Visual test scene
+
+To preview the imported Wolf model without changing the main game scene, open
+`wow_art_lab.tscn` in Godot 4.3 and run the scene. The scene uses the imported
+Wolf GLB when present and keeps the procedural fallback if the asset cannot be
+loaded. The main project scene remains unchanged.

@@ -1653,6 +1653,135 @@ const NPCDEF := [
 		"o": {"beard": Color("aab0b8"), "cloth": Color("8a1f1f"), "metal": Color("c0c8d4"), "helm": true, "prop": "axe"}},
 ]
 
+# ---------- görev yön işaretleri (WoW tarzı waypoint) ----------
+const MAP_LINKS := {"snow": ["swamp", "mine"], "swamp": ["snow", "ash"], "mine": ["snow"], "ash": ["swamp", "snow"]}
+
+## from_map'ten to_map'e giderken ilk geçilecek harita (portal hedefi); bulunamazsa ""
+func _next_hop(from_map: String, to_map: String) -> String:
+	if from_map == to_map:
+		return ""
+	var prev := {from_map: ""}
+	var queue: Array = [from_map]
+	while not queue.is_empty():
+		var cur: String = queue.pop_front()
+		for nx in MAP_LINKS.get(cur, []):
+			if prev.has(nx):
+				continue
+			prev[nx] = cur
+			if nx == to_map:
+				var hop: String = nx
+				while prev[hop] != from_map:
+					hop = prev[hop]
+				return hop
+			queue.append(nx)
+	return ""
+
+func _kill_map(nm: String) -> String:
+	for id in BOSSES:
+		if BOSSES[id]["name"] == nm:
+			return BOSSES[id].get("map", "snow")
+	for pair in [[MTYPES, "snow"], [SWAMP_MTYPES, "swamp"], [MINE_MTYPES, "mine"], [ASH_MTYPES, "ash"]]:
+		for k in pair[0]:
+			if pair[0][k]["name"] == nm:
+				return pair[1]
+	return "snow"
+
+func _giver_info(qid: String) -> Dictionary:
+	for pair in [[NPCDEF, "snow"], [SWAMP_NPCS, "swamp"], [ASH_NPCS, "ash"]]:
+		for d in pair[0]:
+			if d.get("qs", []).has(qid):
+				return {"map": pair[1], "x": d["x"], "z": d["z"], "name": d["name"]}
+	return {}
+
+## Aranan düşmanın bu haritadaki en yakın yeri (canlı yoksa yeniden doğma noktası); yoksa Vector2(1e9, 0)
+func _nearest_target(nm: String) -> Vector2:
+	var best := Vector2(1e9, 0.0)
+	var bd := 1e9
+	var best_dead := Vector2(1e9, 0.0)
+	var bdd := 1e9
+	for m in mobs:
+		if m.nm != nm or m.temp:
+			continue
+		if m.dead:
+			var dd := Vector2(m.hx - P["x"], m.hz - P["z"]).length()
+			if dd < bdd:
+				bdd = dd
+				best_dead = Vector2(m.hx, m.hz)
+		else:
+			var d2 := Vector2(m.x - P["x"], m.z - P["z"]).length()
+			if d2 < bd:
+				bd = d2
+				best = Vector2(m.x, m.z)
+	return best if best.x < 1e8 else best_dead
+
+## Etkin görevler için işaret listesi: {p: Vector2 (dünya), label, kind: kill|turn, qid}
+func _quest_waypoints() -> Array:
+	var out: Array = []
+	for qid in qs:
+		var st: String = qs[qid]["st"]
+		if (st != "active" and st != "ready") or not QUESTS.has(qid):
+			continue
+		var q: Dictionary = QUESTS[qid]
+		var tmap := ""
+		var pos := Vector2.ZERO
+		var label := ""
+		var kind := "kill"
+		if st == "ready":
+			var g := _giver_info(qid)
+			if g.is_empty():
+				continue
+			tmap = g["map"]
+			pos = Vector2(g["x"], g["z"])
+			label = g["name"]
+			kind = "turn"
+		else:
+			tmap = _kill_map(q["kill"])
+			label = q["kill"]
+			if tmap == map:
+				pos = _nearest_target(q["kill"])
+				if pos.x > 1e8:
+					continue
+		if tmap != map:
+			var hop := _next_hop(map, tmap)
+			var found := false
+			for pt in portals:
+				if pt["to"] == hop:
+					pos = Vector2(pt["x"], pt["z"])
+					label = "%s (portal)" % label
+					found = true
+					break
+			if not found:
+				continue
+		out.append({"qid": qid, "p": pos, "label": label, "kind": kind})
+	return out
+
+## Dünya konumlarını ekran işaretlerine çevirir (ekranın dışındaysa kenara sıkıştırır)
+func _waypoint_screen(wps: Array) -> Array:
+	var vs := get_viewport().get_visible_rect().size
+	var c := vs * 0.5
+	var half := c - Vector2(34.0, 52.0)
+	var res: Array = []
+	for w in wps:
+		var wx: float = w["p"].x
+		var wz: float = w["p"].y
+		var d := Vector2(wx - P["x"], wz - P["z"]).length()
+		var wp3 := Vector3(wx, height_at(wx, wz) + 5.0, wz)
+		var local := cam.global_transform.affine_inverse() * wp3
+		var behind := cam.is_position_behind(wp3)
+		var sp := cam.unproject_position(wp3)
+		var inside := not behind and sp.x > 34.0 and sp.x < vs.x - 34.0 and sp.y > 52.0 and sp.y < vs.y - 52.0
+		var rot := 0.0
+		if not inside:
+			var dir := Vector2(local.x, -local.y)
+			if dir.length() < 0.001:
+				dir = Vector2(0, 1)
+			dir = dir.normalized()
+			var k := minf(half.x / maxf(absf(dir.x), 0.0001), half.y / maxf(absf(dir.y), 0.0001))
+			sp = c + dir * k
+			rot = dir.angle() + PI / 2.0
+		res.append({"pos": sp, "edge": not inside, "rot": rot, "dist": d, "label": w["label"], "kind": w["kind"]})
+	return res
+
 func _npc_defs() -> Array:
 	match map:
 		"mine": return []
@@ -2727,6 +2856,7 @@ func _refresh_worldmap() -> void:
 	for n in npcs:
 		np.append({"p": Vector2(n["x"], n["z"]), "mark": npc_mark(n)})
 	w.npcs = np
+	w.qt = _quest_waypoints()
 	w.px = P["x"]
 	w.pz = P["z"]
 	w.pyaw = P["yaw"]
@@ -4960,7 +5090,12 @@ func _update_hud() -> void:
 	var np: Array = []
 	for n in npcs:
 		np.append({"p": Vector2(n["x"], n["z"]), "mark": npc_mark(n)})
-	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np, "swamp": map == "swamp", "mine": map == "mine", "ash": map == "ash"})
+	var qwp: Array = _quest_waypoints() if mode == "play" else []
+	var qmini: Array = []
+	for w in qwp:
+		qmini.append({"p": w["p"], "kind": w["kind"]})
+	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np, "swamp": map == "swamp", "mine": map == "mine", "ash": map == "ash", "qt": qmini})
+	hud.set_waypoints(_waypoint_screen(qwp) if mode == "play" and not P["dead"] else [])
 	# isim levhaları
 	for m in mobs:
 		var show: bool = mode == "play" and not m.dead and Vector2(m.x - P["x"], m.z - P["z"]).length() < (40.0 if m.boss != "" else 22.0)

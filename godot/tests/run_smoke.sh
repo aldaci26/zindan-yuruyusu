@@ -16,6 +16,6 @@ s = s.replace("\t_update_camera(0.0)\n\nfunc _build_world", "\t_update_camera(0.
 open(p, "w").write(s)
 PY
 "$GODOT" --headless --import --path "$TMP" >/dev/null 2>&1 || true
-OUT="$(timeout 300 xvfb-run -a "$GODOT" --rendering-driver opengl3 --path "$TMP" 2>&1 | grep -E 'MAP |YETENEK|BECERİ|PERK|DİYALOG|GÜNLÜK|SMOKE|EKSİK|KAYIT|SCRIPT ERROR|Parse' || true)"
+OUT="$(timeout 300 xvfb-run -a "$GODOT" --rendering-driver opengl3 --path "$TMP" 2>&1 | grep -E 'MAP |YETENEK|BECERİ|PERK|DİYALOG|GÜNLÜK|SMOKE|EKSİK|İŞARET|KAYIT|SCRIPT ERROR|Parse' || true)"
 echo "$OUT"
 echo "$OUT" | grep -q 'SMOKE OK'

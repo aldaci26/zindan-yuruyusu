@@ -73,6 +73,7 @@ var tip_desc: Label
 var tip_note: Label
 var tip_idx := -1
 var minimap
+var waypoints
 var zone_lbl: Label
 var coord_lbl: Label
 var buff_box: HBoxContainer
@@ -270,6 +271,8 @@ func _build_minimap() -> void:
 	minimap = Parts.Minimap.new()
 	_place(minimap, 1.0, 0.0, 1.0, 0.0, -176, 34, -26, 184)
 	root.add_child(_reg(minimap))
+	waypoints = Parts.Waypoints.new()
+	root.add_child(waypoints)
 	coord_lbl = _label("", 11, Color("d9e4ee"), 3)
 	_place(coord_lbl, 1.0, 0.0, 1.0, 0.0, -176, 186, -26, 202)
 	coord_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -794,6 +797,7 @@ func update_minimap(d: Dictionary) -> void:
 	minimap.swamp = d.get("swamp", false)
 	minimap.ash = d.get("ash", false)
 	minimap.mine = d.get("mine", false)
+	minimap.qt = d.get("qt", [])
 	minimap.queue_redraw()
 	coord_lbl.text = "%d, %d   %s" % [roundi(d["px"]), roundi(-d["pz"]), Time.get_time_string_from_system().substr(0, 5)]
 
@@ -870,6 +874,10 @@ func hide_dialog() -> void:
 
 func toggle_help() -> void:
 	help_box.visible = not help_box.visible
+
+func set_waypoints(items: Array) -> void:
+	waypoints.items = items
+	waypoints.queue_redraw()
 
 func set_prompt(text: String) -> void:
 	talk_lbl.text = text

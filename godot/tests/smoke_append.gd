@@ -25,6 +25,25 @@ func _selftest() -> void:
 			if not Items.db().has(r):
 				print("EKSİK ÖDÜL ", qid, " ", r)
 				fails += 1
+	# görev işaretleri: her etkin/teslim görev için her haritada bir işaret çıkmalı
+	for mp2 in ["snow", "swamp", "mine", "ash"]:
+		_enter_map(mp2)
+		for i in 5:
+			step(0.1)
+		for qid in QUESTS:
+			for st2 in ["active", "ready"]:
+				qs.clear()
+				qs[qid] = {"st": st2, "n": 0}
+				var w2: Array = _quest_waypoints()
+				if w2.size() != 1:
+					print("İŞARET YOK ", mp2, " ", qid, " ", st2)
+					fails += 1
+				else:
+					var sc2: Array = _waypoint_screen(w2)
+					if sc2.size() != 1:
+						fails += 1
+		qs.clear()
+	_enter_map("snow")
 	# yetenekler: bütün çubuk hatasız çalışmalı
 	P["lvl"] = MAX_LVL
 	for ai in HudScript.ABIL.size():

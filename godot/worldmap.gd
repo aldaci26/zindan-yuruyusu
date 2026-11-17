@@ -11,6 +11,7 @@ var camps: Array = []
 var bosses: Array = []
 var portals: Array = []
 var npcs: Array = []
+var qt: Array = []
 var mine_rooms: Array = []
 var mine_alc: Array = []
 var px := 0.0
@@ -78,6 +79,11 @@ func _draw() -> void:
 		var p3 := _s(pt["x"], pt["z"])
 		draw_arc(p3, 7.0, 0, TAU, 16, Color("b07aff"), 3.0)
 		_lbl(p3 + Vector2(-30, -10), pt["label"], Color("e0c8ff"), 10)
+	for qw in qt:
+		var p5 := _s(qw["p"].x, qw["p"].y)
+		draw_colored_polygon(PackedVector2Array([p5 + Vector2(0, -9), p5 + Vector2(7, 0), p5 + Vector2(0, 9), p5 + Vector2(-7, 0)]), Color("ffd23a"))
+		draw_polyline(PackedVector2Array([p5 + Vector2(0, -9), p5 + Vector2(7, 0), p5 + Vector2(0, 9), p5 + Vector2(-7, 0), p5 + Vector2(0, -9)]), Color(0.1, 0.06, 0.0), 1.5)
+		_lbl(p5 + Vector2(9, 4), str(qw["label"]), Color("ffe45c"), 10)
 	for n in npcs:
 		var p4 := _s(n["p"].x, n["p"].y)
 		draw_circle(p4, 3.0, Color("ffd23a"))

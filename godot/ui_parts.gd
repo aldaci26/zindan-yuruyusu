@@ -213,6 +213,39 @@ class Portrait extends Control:
 		Glyph.text(self, str(lvl), Vector2(bp.x - 20, bp.y + 4.5), 40, 12, lvl_color, 3)
 
 ## Yuvarlak mini harita
+## Görev yön işaretleri: hedefin üstünde altın elmas, ekran dışındaysa kenarda ok; altında ad ve mesafe
+class Waypoints extends Control:
+	var items: Array = []
+
+	func _init() -> void:
+		set_anchors_preset(Control.PRESET_FULL_RECT)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var f := ThemeDB.fallback_font
+		for it in items:
+			var p: Vector2 = it["pos"]
+			var gold := Color("ffd23a") if it["kind"] == "kill" else Color("fff08a")
+			var pts: PackedVector2Array
+			if it["edge"]:
+				var r: float = it["rot"]
+				var tip := p + Vector2(0, -13).rotated(r)
+				var a := p + Vector2(-9, 7).rotated(r)
+				var b := p + Vector2(9, 7).rotated(r)
+				pts = PackedVector2Array([tip, a, p + Vector2(0, 3).rotated(r), b])
+			else:
+				pts = PackedVector2Array([p + Vector2(0, -12), p + Vector2(8, 0), p + Vector2(0, 12), p + Vector2(-8, 0)])
+			draw_colored_polygon(pts, gold)
+			var outline := pts.duplicate()
+			outline.append(pts[0])
+			draw_polyline(outline, Color(0.1, 0.06, 0.0, 0.95), 2.0)
+			var txt := "%s  %d m" % [it["label"], roundi(it["dist"])]
+			var w := f.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x
+			var tp := p + Vector2(-w * 0.5, 28.0 if not it["edge"] else (30.0 if p.y < size.y * 0.5 else -20.0))
+			tp.x = clampf(tp.x, 6.0, maxf(6.0, size.x - w - 6.0))
+			draw_string_outline(f, tp, txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, 4, Color(0, 0, 0, 0.95))
+			draw_string(f, tp, txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, gold)
+
 class Minimap extends Control:
 	var px := 0.0
 	var pz := 0.0
@@ -224,6 +257,7 @@ class Minimap extends Control:
 	var swamp := false
 	var mine := false
 	var ash := false
+	var qt: Array = []
 	const Glyph = preload("res://glyph.gd")
 	const RANGE := 42.0
 
@@ -289,6 +323,12 @@ class Minimap extends Control:
 				draw_arc(p2, 3.0, 0, TAU, 8, Color(0, 0, 0, 0.8), 1.0)
 				if n["mark"] != "":
 					Glyph.text(self, n["mark"], p2 + Vector2(-8, -4), 16, 13, Color("ffe45c"), 4)
+		# görev işaretleri (kenara sıkıştırılır)
+		for q in qt:
+			var qp := _clamp(_w2s(q["p"].x, q["p"].y), R - 6.0)
+			var dm := PackedVector2Array([qp + Vector2(0, -6), qp + Vector2(5, 0), qp + Vector2(0, 6), qp + Vector2(-5, 0)])
+			draw_colored_polygon(dm, Color("ffd23a"))
+			draw_polyline(PackedVector2Array([dm[0], dm[1], dm[2], dm[3], dm[0]]), Color(0.1, 0.06, 0.0, 0.95), 1.5)
 		# oyuncu oku
 		var fx := -sin(cam_yaw)
 		var fz := -cos(cam_yaw)

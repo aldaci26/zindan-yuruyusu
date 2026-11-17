@@ -2040,10 +2040,10 @@ func _spawn_bosses() -> void:
 
 func _camp_model(kind: String) -> Node3D:
 	match kind:
-		"trogg": return Dwarf.make_trogg(false)
-		"gnoll": return Dwarf.make_gnoll(false)
+		"trogg": return WowAssets.spawn_creature("trogg", func(): return Dwarf.make_trogg(false))
+		"gnoll": return WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(false))
 		"murloc": return Dwarf.make_murloc(false)
-		"shaman": return Dwarf.make_murloc(true)
+		"shaman": return WowAssets.spawn_creature("shaman", func(): return Dwarf.make_murloc(true))
 		"croc": return Dwarf.make_croc(false)
 		"bog": return Dwarf.make_bogbeast()
 		"cinder":
@@ -2053,7 +2053,7 @@ func _camp_model(kind: String) -> Node3D:
 				l.free()
 			return em
 		"slag": return _tint_model(Dwarf.make_golem(false), Color("8a3a22"), 0.5)
-		"ashogre": return _tint_model(Dwarf.make_ogre(), Color("5a3a34"), 0.55)
+		"ashogre": return WowAssets.spawn_creature("ashogre", func(): return _tint_model(Dwarf.make_ogre(), Color("5a3a34"), 0.55))
 		"ashbone": return WowAssets.spawn_creature("ashbone", func(): return _tint_model(Dwarf.make_skeleton(), Color("3a3030"), 0.6))
 		"miner": return WowAssets.spawn_creature("miner", func(): return Dwarf.make_dwarf({"skin": Color("6a5448"), "metal": Color("3a3238"), "cloth": Color("4a3a2a"), "beard": Color("1a1410"), "helm": true, "prop": "hammer"}))
 		"golem": return Dwarf.make_golem(false)

@@ -167,6 +167,7 @@ static func make_dwarf(o: Dictionary = {}) -> Node3D:
 	if o.get("helm", true) == false:
 		for n in helm_nodes:
 			n.visible = false
+	rig["helm"] = helm_nodes
 	var prop: String = o.get("prop", "axe")
 	if prop != "axe":
 		axe.visible = false

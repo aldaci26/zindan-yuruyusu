@@ -16,6 +16,8 @@ const InvUI = preload("res://invui.gd")
 const TalentUI = preload("res://talentui.gd")
 const ProgUI = preload("res://progui.gd")
 const Skills = preload("res://systems/skills.gd")
+const Journal = preload("res://systems/journal.gd")
+const DialogueTrees = preload("res://systems/dialogue_trees.gd")
 const Prog = preload("res://prog.gd")
 const SWAMP_QS := ["q_murloc", "q_shaman", "q_croc", "q_bog", "q_gruff"]
 const BEASTS := ["Kurt", "Yaban Domuzu", "Dağ Ayısı", "Timsah", "Mağara Örümceği"]
@@ -1404,7 +1406,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
@@ -2269,6 +2271,7 @@ func ui_vendor_click(idx: int, _button: int) -> void:
 		hud.say(err, Color("ff6a5a"))
 	else:
 		sfx.play("coin", -6)
+		skill_xp("speech", 1.5)
 	inv_changed()
 
 func ui_loot_click(idx: int) -> void:
@@ -2292,6 +2295,7 @@ func ui_slot_click(kind: String, key, button: int) -> void:
 				var gain: int = inv.sell(key)
 				hud.say("Sattın: %s (+%s)" % [it["name"], Items.money_plain(gain)], Color("f2c75c"))
 				sfx.play("coin", -6)
+				skill_xp("speech", 1.0)
 			elif Items.is_equip(it):
 				err = inv.equip_from_bag(key, lvl)
 			elif it.get("heal", 0.0) > 0.0:
@@ -2464,7 +2468,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	d["npc_mem"] = npc_mem
 	SaveManager.write(SAVE_PATH, d)
 
@@ -2529,6 +2533,16 @@ func load_game() -> bool:
 				P["perks"][str(k)] = true
 	if Skills.points_free(P["lvl"], P["skl"], P["perks"]) < 0:
 		P["perks"] = {}
+	P["lore"] = {}
+	P["talked"] = {}
+	if typeof(d.get("lore")) == TYPE_DICTIONARY:
+		for k in d["lore"]:
+			if Journal.LORE.has(str(k)):
+				P["lore"][str(k)] = true
+	if typeof(d.get("talked")) == TYPE_DICTIONARY:
+		for k in d["talked"]:
+			if str(k).length() < 40:
+				P["talked"][str(k)] = true
 	P["xp"] = maxf(0.0, d["xp"])
 	if typeof(d.get("inv")) == TYPE_DICTIONARY and inv.from_dict(d["inv"]):
 		pass
@@ -3544,6 +3558,76 @@ func close_vendor() -> void:
 	invui.vend_win.visible = false
 	invui.hide_tip()
 
+## Dallanan sohbet düğümünü gösterir; etkileri (bilgi, itibar, para...) ilk seferde uygular.
+func talk_node(npc_id: String, node_id: String) -> void:
+	var node: Dictionary = DialogueTrees.node(npc_id, node_id)
+	if node.is_empty() or cur_npc == null:
+		render_dialog()
+		return
+	var key := "%s:%s" % [npc_id, node_id]
+	var first: bool = not P["talked"].has(key)
+	if first or not node.get("once", false):
+		_talk_effects(node, first)
+	P["talked"][key] = true
+	var buttons: Array = []
+	for o in node.get("opts", []):
+		var why := _talk_block(o.get("need", {}))
+		var opt: Dictionary = o
+		buttons.append({"label": o["label"] + ("  [%s]" % why if why != "" else ""), "disabled": why != "", "cb": func(): _talk_choose(npc_id, opt)})
+	buttons.append({"label": "Sohbeti bitir", "cb": render_dialog})
+	hud.show_dialog(cur_npc["name"], cur_npc["title"], node["text"], buttons)
+
+func _talk_block(need: Dictionary) -> String:
+	if need.has("speech") and skl("speech") < int(need["speech"]):
+		return "Hitabet %d" % need["speech"]
+	if need.has("lvl") and P["lvl"] < int(need["lvl"]):
+		return "Seviye %d" % need["lvl"]
+	if need.has("q") and not (qs.has(need["q"]) and qs[need["q"]]["st"] == "done"):
+		return "Görev: %s" % QUESTS[need["q"]]["title"]
+	return ""
+
+func _talk_effects(node: Dictionary, first: bool) -> void:
+	if node.has("lore") and Journal.unlock(P["lore"], node["lore"]):
+		hud.say("Günlüğe eklendi: %s" % Journal.LORE[node["lore"]]["title"], Color("c9a8ff"))
+		sfx.play("quest", -8)
+		skill_xp("speech", 2.0)
+		if progui != null:
+			progui.refresh()
+	if not first and node.get("once", false):
+		return
+	if node.has("rep"):
+		rep_add(str(node["rep"][0]), int(node["rep"][1]))
+	if node.has("money"):
+		inv.money += int(node["money"])
+		sfx.play("coin")
+		hud.say("+%s" % Items.money_plain(int(node["money"])), Color("f2c75c"))
+	if node.has("xp"):
+		gain_xp(float(node["xp"]))
+	inv_changed()
+	save_game()
+
+func _talk_choose(npc_id: String, o: Dictionary) -> void:
+	if o.has("check"):
+		var ck: Dictionary = o["check"]
+		var key := "%s:%s" % [npc_id, ck["ok"]]
+		if P["talked"].has(key):
+			hud.say("Bunu zaten konuştunuz.", Color("c8c8c8"))
+			talk_node(npc_id, "start")
+			return
+		var rk: String = {"snow": "dem", "swamp": "kar", "mine": "mad"}[map]
+		var bonus := skl("speech") / 2 + Prog.rank_of(P["rep"].get(rk, 0))
+		var rl := randi_range(1, 20)
+		var ok: bool = rl + bonus >= int(ck["dc"])
+		skill_xp("speech", 3.0)
+		hud.say("İkna %s  (zar %d + %d ≥ %d)" % ["başarılı" if ok else "başarısız", rl, bonus, ck["dc"]], Color("7fe08a") if ok else Color("ff9a8a"))
+		talk_node(npc_id, ck["ok"] if ok else ck["fail"])
+		return
+	var nx: String = o.get("next", "")
+	if nx == "":
+		render_dialog()
+	else:
+		talk_node(npc_id, nx)
+
 func render_dialog() -> void:
 	var n = cur_npc
 	var body := ""
@@ -3610,6 +3694,8 @@ func render_dialog() -> void:
 				render_dialog()})
 	if dlg_extra != "":
 		body = "<%s>\n\n%s" % [dlg_extra, body]
+	if DialogueTrees.has_tree(n["id"]):
+		buttons.append({"label": "Sohbet et", "cb": func(): talk_node(n["id"], "start")})
 	for tpc in [["rumors", "Söylentiler"], ["danger", "Bölge tehlikeleri"]]:
 		buttons.append({"label": tpc[1], "cb": func():
 			var rc := NPCDialogue.topic_count(npc_mem, n["id"], tpc[0])

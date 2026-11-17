@@ -64,6 +64,57 @@ func _selftest() -> void:
 		progui.refresh()
 	progui.win.visible = false
 	print("BECERİLER ", P["perks"].size(), " perk")
+	# diyalog ağaçları: bağlantılar geçerli olmalı ve düğümler hatasız gösterilmeli
+	for nid in DialogueTrees.TREES:
+		cur_npc = {"id": nid, "name": nid, "title": "t", "role": "quest", "qs": []}
+		var tr: Dictionary = DialogueTrees.TREES[nid]
+		if not tr.has("start"):
+			print("DİYALOG BAŞLANGIÇ YOK ", nid)
+			fails += 1
+		for ndid in tr:
+			var nd: Dictionary = tr[ndid]
+			if nd.has("lore") and not Journal.LORE.has(nd["lore"]):
+				print("DİYALOG BİLGİ YOK ", nid, " ", ndid)
+				fails += 1
+			if nd.has("rep") and not Prog.FACTIONS.has(nd["rep"][0]):
+				print("DİYALOG İTİBAR HATALI ", nid, " ", ndid)
+				fails += 1
+			for o in nd.get("opts", []):
+				var refs: Array = []
+				if o.get("next", "") != "":
+					refs.append(o["next"])
+				if o.has("check"):
+					refs.append(o["check"]["ok"])
+					refs.append(o["check"]["fail"])
+				for r in refs:
+					if not tr.has(r):
+						print("DİYALOG BAĞLANTI YOK ", nid, " ", ndid, " -> ", r)
+						fails += 1
+				if o.get("need", {}).has("q") and not QUESTS.has(o["need"]["q"]):
+					print("DİYALOG GÖREV YOK ", nid, " ", ndid)
+					fails += 1
+			talk_node(nid, ndid)
+		P["talked"] = {}
+		P["skl"]["speech"] = {"lv": 35, "xp": 0.0}
+		for ndid in tr:
+			for o in tr[ndid].get("opts", []):
+				if o.has("check"):
+					_talk_choose(nid, o)
+	cur_npc = null
+	hud.hide_dialog()
+	for qid in Journal.GIVERS:
+		if not QUESTS.has(qid):
+			print("GÜNLÜK GÖREV YOK ", qid)
+			fails += 1
+	for qid in QUESTS:
+		if not Journal.GIVERS.has(qid):
+			print("GÜNLÜK VEREN YOK ", qid)
+			fails += 1
+	progui.win.visible = true
+	progui.tab = 1
+	progui.refresh()
+	progui.win.visible = false
+	print("DİYALOG ", DialogueTrees.TREES.size(), " ağaç, bilgi ", P["lore"].size(), "/", Journal.LORE.size())
 	# kayıt / yükleme
 	save_game()
 	if not load_game():

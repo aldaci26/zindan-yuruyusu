@@ -4,6 +4,7 @@ extends Control
 const Prog = preload("res://prog.gd")
 const Items = preload("res://items.gd")
 const Skills = preload("res://systems/skills.gd")
+const Journal = preload("res://systems/journal.gd")
 const GOLD := Color("f2c75c")
 const TABS := ["Beceriler", "Günlük", "Meslekler", "İtibar", "Başarımlar"]
 
@@ -138,7 +139,34 @@ func _tab_skills() -> void:
 			_add(b)
 
 func _tab_journal() -> void:
-	pass
+	var active: Array = []
+	var done: Array = []
+	for qid in game.qs:
+		if game.qs[qid]["st"] == "done":
+			done.append(qid)
+		else:
+			active.append(qid)
+	_add(_label("Aktif görevler", 15, GOLD))
+	if active.is_empty():
+		_add(_label("Şu an aktif görevin yok. Şehirdeki ve karakoldaki görev verenlerle konuş.", 12, Color("a8a8a8")))
+	for qid in active:
+		var q: Dictionary = game.QUESTS[qid]
+		var st: Dictionary = game.qs[qid]
+		_add(_label("%s — %d/%d %s%s" % [q["title"], st["n"], q["n"], q["kill"], "  (Teslim et)" if st["st"] == "ready" else ""], 13, Color("7fe08a") if st["st"] == "ready" else Color("f6e8bb")))
+		_add(_label(q["text"], 11, Color("b8b8b8")))
+		_add(_label("Görev veren: " + Journal.giver(qid), 11, Color("7fb8ff")))
+	_add(_label("Tamamlananlar (%d)" % done.size(), 15, GOLD))
+	var names: Array = []
+	for qid in done:
+		names.append(game.QUESTS[qid]["title"])
+	_add(_label(", ".join(names) if not names.is_empty() else "Henüz yok.", 11, Color("a8a8a8")))
+	_add(_label("Keşfedilen bilgiler (%d/%d)" % [game.P["lore"].size(), Journal.LORE.size()], 15, GOLD))
+	if game.P["lore"].is_empty():
+		_add(_label("NPC'lerle 'Sohbet et' diyerek bilgi topla.", 11, Color("a8a8a8")))
+	for lid in Journal.LORE:
+		if game.P["lore"].has(lid):
+			_add(_label(Journal.LORE[lid]["title"], 13, Color("c9a8ff")))
+			_add(_label(Journal.LORE[lid]["text"], 11, Color("c8c8c8")))
 
 func _tab_profs() -> void:
 	for pid in Prog.PROFS:

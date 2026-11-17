@@ -183,6 +183,20 @@ static func make_dwarf(o: Dictionary = {}) -> Node3D:
 		rig["prop"] = pr
 	g.scale = Vector3(1.12, 1.0, 1.05)
 	g.set_meta("rig", rig)
+	var gear_sockets := {
+		"head": head,
+		"mainhand": pivot(rig["armR"], Vector3(0, -0.68, 0.05)),
+		"offhand": pivot(rig["armL"], Vector3(-0.22, -0.55, 0.12)),
+		"chest": pivot(g, Vector3(0, 0.98, 0.35)),
+		"shoulder": pivot(g, Vector3(0, 1.3, 0)),
+		"back": pivot(g, Vector3(0, 1.1, -0.36)),
+		"wrist": pivot(rig["armR"], Vector3(0, -0.5, 0)),
+		"hands": pivot(rig["armR"], Vector3(0, -0.68, 0.05)),
+		"waist": pivot(g, Vector3(0, 0.68, 0.34)),
+		"legs": pivot(g, Vector3(0, 0.45, 0)),
+		"feet": pivot(g, Vector3(0, 0.18, 0)),
+	}
+	g.set_meta("gear_sockets", gear_sockets)
 	return g
 
 static func _legs(g: Node3D, defs: Array, leg_size: Vector3, m: Material) -> Array:

@@ -19,6 +19,7 @@ permissions:
 jobs:
   godot-4-3:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     container:
       image: barichello/godot-ci:4.3
     steps:
@@ -28,4 +29,4 @@ jobs:
         run: godot --headless --editor --path . --quit
       - name: Run MMORPG service tests
         working-directory: godot
-        run: godot --headless --path . --script res://mmorpg/tests/test_core.gd
+        run: timeout 60s godot --headless --path . --script res://mmorpg/tests/test_core.gd

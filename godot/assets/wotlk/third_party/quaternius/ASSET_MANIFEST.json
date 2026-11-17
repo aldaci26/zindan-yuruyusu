@@ -1,0 +1,3234 @@
+{
+  "source_repository": "https://github.com/trebeljahr/quaternius-showcase",
+  "source_commit": "0128ca510d653bb04d6d1e4885bd8890b5050b4f",
+  "source_license_manifest": "https://github.com/trebeljahr/quaternius-showcase/blob/0128ca510d653bb04d6d1e4885bd8890b5050b4f/LICENSES.md",
+  "license": "CC0-1.0",
+  "creator": "Quaternius (Kay Lousberg)",
+  "packs": {
+    "animals_pack": "https://quaternius.com/packs/ultimateanimatedanimals.html",
+    "modular_men": "https://quaternius.com/packs/ultimatemodularcharacters.html",
+    "medieval_village_pack": "https://quaternius.com/packs/medievalvillage.html",
+    "medieval_weapons_pack": "https://quaternius.com/packs/medievalweapons.html",
+    "modular_dungeon_1": "https://quaternius.com/packs/modulardungeon.html",
+    "easy_enemies_pack": "https://quaternius.com/packs/easyenemy.html",
+    "nature_pack": "https://quaternius.com/packs/ultimatenature.html",
+    "rpg_items_pack": "https://quaternius.com/packs/ultimaterpg.html"
+  },
+  "assets": [
+    {
+      "path": "animals_pack/Alpaca.glb",
+      "source_path": "public/glb/animals_pack/Alpaca.glb",
+      "git_blob_sha": "792a5519086eaa185a6c8041292273f1b43e1534",
+      "size_bytes": 647464,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Bull.glb",
+      "source_path": "public/glb/animals_pack/Bull.glb",
+      "git_blob_sha": "8f8e87107de3a257cff99566693aa545fe41cbd7",
+      "size_bytes": 647140,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Cow.glb",
+      "source_path": "public/glb/animals_pack/Cow.glb",
+      "git_blob_sha": "04ea9fa6880c94dfa58e2790e96cc80df7bfe664",
+      "size_bytes": 643984,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Deer.glb",
+      "source_path": "public/glb/animals_pack/Deer.glb",
+      "git_blob_sha": "0c1a5a5d55ec13ca7899dd3a57256724cd9fca4e",
+      "size_bytes": 662108,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Donkey.glb",
+      "source_path": "public/glb/animals_pack/Donkey.glb",
+      "git_blob_sha": "b52459dca0873eeff89332e4af8fc03a97a7c83e",
+      "size_bytes": 667168,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Fox.glb",
+      "source_path": "public/glb/animals_pack/Fox.glb",
+      "git_blob_sha": "4b9e53701955206f394e3ebfd12831d74e0e3d31",
+      "size_bytes": 590112,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Horse.glb",
+      "source_path": "public/glb/animals_pack/Horse.glb",
+      "git_blob_sha": "c93b598005fd4a6163f12782eeb31b10b6e4bc48",
+      "size_bytes": 682356,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Horse_White.glb",
+      "source_path": "public/glb/animals_pack/Horse_White.glb",
+      "git_blob_sha": "43a357043f44d585328beeb590813b08c01f8d1b",
+      "size_bytes": 682260,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Husky.glb",
+      "source_path": "public/glb/animals_pack/Husky.glb",
+      "git_blob_sha": "1e93d4432adbc6ba85bca43f0af4771f9c20e821",
+      "size_bytes": 577176,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/ShibaInu.glb",
+      "source_path": "public/glb/animals_pack/ShibaInu.glb",
+      "git_blob_sha": "021a72f7b781bf7a0e62a6000966c253970e5897",
+      "size_bytes": 540592,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Stag.glb",
+      "source_path": "public/glb/animals_pack/Stag.glb",
+      "git_blob_sha": "18927223c253a8ac497a442c1a419d3c287fb84c",
+      "size_bytes": 685176,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "animals_pack/Wolf.glb",
+      "source_path": "public/glb/animals_pack/Wolf.glb",
+      "git_blob_sha": "c54b02936167a3b0d9a7e8d467432ba4fa788d6b",
+      "size_bytes": 608660,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimateanimatedanimals.html"
+    },
+    {
+      "path": "easy_enemies_pack/Frog.glb",
+      "source_path": "public/glb/easy_enemies_pack/Frog.glb",
+      "git_blob_sha": "0893aa28f586b9f45a5068a0e00ffd17df1c40e1",
+      "size_bytes": 587360,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/easyenemy.html"
+    },
+    {
+      "path": "easy_enemies_pack/Rat.glb",
+      "source_path": "public/glb/easy_enemies_pack/Rat.glb",
+      "git_blob_sha": "a97c5bfe37ca8639b408bd81a54be39c50858000",
+      "size_bytes": 550764,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/easyenemy.html"
+    },
+    {
+      "path": "easy_enemies_pack/Snake.glb",
+      "source_path": "public/glb/easy_enemies_pack/Snake.glb",
+      "git_blob_sha": "fdb107f06725f487fed66c7386b31c56c236e8ad",
+      "size_bytes": 216696,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/easyenemy.html"
+    },
+    {
+      "path": "easy_enemies_pack/Snake_angry.glb",
+      "source_path": "public/glb/easy_enemies_pack/Snake_angry.glb",
+      "git_blob_sha": "a59333fff190a89615e7de8a7fda8be701c87ade",
+      "size_bytes": 226508,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/easyenemy.html"
+    },
+    {
+      "path": "easy_enemies_pack/Spider.glb",
+      "source_path": "public/glb/easy_enemies_pack/Spider.glb",
+      "git_blob_sha": "2dcf260a0dc6f6aaaeaa763c3dee33e04fd38feb",
+      "size_bytes": 449008,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/easyenemy.html"
+    },
+    {
+      "path": "easy_enemies_pack/Wasp.glb",
+      "source_path": "public/glb/easy_enemies_pack/Wasp.glb",
+      "git_blob_sha": "26f11207127eded66857cac6af1dac5576fa758e",
+      "size_bytes": 441256,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/easyenemy.html"
+    },
+    {
+      "path": "medieval_village_pack/Bag.glb",
+      "source_path": "public/glb/medieval_village_pack/Bag.glb",
+      "git_blob_sha": "10c9fa9c47ccc66ff6d774eabe12f5a9eed7f181",
+      "size_bytes": 8164,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bag_Open.glb",
+      "source_path": "public/glb/medieval_village_pack/Bag_Open.glb",
+      "git_blob_sha": "0c1341295e4d462aa7b059edae872ef546f03668",
+      "size_bytes": 11068,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bags.glb",
+      "source_path": "public/glb/medieval_village_pack/Bags.glb",
+      "git_blob_sha": "732c2d22a687ea2dd057a9928047d27427464aa7",
+      "size_bytes": 21124,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Barrel.glb",
+      "source_path": "public/glb/medieval_village_pack/Barrel.glb",
+      "git_blob_sha": "1457721d6f0782804d5da0946f9f14661c65c66b",
+      "size_bytes": 52384,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bell.glb",
+      "source_path": "public/glb/medieval_village_pack/Bell.glb",
+      "git_blob_sha": "58a22101b2a46c7c080642caeb30649f5149279f",
+      "size_bytes": 20164,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bell_Tower.glb",
+      "source_path": "public/glb/medieval_village_pack/Bell_Tower.glb",
+      "git_blob_sha": "8b3941789f75e5a8e9a960f57b921fe1f7935950",
+      "size_bytes": 728440,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bench_1.glb",
+      "source_path": "public/glb/medieval_village_pack/Bench_1.glb",
+      "git_blob_sha": "2ae6b656f39d553bd6fa7471e79dc937650452f4",
+      "size_bytes": 21952,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bench_2.glb",
+      "source_path": "public/glb/medieval_village_pack/Bench_2.glb",
+      "git_blob_sha": "cff409648a0fd36a037f23f564aca77986d84819",
+      "size_bytes": 16452,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Blacksmith.glb",
+      "source_path": "public/glb/medieval_village_pack/Blacksmith.glb",
+      "git_blob_sha": "83917c55b132d8e51e6c2b969911e14c857956a8",
+      "size_bytes": 670832,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bonfire.glb",
+      "source_path": "public/glb/medieval_village_pack/Bonfire.glb",
+      "git_blob_sha": "b936e46d0a1b43a16d548fc80bf538e02211320a",
+      "size_bytes": 30592,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Bonfire_Lit.glb",
+      "source_path": "public/glb/medieval_village_pack/Bonfire_Lit.glb",
+      "git_blob_sha": "f1d44c5f2f5edfa18eb1b56e9d55faf9585b9255",
+      "size_bytes": 50168,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Cart.glb",
+      "source_path": "public/glb/medieval_village_pack/Cart.glb",
+      "git_blob_sha": "b69da9a51ecdcdeb8494f178644734459c06555f",
+      "size_bytes": 108660,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Cauldron.glb",
+      "source_path": "public/glb/medieval_village_pack/Cauldron.glb",
+      "git_blob_sha": "144156e4beb1b084ee6a17cc9502aa5ee07f0703",
+      "size_bytes": 46712,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Crate.glb",
+      "source_path": "public/glb/medieval_village_pack/Crate.glb",
+      "git_blob_sha": "1643dc194a7141b2cc7eefbbf3e9a871f8b76cc6",
+      "size_bytes": 35776,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Door_Round.glb",
+      "source_path": "public/glb/medieval_village_pack/Door_Round.glb",
+      "git_blob_sha": "a6011029a794b15c78827f281d5c755f4f7cde16",
+      "size_bytes": 56644,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Door_Straight.glb",
+      "source_path": "public/glb/medieval_village_pack/Door_Straight.glb",
+      "git_blob_sha": "4e16d7eaf834fb5235ce61c05e13198fa80cffab",
+      "size_bytes": 57184,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Fence.glb",
+      "source_path": "public/glb/medieval_village_pack/Fence.glb",
+      "git_blob_sha": "562e389e169379e55e8a8419646a98a4a2b5af0c",
+      "size_bytes": 12348,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Gazebo.glb",
+      "source_path": "public/glb/medieval_village_pack/Gazebo.glb",
+      "git_blob_sha": "7d96b269fe1ece33607361c9691ef2453ea56c13",
+      "size_bytes": 51956,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Hay.glb",
+      "source_path": "public/glb/medieval_village_pack/Hay.glb",
+      "git_blob_sha": "f6b0f88222c411fc8369254eb25ca884d4e8090f",
+      "size_bytes": 27464,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/House_1.glb",
+      "source_path": "public/glb/medieval_village_pack/House_1.glb",
+      "git_blob_sha": "b2733641f276a98615436b998d8f0d1c5e68a441",
+      "size_bytes": 410268,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/House_2.glb",
+      "source_path": "public/glb/medieval_village_pack/House_2.glb",
+      "git_blob_sha": "daaa54f0be323aa63a3d1b54843a2327130c3e8c",
+      "size_bytes": 509876,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/House_3.glb",
+      "source_path": "public/glb/medieval_village_pack/House_3.glb",
+      "git_blob_sha": "8beb250ade5125a93f9ce2e3a3c6bb3abfe3efec",
+      "size_bytes": 258580,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/House_4.glb",
+      "source_path": "public/glb/medieval_village_pack/House_4.glb",
+      "git_blob_sha": "74e71b5fd358ef9933e298b4ae6f89d86963505b",
+      "size_bytes": 205028,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Inn.glb",
+      "source_path": "public/glb/medieval_village_pack/Inn.glb",
+      "git_blob_sha": "773f9184c4c80f20ec37de300b3f7e4106754e83",
+      "size_bytes": 468600,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/MarketStand_1.glb",
+      "source_path": "public/glb/medieval_village_pack/MarketStand_1.glb",
+      "git_blob_sha": "3894530a8476c5411cb685278eafcaedd90e1249",
+      "size_bytes": 84992,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/MarketStand_2.glb",
+      "source_path": "public/glb/medieval_village_pack/MarketStand_2.glb",
+      "git_blob_sha": "049e04ad14ee535ce134a3e41bccf6e20da79cfa",
+      "size_bytes": 63640,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Mill.glb",
+      "source_path": "public/glb/medieval_village_pack/Mill.glb",
+      "git_blob_sha": "bf421e0d3493f6192971a90b25e91969f27c14de",
+      "size_bytes": 575508,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Package_1.glb",
+      "source_path": "public/glb/medieval_village_pack/Package_1.glb",
+      "git_blob_sha": "ada9cafe5a17ec4e89d4875c2953fb8c19fd1993",
+      "size_bytes": 14340,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Package_2.glb",
+      "source_path": "public/glb/medieval_village_pack/Package_2.glb",
+      "git_blob_sha": "a57fb458bdfb5920d758f8f6ea424b36aa6b9dd4",
+      "size_bytes": 15952,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Path_Square.glb",
+      "source_path": "public/glb/medieval_village_pack/Path_Square.glb",
+      "git_blob_sha": "71c67d8443cf992069310ba7a50b055bbb2f6d82",
+      "size_bytes": 19928,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Path_Straight.glb",
+      "source_path": "public/glb/medieval_village_pack/Path_Straight.glb",
+      "git_blob_sha": "1fb0e9e5048b770536a7c572fcd7524731acfdd0",
+      "size_bytes": 38356,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Rock_1.glb",
+      "source_path": "public/glb/medieval_village_pack/Rock_1.glb",
+      "git_blob_sha": "dabf12c84199053cc76e597324ab810bc91bec66",
+      "size_bytes": 3200,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Rock_2.glb",
+      "source_path": "public/glb/medieval_village_pack/Rock_2.glb",
+      "git_blob_sha": "7bda2442cfcef859faeef2c17f232ca931a85555",
+      "size_bytes": 4720,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Rock_3.glb",
+      "source_path": "public/glb/medieval_village_pack/Rock_3.glb",
+      "git_blob_sha": "7a5be72fc8c88cbe0f8ed4e100023faa6bc61e7e",
+      "size_bytes": 5940,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Sawmill.glb",
+      "source_path": "public/glb/medieval_village_pack/Sawmill.glb",
+      "git_blob_sha": "61bb00a510792562bcad524ab874f8dcd6542b86",
+      "size_bytes": 309568,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Sawmill_saw.glb",
+      "source_path": "public/glb/medieval_village_pack/Sawmill_saw.glb",
+      "git_blob_sha": "c7b8450b5446027c8a578528533a3bba41bd2175",
+      "size_bytes": 21900,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Smoke.glb",
+      "source_path": "public/glb/medieval_village_pack/Smoke.glb",
+      "git_blob_sha": "c7fd8f5e1e3a20af9f5b70b6f943b9dc41d83308",
+      "size_bytes": 23708,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Stable.glb",
+      "source_path": "public/glb/medieval_village_pack/Stable.glb",
+      "git_blob_sha": "0a5d8cf36222f8a579bb44c9402a8f8df1b50da6",
+      "size_bytes": 444596,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Stairs.glb",
+      "source_path": "public/glb/medieval_village_pack/Stairs.glb",
+      "git_blob_sha": "67ec6739a5f048e1986d01eafa3e2030b2e53535",
+      "size_bytes": 13712,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Well.glb",
+      "source_path": "public/glb/medieval_village_pack/Well.glb",
+      "git_blob_sha": "80996c09cdb0680e5f62b62535cdb8bbebba700b",
+      "size_bytes": 110340,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Window_1.glb",
+      "source_path": "public/glb/medieval_village_pack/Window_1.glb",
+      "git_blob_sha": "7321b0c34b803b8762ad7c91a02cf69b6002f608",
+      "size_bytes": 7280,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Window_2.glb",
+      "source_path": "public/glb/medieval_village_pack/Window_2.glb",
+      "git_blob_sha": "1633ad743e31019db4a9e1dc20072461b9eee3bf",
+      "size_bytes": 9248,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Window_3.glb",
+      "source_path": "public/glb/medieval_village_pack/Window_3.glb",
+      "git_blob_sha": "e89b4b8b54db8c356201cbd7fe860dcc672f9424",
+      "size_bytes": 9248,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_village_pack/Window_4.glb",
+      "source_path": "public/glb/medieval_village_pack/Window_4.glb",
+      "git_blob_sha": "197cace1d0cf0f099981a1fa9e8a39e1e2e2d306",
+      "size_bytes": 10328,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalvillage.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Arrow.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Arrow.glb",
+      "git_blob_sha": "36cd59c5908a6b0ff890fddc967a3dc38c96ec29",
+      "size_bytes": 16828,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Axe.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Axe.glb",
+      "git_blob_sha": "f3e800ffba303f8f57f0f2511e1aa4026c34558a",
+      "size_bytes": 63764,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Axe_Double.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Axe_Double.glb",
+      "git_blob_sha": "ca5c95baa599e2ff59c1b2ade231571d6536a05f",
+      "size_bytes": 101596,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Axe_Small.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Axe_Small.glb",
+      "git_blob_sha": "da2ae71651f7a21828b76d63e000c0455ca7e679",
+      "size_bytes": 54740,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Bow_Evil.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Bow_Evil.glb",
+      "git_blob_sha": "625b6932b09ed1ad1c6395474c92a5bcef023538",
+      "size_bytes": 44556,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Bow_Golden.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Bow_Golden.glb",
+      "git_blob_sha": "5a1f9dea8ee895006ef4e2493c09bdeb3cd0c61a",
+      "size_bytes": 45448,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Bow_Wooden.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Bow_Wooden.glb",
+      "git_blob_sha": "ed8ba33364cdd631dc3b615c033867ccc144d5be",
+      "size_bytes": 42668,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Bow_Wooden2.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Bow_Wooden2.glb",
+      "git_blob_sha": "0a8bc695eeb35fb10754b24d3b529cc48a3ffc35",
+      "size_bytes": 39308,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Claymore.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Claymore.glb",
+      "git_blob_sha": "7e2bc34db535a5983012c09930a1ffd3b1cce720",
+      "size_bytes": 54980,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Dagger.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Dagger.glb",
+      "git_blob_sha": "2d2f3ff09a4c97879384f81ce03bd83ac068ed7c",
+      "size_bytes": 43740,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Dagger_2.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Dagger_2.glb",
+      "git_blob_sha": "bfa7f2fed8e3d3be18d7a5d6b7342a7fd3db2af1",
+      "size_bytes": 40368,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Hammer_Double.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Hammer_Double.glb",
+      "git_blob_sha": "7b3f80d837776c7fd33fa99c6dec6229afc67f74",
+      "size_bytes": 105748,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Hammer_Small.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Hammer_Small.glb",
+      "git_blob_sha": "9b6d6ebc4b9b98fc70c48c81c1478614d1e98c0a",
+      "size_bytes": 82540,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Scythe.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Scythe.glb",
+      "git_blob_sha": "be496056bbaaf22576ef77121bcd1402d8d8baa5",
+      "size_bytes": 75252,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Shield_Celtic_Golden.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Shield_Celtic_Golden.glb",
+      "git_blob_sha": "e8f8bb1e1103bff4377bb2032f6e68f69176d3d2",
+      "size_bytes": 47584,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Shield_Heater.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Shield_Heater.glb",
+      "git_blob_sha": "da6627ef6a41898013b944f330a30f413eb8985a",
+      "size_bytes": 97820,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Shield_Heater_2.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Shield_Heater_2.glb",
+      "git_blob_sha": "3a46607aa4d38044cfb453ebc7d26bb01df3a65c",
+      "size_bytes": 63424,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Shield_Round.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Shield_Round.glb",
+      "git_blob_sha": "1b2884b6a6ada7a4519d58accf9d7bc720ef5c54",
+      "size_bytes": 60448,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Shield_Round_2.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Shield_Round_2.glb",
+      "git_blob_sha": "178a5aa7e51d086e0f57c589982ff11e4783ef5c",
+      "size_bytes": 69492,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Spear.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Spear.glb",
+      "git_blob_sha": "32453de78544e74b4461b25482cd86b3252970ae",
+      "size_bytes": 69892,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Sword.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Sword.glb",
+      "git_blob_sha": "d79773820a686fd56c9c76eb38aeca2706adcb75",
+      "size_bytes": 48384,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Sword_2.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Sword_2.glb",
+      "git_blob_sha": "a291d99aff3ec173fa1ae4cca2e29607ee259aa2",
+      "size_bytes": 54156,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Sword_Big.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Sword_Big.glb",
+      "git_blob_sha": "5485c518b599d6ef0cc8dea6a02e3cadca9849d2",
+      "size_bytes": 50336,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "medieval_weapons_pack/Sword_Golden.glb",
+      "source_path": "public/glb/medieval_weapons_pack/Sword_Golden.glb",
+      "git_blob_sha": "283303c890ba2d081ecd9cc01cef541b541572b3",
+      "size_bytes": 58220,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/medievalweapons.html"
+    },
+    {
+      "path": "modular_dungeon_1/Arch.glb",
+      "source_path": "public/glb/modular_dungeon_1/Arch.glb",
+      "git_blob_sha": "7daf64ee42df71a6be000ce2dcbacb709f6f3d4f",
+      "size_bytes": 240092,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Arch_Door.glb",
+      "source_path": "public/glb/modular_dungeon_1/Arch_Door.glb",
+      "git_blob_sha": "a5e5bd1cc030f01e142893afa2b48f6f48a51cef",
+      "size_bytes": 65812,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Arch_Door_bottompivot.glb",
+      "source_path": "public/glb/modular_dungeon_1/Arch_Door_bottompivot.glb",
+      "git_blob_sha": "e896db3a3e36637bbea56c9d4664f111352cbcce",
+      "size_bytes": 65996,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Arch_bars.glb",
+      "source_path": "public/glb/modular_dungeon_1/Arch_bars.glb",
+      "git_blob_sha": "d8f4682b8e591324b7b3c30f734240a483fb56af",
+      "size_bytes": 64004,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Bag_Coins.glb",
+      "source_path": "public/glb/modular_dungeon_1/Bag_Coins.glb",
+      "git_blob_sha": "75446ec3ec953f384a112cc498792c91adac4aad",
+      "size_bytes": 54304,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Bag_Standing.glb",
+      "source_path": "public/glb/modular_dungeon_1/Bag_Standing.glb",
+      "git_blob_sha": "d1cb542c6bcb70a456183519078efda8a97c87bf",
+      "size_bytes": 27380,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Banner.glb",
+      "source_path": "public/glb/modular_dungeon_1/Banner.glb",
+      "git_blob_sha": "7eed2a5a034743d0008b960ca8412eb4dae37bf8",
+      "size_bytes": 34888,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Banner_wall.glb",
+      "source_path": "public/glb/modular_dungeon_1/Banner_wall.glb",
+      "git_blob_sha": "ad379d2576f6d238e70a459ed350ab1197bc9b8a",
+      "size_bytes": 26720,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Barrel.glb",
+      "source_path": "public/glb/modular_dungeon_1/Barrel.glb",
+      "git_blob_sha": "a87257778820a15bff81678d2f3de11a3b60c2ed",
+      "size_bytes": 75512,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Barrel2.glb",
+      "source_path": "public/glb/modular_dungeon_1/Barrel2.glb",
+      "git_blob_sha": "a221ec246cf407e5a7ef7239e2d1684606c203a2",
+      "size_bytes": 60444,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Brick.glb",
+      "source_path": "public/glb/modular_dungeon_1/Brick.glb",
+      "git_blob_sha": "089cfc2ea428b141d712742e0e067a60fa4beae5",
+      "size_bytes": 8868,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Bucket.glb",
+      "source_path": "public/glb/modular_dungeon_1/Bucket.glb",
+      "git_blob_sha": "09804e0c5f4d6bfc781ed2895e0baddc327ed8d7",
+      "size_bytes": 23036,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Chair.glb",
+      "source_path": "public/glb/modular_dungeon_1/Chair.glb",
+      "git_blob_sha": "116101299b618a67e0f016d334d586822dc7adb3",
+      "size_bytes": 69244,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Chest.glb",
+      "source_path": "public/glb/modular_dungeon_1/Chest.glb",
+      "git_blob_sha": "ad40eef632f08894e2f7275f9d4a38b3407c5ca4",
+      "size_bytes": 95736,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Chest_Gold.glb",
+      "source_path": "public/glb/modular_dungeon_1/Chest_Gold.glb",
+      "git_blob_sha": "75399bcc17e04519adac13d861a0edc5bfe353f2",
+      "size_bytes": 1167664,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Cobweb.glb",
+      "source_path": "public/glb/modular_dungeon_1/Cobweb.glb",
+      "git_blob_sha": "ade93511d46274be1c6d624c28df2b971bf5ef2d",
+      "size_bytes": 61468,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Cobweb2.glb",
+      "source_path": "public/glb/modular_dungeon_1/Cobweb2.glb",
+      "git_blob_sha": "f58ce0c9d3b4498762a4088358259541032f9e1f",
+      "size_bytes": 48544,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Coin_Pile.glb",
+      "source_path": "public/glb/modular_dungeon_1/Coin_Pile.glb",
+      "git_blob_sha": "0045eb83940aa0e97dfb98c21818161efef8bc92",
+      "size_bytes": 168888,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Column.glb",
+      "source_path": "public/glb/modular_dungeon_1/Column.glb",
+      "git_blob_sha": "def4c5d3c58683ba30e84e7d09e88056b0ad3d61",
+      "size_bytes": 24732,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Column2.glb",
+      "source_path": "public/glb/modular_dungeon_1/Column2.glb",
+      "git_blob_sha": "1e7361de70c4488efc887f6fa0976beed201b264",
+      "size_bytes": 30328,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Crate.glb",
+      "source_path": "public/glb/modular_dungeon_1/Crate.glb",
+      "git_blob_sha": "9aece28b5474025aee9b7e04ee776bf421fe0519",
+      "size_bytes": 131500,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Decorative_Wall.glb",
+      "source_path": "public/glb/modular_dungeon_1/Decorative_Wall.glb",
+      "git_blob_sha": "34b6acb58763c08a824ac8dd0167ea5f36d2a343",
+      "size_bytes": 58408,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Fence_90_Modular.glb",
+      "source_path": "public/glb/modular_dungeon_1/Fence_90_Modular.glb",
+      "git_blob_sha": "07a5e980d29c50d88a548597d86d0e33508ef64f",
+      "size_bytes": 8624,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Fence_End_Modular.glb",
+      "source_path": "public/glb/modular_dungeon_1/Fence_End_Modular.glb",
+      "git_blob_sha": "c673fd65ed1bab45251ed306e7e641f33ce5702e",
+      "size_bytes": 8084,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Fence_Straight_Modular.glb",
+      "source_path": "public/glb/modular_dungeon_1/Fence_Straight_Modular.glb",
+      "git_blob_sha": "c166c3fa7d824a88ff09e494c33628b151945c0d",
+      "size_bytes": 8204,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Floor_BricksSeparate.glb",
+      "source_path": "public/glb/modular_dungeon_1/Floor_BricksSeparate.glb",
+      "git_blob_sha": "f9f3f95f93233c2bca29268f66135039df1ead20",
+      "size_bytes": 14084,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Floor_BricksSeparate2.glb",
+      "source_path": "public/glb/modular_dungeon_1/Floor_BricksSeparate2.glb",
+      "git_blob_sha": "ce9f8a40cf1468d77a4184930e3f8d05f30c27b7",
+      "size_bytes": 27100,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Floor_Modular.glb",
+      "source_path": "public/glb/modular_dungeon_1/Floor_Modular.glb",
+      "git_blob_sha": "ed2b8b5cee9536f06984cea3ff0ce44ea34195af",
+      "size_bytes": 63540,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Pedestal.glb",
+      "source_path": "public/glb/modular_dungeon_1/Pedestal.glb",
+      "git_blob_sha": "cad2f277e5a0c2434e9ffdc19f1aa594c8383bf7",
+      "size_bytes": 97728,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Pedestal2.glb",
+      "source_path": "public/glb/modular_dungeon_1/Pedestal2.glb",
+      "git_blob_sha": "de61a7383cb088ae82a5a30ca8793717ac7468ca",
+      "size_bytes": 58380,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Skull.glb",
+      "source_path": "public/glb/modular_dungeon_1/Skull.glb",
+      "git_blob_sha": "cd64b2a4915c9fd983cae558f48e365e09228772",
+      "size_bytes": 76860,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Spikes.glb",
+      "source_path": "public/glb/modular_dungeon_1/Spikes.glb",
+      "git_blob_sha": "8b2064f9ab25ea6256979421f712b147239c74ad",
+      "size_bytes": 32368,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Stairs_Modular.glb",
+      "source_path": "public/glb/modular_dungeon_1/Stairs_Modular.glb",
+      "git_blob_sha": "bf38154525753a8edb173fedf8c5013d0eb66550",
+      "size_bytes": 76712,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Stairs_SideCover.glb",
+      "source_path": "public/glb/modular_dungeon_1/Stairs_SideCover.glb",
+      "git_blob_sha": "5ce7a47f536e0310e6d15199ae6ac2e4ef5732ae",
+      "size_bytes": 48636,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Stairs_SideCoverWall.glb",
+      "source_path": "public/glb/modular_dungeon_1/Stairs_SideCoverWall.glb",
+      "git_blob_sha": "17fbad0484255d6efc33873fc6d4c05f9605f0c3",
+      "size_bytes": 67700,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Statue_Horse.glb",
+      "source_path": "public/glb/modular_dungeon_1/Statue_Horse.glb",
+      "git_blob_sha": "e5be16c08db1e26385bb611792e2d3e3ca60c35b",
+      "size_bytes": 119712,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Sword_WallMount.glb",
+      "source_path": "public/glb/modular_dungeon_1/Sword_WallMount.glb",
+      "git_blob_sha": "948ab0da77afd13261abc0fa9309a84335a4ad16",
+      "size_bytes": 136004,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Table_Big.glb",
+      "source_path": "public/glb/modular_dungeon_1/Table_Big.glb",
+      "git_blob_sha": "37bc315ee0c9ab9a300afee16c9d47454398146e",
+      "size_bytes": 52208,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Table_Small.glb",
+      "source_path": "public/glb/modular_dungeon_1/Table_Small.glb",
+      "git_blob_sha": "7bc6b07ac4f074d64a1b92efd1678b9bcc2f146f",
+      "size_bytes": 46168,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Torch.glb",
+      "source_path": "public/glb/modular_dungeon_1/Torch.glb",
+      "git_blob_sha": "500ac324875b7c1593bea5cc7830043f0f7af71d",
+      "size_bytes": 23492,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Trap_empty.glb",
+      "source_path": "public/glb/modular_dungeon_1/Trap_empty.glb",
+      "git_blob_sha": "a4534a5e5b21795e1d005d122012f2f204de4428",
+      "size_bytes": 78004,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Trap_spikes.glb",
+      "source_path": "public/glb/modular_dungeon_1/Trap_spikes.glb",
+      "git_blob_sha": "2cab1e1f2db11a8639ef4f247fa23fdd378856f1",
+      "size_bytes": 107136,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Trapdoor.glb",
+      "source_path": "public/glb/modular_dungeon_1/Trapdoor.glb",
+      "git_blob_sha": "0162156beebb3c02fb2c281e2053400fcecbd257",
+      "size_bytes": 32360,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Trapdoor_open.glb",
+      "source_path": "public/glb/modular_dungeon_1/Trapdoor_open.glb",
+      "git_blob_sha": "59a2b6ac05eb1cc9239f0af6044e4b9675bc3f40",
+      "size_bytes": 34832,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Vase.glb",
+      "source_path": "public/glb/modular_dungeon_1/Vase.glb",
+      "git_blob_sha": "cbeb14c36894942c36c4eea4c1a25cccddce6077",
+      "size_bytes": 13392,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/WallCover_Modular.glb",
+      "source_path": "public/glb/modular_dungeon_1/WallCover_Modular.glb",
+      "git_blob_sha": "b7140d35aa54121d949ca6091306bf1b02432d13",
+      "size_bytes": 16308,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Wall_Modular.glb",
+      "source_path": "public/glb/modular_dungeon_1/Wall_Modular.glb",
+      "git_blob_sha": "4d6e77d38e4f15811fc623fafe7eba928b2afdc0",
+      "size_bytes": 91404,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_dungeon_1/Woodfire.glb",
+      "source_path": "public/glb/modular_dungeon_1/Woodfire.glb",
+      "git_blob_sha": "a830b9fd1c661455736af754235f53196d0c7264",
+      "size_bytes": 16940,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/modulardungeon.html"
+    },
+    {
+      "path": "modular_men/Adventurer.glb",
+      "source_path": "public/glb/modular_men/Adventurer.glb",
+      "git_blob_sha": "14456cd24345ad437840365396b60e82af653507",
+      "size_bytes": 1272560,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Beach.glb",
+      "source_path": "public/glb/modular_men/Beach.glb",
+      "git_blob_sha": "2e5c6fae3845729666b1b1ff0365eedea9e92b1e",
+      "size_bytes": 833592,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Casual.glb",
+      "source_path": "public/glb/modular_men/Casual.glb",
+      "git_blob_sha": "a74f94183952267a874c24ac73c4d2382fd0187d",
+      "size_bytes": 785308,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Casual2.glb",
+      "source_path": "public/glb/modular_men/Casual2.glb",
+      "git_blob_sha": "8de02ab8cc15be5d4375373675f886d347bef11e",
+      "size_bytes": 759456,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Farmer.glb",
+      "source_path": "public/glb/modular_men/Farmer.glb",
+      "git_blob_sha": "1bb26933075508de97d04c815032aff00d4b0a53",
+      "size_bytes": 699104,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/King.glb",
+      "source_path": "public/glb/modular_men/King.glb",
+      "git_blob_sha": "905e6219bb5605e35d6c71a8c79c81c297b00c68",
+      "size_bytes": 1335128,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Punk.glb",
+      "source_path": "public/glb/modular_men/Punk.glb",
+      "git_blob_sha": "519955c7a1bedfb84728869ab1f83a59e3649aaf",
+      "size_bytes": 702512,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Spacesuit.glb",
+      "source_path": "public/glb/modular_men/Spacesuit.glb",
+      "git_blob_sha": "c29cc9fd43303dcde1a39afd6d2046dcc6258154",
+      "size_bytes": 1273960,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Suit.glb",
+      "source_path": "public/glb/modular_men/Suit.glb",
+      "git_blob_sha": "7de8d95b6ad1cab6119e4bea4e08ae6f258604ca",
+      "size_bytes": 857732,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Swat.glb",
+      "source_path": "public/glb/modular_men/Swat.glb",
+      "git_blob_sha": "ac1ea33eb1f12541acba6821bc8b266c9c5cb315",
+      "size_bytes": 889396,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "modular_men/Worker.glb",
+      "source_path": "public/glb/modular_men/Worker.glb",
+      "git_blob_sha": "f9c8aa373fe950dded61eab9b4a895e71d58ddb0",
+      "size_bytes": 673480,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatemodularcharacters.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_1.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_1.glb",
+      "git_blob_sha": "f471d85eacf2d55daaf5eb2adc384f0fa6fc9401",
+      "size_bytes": 98204,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_2.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_2.glb",
+      "git_blob_sha": "e89b16d66c90971c3b98b496aa917b3aafe0b2ce",
+      "size_bytes": 90348,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_3.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_3.glb",
+      "git_blob_sha": "8f1e717202c17c0b2c62b1e65da39a2db0cd2d3a",
+      "size_bytes": 99468,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_4.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_4.glb",
+      "git_blob_sha": "1a93c7a8ee8667eea56b4afa6492abf7f183a5bc",
+      "size_bytes": 131892,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_5.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_5.glb",
+      "git_blob_sha": "6cbe42066762c679a0c5508e0d11fcb2629d68ea",
+      "size_bytes": 100164,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Autumn_1.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Autumn_1.glb",
+      "git_blob_sha": "55f5cab6c609017c46198d561beaf3e9aaadebc9",
+      "size_bytes": 98220,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Autumn_2.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Autumn_2.glb",
+      "git_blob_sha": "250872419362d67027a4d5f314b28d549bd3f5d6",
+      "size_bytes": 90348,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Autumn_3.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Autumn_3.glb",
+      "git_blob_sha": "d598a59f916475104636cd33c04743b5f3ad8f29",
+      "size_bytes": 99484,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Autumn_4.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Autumn_4.glb",
+      "git_blob_sha": "d20f1324b3fdbde3bbe79d877765ee5374ee18fb",
+      "size_bytes": 131908,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Autumn_5.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Autumn_5.glb",
+      "git_blob_sha": "e9a3b19a0df8094fa5a9c85859a9aa2a4abe9b5b",
+      "size_bytes": 100176,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_1.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_1.glb",
+      "git_blob_sha": "b542983ad1393105a16550b99977e966132c9f40",
+      "size_bytes": 47996,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_2.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_2.glb",
+      "git_blob_sha": "e1da095bc7ec0ef545a9b159cfb9560bb2a5ea3e",
+      "size_bytes": 74420,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_3.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_3.glb",
+      "git_blob_sha": "aed9c7d02fc38586e9d2a25eab602e26b0615471",
+      "size_bytes": 76644,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_4.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_4.glb",
+      "git_blob_sha": "2860825b087c699f047e438baee6b876e31527af",
+      "size_bytes": 88328,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_5.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_5.glb",
+      "git_blob_sha": "1c97e1a3a1b51aa17d59c32f586645c69b1df860",
+      "size_bytes": 70428,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_Snow_1.glb",
+      "git_blob_sha": "0e84cfa25831687f56f657a5f54930af1870689c",
+      "size_bytes": 52060,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_Snow_2.glb",
+      "git_blob_sha": "f34e15aeda38f0d8613892196134620e559e80f4",
+      "size_bytes": 82064,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_Snow_3.glb",
+      "git_blob_sha": "3af2df66647ae483bb41f54625762c070eee9d4c",
+      "size_bytes": 81800,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_Snow_4.glb",
+      "git_blob_sha": "b376fb598030d248eba540e1639fcffd45cc7dd0",
+      "size_bytes": 97372,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Dead_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Dead_Snow_5.glb",
+      "git_blob_sha": "652f19388cd1b1a3ede49f046b668c2dd22055e2",
+      "size_bytes": 73912,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Snow_1.glb",
+      "git_blob_sha": "965dc1e82d566b09913a307bb7d3bfc9d6003274",
+      "size_bytes": 104660,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Snow_2.glb",
+      "git_blob_sha": "1be70fb7b4b06aeb29b63a1b16e212c40a4711b1",
+      "size_bytes": 93760,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Snow_3.glb",
+      "git_blob_sha": "a96a35fd76d23290b32028485babfdf74775bef8",
+      "size_bytes": 104192,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Snow_4.glb",
+      "git_blob_sha": "ec9c437613d5495e1297c07733373c5c833af69c",
+      "size_bytes": 140508,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BirchTree_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/BirchTree_Snow_5.glb",
+      "git_blob_sha": "8dac7987dd02fd5deda01eca62cf9cc65177e798",
+      "size_bytes": 105104,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BushBerries_1.glb",
+      "source_path": "public/glb/nature_pack/BushBerries_1.glb",
+      "git_blob_sha": "c21615b1443afefe5f4a1392ee5fc50cd8ce7a7e",
+      "size_bytes": 50896,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/BushBerries_2.glb",
+      "source_path": "public/glb/nature_pack/BushBerries_2.glb",
+      "git_blob_sha": "cbd0ca236dacc18f56c3d346175d3f04fcbac55f",
+      "size_bytes": 45716,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Bush_1.glb",
+      "source_path": "public/glb/nature_pack/Bush_1.glb",
+      "git_blob_sha": "db58091cfc310c34b4ce0339fded9dbd01991e0e",
+      "size_bytes": 21348,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Bush_2.glb",
+      "source_path": "public/glb/nature_pack/Bush_2.glb",
+      "git_blob_sha": "569853e8fb92fc5b43b5cb8fa0126b110c8500b9",
+      "size_bytes": 16100,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Bush_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/Bush_Snow_1.glb",
+      "git_blob_sha": "60d37f3799bc5db32f5e89cc66c1cc023d9bc1ff",
+      "size_bytes": 27584,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Bush_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/Bush_Snow_2.glb",
+      "git_blob_sha": "41343a77b1424a5b52c940696b7e4567d0921096",
+      "size_bytes": 21036,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CactusFlower_1.glb",
+      "source_path": "public/glb/nature_pack/CactusFlower_1.glb",
+      "git_blob_sha": "f07cffdab375ef5cdbecc1fe35754d89907d59e0",
+      "size_bytes": 115764,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CactusFlowers_2.glb",
+      "source_path": "public/glb/nature_pack/CactusFlowers_2.glb",
+      "git_blob_sha": "4d0ef9c447d863b062e51329d0d595542212b91c",
+      "size_bytes": 84268,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CactusFlowers_3.glb",
+      "source_path": "public/glb/nature_pack/CactusFlowers_3.glb",
+      "git_blob_sha": "c725c18e08bb3e99a7b313ca37e5b7b020da5814",
+      "size_bytes": 67844,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CactusFlowers_4.glb",
+      "source_path": "public/glb/nature_pack/CactusFlowers_4.glb",
+      "git_blob_sha": "f2fc993bff6b9f4ed340ba3157cc0baddbfa66d5",
+      "size_bytes": 90892,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CactusFlowers_5.glb",
+      "source_path": "public/glb/nature_pack/CactusFlowers_5.glb",
+      "git_blob_sha": "ada91122e28b40e4cb2d60fe51b37c30d1881922",
+      "size_bytes": 45960,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Cactus_1.glb",
+      "source_path": "public/glb/nature_pack/Cactus_1.glb",
+      "git_blob_sha": "ca9679f38c2b7ccc0e36261f1539c05f90f02b54",
+      "size_bytes": 30312,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Cactus_2.glb",
+      "source_path": "public/glb/nature_pack/Cactus_2.glb",
+      "git_blob_sha": "15acab461bc8017d6c7089a866cec3cce31407a1",
+      "size_bytes": 40580,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Cactus_3.glb",
+      "source_path": "public/glb/nature_pack/Cactus_3.glb",
+      "git_blob_sha": "fdf9cb6509332ca71f87f15d08e736c481769104",
+      "size_bytes": 24160,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Cactus_4.glb",
+      "source_path": "public/glb/nature_pack/Cactus_4.glb",
+      "git_blob_sha": "2975b531266418ed3c77aaa15d5e31c2d6eac5b3",
+      "size_bytes": 63908,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Cactus_5.glb",
+      "source_path": "public/glb/nature_pack/Cactus_5.glb",
+      "git_blob_sha": "b16cb9a0f25449d2ac68b5bedb3354a16ced6be2",
+      "size_bytes": 31940,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_1.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_1.glb",
+      "git_blob_sha": "1ec431431a6b9ce4ffcefb5460426457f573eafc",
+      "size_bytes": 158708,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_2.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_2.glb",
+      "git_blob_sha": "e2555c67e165b79deaa6af905ed59eaaa705ad4e",
+      "size_bytes": 162108,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_3.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_3.glb",
+      "git_blob_sha": "866154043d0d7fd5d8ed69f2cc28567376b74ec6",
+      "size_bytes": 89340,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_4.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_4.glb",
+      "git_blob_sha": "33934beb3398f66e51946f8b4ae8d217bfed2b0e",
+      "size_bytes": 76780,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_5.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_5.glb",
+      "git_blob_sha": "023445f346cc895ef79500fa343e20aa7f0b01d5",
+      "size_bytes": 101896,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Autumn_1.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Autumn_1.glb",
+      "git_blob_sha": "3534beb0f18dad64a299479ea366b63e87059521",
+      "size_bytes": 158724,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Autumn_2.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Autumn_2.glb",
+      "git_blob_sha": "4fdffe6993d1a4c5b5a77bf3ab73757fec80dc83",
+      "size_bytes": 163172,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Autumn_3.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Autumn_3.glb",
+      "git_blob_sha": "a4711255541527a4e97278aad88e0bf62ba775b2",
+      "size_bytes": 89356,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Autumn_4.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Autumn_4.glb",
+      "git_blob_sha": "6da7c315ed1de3d6d8382e8309523ade4f927383",
+      "size_bytes": 76796,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Autumn_5.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Autumn_5.glb",
+      "git_blob_sha": "80e1350e9b71b9e3217eb516f82a523f306fd429",
+      "size_bytes": 101912,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_1.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_1.glb",
+      "git_blob_sha": "ba2eaec8d0aeb03256dcfe40b48b7483ecd50f74",
+      "size_bytes": 129160,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_2.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_2.glb",
+      "git_blob_sha": "10225c4faca523c4d05a9cdd5584a21c3355fcb7",
+      "size_bytes": 129160,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_3.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_3.glb",
+      "git_blob_sha": "0c539e0d1c85d4395e803176f741ee9c2dd09034",
+      "size_bytes": 52696,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_4.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_4.glb",
+      "git_blob_sha": "07a9bf93203e674f920a84e099c604001aa439ca",
+      "size_bytes": 56148,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_5.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_5.glb",
+      "git_blob_sha": "e65b72a5641d28928bdaa30f400b22b058e344ce",
+      "size_bytes": 78616,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_Snow_1.glb",
+      "git_blob_sha": "f2361aca66f223cf9c97141f56e4d878df39f79f",
+      "size_bytes": 144692,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_Snow_2.glb",
+      "git_blob_sha": "f285237a9a45756aed6aa23016a1cd5396b0aca0",
+      "size_bytes": 144232,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_Snow_3.glb",
+      "git_blob_sha": "65cda509941176e3523696b2f50db9d2eb79eadd",
+      "size_bytes": 57204,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_Snow_4.glb",
+      "git_blob_sha": "f46b63f2ef7f8229c29a22a6f2b47a57469c3aca",
+      "size_bytes": 62384,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Dead_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Dead_Snow_5.glb",
+      "git_blob_sha": "871792afa009783a00e18d1771927c209b2c447c",
+      "size_bytes": 86588,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Snow_1.glb",
+      "git_blob_sha": "16b024ef6865d61ba71f19374d50f5cc9c06b636",
+      "size_bytes": 164120,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Snow_2.glb",
+      "git_blob_sha": "01723c971320c612398aebe8fe9352240750a9cf",
+      "size_bytes": 168504,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Snow_3.glb",
+      "git_blob_sha": "371ae7c1ec497f37e74bfbf3a9af7dd26bee47b8",
+      "size_bytes": 95340,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Snow_4.glb",
+      "git_blob_sha": "cca09ed80164308cc7c5d7fdcc9a91eaf320b0c3",
+      "size_bytes": 80792,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/CommonTree_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/CommonTree_Snow_5.glb",
+      "git_blob_sha": "8e5f759e94060fdf3096f203c2396178d37f84b9",
+      "size_bytes": 107264,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Corn_1.glb",
+      "source_path": "public/glb/nature_pack/Corn_1.glb",
+      "git_blob_sha": "257f72726438c0dc2fc49579614345ba0da455a9",
+      "size_bytes": 33172,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Corn_2.glb",
+      "source_path": "public/glb/nature_pack/Corn_2.glb",
+      "git_blob_sha": "9df4f1000f71c099b7032742974d0fb189f4a4e6",
+      "size_bytes": 43288,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Flowers.glb",
+      "source_path": "public/glb/nature_pack/Flowers.glb",
+      "git_blob_sha": "6f04023b0915f2cdbfac18292c2ef90feaaee866",
+      "size_bytes": 26560,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Grass.glb",
+      "source_path": "public/glb/nature_pack/Grass.glb",
+      "git_blob_sha": "f448fddc97a22370d97fbc12e6a91f57ed2c06de",
+      "size_bytes": 12632,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Grass_2.glb",
+      "source_path": "public/glb/nature_pack/Grass_2.glb",
+      "git_blob_sha": "7ad2e5f47e876ce5453a3faac4e319de456d74c0",
+      "size_bytes": 12636,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Grass_Short.glb",
+      "source_path": "public/glb/nature_pack/Grass_Short.glb",
+      "git_blob_sha": "85d44dadd25f940dedeb46a140c79746de9b7c8b",
+      "size_bytes": 12656,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Lilypad.glb",
+      "source_path": "public/glb/nature_pack/Lilypad.glb",
+      "git_blob_sha": "b6d4e7b0199288a58787f75be6e13eb98f10105f",
+      "size_bytes": 23784,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PalmTree_1.glb",
+      "source_path": "public/glb/nature_pack/PalmTree_1.glb",
+      "git_blob_sha": "dbaf70ae56b33190b611087f52ef61bcc62d6e9e",
+      "size_bytes": 100824,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PalmTree_2.glb",
+      "source_path": "public/glb/nature_pack/PalmTree_2.glb",
+      "git_blob_sha": "3d3aae4ebdd42ce5a3b95187bced33deef78acfa",
+      "size_bytes": 71184,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PalmTree_3.glb",
+      "source_path": "public/glb/nature_pack/PalmTree_3.glb",
+      "git_blob_sha": "8841c59ef2751207eee3792a5a851dace6f602f4",
+      "size_bytes": 88128,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PalmTree_4.glb",
+      "source_path": "public/glb/nature_pack/PalmTree_4.glb",
+      "git_blob_sha": "72dde62346675942307fb84ab1d9e56b7eacc86d",
+      "size_bytes": 63764,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_1.glb",
+      "source_path": "public/glb/nature_pack/PineTree_1.glb",
+      "git_blob_sha": "ad802951468ccc02465a2a0ee1b4a7395acc28fb",
+      "size_bytes": 106060,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_2.glb",
+      "source_path": "public/glb/nature_pack/PineTree_2.glb",
+      "git_blob_sha": "ea16e5027341208450ace459079cd3ca97769949",
+      "size_bytes": 93688,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_3.glb",
+      "source_path": "public/glb/nature_pack/PineTree_3.glb",
+      "git_blob_sha": "99b4a0d0c2b588482fc75b6ed11bef14c3c5fbf3",
+      "size_bytes": 131548,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_4.glb",
+      "source_path": "public/glb/nature_pack/PineTree_4.glb",
+      "git_blob_sha": "d462fff9684d380776de9aa0d5a90de1b5804b7f",
+      "size_bytes": 94396,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_5.glb",
+      "source_path": "public/glb/nature_pack/PineTree_5.glb",
+      "git_blob_sha": "9c2ca7a3bf35b11d8d8ee1958059338dd7100d82",
+      "size_bytes": 87452,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Autumn_1.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Autumn_1.glb",
+      "git_blob_sha": "d3aa00d4355411c4ef30034497f7dd07280fa259",
+      "size_bytes": 107128,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Autumn_2.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Autumn_2.glb",
+      "git_blob_sha": "45cba199a2c491bb5c1804d09aa79089707827ce",
+      "size_bytes": 94756,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Autumn_3.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Autumn_3.glb",
+      "git_blob_sha": "1e0e7625863f19ef5cdd90659f1dd57a850eb046",
+      "size_bytes": 132620,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Autumn_4.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Autumn_4.glb",
+      "git_blob_sha": "5532748fa8410e4f0f7c34f160ddfd4d5bad3862",
+      "size_bytes": 95460,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Autumn_5.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Autumn_5.glb",
+      "git_blob_sha": "3d26c592372c9211b3221682b722791ba23d0692",
+      "size_bytes": 88524,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Snow_1.glb",
+      "git_blob_sha": "9c021cd7603d650187c7d5599276ac0903a2e00f",
+      "size_bytes": 107116,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Snow_2.glb",
+      "git_blob_sha": "056cb66f4744530ae349547692ba6d9c26f41e20",
+      "size_bytes": 94744,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Snow_3.glb",
+      "git_blob_sha": "b193b3fb3d3901d3b05b4b47fdf59f0e95898d03",
+      "size_bytes": 132604,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Snow_4.glb",
+      "git_blob_sha": "9f866d0848426c36b14d753e9b9c1521c9a4bc87",
+      "size_bytes": 95448,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/PineTree_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/PineTree_Snow_5.glb",
+      "git_blob_sha": "265e24c391177c06ae8ccb513ab2f52e33395d0d",
+      "size_bytes": 88504,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Plant_1.glb",
+      "source_path": "public/glb/nature_pack/Plant_1.glb",
+      "git_blob_sha": "021644a35acc74bea4c2de457f6f094940327872",
+      "size_bytes": 18416,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Plant_2.glb",
+      "source_path": "public/glb/nature_pack/Plant_2.glb",
+      "git_blob_sha": "b693392dc53c654d80c7b9f11a50264a1e64c1d2",
+      "size_bytes": 16040,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Plant_3.glb",
+      "source_path": "public/glb/nature_pack/Plant_3.glb",
+      "git_blob_sha": "8014c77f46a0533f9a9ae6a2bf2414b68c65ccf3",
+      "size_bytes": 34872,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Plant_4.glb",
+      "source_path": "public/glb/nature_pack/Plant_4.glb",
+      "git_blob_sha": "5b5b00e6d5a206529b5710fadf2416e00aba7242",
+      "size_bytes": 29152,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Plant_5.glb",
+      "source_path": "public/glb/nature_pack/Plant_5.glb",
+      "git_blob_sha": "713258e45d30e51739d4180398dd87774fe82bf1",
+      "size_bytes": 36992,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_1.glb",
+      "source_path": "public/glb/nature_pack/Rock_1.glb",
+      "git_blob_sha": "074ed892d5f0919cbf06f46883728550bd0cc9ad",
+      "size_bytes": 5516,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_2.glb",
+      "source_path": "public/glb/nature_pack/Rock_2.glb",
+      "git_blob_sha": "a326746bdd8fb462beaa8e507ea186744df087c3",
+      "size_bytes": 6100,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_3.glb",
+      "source_path": "public/glb/nature_pack/Rock_3.glb",
+      "git_blob_sha": "4e795f14265eec80319e1c8b673930a7d1197797",
+      "size_bytes": 5812,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_4.glb",
+      "source_path": "public/glb/nature_pack/Rock_4.glb",
+      "git_blob_sha": "9537df68f7042a6cec20e6ebb57a171c7c9a9ce0",
+      "size_bytes": 8884,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_5.glb",
+      "source_path": "public/glb/nature_pack/Rock_5.glb",
+      "git_blob_sha": "b9087f17fee6816298030273b31f620b83852381",
+      "size_bytes": 6644,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_6.glb",
+      "source_path": "public/glb/nature_pack/Rock_6.glb",
+      "git_blob_sha": "2b657672352f462d9f8b5fc0a310e8e55f6e5d35",
+      "size_bytes": 7760,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_7.glb",
+      "source_path": "public/glb/nature_pack/Rock_7.glb",
+      "git_blob_sha": "3b6ffabc4e12fd237166e8c9b73f75d06d530e2c",
+      "size_bytes": 6904,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Moss_1.glb",
+      "source_path": "public/glb/nature_pack/Rock_Moss_1.glb",
+      "git_blob_sha": "6416ffe51639c45249138b092f8292ec62c4db62",
+      "size_bytes": 6560,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Moss_2.glb",
+      "source_path": "public/glb/nature_pack/Rock_Moss_2.glb",
+      "git_blob_sha": "06eb51cbf77f5bfcee35e6b979d79c533af8eab7",
+      "size_bytes": 7084,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Moss_3.glb",
+      "source_path": "public/glb/nature_pack/Rock_Moss_3.glb",
+      "git_blob_sha": "f81f812cf47bf0b90ca4d3befdfc19d02d058a78",
+      "size_bytes": 6376,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Moss_4.glb",
+      "source_path": "public/glb/nature_pack/Rock_Moss_4.glb",
+      "git_blob_sha": "d940fbd5134c4f214bb5a646efad98a401271147",
+      "size_bytes": 9932,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Moss_5.glb",
+      "source_path": "public/glb/nature_pack/Rock_Moss_5.glb",
+      "git_blob_sha": "f3db78e46e24f903192b09ee54ee15415ae55905",
+      "size_bytes": 7532,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Moss_6.glb",
+      "source_path": "public/glb/nature_pack/Rock_Moss_6.glb",
+      "git_blob_sha": "8352f49ce54097199f035c7da98b0704e19c4f08",
+      "size_bytes": 8808,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Moss_7.glb",
+      "source_path": "public/glb/nature_pack/Rock_Moss_7.glb",
+      "git_blob_sha": "f5936a31f52fc354273905c0bc0534e2c0be80d5",
+      "size_bytes": 7484,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/Rock_Snow_1.glb",
+      "git_blob_sha": "f453757e09ba4bc6ff5453d560fff43d229e5f1c",
+      "size_bytes": 8288,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/Rock_Snow_2.glb",
+      "git_blob_sha": "e10e623afc26829570408e52a77c45e2c1c9ead2",
+      "size_bytes": 9260,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/Rock_Snow_3.glb",
+      "git_blob_sha": "d5a7dcc824006d4435fb41f31f7e23651cd032cd",
+      "size_bytes": 7892,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/Rock_Snow_4.glb",
+      "git_blob_sha": "e49acd08b34275b95cac040bba6c901f1147acd6",
+      "size_bytes": 13176,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/Rock_Snow_5.glb",
+      "git_blob_sha": "e145ebe387e1f275616e0b8c56d6bbe8d06db675",
+      "size_bytes": 9480,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Snow_6.glb",
+      "source_path": "public/glb/nature_pack/Rock_Snow_6.glb",
+      "git_blob_sha": "5e322b14ea96ff53ba9fc2eac27bf7f9fc23104b",
+      "size_bytes": 12480,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Rock_Snow_7.glb",
+      "source_path": "public/glb/nature_pack/Rock_Snow_7.glb",
+      "git_blob_sha": "374bedfbdfaea305207b2a791a7f1b4ff8dcd77f",
+      "size_bytes": 11056,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/TreeStump.glb",
+      "source_path": "public/glb/nature_pack/TreeStump.glb",
+      "git_blob_sha": "2765e6e0566744f9e2cf350afa9356ddc9803519",
+      "size_bytes": 16408,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/TreeStump_Moss.glb",
+      "source_path": "public/glb/nature_pack/TreeStump_Moss.glb",
+      "git_blob_sha": "37851b530cca2cf2c582359a29259ac8a3c28ab2",
+      "size_bytes": 15376,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/TreeStump_Snow.glb",
+      "source_path": "public/glb/nature_pack/TreeStump_Snow.glb",
+      "git_blob_sha": "efd88c208001967dfca8220f832a1f65c0a2fb0b",
+      "size_bytes": 16780,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Wheat.glb",
+      "source_path": "public/glb/nature_pack/Wheat.glb",
+      "git_blob_sha": "4766e9627b3462ef110ed918544feab2aa8e6216",
+      "size_bytes": 24108,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_1.glb",
+      "source_path": "public/glb/nature_pack/Willow_1.glb",
+      "git_blob_sha": "f3616474c13cbabd3df2065f894eef26939d2742",
+      "size_bytes": 109088,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_2.glb",
+      "source_path": "public/glb/nature_pack/Willow_2.glb",
+      "git_blob_sha": "d7736ada2de0ffa968f93a48c308127db21aa499",
+      "size_bytes": 151272,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_3.glb",
+      "source_path": "public/glb/nature_pack/Willow_3.glb",
+      "git_blob_sha": "7742c54f42ab04b606abf82be1528d6ad5184388",
+      "size_bytes": 59144,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_4.glb",
+      "source_path": "public/glb/nature_pack/Willow_4.glb",
+      "git_blob_sha": "c11f4c3862de5bdae504017af08abf8df8a6b518",
+      "size_bytes": 87472,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_5.glb",
+      "source_path": "public/glb/nature_pack/Willow_5.glb",
+      "git_blob_sha": "ea25c1a1a468581230d93782294252d95764071f",
+      "size_bytes": 90256,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Autumn_1.glb",
+      "source_path": "public/glb/nature_pack/Willow_Autumn_1.glb",
+      "git_blob_sha": "96882e542c5a4df894b297bdbf916700ad8ca53f",
+      "size_bytes": 109100,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Autumn_2.glb",
+      "source_path": "public/glb/nature_pack/Willow_Autumn_2.glb",
+      "git_blob_sha": "41631301e8da9e24f3fc8ec526671ba83901e4a2",
+      "size_bytes": 151280,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Autumn_3.glb",
+      "source_path": "public/glb/nature_pack/Willow_Autumn_3.glb",
+      "git_blob_sha": "95e4fbff8327b360103d2a93447ca10d58dba6fe",
+      "size_bytes": 59136,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Autumn_4.glb",
+      "source_path": "public/glb/nature_pack/Willow_Autumn_4.glb",
+      "git_blob_sha": "4aac97b1d0c1e1825de7f2f82ca68e200ed4438c",
+      "size_bytes": 87484,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Autumn_5.glb",
+      "source_path": "public/glb/nature_pack/Willow_Autumn_5.glb",
+      "git_blob_sha": "cf5f8124a97e24afa9eaf622ebc57784a81618fb",
+      "size_bytes": 90264,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_1.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_1.glb",
+      "git_blob_sha": "3c90dbb9a328b95a75af1c7f772579df07ec8287",
+      "size_bytes": 63968,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_2.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_2.glb",
+      "git_blob_sha": "8464a19fff2796b4f86d47c2c970003e46a0f7dc",
+      "size_bytes": 102152,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_3.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_3.glb",
+      "git_blob_sha": "a32e60bb95adade706d38f133084762f35373e44",
+      "size_bytes": 23308,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_4.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_4.glb",
+      "git_blob_sha": "09d9f7a65ab6560b021286bdfca3333fe2cb8704",
+      "size_bytes": 44044,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_5.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_5.glb",
+      "git_blob_sha": "27261cd7468027fa56a3afa3705f2b67f4385f44",
+      "size_bytes": 28492,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_Snow_1.glb",
+      "git_blob_sha": "08e4c62f254d2adcacd2836f89a21fad59325d2f",
+      "size_bytes": 69988,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_Snow_2.glb",
+      "git_blob_sha": "7e963547860faeb5549fecb665264b2a57ce5784",
+      "size_bytes": 113788,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_Snow_3.glb",
+      "git_blob_sha": "43b904235a10e36deacd71d212d7419492c72044",
+      "size_bytes": 26516,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_Snow_4.glb",
+      "git_blob_sha": "fb2f0939f29572443beff0ad733be387bd98ec52",
+      "size_bytes": 48984,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Dead_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/Willow_Dead_Snow_5.glb",
+      "git_blob_sha": "5be29a06019afd5ac80c91d6dd83269c69872b04",
+      "size_bytes": 33212,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Snow_1.glb",
+      "source_path": "public/glb/nature_pack/Willow_Snow_1.glb",
+      "git_blob_sha": "15edf2d156283c32e3f0913bf9f26d3e795822f7",
+      "size_bytes": 113596,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Snow_2.glb",
+      "source_path": "public/glb/nature_pack/Willow_Snow_2.glb",
+      "git_blob_sha": "900e2c3385561f4b10d888e1cf25593da765e698",
+      "size_bytes": 155996,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Snow_3.glb",
+      "source_path": "public/glb/nature_pack/Willow_Snow_3.glb",
+      "git_blob_sha": "7aebcf563d719a3ed66a0846b41d84d9c3eecc97",
+      "size_bytes": 62984,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Snow_4.glb",
+      "source_path": "public/glb/nature_pack/Willow_Snow_4.glb",
+      "git_blob_sha": "5462c2cce53975c4cb9cb76e77a897f4b4985500",
+      "size_bytes": 92196,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/Willow_Snow_5.glb",
+      "source_path": "public/glb/nature_pack/Willow_Snow_5.glb",
+      "git_blob_sha": "f083534d48a0da81eab6d5790613ff528fdfc676",
+      "size_bytes": 96492,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/WoodLog.glb",
+      "source_path": "public/glb/nature_pack/WoodLog.glb",
+      "git_blob_sha": "872f1015eff034a72429e8990774a1272223ddd6",
+      "size_bytes": 29332,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/WoodLog_Moss.glb",
+      "source_path": "public/glb/nature_pack/WoodLog_Moss.glb",
+      "git_blob_sha": "104c3647750638b257b34b9bde3a8ba1cfb11736",
+      "size_bytes": 39980,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "nature_pack/WoodLog_Snow.glb",
+      "source_path": "public/glb/nature_pack/WoodLog_Snow.glb",
+      "git_blob_sha": "69642009e3aab6feb994401b6943ee713bba7fc7",
+      "size_bytes": 17864,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimatenature.html"
+    },
+    {
+      "path": "rpg_items_pack/Armor_Black.glb",
+      "source_path": "public/glb/rpg_items_pack/Armor_Black.glb",
+      "git_blob_sha": "8cd52f3073e32f04d4129a97a96230552dcdafe0",
+      "size_bytes": 59116,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Armor_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Armor_Golden.glb",
+      "git_blob_sha": "c06577b4bc47644ccb44ce9fd4ccc4aee96a9b91",
+      "size_bytes": 58064,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Armor_Leather.glb",
+      "source_path": "public/glb/rpg_items_pack/Armor_Leather.glb",
+      "git_blob_sha": "4865213b3f452d4d0d6ba1850c29d9c9383e3573",
+      "size_bytes": 17452,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Armor_Metal.glb",
+      "source_path": "public/glb/rpg_items_pack/Armor_Metal.glb",
+      "git_blob_sha": "34d3517b14b56fbdc9e71f9bb705f52653f9b61b",
+      "size_bytes": 33440,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Armor_Metal2.glb",
+      "source_path": "public/glb/rpg_items_pack/Armor_Metal2.glb",
+      "git_blob_sha": "3f33bd769f7d94d9ce43d7e9d72e73b2c7abb942",
+      "size_bytes": 39920,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Arrow.glb",
+      "source_path": "public/glb/rpg_items_pack/Arrow.glb",
+      "git_blob_sha": "7f542fdc1af6dbac55c545a0bf66c6ca77c2d03a",
+      "size_bytes": 16836,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Arrow_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Arrow_Golden.glb",
+      "git_blob_sha": "c903c80d48b5f166f3482ab9974abbb1dc27a7d6",
+      "size_bytes": 14756,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Axe_Double.glb",
+      "source_path": "public/glb/rpg_items_pack/Axe_Double.glb",
+      "git_blob_sha": "5512547c79d0572f3d4c8cd1255fca892260b45d",
+      "size_bytes": 84232,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Axe_Double_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Axe_Double_Golden.glb",
+      "git_blob_sha": "dffc48530458679e5e29c7fca9589f2f439fc5f6",
+      "size_bytes": 84244,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Axe_small.glb",
+      "source_path": "public/glb/rpg_items_pack/Axe_small.glb",
+      "git_blob_sha": "391d4b188bc255b862c38b04c024bfb0bbd9c1a2",
+      "size_bytes": 54604,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Axe_small_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Axe_small_Golden.glb",
+      "git_blob_sha": "2b0d785b800680ccc9fec4afc6e290f40f41aff7",
+      "size_bytes": 54616,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Backpack.glb",
+      "source_path": "public/glb/rpg_items_pack/Backpack.glb",
+      "git_blob_sha": "989c469bf4ee2df683f98d3717405bd7d2b912aa",
+      "size_bytes": 217084,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Bag.glb",
+      "source_path": "public/glb/rpg_items_pack/Bag.glb",
+      "git_blob_sha": "3ba1e20606064e59add6fdaa14c5ad0c4c2d3918",
+      "size_bytes": 70352,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Bone.glb",
+      "source_path": "public/glb/rpg_items_pack/Bone.glb",
+      "git_blob_sha": "8ab2cd3fdf1ecaa8285fdc66cde96b7734925b4c",
+      "size_bytes": 17192,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book1_Closed.glb",
+      "source_path": "public/glb/rpg_items_pack/Book1_Closed.glb",
+      "git_blob_sha": "175d30d5d5a99e37586de42c4b6f649d8f549a99",
+      "size_bytes": 17416,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book1_Open.glb",
+      "source_path": "public/glb/rpg_items_pack/Book1_Open.glb",
+      "git_blob_sha": "2dcc875df7b0f5a96fb43c87e2a141f5169e81bd",
+      "size_bytes": 25168,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book2_Closed.glb",
+      "source_path": "public/glb/rpg_items_pack/Book2_Closed.glb",
+      "git_blob_sha": "fe013d3b519b7c7ad09e76fb5bd12c5ceca881bb",
+      "size_bytes": 21344,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book2_Open.glb",
+      "source_path": "public/glb/rpg_items_pack/Book2_Open.glb",
+      "git_blob_sha": "eae95790bb8d6fbc37b2f93a34ac6096469883c5",
+      "size_bytes": 34976,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book3_Closed.glb",
+      "source_path": "public/glb/rpg_items_pack/Book3_Closed.glb",
+      "git_blob_sha": "251fac2caf95acc9f342d9c48b9e5bd71a4934de",
+      "size_bytes": 61620,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book3_Open.glb",
+      "source_path": "public/glb/rpg_items_pack/Book3_Open.glb",
+      "git_blob_sha": "cf0a94f0da1cacb287b91d260c067ff4adad472d",
+      "size_bytes": 29044,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book4_Closed.glb",
+      "source_path": "public/glb/rpg_items_pack/Book4_Closed.glb",
+      "git_blob_sha": "1773b70ebef47540d44273f560366e59922c3cea",
+      "size_bytes": 40448,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Book4_Open.glb",
+      "source_path": "public/glb/rpg_items_pack/Book4_Open.glb",
+      "git_blob_sha": "7d1cb6e518acf4803be950888dc1c44833d1549e",
+      "size_bytes": 27080,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Bow_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Bow_Golden.glb",
+      "git_blob_sha": "0f9e35da90d09787b17947913a441a5148a9d6a7",
+      "size_bytes": 45460,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Bow_Wooden.glb",
+      "source_path": "public/glb/rpg_items_pack/Bow_Wooden.glb",
+      "git_blob_sha": "0de4d56d126278beb4f41a6c8c77ec148197a55b",
+      "size_bytes": 39108,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Chalice.glb",
+      "source_path": "public/glb/rpg_items_pack/Chalice.glb",
+      "git_blob_sha": "f3984ce5481a061e9565e39d32f1d9da3008e893",
+      "size_bytes": 22020,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Chest_Closed.glb",
+      "source_path": "public/glb/rpg_items_pack/Chest_Closed.glb",
+      "git_blob_sha": "544e63ca39289d37837dc4c88f7d716e8386511b",
+      "size_bytes": 96748,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Chest_Ingots.glb",
+      "source_path": "public/glb/rpg_items_pack/Chest_Ingots.glb",
+      "git_blob_sha": "45c0703df9be03e813138a9b9cbbdabd3d5f85c4",
+      "size_bytes": 131208,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Chest_Open.glb",
+      "source_path": "public/glb/rpg_items_pack/Chest_Open.glb",
+      "git_blob_sha": "4b518fb1ad07c4d4abf0dac68d31a6473b0989ce",
+      "size_bytes": 95156,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/ChickenLeg.glb",
+      "source_path": "public/glb/rpg_items_pack/ChickenLeg.glb",
+      "git_blob_sha": "e6b50a0cecd5359a4c2ee03b838f76e809935138",
+      "size_bytes": 18296,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Coin.glb",
+      "source_path": "public/glb/rpg_items_pack/Coin.glb",
+      "git_blob_sha": "47960d1081c5ed2941de450e63b6332d5122083a",
+      "size_bytes": 22304,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Coin_Skull.glb",
+      "source_path": "public/glb/rpg_items_pack/Coin_Skull.glb",
+      "git_blob_sha": "28cbf96cc90e03b4c81bc3a8dc1b30c0b854cc26",
+      "size_bytes": 31200,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Coin_Star.glb",
+      "source_path": "public/glb/rpg_items_pack/Coin_Star.glb",
+      "git_blob_sha": "4a9363116f7459cbfda4101b6fd2e46d75b130d1",
+      "size_bytes": 25292,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crown.glb",
+      "source_path": "public/glb/rpg_items_pack/Crown.glb",
+      "git_blob_sha": "37ef28282d7cf20bb3c065c4c782a736544a0353",
+      "size_bytes": 33660,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crown2.glb",
+      "source_path": "public/glb/rpg_items_pack/Crown2.glb",
+      "git_blob_sha": "f3c8a0274e006169a16c48be4e251f1c9c895f3e",
+      "size_bytes": 47620,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal1.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal1.glb",
+      "git_blob_sha": "2e873bebe1ccecef0c4099f3e9cdde3141abf75c",
+      "size_bytes": 5208,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal1_Damaged.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal1_Damaged.glb",
+      "git_blob_sha": "49b37fa124cf2872aa6624c43028ee516cdd30af",
+      "size_bytes": 7972,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal2.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal2.glb",
+      "git_blob_sha": "e2bb4c16abbfa1d5e241d7f213c15e8730dee655",
+      "size_bytes": 10248,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal2_Damaged.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal2_Damaged.glb",
+      "git_blob_sha": "40ab36dba7a82c1feeb8dbf765ad7c60b8f92776",
+      "size_bytes": 7312,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal3.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal3.glb",
+      "git_blob_sha": "99012b4ba800aa1187185f8b30334e0bb1962cee",
+      "size_bytes": 3084,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal3_Damaged.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal3_Damaged.glb",
+      "git_blob_sha": "1e35f51367cf086310402822f0ab646c4843eab4",
+      "size_bytes": 8988,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal4.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal4.glb",
+      "git_blob_sha": "3abbf4ef2696346c332fdb144c9e37fd5dd3c81e",
+      "size_bytes": 4028,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal5.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal5.glb",
+      "git_blob_sha": "48baea3c38f7e989367da805fdac50b03f9d9cb0",
+      "size_bytes": 2968,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Crystal5_Damaged.glb",
+      "source_path": "public/glb/rpg_items_pack/Crystal5_Damaged.glb",
+      "git_blob_sha": "d98344eb592b8d77e5dc86157d390354647169af",
+      "size_bytes": 6228,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Dagger.glb",
+      "source_path": "public/glb/rpg_items_pack/Dagger.glb",
+      "git_blob_sha": "a85368f456710b6ff8fb96d11075b35b016055ea",
+      "size_bytes": 42808,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Dagger_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Dagger_Golden.glb",
+      "git_blob_sha": "e5a44ed8937fa60f349873c588e671b1e071f942",
+      "size_bytes": 42824,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Dart.glb",
+      "source_path": "public/glb/rpg_items_pack/Dart.glb",
+      "git_blob_sha": "675665d49660ae061bc14ab8de10f524bc4a7265",
+      "size_bytes": 16836,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Dart_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Dart_Golden.glb",
+      "git_blob_sha": "fabee0881651ebb3b67e3099f7500edfb35de40e",
+      "size_bytes": 14752,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/FishBone.glb",
+      "source_path": "public/glb/rpg_items_pack/FishBone.glb",
+      "git_blob_sha": "58cdfe687860ff380b2a464951daa0d21cdb721b",
+      "size_bytes": 33068,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Glove.glb",
+      "source_path": "public/glb/rpg_items_pack/Glove.glb",
+      "git_blob_sha": "fe9eeed3cd81cb0ca82507f7a8d9338d91a7c881",
+      "size_bytes": 40796,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Gold_Ingots.glb",
+      "source_path": "public/glb/rpg_items_pack/Gold_Ingots.glb",
+      "git_blob_sha": "8e7850dbe2e4bf894f80fc34d607bc82b5a639ad",
+      "size_bytes": 36696,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Hammer_Double.glb",
+      "source_path": "public/glb/rpg_items_pack/Hammer_Double.glb",
+      "git_blob_sha": "8f7b80dea6ac7c02158c44b2d1e723bb9d2955b7",
+      "size_bytes": 105920,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Hammer_Double_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Hammer_Double_Golden.glb",
+      "git_blob_sha": "7c460c330d4db352dd5e85627593b34d6533b919",
+      "size_bytes": 105936,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Heart.glb",
+      "source_path": "public/glb/rpg_items_pack/Heart.glb",
+      "git_blob_sha": "8ac68f52775ba90b4f18861a52cf97fbec4bda25",
+      "size_bytes": 32796,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Heart_Broken.glb",
+      "source_path": "public/glb/rpg_items_pack/Heart_Broken.glb",
+      "git_blob_sha": "ce887aa0b310d8220fb21c50e90efabf47fdda75",
+      "size_bytes": 37708,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Heart_Half.glb",
+      "source_path": "public/glb/rpg_items_pack/Heart_Half.glb",
+      "git_blob_sha": "f6e2af665d93e1f7c77a9316672f94eaf40a7588",
+      "size_bytes": 19676,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Key1.glb",
+      "source_path": "public/glb/rpg_items_pack/Key1.glb",
+      "git_blob_sha": "1905a2f6321f20d185eb71e532d4f19be8e366c6",
+      "size_bytes": 16980,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Key2.glb",
+      "source_path": "public/glb/rpg_items_pack/Key2.glb",
+      "git_blob_sha": "b797a45f02e45a0563a954d84ae666ed8297ad6d",
+      "size_bytes": 29200,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Key3.glb",
+      "source_path": "public/glb/rpg_items_pack/Key3.glb",
+      "git_blob_sha": "d1fa8451b1c819bc66f65d2d18bd3e8d3512fec2",
+      "size_bytes": 41732,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Key4.glb",
+      "source_path": "public/glb/rpg_items_pack/Key4.glb",
+      "git_blob_sha": "5d343a6f578db2f40d6e97d4f3a338a90dc4ab2d",
+      "size_bytes": 38800,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Mineral.glb",
+      "source_path": "public/glb/rpg_items_pack/Mineral.glb",
+      "git_blob_sha": "984a545cceb5f23e7ff16999810fb68ce5c07337",
+      "size_bytes": 90384,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Necklace1.glb",
+      "source_path": "public/glb/rpg_items_pack/Necklace1.glb",
+      "git_blob_sha": "367c69aa9a0deaff9f23cffb7a42c0474d734a08",
+      "size_bytes": 59736,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Necklace2.glb",
+      "source_path": "public/glb/rpg_items_pack/Necklace2.glb",
+      "git_blob_sha": "973588e105af5861319df0d9f2f5a7d2b96a246c",
+      "size_bytes": 48516,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Necklace3.glb",
+      "source_path": "public/glb/rpg_items_pack/Necklace3.glb",
+      "git_blob_sha": "780d3a109b282f94bd79aa01e5029bbd4b754110",
+      "size_bytes": 61920,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Padlock.glb",
+      "source_path": "public/glb/rpg_items_pack/Padlock.glb",
+      "git_blob_sha": "442fb46b0b755a4dbe793861d684153b935950a0",
+      "size_bytes": 33852,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Parchment.glb",
+      "source_path": "public/glb/rpg_items_pack/Parchment.glb",
+      "git_blob_sha": "1bb91579ba389d023b33743c92ebb7bba9221cd3",
+      "size_bytes": 33000,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion10_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion10_Empty.glb",
+      "git_blob_sha": "397fc8648665a3e0380ff5ee0d9a661a06a49ed3",
+      "size_bytes": 18716,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion10_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion10_Filled.glb",
+      "git_blob_sha": "fd824f14d144ecd12b8bd4c5b22ff08a034d6833",
+      "size_bytes": 22044,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion11_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion11_Empty.glb",
+      "git_blob_sha": "474254c73130ee371e5e568443183286c64dbbb7",
+      "size_bytes": 22076,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion11_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion11_Filled.glb",
+      "git_blob_sha": "60a4abdbc81a3a97ce16aa9c6ba1f7a9a58eca62",
+      "size_bytes": 25408,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion1_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion1_Empty.glb",
+      "git_blob_sha": "e0b3510408a4c29f3d05ae03daa8ff5d86b0d747",
+      "size_bytes": 32444,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion1_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion1_Filled.glb",
+      "git_blob_sha": "7e2b9676afc0d607e78de0a55c075761ebad75e3",
+      "size_bytes": 37360,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion2_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion2_Empty.glb",
+      "git_blob_sha": "10b786fc1fabee5befba4d7ba17babb29b1d80d2",
+      "size_bytes": 31336,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion2_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion2_Filled.glb",
+      "git_blob_sha": "1d623f8c95243189891be5eccd74293aaffca042",
+      "size_bytes": 37096,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion3_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion3_Empty.glb",
+      "git_blob_sha": "c0c81a602302aa47b2cb83ef9c1db039a78302fe",
+      "size_bytes": 31340,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion3_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion3_Filled.glb",
+      "git_blob_sha": "0e9be28d9ad460c93b05b5f9e064c63ca43f2461",
+      "size_bytes": 39980,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion4_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion4_Empty.glb",
+      "git_blob_sha": "8757e2ecd03be18627a903f14d567c40a930f118",
+      "size_bytes": 31340,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion4_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion4_Filled.glb",
+      "git_blob_sha": "4b7e4388e8ddb3513726fbae5df34f6337034967",
+      "size_bytes": 37676,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion5_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion5_Empty.glb",
+      "git_blob_sha": "5e1151aa26f15ee242b518cf7d5f24a219f2eeea",
+      "size_bytes": 35952,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion5_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion5_Filled.glb",
+      "git_blob_sha": "3cd105536ef170967ba3cd401a390d4e727c3cdb",
+      "size_bytes": 42480,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion6_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion6_Empty.glb",
+      "git_blob_sha": "87afac1b8dc850fdfb0ee3336b5ec9bcb9d5c6fc",
+      "size_bytes": 45176,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion6_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion6_Filled.glb",
+      "git_blob_sha": "590e405a1cc2394b22977cabb4883d4baf0e9232",
+      "size_bytes": 56116,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion7_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion7_Empty.glb",
+      "git_blob_sha": "bdc70d918b2adac12543dcec77401f1b986f0b8a",
+      "size_bytes": 26736,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion7_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion7_Filled.glb",
+      "git_blob_sha": "69d9f27fe9e4afcbcdd31406c83add9b19bf8fdb",
+      "size_bytes": 34224,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion8_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion8_Empty.glb",
+      "git_blob_sha": "ee569fdbb92a3a70e481b18cba55aae3e135b24e",
+      "size_bytes": 26736,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion8_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion8_Filled.glb",
+      "git_blob_sha": "ec35f244e1585170b87f85c3c2503f8658c28306",
+      "size_bytes": 34228,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion9_Empty.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion9_Empty.glb",
+      "git_blob_sha": "3b939347e81b1eda1aabfd1c749fd3e5fb8a0290",
+      "size_bytes": 29332,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Potion9_Filled.glb",
+      "source_path": "public/glb/rpg_items_pack/Potion9_Filled.glb",
+      "git_blob_sha": "fb6a16677ac051de89bbba6d8000dbcb9001ef59",
+      "size_bytes": 34124,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Pouch.glb",
+      "source_path": "public/glb/rpg_items_pack/Pouch.glb",
+      "git_blob_sha": "42236ef249a065ea1366c755b400649c131a2cd0",
+      "size_bytes": 24804,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Ring1.glb",
+      "source_path": "public/glb/rpg_items_pack/Ring1.glb",
+      "git_blob_sha": "c43c20fe20da6b8201e51952370321c49668b74b",
+      "size_bytes": 12372,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Ring2.glb",
+      "source_path": "public/glb/rpg_items_pack/Ring2.glb",
+      "git_blob_sha": "8c6dcc3505427746187cd28f69522af7afd3441c",
+      "size_bytes": 13308,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Ring3.glb",
+      "source_path": "public/glb/rpg_items_pack/Ring3.glb",
+      "git_blob_sha": "787dcaf92c15bc0b619e938dbaaa305ff37843b8",
+      "size_bytes": 17364,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Ring4.glb",
+      "source_path": "public/glb/rpg_items_pack/Ring4.glb",
+      "git_blob_sha": "8d5e8b77b8599de02bd2da65ec06eec9f18239e9",
+      "size_bytes": 30364,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Ring5.glb",
+      "source_path": "public/glb/rpg_items_pack/Ring5.glb",
+      "git_blob_sha": "68ed9f05f3c2f0af34b262be9c110d55ba790368",
+      "size_bytes": 30500,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Ring6.glb",
+      "source_path": "public/glb/rpg_items_pack/Ring6.glb",
+      "git_blob_sha": "3f2ab8fb137b598d3095ecaca5513b27eca12531",
+      "size_bytes": 20304,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Ring7.glb",
+      "source_path": "public/glb/rpg_items_pack/Ring7.glb",
+      "git_blob_sha": "263da28f31e12882654883e3783f112343417233",
+      "size_bytes": 17324,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Scroll.glb",
+      "source_path": "public/glb/rpg_items_pack/Scroll.glb",
+      "git_blob_sha": "6791ee1e013807c462f2e632648ab2fc9aeac5af",
+      "size_bytes": 54328,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Skull.glb",
+      "source_path": "public/glb/rpg_items_pack/Skull.glb",
+      "git_blob_sha": "9cde55e1556fb19c7ee76e4886ef8d55ddf1b106",
+      "size_bytes": 20408,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Skull2.glb",
+      "source_path": "public/glb/rpg_items_pack/Skull2.glb",
+      "git_blob_sha": "0f37ae56907caa56bb17252bdac1c1e76b36e500",
+      "size_bytes": 91552,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Snowflake1.glb",
+      "source_path": "public/glb/rpg_items_pack/Snowflake1.glb",
+      "git_blob_sha": "ef8a807c2dd5f59ccc3933cbf016d952c2d12223",
+      "size_bytes": 37396,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Snowflake2.glb",
+      "source_path": "public/glb/rpg_items_pack/Snowflake2.glb",
+      "git_blob_sha": "19731958874bf03da3e3c8eb445b564b9580f1fc",
+      "size_bytes": 22032,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Snowflake3.glb",
+      "source_path": "public/glb/rpg_items_pack/Snowflake3.glb",
+      "git_blob_sha": "b38cc0ed2c803c736d3de5fef975d1ae19fdbbbe",
+      "size_bytes": 82924,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Star.glb",
+      "source_path": "public/glb/rpg_items_pack/Star.glb",
+      "git_blob_sha": "476f3416bc8188be82d2e23cdd661102aeb208c1",
+      "size_bytes": 13564,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Sword.glb",
+      "source_path": "public/glb/rpg_items_pack/Sword.glb",
+      "git_blob_sha": "add0a9400c6f3790b1b1df831467e9803970e199",
+      "size_bytes": 47240,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Sword_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Sword_Golden.glb",
+      "git_blob_sha": "e2f05acff247697158455ed32074c0682a160bd1",
+      "size_bytes": 47252,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Sword_big.glb",
+      "source_path": "public/glb/rpg_items_pack/Sword_big.glb",
+      "git_blob_sha": "37609dd2aeaadc969673d0cf11c9f2fd27280bf4",
+      "size_bytes": 50036,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    },
+    {
+      "path": "rpg_items_pack/Sword_big_Golden.glb",
+      "source_path": "public/glb/rpg_items_pack/Sword_big_Golden.glb",
+      "git_blob_sha": "e7046ffb4be64852f3d5686d12ed74a03b63c508",
+      "size_bytes": 50048,
+      "license": "CC0-1.0",
+      "source_pack_page": "https://quaternius.com/packs/ultimaterpg.html"
+    }
+  ],
+  "summary": {
+    "file_count": 401,
+    "total_bytes": 45812580,
+    "runtime_aliases": {
+      "assets/wotlk/creatures/wolf.glb": "third_party/quaternius/animals_pack/Wolf.glb"
+    }
+  }
+}

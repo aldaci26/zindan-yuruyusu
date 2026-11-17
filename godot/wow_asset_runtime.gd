@@ -98,6 +98,8 @@ static func spawn_creature(kind: String, fallback: Callable) -> Node3D:
 		var instance := packed.instantiate()
 		if instance is Node3D:
 			var node := instance as Node3D
+			node.set_meta("wow_asset_source", path)
+			_sanitize_imported_scene(node)
 			_configure_gobkit_animation_segments(node, path)
 			return node
 		instance.queue_free()
@@ -106,6 +108,7 @@ static func spawn_creature(kind: String, fallback: Callable) -> Node3D:
 static func update_locomotion(root: Node3D, moving: bool, attacking: bool = false) -> void:
 	if root == null or not is_instance_valid(root):
 		return
+	_sanitize_imported_scene(root)
 	for candidate in root.find_children("*", "AnimationPlayer", true, false):
 		var player := candidate as AnimationPlayer
 		if player == null:
@@ -142,6 +145,29 @@ static func play_death(root: Node3D) -> bool:
 			player.set_meta("wow_animation_state", "death")
 			played = true
 	return played
+
+static func _sanitize_imported_scene(root: Node3D) -> void:
+	if root.has_meta("wow_meshes_sanitized"):
+		return
+	root.set_meta("wow_meshes_sanitized", true)
+	var empty_meshes: Array[String] = []
+	for candidate in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := candidate as MeshInstance3D
+		if mesh_instance != null and mesh_instance.mesh == null:
+			empty_meshes.append(str(mesh_instance.get_path()))
+			var parent := mesh_instance.get_parent()
+			if parent != null:
+				parent.remove_child(mesh_instance)
+			mesh_instance.free()
+	for candidate in root.find_children("*", "MultiMeshInstance3D", true, false):
+		var multimesh_instance := candidate as MultiMeshInstance3D
+		if multimesh_instance != null and (multimesh_instance.multimesh == null or multimesh_instance.multimesh.mesh == null):
+			var parent := multimesh_instance.get_parent()
+			if parent != null:
+				parent.remove_child(multimesh_instance)
+			multimesh_instance.free()
+	if not empty_meshes.is_empty():
+		push_warning("Removed empty mesh nodes from %s: %s" % [str(root.get_meta("wow_asset_source", root.name)), ", ".join(empty_meshes)])
 
 static func _load_gobkit_segments() -> void:
 	if _gobkit_segments_loaded:

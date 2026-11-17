@@ -167,7 +167,7 @@ static func _sanitize_imported_scene(root: Node3D) -> void:
 				parent.remove_child(multimesh_instance)
 			multimesh_instance.free()
 	if not empty_meshes.is_empty():
-		push_warning("Removed empty mesh nodes from %s: %s" % [str(root.get_meta("wow_asset_source", root.name)), ", ".join(empty_meshes)])
+		push_warning("Removed empty mesh nodes from %s: %s" % [str(root.get_meta("wow_asset_source", root.name)), str(empty_meshes)])
 
 static func _load_gobkit_segments() -> void:
 	if _gobkit_segments_loaded:

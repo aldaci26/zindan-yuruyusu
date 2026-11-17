@@ -5,6 +5,7 @@ extends RefCounted
 const CREATURE_SCENES := {
 	"wolf": ["res://assets/wotlk_local/creatures/wolf.glb", "res://assets/wotlk/creatures/wolf.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Wolf.glb"],
 	"boar": ["res://assets/wotlk_local/creatures/boar.glb", "res://assets/third_party/gobkit/animalB/Boar.glb", "res://assets/third_party/gobkit/animal012/WildBoar.glb"],
+	"gobkit_wild_boar": ["res://assets/third_party/gobkit/animal012/WildBoar.glb"],
 	"rat": ["res://assets/wotlk_local/creatures/rat.glb", "res://assets/third_party/gobkit/animalB/Rat.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Rat.glb"],
 	"deer": ["res://assets/wotlk_local/creatures/deer.glb", "res://assets/third_party/gobkit/animal006/Doe.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Deer.glb"],
 	"stag": ["res://assets/wotlk_local/creatures/stag.glb", "res://assets/third_party/gobkit/animal011/SkullDeer.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Stag.glb"],

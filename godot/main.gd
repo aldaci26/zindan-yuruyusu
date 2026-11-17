@@ -2043,7 +2043,7 @@ func _camp_model(kind: String) -> Node3D:
 		"trogg": return WowAssets.spawn_creature("trogg", func(): return Dwarf.make_trogg(false))
 		"gnoll": return WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(false))
 		"murloc": return Dwarf.make_murloc(false)
-		"shaman": return WowAssets.spawn_creature("shaman", func(): return Dwarf.make_murloc(true))
+		"shaman": return Dwarf.make_murloc(true)
 		"croc": return Dwarf.make_croc(false)
 		"bog": return Dwarf.make_bogbeast()
 		"cinder":

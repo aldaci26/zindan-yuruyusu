@@ -1,26 +1,28 @@
 # WotLK Asset Import Contract
 
-Use Godot 4.3 and import rigged characters, creatures and equipment as glTF 2.0 binary (.glb) scenes. This folder intentionally contains no extracted Blizzard client files and no unverified third-party models.
+Use Godot 4.3 and import rigged characters, creatures and equipment as glTF 2.0 binary (.glb) scenes.
+
+## Private/local asset folder
+
+Place client-derived or otherwise non-redistributable files only under assets/wotlk_local/. This directory is ignored by Git. It is intentionally excluded from commits and releases. The project can load these local files for private testing, but do not publish them unless the exact asset license permits redistribution.
 
 ## First supported creature
 
-Place a properly licensed, rigged wolf model at creatures/wolf.glb.
+Place a properly licensed, rigged wolf model at assets/wotlk_local/creatures/wolf.glb for private/local testing, or assets/wotlk/creatures/wolf.glb only if the model is independently licensed for redistribution.
 
-The existing outdoor wolf spawn will automatically load it when present. Otherwise it uses the existing procedural wolf model. The imported scene should contain:
+The existing outdoor wolf spawn loads the local version first, then the public asset version, and finally falls back to the existing procedural wolf. The imported scene should contain:
 - a Node3D root;
 - one or more MeshInstance3D nodes;
 - a Skeleton3D with skin weights;
 - an AnimationPlayer with clips whose names include Idle/Stand, Walk/Run, Attack/Bite and optionally Death/Die.
 
-The runtime animation mapper is case-insensitive and accepts common clip-name variants.
+## Equipment
 
-## Other reserved paths
+For each equipped item, the runtime looks for equipment/<item_id>.glb in wotlk_local first, then wotlk. Example: equipment/axe_old.glb. Models are attached to matching Skeleton3D bones when available; the current procedural dwarf rig has named fallback sockets. Per-model alignment may need adjustment in the source GLB.
+
+## Other reserved creature paths
 - creatures/frost_wolf.glb
 - creatures/trogg.glb
-
-## Equipment attachment
-
-Use WowAssetRuntime.attach_equipment() to attach a PackedScene to a named Skeleton3D bone (preferred) or to the existing procedural dwarf rig as a fallback. Supply candidate bone names for the source rig, e.g. ["Hand.R", "hand_r", "RightHand"]. Validate the actual bone names in the imported asset before shipping.
 
 ## Asset acceptance checklist
 1. Source URL and exact repository commit are recorded.

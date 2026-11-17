@@ -72,7 +72,15 @@ jobs:
             exit 0
           fi
           git commit -m "Import expanded CC0 fantasy models and painterly atlas maps"
-          # Other CI or manual commits may advance wow while large asset packs download.
-          git fetch origin wow
-          git rebase origin/wow
-          git push origin HEAD:wow
+          # Retry if another workflow advances wow between fetch/rebase and push.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin wow
+            git rebase origin/wow
+            if git push origin HEAD:wow; then
+              exit 0
+            fi
+            echo "Concurrent branch update detected; retrying push ($attempt/5)."
+            sleep 2
+          done
+          echo "Could not push imported assets after 5 retries."
+          exit 1

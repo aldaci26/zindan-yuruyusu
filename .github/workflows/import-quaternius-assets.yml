@@ -1,0 +1,53 @@
+name: Import CC0 Quaternius game assets
+
+on:
+  push:
+    branches:
+      - wow
+    paths:
+      - ".github/workflows/import-quaternius-assets.yml"
+      - "godot/tools/import_quaternius_assets.py"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-quaternius-assets-wow
+  cancel-in-progress: false
+
+jobs:
+  import-assets:
+    name: Download, verify and commit curated CC0 GLB assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout wow branch
+        uses: actions/checkout@v4
+        with:
+          ref: wow
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download and verify source assets
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python godot/tools/import_quaternius_assets.py
+
+      - name: Commit imported models and textures
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add godot/assets/wotlk/third_party/quaternius
+          git add godot/assets/wotlk/creatures/wolf.glb
+          if git diff --cached --quiet; then
+            echo "No asset changes to commit."
+            exit 0
+          fi
+          git commit -m "Import curated CC0 Quaternius models and textures"
+          git push origin HEAD:wow

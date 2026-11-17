@@ -35,8 +35,8 @@ const ENTRIES := [
  {"label":"Gobkit Bloodiron Smith","path":"res://assets/third_party/gobkit/human010/BloodironSmith.glb","kind":"miner","scale":1.0},
  {"label":"Gobkit Footman","path":"res://assets/third_party/gobkit/human003/Footman.glb","kind":"guard","scale":1.0},
  {"label":"Gobkit Orc War Shaman","path":"res://assets/third_party/gobkit/human006/OrcWarShaman.glb","kind":"shaman","scale":1.0},
- {"label":"Gobkit Tomb Mummy","path":"res://assets/third_party/gobkit/human011/TombMummy.glb","kind":"ashbone","scale":1.0},
- {"label":"Gobkit Wild Boar","path":"res://assets/third_party/gobkit/animal012/WildBoar.glb","kind":"boar","scale":1.2},
+ {"label":"Gobkit Tomb Mummy","path":"res://assets/third_party/gobkit/human011/TombMummy.glb","scale":1.0},
+ {"label":"Gobkit Wild Boar","path":"res://assets/third_party/gobkit/animal012/WildBoar.glb","kind":"gobkit_wild_boar","scale":1.2},
  {"label":"Gobkit Doe","path":"res://assets/third_party/gobkit/animal006/Doe.glb","kind":"deer","scale":1.2},
  {"label":"Gobkit Skull Deer","path":"res://assets/third_party/gobkit/animal011/SkullDeer.glb","kind":"stag","scale":1.2},
 ]

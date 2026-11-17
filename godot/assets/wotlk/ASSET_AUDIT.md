@@ -40,8 +40,10 @@ that identifies CC0-1.0. We imported 401 GLB files (43.69 MiB) from these packs:
 - Ultimate Nature Pack
 - Ultimate RPG Pack
 
-The GLBs contain the models and their packaged material/texture data. The
-runtime Wolf alias at `assets/wotlk/creatures/wolf.glb` now points to the
+The GLBs contain the model geometry and available material data. Texture
+coverage is pack-dependent: the official Ultimate Animated Animal and Ultimate
+Nature pages mark their models as untextured, so this import is **not** claimed
+to be a complete texture library. The runtime Wolf alias at `assets/wotlk/creatures/wolf.glb` now points to the
 imported Quaternius Wolf model, and the isolated WotLK visual lab uses this
 model first with the procedural wolf retained as fallback.
 
@@ -51,3 +53,15 @@ Quaternius art and are not represented as WoW client models or textures.
 Full per-file paths, upstream blob SHAs, sizes, pack pages and license labels
 are recorded in `third_party/quaternius/ASSET_MANIFEST.json`; attribution and
 license boundaries are in `QUATERNIUS_ASSET_CREDITS.md`.
+
+
+### Texture coverage caveat
+
+Quaternius' FAQ states that texture coverage depends on the pack. The official
+Ultimate Animated Animal and Ultimate Nature pack pages mark their models as
+untextured. The current import therefore provides a real mesh/animation/prop
+library and whatever materials are present in each GLB, but it does not satisfy
+the separate requirement for a complete, consistent set of image texture maps.
+Do not describe all 401 models as textured. A dedicated texture pass must
+source CC0 textures (or original hand-painted textures) and record each
+texture's provenance independently.

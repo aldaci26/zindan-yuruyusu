@@ -63,7 +63,7 @@ func _run() -> void:
 		"required_count": 3,
 		"label": "Defeat snow wolves"
 	})
-	first.rewards = [{"type": "currency", "amount": 25}]
+	first.rewards.append({"type": "currency", "amount": 25})
 	_check(first.validate().is_empty(), "valid quest definition should pass validation")
 
 	var second = QuestDefinition.new()

@@ -3,9 +3,9 @@ extends RefCounted
 ## Missing assets always fall back to the existing procedural models.
 
 const CREATURE_SCENES := {
-	"wolf": "res://assets/wotlk/creatures/wolf.glb",
-	"frost_wolf": "res://assets/wotlk/creatures/frost_wolf.glb",
-	"trogg": "res://assets/wotlk/creatures/trogg.glb",
+	"wolf": ["res://assets/wotlk_local/creatures/wolf.glb", "res://assets/wotlk/creatures/wolf.glb"],
+	"frost_wolf": ["res://assets/wotlk_local/creatures/frost_wolf.glb", "res://assets/wotlk/creatures/frost_wolf.glb"],
+	"trogg": ["res://assets/wotlk_local/creatures/trogg.glb", "res://assets/wotlk/creatures/trogg.glb"],
 }
 const ANIMATION_ALIASES := {
 	"idle": ["idle", "stand", "breathing"],
@@ -15,14 +15,18 @@ const ANIMATION_ALIASES := {
 }
 
 static func spawn_creature(kind: String, fallback: Callable) -> Node3D:
-	var path := str(CREATURE_SCENES.get(kind, ""))
-	if not path.is_empty() and ResourceLoader.exists(path):
+	var paths: Array = CREATURE_SCENES.get(kind, [])
+	for path_value in paths:
+		var path := str(path_value)
+		if not ResourceLoader.exists(path):
+			continue
 		var packed := load(path) as PackedScene
-		if packed != null:
-			var instance := packed.instantiate()
-			if instance is Node3D:
-				return instance as Node3D
-			instance.queue_free()
+		if packed == null:
+			continue
+		var instance := packed.instantiate()
+		if instance is Node3D:
+			return instance as Node3D
+		instance.queue_free()
 	return fallback.call() as Node3D
 
 static func update_locomotion(root: Node3D, moving: bool, attacking: bool = false) -> void:
@@ -92,7 +96,9 @@ static func refresh_equipment(character: Node3D, equipped: Dictionary) -> void:
 		var item_id := str(equipped[slot])
 		if item_id.is_empty():
 			continue
-		var path := "res://assets/wotlk/equipment/%s.glb" % item_id
+		var local_path := "res://assets/wotlk_local/equipment/%s.glb" % item_id
+		var public_path := "res://assets/wotlk/equipment/%s.glb" % item_id
+		var path := local_path if ResourceLoader.exists(local_path) else public_path
 		if not ResourceLoader.exists(path):
 			continue
 		var packed := load(path) as PackedScene

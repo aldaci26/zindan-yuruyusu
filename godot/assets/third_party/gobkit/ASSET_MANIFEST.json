@@ -19328,5 +19328,6 @@
     "rigged_model_count": 236,
     "animated_model_count": 236,
     "total_bytes": 62072560
-  }
+  },
+  "animation_segments_file": "ANIMATION_SEGMENTS.json"
 }

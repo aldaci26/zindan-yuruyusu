@@ -10,6 +10,9 @@ SOURCES={
  "adventurers":{"repo":"KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0","commit":"672074b73ba276876a19e8816ecdc5241817ab47","addon":"kaykit_character_pack_adventures","folders":["Characters/gltf/","Assets/gltf/"],"ext":{".glb",".gltf",".bin",".png"}},
  "skeletons":{"repo":"KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0","commit":"15b62b9bad122f72926c10fb14d622c73819fa54","addon":"kaykit_character_pack_skeletons","folders":["Characters/gltf/","Assets/gltf/"],"ext":{".glb",".gltf",".bin",".png"}},
  "dungeon":{"repo":"KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0","commit":"b0ca9bd96a8072ab36a3a5464f00ed1e06a16d07","addon":"kaykit_dungeon_remastered","folders":["Assets/gltf/","Assets/texture/"],"ext":{".glb",".png"}},
+ "medieval_hexagon":{"repo":"KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0","commit":"84fa4e91af6a88989be7c99e0891cede11f2ca38","addon":"kaykit_medieval_hexagon_pack","folders":["Assets/gltf/","Textures/"],"ext":{".gltf",".bin",".png"}},
+ "city_builder":{"repo":"KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0","commit":"63976910ca04d16f0fc531b9c614244be8128713","addon":"kaykit_city_builder_bits","folders":["Assets/gltf/"],"ext":{".gltf",".bin",".png"}},
+ "halloween_bits":{"repo":"KayKit-Game-Assets/KayKit-Halloween-Bits-1.0","commit":"6dc69bf6b2fa766a985754f35ec6a0324090e6c6","addon":"kaykit_halloween_bits","folders":["Assets/gltf/"],"ext":{".gltf",".bin",".png"}},
 }
 def get(url,token=""):
  headers={"User-Agent":"zindan-yuruyusu-cc0-import/1.0"}
@@ -43,7 +46,7 @@ def main():
    if not p.startswith(prefix): continue
    rel=p[len(prefix):]
    if any(rel.startswith(x) for x in spec["folders"]) and PurePosixPath(p).suffix.lower() in spec["ext"]: chosen.append(e)
-  if not any(x["path"].lower().endswith(".glb") for x in chosen): raise RuntimeError(f"No GLB found in {repo}")
+  if not any(PurePosixPath(x["path"]).suffix.lower() in {".glb", ".gltf"} for x in chosen): raise RuntimeError(f"No glTF/GLB model found in {repo}")
   manifest["sources"][slug]={"repository":f"https://github.com/{repo}","commit":commit,"license":"CC0-1.0","readme":f"https://github.com/{repo}/blob/{commit}/README.md","license_file":f"https://github.com/{repo}/blob/{commit}/LICENSE.txt","file_count":len(chosen)}
   for e in chosen:
    p=e["path"]

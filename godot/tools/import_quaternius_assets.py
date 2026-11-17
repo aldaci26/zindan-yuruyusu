@@ -6,6 +6,7 @@ script is run by GitHub Actions, where network access is available.
 """
 from __future__ import annotations
 
+import concurrent.futures
 import json
 import os
 import shutil
@@ -102,8 +103,7 @@ def main() -> int:
         "assets": [],
     }
 
-    total_bytes = 0
-    for index, entry in enumerate(selected, start=1):
+    def download_entry(entry):
         source_path = entry["path"]
         relative_path = source_path.removeprefix("public/glb/")
         destination = ASSET_ROOT / relative_path
@@ -118,16 +118,22 @@ def main() -> int:
         if data[:4] != b"glTF":
             raise RuntimeError(f"Invalid GLB header: {source_path}")
         destination.write_bytes(data)
-        total_bytes += len(data)
-        manifest["assets"].append({
+        return {
             "path": relative_path,
             "source_path": source_path,
             "git_blob_sha": entry["sha"],
             "size_bytes": len(data),
             "license": "CC0-1.0",
             "source_pack_page": PACKS[relative_path.split("/", 1)[0]],
-        })
-        print(f"[{index}/{len(selected)}] {relative_path} ({len(data):,} bytes)")
+        }
+
+    total_bytes = 0
+    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as pool:
+        for index, record in enumerate(pool.map(download_entry, selected), start=1):
+            manifest["assets"].append(record)
+            total_bytes += record["size_bytes"]
+            if index % 25 == 0 or index == len(selected):
+                print(f"[{index}/{len(selected)}] {record['path']} ({record['size_bytes']:,} bytes)")
 
     # The runtime already knows this stable path. Keep the original vendor
     # copy too; Git stores identical file content as a single blob.

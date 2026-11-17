@@ -8,6 +8,7 @@ on:
       - ".github/workflows/import-quaternius-assets.yml"
       - "godot/tools/import_quaternius_assets.py"
       - "godot/tools/import_kaykit_assets.py"
+      - "godot/tools/import_gobkit_assets.py"
       - "godot/tools/generate_painterly_atlas.py"
   workflow_dispatch:
 
@@ -49,6 +50,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: python godot/tools/import_kaykit_assets.py
 
+      - name: Import Gobkit CC0 animated creatures and nature
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python godot/tools/import_gobkit_assets.py
+
       - name: Generate original painterly-style atlas maps
         run: python godot/tools/generate_painterly_atlas.py
 
@@ -59,10 +65,14 @@ jobs:
           git add godot/assets/wotlk/third_party/quaternius
           git add godot/assets/wotlk/creatures/wolf.glb
           git add godot/assets/third_party/kaykit
+          git add godot/assets/third_party/gobkit
           git add godot/assets/materials/painterly_fantasy_*
           if git diff --cached --quiet; then
             echo "No asset changes to commit."
             exit 0
           fi
           git commit -m "Import expanded CC0 fantasy models and painterly atlas maps"
+          # Other CI or manual commits may advance wow while large asset packs download.
+          git fetch origin wow
+          git rebase origin/wow
           git push origin HEAD:wow

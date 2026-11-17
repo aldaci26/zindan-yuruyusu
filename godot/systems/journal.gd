@@ -15,6 +15,10 @@ const LORE := {
 	"l_marsh": {"title": "Sisli Bataklık", "text": "Muck'a göre sis, Murloc şamanlarının ayinleriyle her gece kalınlaşıyor. Karakol sisin içinde yolunu bayraklarla işaretliyor."},
 	"l_gruff": {"title": "Gruff Swiftbite", "text": "Brenna, devasa timsahın bir zamanlar karakolun sevgili avı olduğunu, sonra göldeki karanlık bir şeyin onu azdırdığını söylüyor."},
 	"l_caravan": {"title": "Kervan Yolu", "text": "Fenn'in kervanları bataklıktan güneye, kül yağan diyarlara uzanan eski bir yolu kullanıyordu. Yol şimdi kapalı; kimse neden olduğunu bilmiyor."},
+	"l_ashland": {"title": "Kül Diyarı", "text": "Ragnaros uyanınca gökten kül yağmaya başladı. Torga'ya göre yer çatlamış, lav havuzları yürünmez hâle gelmiş; Kül Nöbetçileri son sığınağı tutuyor."},
+	"l_golemagg": {"title": "Golemagg", "text": "Zeyra'ya göre Golemagg batıdaki kor ocağının bekçisi. Canı azalınca çekirdek köpeklerini çağırıyor; Magma Dalgası yakınındakileri yakıyor."},
+	"l_geddon": {"title": "Baron Geddon", "text": "Geddon etrafına cehennem halkası yayıyor ve Yaşayan Bomba ile hedefini yakıyor. Canı yarıya inince Armagedon ile herkesi sarsıyor."},
+	"l_sulfuron": {"title": "Kül Lordu Sulfuron", "text": "Sulfuron güneybatıda çekiciyle oturuyor. Hizmetkârlarını çağırıyor; canı azaldıkça öfkeleniyor."},
 	"l_ash": {"title": "Kül Diyarı Söylentisi", "text": "Güneyde, bataklığın ötesinde gökten kül yağan bir diyar olduğu söyleniyor. Ragnaros'un uyanışından sonra orası yaşanmaz olmuş."},
 }
 
@@ -25,7 +29,9 @@ const GIVERS := {
 	"q_mine1": "Madenci Başı Durin, Demirkazan", "q_mine2": "Madenci Başı Durin, Demirkazan", "q_mine3": "Madenci Başı Durin, Demirkazan",
 	"q_bear": "Komutan Thrum, Demirkazan", "q_defias": "Komutan Thrum, Demirkazan", "q_dark": "Komutan Thrum, Demirkazan", "q_vc": "Komutan Thrum, Demirkazan", "q_rag": "Komutan Thrum, Demirkazan",
 	"q_murloc": "Bekçi Muck, Bataklık Karakolu", "q_shaman": "Bekçi Muck, Bataklık Karakolu", "q_croc": "Bekçi Muck, Bataklık Karakolu",
-	"q_bog": "Kaşif Brenna, Bataklık Karakolu", "q_gruff": "Kaşif Brenna, Bataklık Karakolu",
+	"q_bog": "Kaşif Brenna, Bataklık Karakolu",
+	"q_ash1": "Nöbetçi Torga, Kül Nöbetçileri Kampı", "q_ash2": "Nöbetçi Torga, Kül Nöbetçileri Kampı", "q_ash3": "Nöbetçi Torga, Kül Nöbetçileri Kampı", "q_ash4": "Nöbetçi Torga, Kül Nöbetçileri Kampı",
+	"q_ash5": "Kor Avcısı Zeyra, Kül Nöbetçileri Kampı", "q_ash6": "Kor Avcısı Zeyra, Kül Nöbetçileri Kampı", "q_ash7": "Kor Avcısı Zeyra, Kül Nöbetçileri Kampı", "q_gruff": "Kaşif Brenna, Bataklık Karakolu",
 }
 
 static func unlock(lore: Dictionary, id: String) -> bool:

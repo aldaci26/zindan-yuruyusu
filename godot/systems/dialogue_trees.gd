@@ -102,6 +102,36 @@ const TREES := {
 		"ok": {"text": "Tamam tamam, şu kese senin. Ama kimseye söyleme!", "money": 900, "rep": ["kar", 100], "once": true, "opts": [{"label": "Teşekkürler.", "next": "start"}]},
 		"fail": {"text": "Bu fiyat zaten kâr bırakmıyor.", "opts": [{"label": "Peki.", "next": "start"}]},
 	},
+	"torga": {
+		"start": {"text": "Kül yağmuru dinmiyor. Nöbet burada kolay değil; ne soracaksın?", "opts": [
+			{"label": "Kül Diyarı nasıl bir yer?", "next": "land"},
+			{"label": "Lav havuzlarına yaklaşmak güvenli mi?", "next": "lava", "need": {"lvl": 14}},
+			{"label": "Nöbetçilere katılabilir miyim? (İkna)", "next": "", "check": {"dc": 16, "ok": "ok", "fail": "fail"}, "need": {"speech": 12}},
+			{"label": "Hoşça kal.", "next": ""}]},
+		"land": {"text": "Ragnaros uyanınca gökten kül yağmaya başladı. Yer çatladı, lav yükseldi. Biz kalan son nöbetçileriz.", "lore": "l_ashland", "opts": [{"label": "Anladım.", "next": "start"}]},
+		"lava": {"text": "Havuzlara yaklaşma; kenarları çöker. Golemler lavdan çıkıp kampa yürüyor, yolun ortasında kal.", "xp": 160, "once": true, "opts": [{"label": "Anladım.", "next": "start"}]},
+		"ok": {"text": "Cesursun. Nöbet defterine adını yazdım; kampta herkes seni tanıyacak.", "rep": ["kul", 200], "once": true, "opts": [{"label": "Teşekkürler.", "next": "start"}]},
+		"fail": {"text": "Güzel konuşuyorsun ama nöbet iş ister.", "opts": [{"label": "Peki.", "next": "start"}]},
+	},
+	"zeyra": {
+		"start": {"text": "Avlanacak çok şey var burada. Ne öğrenmek istersin?", "opts": [
+			{"label": "Golemagg kimdir?", "next": "golemagg"},
+			{"label": "Baron Geddon'dan nasıl korunurum?", "next": "geddon", "need": {"lvl": 16}},
+			{"label": "Kül Lordu hakkında ne biliyorsun?", "next": "sulfuron", "need": {"q": "q_ash6"}},
+			{"label": "Hoşça kal.", "next": ""}]},
+		"golemagg": {"text": "Batıdaki kor ocağının bekçisi. Çekirdek köpeklerini çağırır; önce onları temizlemeni öneririm.", "lore": "l_golemagg", "opts": [{"label": "Anladım.", "next": "start"}]},
+		"geddon": {"text": "Etrafına cehennem halkası yayar. Yaşayan Bomba üstündeyken uzaklaş, yoksa yakınındakileri de yakar.", "lore": "l_geddon", "opts": [{"label": "Anladım.", "next": "start"}]},
+		"sulfuron": {"text": "Güneybatıda, Sulfuron çekiciyle oturur. Hizmetkârlarını çağırır; sabırlı ol, çevreni kolla.", "lore": "l_sulfuron", "xp": 200, "once": true, "opts": [{"label": "Anladım.", "next": "start"}]},
+	},
+	"rolf": {
+		"start": {"text": "Kervanım kül altında kaldı ama mal hâlâ var. Ne lazım?", "opts": [
+			{"label": "Buraya nasıl geldin?", "next": "road"},
+			{"label": "Bana indirim yapar mısın? (İkna)", "next": "", "check": {"dc": 16, "ok": "ok", "fail": "fail"}, "need": {"speech": 10}},
+			{"label": "Hoşça kal.", "next": ""}]},
+		"road": {"text": "Bataklıktan güneye uzanan eski kervan yoluyla. Şimdi yalnızca portaldan geçiliyor; yol lavla kesildi.", "xp": 100, "once": true, "opts": [{"label": "Anladım.", "next": "start"}]},
+		"ok": {"text": "Peki, şu kese senin. Bir dahaki sefere fiyat tam!", "money": 1100, "rep": ["kul", 100], "once": true, "opts": [{"label": "Teşekkürler.", "next": "start"}]},
+		"fail": {"text": "Bu fiyat zaten zarar.", "opts": [{"label": "Peki.", "next": "start"}]},
+	},
 }
 
 static func node(npc_id: String, node_id: String) -> Dictionary:

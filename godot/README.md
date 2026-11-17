@@ -42,7 +42,7 @@ Karlı vadide kurt, domuz ve ayı avla; Demirkazan cüce şehrinde görev al, de
 WoW Classic mantığıyla: nadirlik renkleri (gri, beyaz, yeşil, mavi, mor), 16 ekipman yuvası, 16 gözlü çanta, bakır/gümüş/altın parası, eşya ipuçları ve giyili eşyayla karşılaştırma. Canavarlar ceset üzerinde ganimet bırakır (sol tık veya G). Tüccar Hilda ve Demirci Borga eşya satar, sattıklarını geri alabilirsin. Görev ödüllerinde eşya seçersin. İki takım vardır: Derin Ocak Takımı ve Dağ Kralının Mirası; parça sayısına göre ek güç verir. Eşyalar sadece istatistik değiştirir, görünüm değişmez.
 
 ## Görevler
-Üç görev vericisi (Avcı Başı Ragna, Muhafız Dorn, Komutan Thrum) birer görev zinciri verir; biri bitince sıradaki açılır. Toplam 21 görev var (Kar Dağı, Bataklık ve Madenin görevleri dahil). Her görev tecrübe, para ve üç eşyadan birini seçme hakkı verir. Görev vericisinin üstündeki `!` yeni görev, `?` teslim demektir.
+Üç görev vericisi (Avcı Başı Ragna, Muhafız Dorn, Komutan Thrum) birer görev zinciri verir; biri bitince sıradaki açılır. Toplam 28 görev var (Kar Dağı, Bataklık, Maden ve Kül Diyarı görevleri dahil). Her görev tecrübe, para ve üç eşyadan birini seçme hakkı verir. Görev vericisinin üstündeki `!` yeni görev, `?` teslim demektir.
 
 ## Düşmanlar
 Kurt, yaban domuzu ve dağ ayısına ek olarak dört kamp vardır: **Troggar** (doğu, Sv 3-6), **Gnoll'lar** (doğu-güney, Sv 4-7), **Defias haydutları** (güneybatı, Sv 6-8) ve **Kara Demir büyücüleri** (batı, Sv 7-9; uzaktan ateş okuyla vururlar). Her türün kendine özel çerçöpü düşer.
@@ -79,11 +79,14 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 - **Madencilik** (Madenci Başı Durin): Kar Dağı'ndaki ve madendeki damarlara yaklaşıp G'ye bas. Demir ve Kara Demir cevheri verir. Damarlar 150 sn sonra yeniden çıkar.
 - **Deri İşleme** (Avcı Başı Ragna): Hayvanlardan ham deri düşer; deriyi işleyip pelerin ve kemer yaparsın.
 - **Demircilik** (Demirci Borga): Cevheri külçeye çevirir, külçe ve deriden silah ve zırh dökersin. Üretim Demirkazan içinde yapılır.
-- **İtibar**: Demirkazan Kalesi, Bataklık Karakolu ve Maden Loncası. Görev teslimi ve düşman öldürmek itibar kazandırır; Dost ve üstünde o gruptaki satıcılar %5-20 indirim yapar.
+- **İtibar**: Demirkazan Kalesi, Bataklık Karakolu, Maden Loncası ve Kül Nöbetçileri. Görev teslimi ve düşman öldürmek itibar kazandırır; Dost ve üstünde o gruptaki satıcılar %5-20 indirim yapar.
 - **Başarımlar**: 27 başarım; boss, görev, meslek, itibar ve seviye hedefleri.
 
 ## Otomatik test
-`godot/tests/run_smoke.sh /yol/Godot_v4.3-stable_linux.x86_64` komutu üç haritayı kurar, oyunu birkaç saniye çalıştırır, hava döngüsünü, görev ödüllerini, kaydet/yükle işlemini ve grafik kalitesi ayarını dener. Başarılıysa son satır `SMOKE OK` olur. Linux ve `xvfb` gerekir (geliştirme aracıdır, oyunu oynamak için gerekmez).
+`godot/tests/run_smoke.sh /yol/Godot_v4.3-stable_linux.x86_64` komutu dört haritayı kurar, oyunu birkaç saniye çalıştırır, hava döngüsünü, görev ödüllerini, kaydet/yükle işlemini ve grafik kalitesi ayarını dener. Başarılıysa son satır `SMOKE OK` olur. Linux ve `xvfb` gerekir (geliştirme aracıdır, oyunu oynamak için gerekmez).
+
+## Üçüncü harita: Kül Diyarı
+Bataklık Karakolu'ndaki kırmızı portaldan girilir, Sv 14–20. Gökten kül yağan, lav havuzlarıyla dolu bir diyardır (havuzlara girilemez). Düşmanlar: Kül Elementali (uzaktan vurur), Cüruf Golemi, Kül Ogresi, Yanık İskelet. Üç boss vardır: **Golemagg** (Magma Dalgası, çekirdek köpekleri), **Baron Geddon** (Cehennem halkası, Yaşayan Bomba, Armagedon), **Sulfuron** (hizmetkâr çağırma, Kül Dalgası, öfke). Kül Nöbetçileri Kampı'nda iki görev vericisi (Nöbetçi Torga, Kor Avcısı Zeyra) ve tüccar Rolf bulunur; yedi görev, "Kül Dövmesi" eşya takımı ve yeni bir itibar grubu (Kül Nöbetçileri) eklendi. Kampın portalları Bataklık'a ve Demirkazan'a döndürür.
 
 ## Banka, dünya haritası, ayarlar
 - **Bankacı Gundri** (Demirkazan): 28 yuvalık depo; "Banka" ve "Çantam" sekmeleriyle eşya koyup alırsın, çantada sağ tık da bankaya koyar. Banka kayda dahildir.

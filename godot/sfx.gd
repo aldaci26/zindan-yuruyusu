@@ -121,6 +121,8 @@ func set_map(name: String) -> void:
 		loops["m_" + name] = _pad(name)
 		if name == "swamp":
 			loops["a_swamp"] = _loop(8.0, func(t, n): return _noise_lp(n, 0.04) * 0.5 + _frog(t))
+		elif name == "ash":
+			loops["a_ash"] = _loop(8.0, func(t, n): return _noise_lp(n, 0.03) * 0.5 + sin(TAU * 45.0 * t) * 0.12)
 		elif name == "mine":
 			loops["a_mine"] = _loop(8.0, func(t, n): return _noise_lp(n, 0.02) * 0.6 + sin(TAU * 55.0 * t) * 0.18 + _drip(t))
 	music.stream = loops["m_" + name]
@@ -169,6 +171,7 @@ func _pad(name: String) -> AudioStreamWAV:
 		"snow": [[220.0, 261.6, 329.6], [196.0, 246.9, 293.7], [174.6, 220.0, 261.6], [196.0, 246.9, 293.7]],
 		"swamp": [[146.8, 174.6, 220.0], [130.8, 155.6, 196.0], [146.8, 174.6, 220.0], [116.5, 146.8, 174.6]],
 		"mine": [[110.0, 130.8, 164.8], [103.8, 123.5, 155.6], [110.0, 130.8, 164.8], [98.0, 116.5, 146.8]],
+		"ash": [[98.0, 116.5, 146.8], [87.3, 103.8, 130.8], [98.0, 116.5, 146.8], [82.4, 98.0, 123.5]],
 	}[name]
 	var dur := 16.0
 	return _loop(dur, func(t, _n):

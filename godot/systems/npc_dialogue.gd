@@ -48,12 +48,14 @@ static func topic_response(npc_name: String, topic: String, map_name: String, re
 		"rumors": {
 			"snow": "Köylüler kuzey geçidinde eski bir ganimet saklandığını söylüyor.",
 			"swamp": "Bataklıkta sis çöktüğünde Murloc ayinleri yeniden başlıyor.",
-			"mine": "Madende derinlere indikçe Kara Demir muhafızları çoğalıyor."
+			"mine": "Madende derinlere indikçe Kara Demir muhafızları çoğalıyor.",
+			"ash": "Lav havuzlarının yanında Golemagg'ın çekirdek köpekleri dolaşıyor, dikkat et."
 		},
 		"danger": {
 			"snow": "Trogglar doğuda, Gnollar güneydoğuda pusu kuruyor. Hazırlıksız gitme.",
 			"swamp": "Şamanları önce durdur; diğer Murlocları güçlendiriyorlar.",
-			"mine": "Dar koridorlarda geri çekilme alanı bırak. Golemler ağır ama çok sert vurur."
+			"mine": "Dar koridorlarda geri çekilme alanı bırak. Golemler ağır ama çok sert vurur.",
+			"ash": "Baron Geddon'a yaklaşma; cehennem halkası yakınındakileri yakar. Yaşayan Bomba üstündeyken uzaklaş."
 		}
 	}
 	var line: String = responses.get(topic, {}).get(map_name, "Bu bölge hakkında şimdilik bildiğim başka bir şey yok.")

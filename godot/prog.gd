@@ -33,6 +33,7 @@ const FACTIONS := {
 	"dem": {"name": "Demirkazan Kalesi", "col": Color("6aa0ff")},
 	"kar": {"name": "Bataklık Karakolu", "col": Color("8ad06a")},
 	"mad": {"name": "Maden Loncası", "col": Color("ffb04a")},
+	"kul": {"name": "Kül Nöbetçileri", "col": Color("ff7a4a")},
 }
 
 ## [ad, gereken itibar]
@@ -40,7 +41,7 @@ const RANKS := [["Yabancı", 0], ["Tanıdık", 500], ["Dost", 1500], ["Saygın",
 const DISCOUNT := [0.0, 0.0, 0.05, 0.10, 0.15, 0.20]
 
 ## Satıcı hangi grubun
-const VENDOR_FACTION := {"fenn": "kar", "hilda": "dem", "borga": "dem"}
+const VENDOR_FACTION := {"fenn": "kar", "hilda": "dem", "borga": "dem", "rolf": "kul"}
 
 ## stat: sayaç anahtarı; özel anahtarlar main.gd içinde ach_value() ile çözülür
 const ACHS := [
@@ -58,7 +59,10 @@ const ACHS := [
 	{"id": "a_gruff", "name": "Bataklık Efendisi", "desc": "Gruff Swiftbite'ı devir.", "stat": "boss_gruff", "goal": 1, "pts": 15},
 	{"id": "a_gor", "name": "Taşı Kıran", "desc": "Gorduk Taşyürek'i devir.", "stat": "boss_gorduk", "goal": 1, "pts": 15},
 	{"id": "a_vur", "name": "Maden Lordu", "desc": "Vurgan'ı devir.", "stat": "boss_vurgan", "goal": 1, "pts": 25},
-	{"id": "a_boss9", "name": "Efsane Avcısı", "desc": "Dokuz bossun hepsini devir.", "stat": "bosses", "goal": 9, "pts": 30},
+	{"id": "a_gol", "name": "Çekirdek Kıran", "desc": "Golemagg'ı devir.", "stat": "boss_golemagg", "goal": 1, "pts": 15},
+	{"id": "a_ged", "name": "Baronu Söndüren", "desc": "Baron Geddon'u devir.", "stat": "boss_geddon", "goal": 1, "pts": 20},
+	{"id": "a_sul", "name": "Kül Lordu", "desc": "Sulfuron'u devir.", "stat": "boss_sulfuron", "goal": 1, "pts": 25},
+	{"id": "a_boss9", "name": "Efsane Avcısı", "desc": "On üç bossun hepsini devir.", "stat": "bosses", "goal": 13, "pts": 30},
 	{"id": "a_q5", "name": "Görev İnsanı", "desc": "5 görev tamamla.", "stat": "quests", "goal": 5, "pts": 10},
 	{"id": "a_qall", "name": "Her İşin Ustası", "desc": "Bütün görevleri tamamla.", "stat": "quests_all", "goal": 1, "pts": 25},
 	{"id": "a_rich", "name": "Zengin Cüce", "desc": "Çantanda 5 altın biriktir.", "stat": "money", "goal": 50000, "pts": 10},
@@ -96,6 +100,8 @@ static func recipe(id: String) -> Dictionary:
 static func faction_of_quest(qid: String, swamp_ids: Array) -> String:
 	if qid.begins_with("q_mine"):
 		return "mad"
+	if qid.begins_with("q_ash"):
+		return "kul"
 	if swamp_ids.has(qid):
 		return "kar"
 	return "dem"

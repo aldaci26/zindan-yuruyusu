@@ -792,6 +792,7 @@ func update_minimap(d: Dictionary) -> void:
 	minimap.mobs = d["mobs"]
 	minimap.npcs = d["npcs"]
 	minimap.swamp = d.get("swamp", false)
+	minimap.ash = d.get("ash", false)
 	minimap.mine = d.get("mine", false)
 	minimap.queue_redraw()
 	coord_lbl.text = "%d, %d   %s" % [roundi(d["px"]), roundi(-d["pz"]), Time.get_time_string_from_system().substr(0, 5)]

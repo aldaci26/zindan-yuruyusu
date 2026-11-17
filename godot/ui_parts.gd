@@ -223,6 +223,7 @@ class Minimap extends Control:
 	var npcs: Array = []
 	var swamp := false
 	var mine := false
+	var ash := false
 	const Glyph = preload("res://glyph.gd")
 	const RANGE := 42.0
 
@@ -266,10 +267,10 @@ class Minimap extends Control:
 	func _draw() -> void:
 		var c := size * 0.5
 		var R := size.x * 0.5 - 3.0
-		draw_circle(c, R, Color("3a3438") if mine else (Color("7f9468") if swamp else Color("c7d6e6")))
+		draw_circle(c, R, Color("3a3438") if mine else (Color("4a3a34") if ash else (Color("7f9468") if swamp else Color("c7d6e6"))))
 		if not mine:
-			_disc(0.0, 0.0, 16.0, Color("9a8c5a") if swamp else Color("e4ecf4"))
-		if not swamp and not mine:
+			_disc(0.0, 0.0, 16.0, Color("8a7a60") if ash else (Color("9a8c5a") if swamp else Color("e4ecf4")))
+		if not swamp and not mine and not ash:
 			_disc(city.x, city.y, city.z, Color("b9a98c"))
 			_disc(city.x, city.y, city.z - 3.0, Color("d6c6a4"))
 			# yol

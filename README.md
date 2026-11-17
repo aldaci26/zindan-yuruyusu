@@ -8,7 +8,7 @@ World of Warcraft'tan esinlenmiş 3D bir cüce savaşçı oyunu. Godot 4.3 ile y
 
 ## Oyun
 
-- Üç harita: Kar Dağı Vadisi (Demirkazan şehri), Sisli Bataklık ve Kara Demir Madeni; portallarla geçilir
+- Dört harita: Kar Dağı Vadisi (Demirkazan şehri), Sisli Bataklık, Kara Demir Madeni ve Kül Diyarı (Sv 14-20); portallarla geçilir
 - WoW tarzı arayüz, eşya sistemi (nadirlik, setler, satıcılar, banka), 10 boss, 21 görev
 - Savaşçı yetenekleri ve yetenek ağacı, meslekler, itibar, başarımlar, gece-gündüz ve hava
 

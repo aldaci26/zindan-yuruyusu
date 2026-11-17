@@ -30,6 +30,7 @@ static func population_budget(map_name: String, player_level: int) -> int:
 	match map_name:
 		"swamp": base = 26
 		"mine": base = 18
+		"ash": base = 28
 	return clampi(base + int(maxi(0, player_level - 10) / 5), 12, 36)
 
 static func is_spawn_position_safe(position: Vector2, player_position: Vector2, obstacles: Array, min_player_distance: float = 18.0) -> bool:

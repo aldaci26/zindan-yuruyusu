@@ -41,7 +41,7 @@ func _draw() -> void:
 	draw_rect(r, Color(0.06, 0.05, 0.04, 0.97))
 	draw_rect(r, Color("c9a24a"), false, 3.0)
 	_lbl(Vector2(16, 26), title + "   (M: kapat)", Color("f2c75c"), 17)
-	var base := Color("3a3438") if map_name == "mine" else (Color("6f8458") if map_name == "swamp" else Color("c7d6e6"))
+	var base := Color("3a3438") if map_name == "mine" else (Color("6f8458") if map_name == "swamp" else (Color("5a4640") if map_name == "ash" else Color("c7d6e6")))
 	var area := Rect2(14, 42, SZ, SZ)
 	draw_rect(area, Color(0.02, 0.02, 0.02))
 	if map_name == "mine":

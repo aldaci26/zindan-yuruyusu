@@ -2,7 +2,7 @@
 # --- Otomatik duman testi: run_smoke.sh bu bloğu geçici bir proje kopyasındaki main.gd'ye ekler ---
 func _selftest() -> void:
 	var fails := 0
-	for mp in ["snow", "swamp", "mine", "snow"]:
+	for mp in ["snow", "swamp", "mine", "ash", "snow"]:
 		_enter_map(mp)
 		for i in 60:
 			step(0.1)

@@ -19,6 +19,10 @@ const SETS := {
 		{"n": 2, "txt": "+4 Dayanıklılık", "sta": 4},
 		{"n": 3, "txt": "Kritik vuruş şansı %2 artar", "crit": 2.0},
 		{"n": 5, "txt": "Verdiğin hasar %6 artar", "dmg": 0.06}]},
+	"ash": {"name": "Kül Dövmesi Takımı", "pieces": ["ch_ash", "lg_ash", "helm_ash", "hd_ash", "ft_ash", "wt_ash"], "bonus": [
+		{"n": 2, "txt": "+5 Dayanıklılık", "sta": 5},
+		{"n": 4, "txt": "Kritik vuruş şansı %3 artar", "crit": 3.0},
+		{"n": 6, "txt": "Verdiğin hasar %7 artar", "dmg": 0.07}]},
 	"king": {"name": "Dağ Kralının Mirası", "pieces": ["helm_king", "rg_king", "sh_king", "axe_king"], "bonus": [
 		{"n": 2, "txt": "+6 Güç", "str": 6},
 		{"n": 3, "txt": "Kritik vuruş şansı %3 artar", "crit": 3.0},
@@ -176,6 +180,32 @@ static func _build() -> void:
 	_eq("helm_vurgan", "Lord Miğferi", "head", 4, 16, 70, 7, 0, 9, 4600, "Plaka", "dark")
 	_eq("tr_vurgan", "Kor Kalp", "trinket", 4, 16, 0, 8, 5, 7, 4800, "", "red")
 	for bid in ["hammer_gorduk", "lg_gorduk", "nk_gorduk", "axe_vurgan", "ch_vurgan", "helm_vurgan", "tr_vurgan"]:
+		_db[bid]["boss"] = true
+	# Kül Diyarı
+	_eq("ch_ash", "Kül Dövmesi Zırh", "chest", 3, 14, 124, 6, 0, 9, 2000, "Plaka", "dark")
+	_eq("lg_ash", "Kül Dizlikleri", "legs", 3, 14, 88, 5, 0, 8, 1700, "Plaka", "dark")
+	_eq("helm_ash", "Kor Gözlü Miğfer", "head", 3, 14, 64, 5, 0, 7, 1600, "Plaka", "red")
+	_eq("hd_ash", "Cüruf Eldivenleri", "hands", 3, 15, 42, 5, 2, 6, 1500, "Plaka", "iron")
+	_eq("sh_ash", "Kül Duvarı Kalkanı", "offhand", 3, 15, 118, 0, 0, 9, 1900, "Kalkan", "dark")
+	_wp("axe_ash", "Kül Baltası", 3, 15, 40, 60, 2.4, 8, 2, 4, 2100, "dark", 1)
+	_eq("ft_ash", "Yanık Çizmeler", "feet", 3, 16, 56, 4, 2, 6, 1500, "Plaka", "dark")
+	_eq("wt_ash", "Magma Kuşağı", "waist", 3, 16, 46, 5, 0, 7, 1500, "Plaka", "red")
+	_eq("nk_ash", "Kor Kolye", "neck", 3, 16, 0, 5, 3, 7, 1800, "", "red")
+	_eq("rg_ash", "Kül Yüzüğü", "ring", 3, 16, 0, 5, 3, 6, 1700, "", "bronze")
+	_eq("bk_ash", "Kül Pelerini", "back", 3, 16, 16, 4, 4, 6, 1600, "Kumaş", "dark")
+	_wp("hammer_ash", "Kor Çekici", 3, 16, 46, 68, 2.6, 9, 2, 5, 2600, "dark", 2)
+	_wp("hammer_golemagg", "Yakıcının Çekici", 4, 17, 58, 86, 2.7, 13, 3, 8, 6400, "red", 2)
+	_eq("lg_golemagg", "Çekirdek Pantolonu", "legs", 4, 17, 104, 7, 0, 11, 5600, "Plaka", "red")
+	_eq("nk_golemagg", "Kor Çekirdek", "neck", 4, 17, 0, 7, 3, 9, 5200, "", "red")
+	_eq("ch_geddon", "Baron'un Alev Zırhı", "chest", 4, 18, 148, 10, 0, 14, 7600, "Plaka", "red")
+	_eq("helm_geddon", "Geddon Miğferi", "head", 4, 18, 84, 8, 0, 11, 6800, "Plaka", "dark")
+	_eq("rg_geddon", "Yanardağ Yüzüğü", "ring", 4, 18, 0, 8, 4, 9, 6400, "", "red")
+	_eq("tr_geddon", "Yaşayan Bomba", "trinket", 4, 18, 0, 10, 5, 8, 7000, "", "gold")
+	_wp("axe_sulf", "Sulfuron'un Hükmü", 4, 19, 68, 104, 2.6, 15, 4, 10, 9800, "gold", 2)
+	_eq("sh_sulf", "Kül Lordu Kalkanı", "offhand", 4, 19, 150, 0, 0, 13, 8200, "Kalkan", "red")
+	_eq("bk_sulf", "Kor Pelerin", "back", 4, 19, 24, 7, 4, 9, 6800, "Kumaş", "red")
+	_eq("tr_sulf", "Kül Kralı Mührü", "trinket", 4, 19, 0, 11, 5, 10, 8200, "", "gold")
+	for bid in ["hammer_golemagg", "lg_golemagg", "nk_golemagg", "ch_geddon", "helm_geddon", "rg_geddon", "tr_geddon", "axe_sulf", "sh_sulf", "bk_sulf", "tr_sulf"]:
 		_db[bid]["boss"] = true
 	# meslek malzemeleri ve üretim ürünleri
 	_misc("ore_iron", "Demir Cevheri", 1, 1, 30, 20, "ore", 0.0, "iron")

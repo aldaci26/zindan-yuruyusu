@@ -3,6 +3,8 @@ extends SceneTree
 
 const ItemDefinition = preload("res://mmorpg/data/item_definition.gd")
 const QuestDefinition = preload("res://mmorpg/data/quest_definition.gd")
+const CreatureDefinition = preload("res://mmorpg/data/creature_definition.gd")
+const SpellDefinition = preload("res://mmorpg/data/spell_definition.gd")
 const QuestLog = preload("res://mmorpg/services/quest_log.gd")
 const InventoryService = preload("res://mmorpg/services/inventory_service.gd")
 
@@ -22,6 +24,20 @@ func _run() -> void:
 	potion.display_name = "Healing Potion"
 	potion.max_stack = 5
 	_check(potion.validate().is_empty(), "valid item definition should pass validation")
+
+	var creature = CreatureDefinition.new()
+	creature.id = &"snow_wolf"
+	creature.display_name = "Snow Wolf"
+	creature.minimum_level = 2
+	creature.maximum_level = 3
+	creature.base_health = 80
+	_check(creature.validate().is_empty(), "valid creature definition should pass validation")
+
+	var spell = SpellDefinition.new()
+	spell.id = &"heroic_strike"
+	spell.display_name = "Heroic Strike"
+	spell.effects = [{"type": "damage", "power": 12}]
+	_check(spell.validate().is_empty(), "valid spell definition should pass validation")
 
 	var inventory = InventoryService.new(2)
 	var definitions := {"healing_potion": potion}

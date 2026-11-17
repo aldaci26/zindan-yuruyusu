@@ -123,3 +123,28 @@ recorded in the manifest but are not yet split into runtime clips.
 The visual gallery includes representative Gobkit creatures and KayKit
 environment props. They are not assigned to unrelated mob species until their
 silhouettes and animations are reviewed in Godot.
+
+
+## Gobkit API models and animation handling
+
+The original Gobkit GitHub mirror remains the provenance source for its 41
+nature models. Creature and fantasy-character imports now use the official
+read-only `https://gobkit.com/api/free` manifest (schema version 2). The API
+catalog reports 405 free models; this project selects 21 packs relevant to
+fantasy mobs, wildlife, medieval humanoids, orcs, undead and insects.
+
+The importer validates each selected pack/model's CC0 1.0 license and exact
+download URL, records the API snapshot hash and per-file SHA-256, and compares
+declared animation names with the actual GLB animation library. The API has
+two animation layouts:
+
+- Animal/minion assets may describe a single baked track with `from/to` frame
+  ranges. The importer writes those ranges to `ANIMATION_SEGMENTS.json`; the
+  Godot runtime creates named idle/walk/attack/death subclips from the source.
+- Humanoid/monster assets may already contain named clips (Idle, Walk, Run,
+  Attack, Death, etc.). These are used directly; no slicing is performed.
+
+The game now attempts imported models for boar, rat, deer, stag, gnoll,
+trogg, ashogre, darkiron, miner and guard, while retaining procedural fallback
+models. Murloc shaman remains procedural until a species-appropriate Murloc
+model is found. The isolated asset gallery previews the new Gobkit variants.

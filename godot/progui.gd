@@ -3,8 +3,9 @@ extends Control
 
 const Prog = preload("res://prog.gd")
 const Items = preload("res://items.gd")
+const Skills = preload("res://systems/skills.gd")
 const GOLD := Color("f2c75c")
-const TABS := ["Meslekler", "İtibar", "Başarımlar"]
+const TABS := ["Beceriler", "Günlük", "Meslekler", "İtibar", "Başarımlar"]
 
 var game
 var win: Panel
@@ -29,7 +30,7 @@ func _ready() -> void:
 	win.size = Vector2(500, 470)
 	win.position = Vector2(-250, -235)
 	add_child(win)
-	head = _label("Meslekler ve Başarımlar", 16, GOLD)
+	head = _label("Karakter Gelişimi", 16, GOLD)
 	head.autowrap_mode = TextServer.AUTOWRAP_OFF
 	head.position = Vector2(14, 6)
 	win.add_child(head)
@@ -40,13 +41,13 @@ func _ready() -> void:
 	x.size = Vector2(24, 22)
 	x.pressed.connect(func(): game.toggle_win("prog"))
 	win.add_child(x)
-	for i in 3:
+	for i in TABS.size():
 		var b := Button.new()
 		b.text = TABS[i]
 		b.toggle_mode = true
 		b.focus_mode = Control.FOCUS_NONE
-		b.position = Vector2(14 + i * 118, 34)
-		b.size = Vector2(112, 26)
+		b.position = Vector2(14 + i * 96, 34)
+		b.size = Vector2(92, 26)
 		b.pressed.connect(func():
 			tab = i
 			refresh())
@@ -100,9 +101,44 @@ func refresh() -> void:
 		box.remove_child(c)
 		c.queue_free()
 	match tab:
-		0: _tab_profs()
-		1: _tab_rep()
+		0: _tab_skills()
+		1: _tab_journal()
+		2: _tab_profs()
+		3: _tab_rep()
 		_: _tab_ach()
+
+func _tab_skills() -> void:
+	var free: int = Skills.points_free(game.P["lvl"], game.P["skl"], game.P["perks"])
+	_add(_label("Perk puanı: %d  (iki seviyede bir +1; seviyesi 30'a ulaşan her beceri +1)" % free, 12, Color("9be8a8") if free > 0 else Color("c8c8c8")))
+	for sid in Skills.ORDER:
+		var sd: Dictionary = Skills.SKILLS[sid]
+		var lv: int = Skills.level_of(game.P["skl"], sid)
+		_add(_label("%s  —  %d/%d" % [sd["name"], lv, Skills.MAX], 15, GOLD))
+		_add(_bar(Skills.xp_of(game.P["skl"], sid) if lv < Skills.MAX else 1.0, Skills.need(lv) if lv < Skills.MAX else 1.0, Color("5aa0ff")))
+		_add(_label(sd["use"] + " " + sd["per"], 11, Color("a8a8a8")))
+		for pk in Skills.PERKS:
+			if pk["skill"] != sid:
+				continue
+			var owned: bool = game.P["perks"].has(pk["id"])
+			var why: String = Skills.can_take(game.P["lvl"], game.P["skl"], game.P["perks"], pk["id"])
+			var b := Button.new()
+			b.focus_mode = Control.FOCUS_NONE
+			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			b.add_theme_font_size_override("font_size", 12)
+			b.custom_minimum_size = Vector2(0, 26)
+			if owned:
+				b.text = "✔ %s: %s" % [pk["name"], pk["desc"]]
+				b.disabled = true
+			else:
+				b.text = "%s (Beceri %d): %s" % [pk["name"], pk["req"], pk["desc"]]
+				b.disabled = why != ""
+				b.tooltip_text = why
+				var pid: String = pk["id"]
+				b.pressed.connect(func(): game.take_perk(pid))
+			_add(b)
+
+func _tab_journal() -> void:
+	pass
 
 func _tab_profs() -> void:
 	for pid in Prog.PROFS:

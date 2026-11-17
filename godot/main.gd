@@ -15,6 +15,7 @@ const NPCDialogue = preload("res://systems/npc_dialogue.gd")
 const InvUI = preload("res://invui.gd")
 const TalentUI = preload("res://talentui.gd")
 const ProgUI = preload("res://progui.gd")
+const Skills = preload("res://systems/skills.gd")
 const Prog = preload("res://prog.gd")
 const SWAMP_QS := ["q_murloc", "q_shaman", "q_croc", "q_bog", "q_gruff"]
 const BEASTS := ["Kurt", "Yaban Domuzu", "Dağ Ayısı", "Timsah", "Mağara Örümceği"]
@@ -1403,7 +1404,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
@@ -1413,23 +1414,23 @@ func base_str() -> int:
 	return 12 + 2 * P["lvl"]
 
 func base_agi() -> int:
-	return 6 + P["lvl"]
+	return 6 + P["lvl"] + roundi(Skills.perk_sum(P["perks"], "agi"))
 
 func base_sta() -> int:
 	return 10 + 2 * P["lvl"]
 
 func max_hp() -> int:
-	return roundi((110 + 28 * (P["lvl"] - 1) + 7 * G["sta"]) * (1.0 + 0.03 * trk("pro_hp")))
+	return roundi((110 + 28 * (P["lvl"] - 1) + 7 * G["sta"]) * (1.0 + 0.03 * trk("pro_hp") + Skills.perk_sum(P["perks"], "hp")))
 
 func atk() -> float:
 	var wd: float = (G["wmin"] + G["wmax"]) * 0.5 / G["wspd"] * 1.5
-	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0) * (1.5 if P["rk_t"] > 0.0 else 1.0) * (1.0 + 0.03 * trk("arm_dmg"))
+	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0) * (1.5 if P["rk_t"] > 0.0 else 1.0) * (1.0 + 0.03 * trk("arm_dmg") + 0.004 * skl("onehand") + Skills.perk_sum(P["perks"], "dmg"))
 
 func crit_chance() -> float:
-	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01 + 0.02 * trk("arm_crit")
+	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01 + 0.02 * trk("arm_crit") + Skills.perk_sum(P["perks"], "crit")
 
 func armor_total() -> float:
-	return (G["armor"] * 0.5 + P["lvl"] * 1.5) * (1.0 + 0.05 * trk("pro_armor"))
+	return (G["armor"] * 0.5 + P["lvl"] * 1.5) * (1.0 + 0.05 * trk("pro_armor") + 0.005 * skl("heavy") + Skills.perk_sum(P["perks"], "armor"))
 
 func potion_count() -> int:
 	return inv.count("pot_heal") + inv.count("pot_big")
@@ -1453,6 +1454,33 @@ func talent_def(id: String) -> Dictionary:
 		if td["id"] == id:
 			return td
 	return {}
+
+func skl(id: String) -> int:
+	return Skills.level_of(P["skl"], id)
+
+## Beceriye kullanım tecrübesi ekler; seviye atlayınca haber verir.
+func skill_xp(id: String, amt: float) -> void:
+	if Skills.add_xp(P["skl"], id, amt) > 0:
+		var nm: String = Skills.SKILLS[id]["name"]
+		var lv := skl(id)
+		hud.say("%s becerisi arttı: %d" % [nm, lv], Color("9be8a8"))
+		sfx.play("quest", -8)
+		if lv % 10 == 0 and Skills.points_free(P["lvl"], P["skl"], P["perks"]) > 0:
+			hud.say("Yeni perk seçebilirsin! (K › Beceriler)", Color("f2c75c"))
+		if progui != null:
+			progui.refresh()
+
+func take_perk(id: String) -> void:
+	var why: String = Skills.can_take(P["lvl"], P["skl"], P["perks"], id)
+	if why != "":
+		hud.say(why, Color("ff9a8a"))
+		return
+	P["perks"][id] = true
+	hud.say("Perk alındı: %s" % Skills.perk_def(id)["name"], Color("f2c75c"))
+	sfx.play("quest")
+	P["hp"] = minf(P["hp"], float(max_hp()))
+	inv_changed()
+	save_game()
 
 func trk(id: String) -> int:
 	return int(P["tal"].get(id, 0))
@@ -2436,7 +2464,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	d["npc_mem"] = npc_mem
 	SaveManager.write(SAVE_PATH, d)
 
@@ -2489,6 +2517,18 @@ func load_game() -> bool:
 		for a in Prog.ACHS:
 			if d["ach"].has(a["id"]):
 				P["ach"][a["id"]] = true
+	P["skl"] = {}
+	P["perks"] = {}
+	if typeof(d.get("skl")) == TYPE_DICTIONARY:
+		for k in Skills.ORDER:
+			if d["skl"].has(k) and typeof(d["skl"][k]) == TYPE_DICTIONARY:
+				P["skl"][k] = {"lv": clampi(int(d["skl"][k].get("lv", 1)), 1, Skills.MAX), "xp": maxf(0.0, float(d["skl"][k].get("xp", 0.0)))}
+	if typeof(d.get("perks")) == TYPE_DICTIONARY:
+		for k in d["perks"]:
+			if not Skills.perk_def(str(k)).is_empty():
+				P["perks"][str(k)] = true
+	if Skills.points_free(P["lvl"], P["skl"], P["perks"]) < 0:
+		P["perks"] = {}
 	P["xp"] = maxf(0.0, d["xp"])
 	if typeof(d.get("inv")) == TYPE_DICTIONARY and inv.from_dict(d["inv"]):
 		pass
@@ -2667,6 +2707,7 @@ func hit_mob(m, r: Dictionary, col: Color = Color.WHITE) -> void:
 	if m.dead:
 		return
 	m.hp -= r["v"]
+	skill_xp("onehand", 1.2 if r["crit"] else 1.0)
 	hud.clog("%s%s hedefine %d hasar verdin." % ["KRİTİK! " if r["crit"] else "", m.nm, r["v"]], Color("ffd23a") if r["crit"] else Color("e9eef2"))
 	sfx.play("crit" if r["crit"] else "hit", -4)
 	float_text(Vector3(m.x, 1.9 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), str(r["v"]), Color("ffd23a") if r["crit"] else col, r["crit"])
@@ -3002,7 +3043,7 @@ func ability(i: int) -> void:
 			float_text(pp + Vector3(0, 2.6, 0), "Savaş Narası!", Color("ffe08a"), true)
 		"shield":
 			sfx.play("block")
-			P["sb_t"] = 5.0 + trk("pro_shield")
+			P["sb_t"] = 5.0 + trk("pro_shield") + Skills.perk_sum(P["perks"], "blk")
 			ring_fx(pp, 1.8, Color("59a9ff"), 0.5)
 			float_text(pp + Vector3(0, 2.6, 0), "Kalkan Bloğu", Color("8ec9ff"), false)
 		"clap":
@@ -3073,8 +3114,11 @@ func hurt_player(raw: float, m) -> void:
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Kaçındın", Color("b8f0ff"), false)
 		return
 	var blocked: bool = P["sb_t"] > 0.0
-	var d := CombatRules.incoming_damage(raw, arm, m.lvl, (1.2 if P["rk_t"] > 0.0 else 1.0) * (1.0 - 0.02 * trk("pro_dr")), blocked)
+	var d := CombatRules.incoming_damage(raw, arm, m.lvl, (1.2 if P["rk_t"] > 0.0 else 1.0) * (1.0 - 0.02 * trk("pro_dr") - Skills.perk_sum(P["perks"], "dr")), blocked)
+	skill_xp("heavy", 1.0)
 	if blocked:
+		skill_xp("block", 1.5)
+		add_rage(Skills.perk_sum(P["perks"], "rage") + 0.2 * skl("block"))
 		float_text(Vector3(P["x"], P["y"] + 2.9, P["z"]), "Bloklandı", Color("8ec9ff"), false)
 		sfx.play("block", -6)
 		add_rage(5.0)
@@ -3255,9 +3299,8 @@ func rep_add(fid: String, n: int) -> void:
 
 func vendor_discount(vid: String) -> float:
 	var f: String = Prog.VENDOR_FACTION.get(vid, "")
-	if f == "":
-		return 0.0
-	return Prog.DISCOUNT[Prog.rank_of(P["rep"].get(f, 0))]
+	var base: float = 0.0 if f == "" else Prog.DISCOUNT[Prog.rank_of(P["rep"].get(f, 0))]
+	return minf(0.4, base + 0.003 * skl("speech") + Skills.perk_sum(P["perks"], "disc"))
 
 func learn_prof(pid: String) -> void:
 	if P["prof"].has(pid):
@@ -3476,7 +3519,7 @@ func reward_pick(qid: String) -> void:
 			hud.say("Ödül: %d XP, %s, %s" % [q["xp"], Items.money_plain(q["money"]), it["name"]], Color("f2c75c"))
 			render_quests()
 			close_dialog()
-			gain_xp(q["xp"])
+			gain_xp(q["xp"] * (1.0 + Skills.perk_sum(P["perks"], "qxp")))
 			inv_changed()
 			save_game()})
 	buttons.append({"label": "Geri", "cb": render_dialog})
@@ -3686,7 +3729,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 		var fz := -cos(cam_yaw)
 		var rx := -fz
 		var rz := fx
-		var sp := 5.0 * (0.5 if P["slow_t"] > 0.0 else 1.0)
+		var sp := 5.0 * (0.5 if P["slow_t"] > 0.0 else 1.0) * (1.0 + 0.003 * skl("athletics") + Skills.perk_sum(P["perks"], "spd"))
 		var chm = P["charge"]
 		if chm != null and (chm.dead or P["charge_t"] > 2.0):
 			P["charge"] = null
@@ -3713,6 +3756,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 				P["z"] = cc.y
 				P["spd"] = 1.8
 		elif moving:
+			skill_xp("athletics", 0.4 * dt)
 			var dx := fx * iy + rx * ix
 			var dz := fz * iy + rz * ix
 			var dl := maxf(0.0001, Vector2(dx, dz).length())

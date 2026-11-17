@@ -46,10 +46,31 @@ func _selftest() -> void:
 		for k in 6:
 			step(0.1)
 	print("YETENEKLER ", HudScript.ABIL.size())
+	# beceriler ve perkler
+	for sid in Skills.ORDER:
+		for k in 300:
+			skill_xp(sid, 5.0)
+		if skl(sid) < 30:
+			print("BECERİ GELİŞMEDİ ", sid)
+			fails += 1
+	for pk in Skills.PERKS:
+		take_perk(pk["id"])
+	if P["perks"].size() < 10:
+		print("PERK ALINAMADI ", P["perks"].size())
+		fails += 1
+	progui.win.visible = true
+	for tb in 5:
+		progui.tab = tb
+		progui.refresh()
+	progui.win.visible = false
+	print("BECERİLER ", P["perks"].size(), " perk")
 	# kayıt / yükleme
 	save_game()
 	if not load_game():
 		print("KAYIT YÜKLENEMEDİ")
+		fails += 1
+	elif P["perks"].size() < 10 or skl("onehand") < 30:
+		print("KAYITTA BECERİ KAYBI")
 		fails += 1
 	# yetenek ve kalite
 	for q in [0, 1, 2]:

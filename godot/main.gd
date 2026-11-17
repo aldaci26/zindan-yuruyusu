@@ -1512,6 +1512,7 @@ func _spawn_player() -> void:
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
+	WowAssets.refresh_equipment(player, inv.eq)
 	P["hp"] = float(max_hp())
 
 func base_str() -> int:
@@ -1542,6 +1543,7 @@ func potion_count() -> int:
 ## Eşya/seviye değişince istatistikleri ve pencereleri yenile.
 func inv_changed() -> void:
 	G = Items.totals(inv.eq)
+	WowAssets.refresh_equipment(player, inv.eq)
 	if P.has("hp"):
 		P["hp"] = minf(P["hp"], float(max_hp()))
 	if invui != null:

@@ -18,7 +18,7 @@ concurrency:
 jobs:
   windows:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     container:
       image: barichello/godot-ci:4.3
     steps:
@@ -27,19 +27,51 @@ jobs:
         with:
           ref: wow
 
-      - name: Import project resources
+      - name: Locate and install Godot 4.3 Windows export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          TEMPLATE_FILE="$(find / -type f -name windows_release_x86_64.exe -print -quit 2>/dev/null || true)"
+          if [ -z "$TEMPLATE_FILE" ]; then
+            echo "Godot 4.3 Windows export template was not found in the build image."
+            find /root/.local/share/godot /usr/local/share/godot -maxdepth 5 -type f 2>/dev/null | head -80 || true
+            exit 1
+          fi
+          TEMPLATE_DIR="$(dirname "$TEMPLATE_FILE")"
+          TARGET_DIR="$HOME/.local/share/godot/export_templates/4.3.stable"
+          mkdir -p "$TARGET_DIR"
+          cp -a "$TEMPLATE_DIR/." "$TARGET_DIR/"
+          test -s "$TARGET_DIR/windows_release_x86_64.exe"
+          test -s "$TARGET_DIR/windows_debug_x86_64.exe"
+          echo "Installed templates from: $TEMPLATE_DIR"
+
+      - name: Import and validate project scripts
         working-directory: godot
-        run: godot --headless --editor --path . --import
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! godot --headless --editor --path . --import > /tmp/godot-import.log 2>&1; then
+            cat /tmp/godot-import.log
+            exit 1
+          fi
+          cat /tmp/godot-import.log
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|ERROR:" /tmp/godot-import.log; then
+            echo "Godot reported script or resource errors during project import."
+            exit 1
+          fi
 
       - name: Export Windows game
         working-directory: godot
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p build/windows
           godot --headless --path . --export-release "Windows" build/windows/CuceSavasci.exe
           test -s build/windows/CuceSavasci.exe
           cd build/windows
-          zip -9 CuceSavasci-Windows.zip CuceSavasci.exe
+          zip -9 -j CuceSavasci-Windows.zip CuceSavasci.exe
           test -s CuceSavasci-Windows.zip
+          unzip -l CuceSavasci-Windows.zip
 
       - name: Upload playable Windows build
         uses: actions/upload-artifact@v4

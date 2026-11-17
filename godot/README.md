@@ -3,7 +3,7 @@
 Karlı vadide kurt, domuz ve ayı avla; Demirkazan cüce şehrinde görev al, demirciden silah, tüccardan iksir al.
 
 ## İndir ve oyna
-**Releases** sayfasından `CuceSavasci-Windows.zip` dosyasını indir (*son-surum* altında), aç ve `CuceSavasci.exe` çalıştır. ("Windows bilgisayarını korudu" çıkarsa: *Ek bilgi → Yine de çalıştır*.) Sürüm imzasızdır, bu yüzden Windows bir kez uyarı verir.
+`wow` dalının güncel Windows test sürümünü GitHub deposunda **Actions → WoW Windows build → Artifacts → CuceSavasci-Windows** bölümünden indir. ZIP'i açıp `CuceSavasci.exe` dosyasını çalıştır. ("Windows bilgisayarını korudu" çıkarsa: *Ek bilgi → Yine de çalıştır*.) Dosya imzasızdır; Windows uyarı verebilir.
 
 ## Kontroller
 | Tuş | İşlev |
@@ -82,8 +82,8 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 - **İtibar**: Demirkazan Kalesi, Bataklık Karakolu, Maden Loncası ve Kül Nöbetçileri. Görev teslimi ve düşman öldürmek itibar kazandırır; Dost ve üstünde o gruptaki satıcılar %5-20 indirim yapar.
 - **Başarımlar**: 27 başarım; boss, görev, meslek, itibar ve seviye hedefleri.
 
-## Otomatik test
-`godot/tests/run_smoke.sh /yol/Godot_v4.3-stable_linux.x86_64` komutu dört haritayı kurar, oyunu birkaç saniye çalıştırır, hava döngüsünü, görev ödüllerini, kaydet/yükle işlemini ve grafik kalitesi ayarını dener. Başarılıysa son satır `SMOKE OK` olur. Linux ve `xvfb` gerekir (geliştirme aracıdır, oyunu oynamak için gerekmez).
+## Test sürümü
+Windows test derlemeleri GitHub Actions üzerinden ZIP artifact olarak yayımlanır. Bu dal, mevcut tek oyunculu oyunun test edilebilir sürümünü içerir; yeni MMORPG veri servisleri henüz ana oyun döngüsüne bağlanmamıştır.
 
 ## Üçüncü harita: Kül Diyarı
 Bataklık Karakolu'ndaki kırmızı portaldan girilir, Sv 14–20. Gökten kül yağan, lav havuzlarıyla dolu bir diyardır (havuzlara girilemez). Düşmanlar: Kül Elementali (uzaktan vurur), Cüruf Golemi, Kül Ogresi, Yanık İskelet. Üç boss vardır: **Golemagg** (Magma Dalgası, çekirdek köpekleri), **Baron Geddon** (Cehennem halkası, Yaşayan Bomba, Armagedon), **Sulfuron** (hizmetkâr çağırma, Kül Dalgası, öfke). Kül Nöbetçileri Kampı'nda iki görev vericisi (Nöbetçi Torga, Kor Avcısı Zeyra) ve tüccar Rolf bulunur; yedi görev, "Kül Dövmesi" eşya takımı ve yeni bir itibar grubu (Kül Nöbetçileri) eklendi. Kampın portalları Bataklık'a ve Demirkazan'a döndürür.

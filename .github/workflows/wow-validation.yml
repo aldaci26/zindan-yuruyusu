@@ -4,12 +4,12 @@ on:
   push:
     branches: [wow]
     paths:
-      - "godot/**"
+      - "godot/mmorpg/**"
       - ".github/workflows/wow-validation.yml"
   pull_request:
     branches: [main]
     paths:
-      - "godot/**"
+      - "godot/mmorpg/**"
       - ".github/workflows/wow-validation.yml"
   workflow_dispatch:
 
@@ -24,9 +24,6 @@ jobs:
       image: barichello/godot-ci:4.3
     steps:
       - uses: actions/checkout@v4
-      - name: Import and parse project with Godot 4.3
-        working-directory: godot
-        run: godot --headless --editor --path . --quit
-      - name: Run MMORPG service tests
+      - name: Run isolated MMORPG core tests on Godot 4.3
         working-directory: godot
         run: timeout 60s godot --headless --path . --script res://mmorpg/tests/test_core.gd

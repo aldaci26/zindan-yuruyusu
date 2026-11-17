@@ -189,7 +189,8 @@ static func _configure_gobkit_animation_segments(root: Node3D, source_path: Stri
 				continue
 			var start_time := float(segment["from"]) / fps
 			var end_time := (float(segment["to"]) + 1.0) / fps
-			var subclip := _slice_animation(source_animation, start_time, end_time, bool(segment.get("loop", false)))
+			var default_loop := clip_name == "idle" or clip_name == "walk" or clip_name == "run"
+			var subclip := _slice_animation(source_animation, start_time, end_time, bool(segment.get("loop", default_loop)))
 			if subclip == null:
 				continue
 			if library.has_animation(clip_name):

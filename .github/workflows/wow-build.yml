@@ -1,0 +1,55 @@
+name: WoW Windows build
+
+on:
+  push:
+    branches: [wow]
+    paths:
+      - "godot/**"
+      - ".github/workflows/wow-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wow-windows-build
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - name: Checkout wow branch
+        uses: actions/checkout@v4
+        with:
+          ref: wow
+
+      - name: Install Godot export templates
+        run: |
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          cp -r /root/.local/share/godot/export_templates/* "$HOME/.local/share/godot/export_templates/"
+
+      - name: Import project resources
+        working-directory: godot
+        run: godot --headless --editor --path . --import
+
+      - name: Export Windows game
+        working-directory: godot
+        run: |
+          mkdir -p build/windows
+          godot --headless --path . --export-release "Windows" build/windows/CuceSavasci.exe
+          test -s build/windows/CuceSavasci.exe
+          cd build/windows
+          zip -9 CuceSavasci-Windows.zip CuceSavasci.exe
+          test -s CuceSavasci-Windows.zip
+
+      - name: Upload playable Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: CuceSavasci-Windows
+          path: godot/build/windows/CuceSavasci-Windows.zip
+          if-no-files-found: error
+          retention-days: 30

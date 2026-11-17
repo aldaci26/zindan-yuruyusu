@@ -81,3 +81,20 @@ icons, UI, audio or fonts.
 
 Each pack's README and LICENSE.txt state CC0 1.0 Universal. Their glTF files,
 external buffers and referenced texture maps are retained with original paths.
+
+
+## Gobkit official CC0 model API
+
+- API: https://gobkit.com/api/free
+- Schema version: 2; the API catalog reports 405 free models.
+- The importer allowlists 21 fantasy-relevant CC0 packs: Minion, multiple
+  Animal volumes, Birds, Dinosaurs, Medieval Humans, Orcs, Bloodiron, Halloween
+  monsters and Insects.
+- Every model is downloaded from the exact URL returned in `packs[].models[]`
+  and cross-checked against the API's `glbs[]` list.
+- Per-model metadata includes license, rigged status, FPS, declared animation
+  clips, actual GLB animation names, SHA-256 and source URL.
+- Frame-range metadata is exported to `ANIMATION_SEGMENTS.json` and converted
+  into named Godot clips at runtime. Models that already contain named clips
+  are played directly; they are not sliced.
+- The old pinned GitHub mirror's 41 nature models are retained in `nature/`.

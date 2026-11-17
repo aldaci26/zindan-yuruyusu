@@ -21,3 +21,33 @@ The import/runtime layer is now prepared for separately licensed GLB assets. Whe
 ## Extraction compatibility note
 
 TrinityCore's server setup documentation states that the 3.3.5 branch requires the WotLK 3.3.5a client and that TrinityCore does not provide a client download. This supports treating extracted client data as a separate, user-supplied input rather than as an open-source repository asset.
+
+
+## Follow-up: independently licensed model library added
+
+After the initial six-repository audit, a separate asset source was verified and
+imported: a curated selection from the Quaternius Showcase mirror, pinned to
+commit `0128ca510d653bb04d6d1e4885bd8890b5050b4f`. Its per-pack
+`LICENSES.md` maps each selected pack to an individual Quaternius source page
+that identifies CC0-1.0. We imported 401 GLB files (43.69 MiB) from these packs:
+
+- Ultimate Animated Animal Pack
+- Ultimate Modular Men Pack
+- Medieval Village Pack
+- Modular Weapons Pack
+- Modular Dungeons Pack
+- Easy Enemy Pack
+- Ultimate Nature Pack
+- Ultimate RPG Pack
+
+The GLBs contain the models and their packaged material/texture data. The
+runtime Wolf alias at `assets/wotlk/creatures/wolf.glb` now points to the
+imported Quaternius Wolf model, and the isolated WotLK visual lab uses this
+model first with the procedural wolf retained as fallback.
+
+This resolves the lack of **redistribution-cleared independent fantasy assets**,
+not the lack of authentic Blizzard WotLK assets. The imported models are
+Quaternius art and are not represented as WoW client models or textures.
+Full per-file paths, upstream blob SHAs, sizes, pack pages and license labels
+are recorded in `third_party/quaternius/ASSET_MANIFEST.json`; attribution and
+license boundaries are in `QUATERNIUS_ASSET_CREDITS.md`.

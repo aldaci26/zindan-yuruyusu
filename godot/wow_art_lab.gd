@@ -2,6 +2,7 @@ extends Node3D
 ## İzole WotLK görsel prototipi. Ana oyun sahnesini veya kayıt sistemini değiştirmez.
 
 const Dwarf = preload("res://dwarf.gd")
+const WowAssets = preload("res://wow_asset_runtime.gd")
 
 const SNOW := Color("#b9cbd8")
 const STONE := Color("#59616b")
@@ -105,7 +106,7 @@ func _build_ruins() -> void:
 
 	# Kırık kale kapısı: iri, okunaklı WotLK silüeti.
 	for side in [-1.0, 1.0]:
-		var x := side * 7.0
+		var x: float = float(side) * 7.0
 		_box(self, Vector3(2.0, 6.0, 2.0), stone, Vector3(x, 3.0, -7.0))
 		_box(self, Vector3(2.2, 0.35, 2.2), snow, Vector3(x, 6.12, -7.0))
 		_box(self, Vector3(2.15, 0.5, 2.15), dark, Vector3(x, 0.35, -7.0))
@@ -172,11 +173,12 @@ func _build_characters() -> void:
 	player.scale = Vector3(1.35, 1.35, 1.35)
 	add_child(player)
 
-	var wolf := Dwarf.make_wolf()
+	var wolf := WowAssets.spawn_creature("wolf", func(): return Dwarf.make_wolf())
 	wolf.position = Vector3(3.4, 0.0, 5.3)
 	wolf.rotation.y = 0.25
 	wolf.scale = Vector3(1.2, 1.2, 1.2)
 	add_child(wolf)
+	WowAssets.update_locomotion(wolf, false)
 
 func _build_camera() -> void:
 	var camera := Camera3D.new()

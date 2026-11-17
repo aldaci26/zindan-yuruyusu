@@ -11,7 +11,7 @@ const InventoryService = preload("res://mmorpg/services/inventory_service.gd")
 var failures: Array[String] = []
 
 func _initialize() -> void:
-	call_deferred("_run")
+	_run()
 
 func _check(condition: bool, message: String) -> void:
 	if not condition:

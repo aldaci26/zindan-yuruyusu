@@ -37,7 +37,7 @@ func _run() -> void:
 	var spell = SpellDefinition.new()
 	spell.id = &"heroic_strike"
 	spell.display_name = "Heroic Strike"
-	spell.effects = [{"type": "damage", "power": 12}]
+	spell.effects.append({"type": "damage", "power": 12})
 	_check(spell.validate().is_empty(), "valid spell definition should pass validation")
 
 	var inventory = InventoryService.new(2)
@@ -56,13 +56,13 @@ func _run() -> void:
 	first.id = &"clear_wolves"
 	first.title = "Clear the Wolves"
 	first.minimum_level = 2
-	first.objectives = [{
+	first.objectives.append({
 		"id": "wolves",
 		"type": "kill",
 		"target_id": "snow_wolf",
 		"required_count": 3,
 		"label": "Defeat snow wolves"
-	}]
+	})
 	first.rewards = [{"type": "currency", "amount": 25}]
 	_check(first.validate().is_empty(), "valid quest definition should pass validation")
 
@@ -71,12 +71,12 @@ func _run() -> void:
 	second.title = "Report Back"
 	second.minimum_level = 1
 	second.prerequisites = PackedStringArray(["clear_wolves"])
-	second.objectives = [{
+	second.objectives.append({
 		"id": "talk_to_guard",
 		"type": "interact",
 		"target_id": "north_guard",
 		"required_count": 1
-	}]
+	})
 
 	var journal = QuestLog.new()
 	_check(journal.register_quest(first), "quest definition should register")

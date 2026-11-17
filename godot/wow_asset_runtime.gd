@@ -134,6 +134,7 @@ static func _attach_equipment_node(character: Node3D, slot: String, item: Node3D
 				attachment.set_meta("wow_imported_equipment", true)
 				skeleton.add_child(attachment)
 				attachment.add_child(item)
+				_set_default_part_visibility(character, slot, false)
 				return true
 	var sockets: Dictionary = character.get_meta("gear_sockets", {})
 	var socket := sockets.get(slot) as Node3D
@@ -145,7 +146,20 @@ static func _attach_equipment_node(character: Node3D, slot: String, item: Node3D
 		return false
 	item.set_meta("wow_imported_equipment", true)
 	socket.add_child(item)
+	_set_default_part_visibility(character, slot, false)
 	return true
+
+static func _set_default_part_visibility(character: Node3D, slot: String, visible: bool) -> void:
+	var rig: Dictionary = character.get_meta("rig", {})
+	var part_name := "axe" if slot == "mainhand" else ("shield" if slot == "offhand" else "")
+	if not part_name.is_empty():
+		var part := rig.get(part_name) as Node3D
+		if part != null:
+			part.visible = visible
+	if slot == "head":
+		for part in rig.get("helm", []):
+			if part is Node3D:
+				(part as Node3D).visible = visible
 
 static func _clear_imported_equipment(root: Node) -> void:
 	for child in root.get_children():
@@ -154,6 +168,15 @@ static func _clear_imported_equipment(root: Node) -> void:
 			child.queue_free()
 		else:
 			_clear_imported_equipment(child)
+	var rig: Dictionary = root.get_meta("rig", {})
+	for part_name in ["axe", "shield"]:
+		var part := rig.get(part_name) as Node3D
+		if part != null:
+			part.visible = true
+	var helm_parts: Array = rig.get("helm", [])
+	for part in helm_parts:
+		if part is Node3D:
+			(part as Node3D).visible = true
 
 static func _find_skeleton(root: Node) -> Skeleton3D:
 	if root is Skeleton3D:

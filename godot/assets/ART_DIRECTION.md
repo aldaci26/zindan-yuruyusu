@@ -108,3 +108,31 @@ A phase is not complete just because files import. It must:
 ## Initial recommendation
 
 The best starting combination is **Quaternius (rigged characters, monsters, RPG items) + KayKit (fantasy environment) + Kenney (UI structure and supporting props) + CC0 icon sources**. No single pack will deliver the requested breadth or WoW-like finish. The closest result will come from consistent art direction, custom material treatment, original item icons and a carefully rebuilt interface—not bulk-copying one game's assets.
+
+
+## Expansion: rigged CC0 characters, skeletons and modular environments
+
+The asset pipeline now includes pinned KayKit CC0 repositories in addition to
+the expanded Quaternius CC0 model selection:
+
+- Adventurers: textured, rigged humanoids with 75 published animations.
+- Skeletons: textured, rigged undead characters with 90+ published animations.
+- Dungeon: 200+ modular environment pieces using a shared atlas.
+- Quaternius additions: medieval buildings, interiors, crops, nature, wildlife,
+  fish, dinosaurs, modular dungeon pieces, modular women, knight gear and
+  survival props.
+
+A separate visual gallery scene is used to inspect imported assets without
+changing the playable scene. The runtime only replaces mobs for which a
+reasonably matching model is available (currently spider, skeleton/ashbone,
+defias, darkiron, miner and guard). Other species retain their procedural
+fallbacks until a species-appropriate model is verified; do not substitute
+unrelated models merely to claim 100% coverage.
+
+## Painterly material atlas
+
+The repository now has an original 16-tile brush-painted-style material atlas
+generator (albedo, roughness and metallic maps) and a Godot preview scene.
+This is procedural project art, not a hand-painted-by-human claim. The next
+step is to apply it per material/UV set and tune the surface response in the
+gallery before replacing existing model atlases.

@@ -50,3 +50,27 @@ coverage varies by pack; the Ultimate Animated Animal and Ultimate Nature
 pages mark those packs as untextured. The imported GLBs retain their supplied
 mesh/material data, but the project still needs a separate, file-level texture
 audit and a consistent texture set before the art pass can be called complete.
+
+
+## Additional selected CC0 packs
+
+The expanded importer includes the following directories from the pinned
+Quaternius showcase commit; each is listed as CC0-1.0 in that revision's
+per-pack LICENSES.md:
+
+- Buildings Pack and Ultimate Buildings Pack
+- Ultimate Crops Pack
+- Animated Cute Fish and Animated Fish
+- Animated Dinosaur Pack
+- Ultimate House Interior Pack
+- Modular Dungeon Pack
+- Modular Medieval Building Pack
+- Ultimate Modular Women Pack
+- Ultimate Fantasy RTS
+- Simple Nature Pack
+- Animated Knight Pack
+- Modular Streets Pack
+- Survival Pack
+
+See the generated `ASSET_MANIFEST.json` for the exact file paths, source blob
+SHAs, byte sizes and source pack page.

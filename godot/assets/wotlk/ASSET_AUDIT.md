@@ -65,3 +65,41 @@ the separate requirement for a complete, consistent set of image texture maps.
 Do not describe all 401 models as textured. A dedicated texture pass must
 source CC0 textures (or original hand-painted textures) and record each
 texture's provenance independently.
+
+
+## Expanded model/animation audit
+
+Pinned CC0 KayKit sources were added after checking their own README and
+LICENSE.txt files. The Adventurers repository states CC0 1.0 Universal and
+describes four fully rigged/animated textured characters with 75 animations.
+The Skeletons repository states CC0 1.0 Universal and describes four
+fully rigged/animated textured skeletons with 90+ animations. The Dungeon
+repository states CC0 1.0 Universal and describes 200+ modular dungeon assets.
+
+The import script pins exact commit SHAs, keeps the source notices, verifies
+GLB headers, parses GLB animation names, validates external glTF buffer/image
+references, and records SHA-256 plus upstream blob SHA in the KayKit manifest.
+FBX/OBJ duplicates and sample renders are not imported.
+
+The Quaternius allowlist now includes additional CC0 medieval architecture,
+interiors, crops, wildlife, fish, dinosaurs, dungeon, knight, survival and
+environment packs from the same pinned showcase revision. The per-pack
+license evidence is in its pinned LICENSES.md; the showcase MIT license is
+not treated as the model license.
+
+### Runtime integration status
+
+The runtime now attempts imported models for spider, skeleton, ashbone,
+defias, darkiron, miner and guard. It keeps the procedural fallback for
+species without a good matching model. It also maps many existing weapon,
+shield, helmet and shoulder item IDs to imported Quaternius meshes. These
+attachments still require visual alignment checks in Godot; the gallery and
+Windows CI import are the acceptance path.
+
+### Texture status
+
+KayKit's character and dungeon packs include their own shared gradient atlases.
+The project also generates an original 16-material painterly-style albedo,
+roughness and metallic atlas. The latter is procedural brush-stroke art, not
+human hand-painted artwork. It is not yet automatically applied to every
+model: each model's UV/material slots must be checked before replacement.

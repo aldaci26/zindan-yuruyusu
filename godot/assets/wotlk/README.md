@@ -71,3 +71,31 @@ To preview the imported Wolf model without changing the main game scene, open
 `wow_art_lab.tscn` in Godot 4.3 and run the scene. The scene uses the imported
 Wolf GLB when present and keeps the procedural fallback if the asset cannot be
 loaded. The main project scene remains unchanged.
+
+
+## KayKit CC0 graphics
+
+The expanded import adds `assets/third_party/kaykit/`:
+
+- `adventurers/`: rigged/animated textured character GLBs, accessory glTFs,
+  referenced buffers and texture atlases.
+- `skeletons/`: rigged/animated skeleton GLBs, accessory glTFs, buffers and
+  texture atlas.
+- `dungeon/`: modular dungeon GLB pieces and their shared atlas.
+
+The per-file KayKit manifest records pinned commits, source blob SHAs, SHA-256,
+sizes, GLB animation names and license references. Only glTF/GLB and referenced
+texture/buffer files are imported; FBX/OBJ duplicates and sample images are
+excluded.
+
+## Visual inspection scenes
+
+- Open `asset_gallery.tscn` to inspect imported characters, creatures,
+  equipment and dungeon props.
+- Open `painterly_atlas_preview.tscn` to inspect the original project
+  16-material atlas.
+- The main scene remains `main.tscn`; neither QA scene replaces it.
+
+The painterly atlas is generated from project-authored procedural brush strokes
+and is a style foundation, not a claim of hand-painted human artwork. Its
+shader preview is separate; per-model UV/material assignment is the next step.

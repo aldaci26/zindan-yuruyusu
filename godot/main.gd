@@ -2,6 +2,7 @@ extends Node3D
 ## Cüce Savaşçı: ana sahne. Tüm dünya kodla kurulur.
 
 const Dwarf = preload("res://dwarf.gd")
+const WowAssets = preload("res://wow_asset_runtime.gd")
 const Tex = preload("res://tex.gd")
 const HudScript = preload("res://hud.gd")
 const SfxScript = preload("res://sfx.gd")
@@ -1868,7 +1869,7 @@ func _spawn_mobs() -> void:
 		m.ph = rnd.randf() * 6.0
 		m.id = n
 		match kind:
-			"wolf": m.node = Dwarf.make_wolf()
+			"wolf": m.node = WowAssets.spawn_creature("wolf", func(): return Dwarf.make_wolf())
 			"boar": m.node = Dwarf.make_boar()
 			_: m.node = Dwarf.make_bear()
 		m.node.scale = Vector3.ONE * m.sc
@@ -4928,10 +4929,12 @@ func _step_mob(m, dt: float) -> void:
 		node.position += Vector3(sin(m.yaw), 0, cos(m.yaw)) * 0.25
 	m.ph += dt * ((6.0 if m.state == "idle" else 12.0) if moving else 0.0)
 	var s := sin(m.ph) * 0.7 if moving else 0.0
-	m.legs[0].rotation.x = s
-	m.legs[3].rotation.x = s
-	m.legs[1].rotation.x = -s
-	m.legs[2].rotation.x = -s
+	if m.legs.size() >= 4:
+		m.legs[0].rotation.x = s
+		m.legs[3].rotation.x = s
+		m.legs[1].rotation.x = -s
+		m.legs[2].rotation.x = -s
+	WowAssets.update_locomotion(node, moving, m.lunge > 0.0)
 
 func _step_npcs(dt: float) -> void:
 	for n in npcs:

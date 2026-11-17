@@ -68,7 +68,7 @@ func _build_environment() -> void:
 func _build_ground() -> void:
  var ground:=MeshInstance3D.new()
  var mesh:=PlaneMesh.new()
- mesh.size=Vector2(46.0,46.0)
+ mesh.size=Vector2(72.0,72.0)
  ground.mesh=mesh
  var mat:=StandardMaterial3D.new()
  mat.albedo_color=Color("#56616a")
@@ -78,11 +78,11 @@ func _build_ground() -> void:
  add_child(ground)
 func _build_camera() -> void:
  var camera:=Camera3D.new()
- camera.position=Vector3(0.0,17.0,34.0)
+ camera.position=Vector3(0.0,25.0,52.0)
  camera.fov=55.0
  camera.current=true
  add_child(camera)
- camera.look_at(Vector3(0.0,1.0,4.0),Vector3.UP)
+ camera.look_at(Vector3(0.0,1.0,10.0),Vector3.UP)
 func _build_gallery() -> void:
  for index in range(ENTRIES.size()):
   var entry:Dictionary=ENTRIES[index]

@@ -1,0 +1,1036 @@
+{
+  "creator": "Gobkit / Alsomind Tech Co., Ltd.",
+  "license": "CC0-1.0",
+  "source_repository": "https://github.com/Ariescar/gobkit-free-assets",
+  "source_commit": "4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b",
+  "source_readme": "https://github.com/Ariescar/gobkit-free-assets/blob/4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b/README.md",
+  "source_license": "https://github.com/Ariescar/gobkit-free-assets/blob/4e73c68fa6e8ca9d948fcc0ce7215c830a022c3b/LICENSE",
+  "assets": [
+    {
+      "path": "LICENSE",
+      "git_blob_sha": "31e15c68af2daa2cb6e9310f7054cfd3d5f24e4b",
+      "sha256": "9c841187ead66a563971fcffe3a92cf2f8d5d4eda0a77cbb695204298bda6f43",
+      "size_bytes": 628,
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha": "4bdb3408d3f720d59a9483621e61ddcaccbf5e30",
+      "sha256": "40d20f34a905f8e678ad558a33bf2d4e1d83c99748cf5ca1c72661ce18e30ad2",
+      "size_bytes": 4466,
+      "license": "CC0-1.0"
+    },
+    {
+      "path": "animal/Anglerfish.glb",
+      "git_blob_sha": "e3ed5728a2445eb65f8f4184d4adeec7862accc9",
+      "sha256": "8d07bd212527ec2e0ba2d42367dcf65ae91eb35538fb3b57a2bfd8e1d8ac60fa",
+      "size_bytes": 57640,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Bat.glb",
+      "git_blob_sha": "766de4372d17206835c491f80f6b0db367ca0012",
+      "sha256": "1a4317609094c64d3f751adb9150df628aaf7902f7440174afcb642c30e0e072",
+      "size_bytes": 63308,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Corgi.glb",
+      "git_blob_sha": "5e76b79fe002de2158309d56fdd02402de69f8af",
+      "sha256": "95cd2c4d53d70ee9dd2e1329dcb6de7d4a725301d504a4f2f00ecb34dc1a0851",
+      "size_bytes": 73516,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Duck.glb",
+      "git_blob_sha": "a2c381021e66ffc15a44d6c1573848c54030d9fc",
+      "sha256": "6550a5807bc83edbadec0759155b3d9242b6ce6b980213a3872b49db80dfd579",
+      "size_bytes": 70104,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Hippo.glb",
+      "git_blob_sha": "fc39675ae6400f797f92434246543a097f1d03f6",
+      "sha256": "6a911f141482994f890911429e0863353a10fb567822e553b91a273e0fb1d5bd",
+      "size_bytes": 66300,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Jellyfish.glb",
+      "git_blob_sha": "147c575f5b12ec9af5ed8ab51061fd98fb422c46",
+      "sha256": "b0625fa8a726c594afc47a317b997d98da97b163fe551b15e32262854c99ea46",
+      "size_bytes": 66972,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Platypus.glb",
+      "git_blob_sha": "9246ccaad0217e3a66f64ff085035c8b9a1e27a9",
+      "sha256": "9d5e67a5147dabe04c5e3f677b10aa8042ed4efe337378bccc3b7dd6338d99b6",
+      "size_bytes": 74604,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Red.glb",
+      "git_blob_sha": "8a336ef01092bb5a63edea95bd4ede792e303248",
+      "sha256": "412df0483b64f3339dfa8405c75c194effb90b72bb279bd233bfb4653d70c7a8",
+      "size_bytes": 77092,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Rhino.glb",
+      "git_blob_sha": "f638b1cf00a6472192beb85b1a4162535bfc189e",
+      "sha256": "65cea4e6533e50d00efdde03de3e792f7337736d97b8f8c8f8b12c4bc0ee5017",
+      "size_bytes": 70364,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "animal/Shark.glb",
+      "git_blob_sha": "d2bc2497bbae415bd1fa7e297dc201b5f3f38ae4",
+      "sha256": "0fc450c99f0fd9f2e5d774ef58cd42b8d8d927bed138444254204b366595dc42",
+      "size_bytes": 61616,
+      "license": "CC0-1.0",
+      "animations": [
+        "clip"
+      ],
+      "skins": 1,
+      "meshes": 1,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ],
+        "walk": [
+          90,
+          119
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-a01.glb",
+      "git_blob_sha": "f7700d62b6252f14601743f156049ef3b8454f96",
+      "sha256": "ac3beef42a63a73a763b0a6ea1b21f0257fd3b1aee222581305e8571ec99e4d8",
+      "size_bytes": 170752,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-a02.glb",
+      "git_blob_sha": "7efd8a207b30a0261c10acafb08f173b975c4d2b",
+      "sha256": "98cab2b36c0a64ea7f2d9a485d2226c17fa1eb29c1a46ad754b51df075eba5bb",
+      "size_bytes": 170764,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-b01.glb",
+      "git_blob_sha": "b8419a471e5f2619c17b2a8905dec1a04101430b",
+      "sha256": "08eae482ad0b25bfe240e947568bc159a784f154f83ce19da9f069bd444ae476",
+      "size_bytes": 174432,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-b02.glb",
+      "git_blob_sha": "b351ace190813b69bd6c67b03f3755565ca1c2dc",
+      "sha256": "91b2ec46958774408348199e871c494f604fa15a9925a8493883752f079964ce",
+      "size_bytes": 174432,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-c01.glb",
+      "git_blob_sha": "584b85913b3a075948e6630b6a0d48883227c6d4",
+      "sha256": "f0c29b4bbb1f76f2822c5028d65eb420141043fcb7a9a905975938afceb9b516",
+      "size_bytes": 151100,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-c02.glb",
+      "git_blob_sha": "b776b3d91835e56009ea9ca79362039e89f7d3b5",
+      "sha256": "4a426b16dd6b94763f9dc2bf306a85ab60be52b4b9398ec5fab49c9fe10c6b74",
+      "size_bytes": 151108,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-d01.glb",
+      "git_blob_sha": "ceb7beba04fa67b9607af9c8e704d1d084dd13ee",
+      "sha256": "c6c02ac868fb970da6c743ab569fb9479d6f858f6f2a1c4fde786b4fefce743e",
+      "size_bytes": 189716,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "minion/minion-d02.glb",
+      "git_blob_sha": "435125411965f24ec4d4693029eae7925201f0bb",
+      "sha256": "e48334ab5a4e684c3944ef1ddea5c4a309bd8b9e10f5588be3e2207c7b1b7360",
+      "size_bytes": 189724,
+      "license": "CC0-1.0",
+      "animations": [
+        "movement"
+      ],
+      "skins": 4,
+      "meshes": 4,
+      "materials": 1,
+      "animation_segments": {
+        "fps": 24,
+        "idle": [
+          0,
+          29
+        ],
+        "attack": [
+          30,
+          59
+        ],
+        "dead": [
+          60,
+          89
+        ]
+      }
+    },
+    {
+      "path": "nature/Bush001.glb",
+      "git_blob_sha": "8c952f924da6e67ddb9708b73c24e8b391bdb07c",
+      "sha256": "9e007ba112a0aaf95baddbd0ea49984d639574d8e049807c1a6557f8afae9373",
+      "size_bytes": 15680,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Bush002.glb",
+      "git_blob_sha": "874f8e21288dd3196d4be162b3bd3b4aea3db1d1",
+      "sha256": "a84e21bc0ec9dc289607900d146e702bfee348dc1f4d923e31763ca3651312d3",
+      "size_bytes": 15852,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Cliff001.glb",
+      "git_blob_sha": "ab550051bcc271611fda82dc6eada50ecb654e88",
+      "sha256": "e4c9620c433c2170eecc73fe397a0df7032aa0ff66dda55342ebedb0638c6db0",
+      "size_bytes": 15112,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Cliff002.glb",
+      "git_blob_sha": "f178809d1e220f9408ff43c8913abaa732731560",
+      "sha256": "f949528ef2e0413cf1c3e2b39666d17a023737c0ded052c8afab54094785908f",
+      "size_bytes": 15108,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Cliff003.glb",
+      "git_blob_sha": "99707642ad38b5a9ee0b99bc6061364e0c085485",
+      "sha256": "98d8f900838b5840c280ca70804881cac19a4d3816acb184dd3fedd637f6d8d0",
+      "size_bytes": 15140,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Cloud001.glb",
+      "git_blob_sha": "4019b4d788024f9a291ada63949b310ce81cac8b",
+      "sha256": "e2fef23e03589b6f297219e00f0e98206c9f4cbc56d9cca12cd385faf60886d0",
+      "size_bytes": 15740,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Cloud002.glb",
+      "git_blob_sha": "c4c12be170035ecbab807cd9496c3d05b0ce366d",
+      "sha256": "dc9f38d837dddf9865b8ae0ae81e783f50a3fd7a1a3388370d24bbf9774bb9cf",
+      "size_bytes": 15812,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Cloud003.glb",
+      "git_blob_sha": "28c15d004b57f283d84c1e22bc59ee047994a0d8",
+      "sha256": "eb5a16efbb1ae6459afa10a1cc875ac6aaf60d76edab136e9025e9328fc85d5e",
+      "size_bytes": 15748,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Grass001.glb",
+      "git_blob_sha": "0b0e56f2271717dbb54321025e98ee28f3521208",
+      "sha256": "29c41d3ca887c097e241f8f9825ba873ebfb0c83c384c994e66c25f849163ea2",
+      "size_bytes": 14280,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Grass002.glb",
+      "git_blob_sha": "30e45da9fe671d3bfeddb5681eae5e94394a0251",
+      "sha256": "52a63e54698337385b40244e0dc52613600ff9b13c3a534cc0d2408cb8f75e86",
+      "size_bytes": 14264,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Grass003.glb",
+      "git_blob_sha": "78aba2651865fc06b64182a0dbbf5448808441b9",
+      "sha256": "4b1a9981e8be80a009329ef498bc9869d9066cefc1e5e336fa818a46d92cdf83",
+      "size_bytes": 14264,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Hill001.glb",
+      "git_blob_sha": "e0f274eb884fea705cc92afd74d5939ba45c7a3f",
+      "sha256": "8533e721d71441b44122e680fbd95d71f88f31cd889e97debd249a354f507ae0",
+      "size_bytes": 14868,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Hill002.glb",
+      "git_blob_sha": "0b52b437fff30ac7e38fa02177a3b62c215dd2b6",
+      "sha256": "0fea6f53e1483163ee7db53232fed21fe19667482b090465fc59873653408684",
+      "size_bytes": 14864,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Hill003.glb",
+      "git_blob_sha": "44da30f20f050fa1f795d3eeccced018f81729d8",
+      "sha256": "dbc5c840eb7623c897b8f8f5ae9e7dc715baf84b5031209f5bdd7de9f8312108",
+      "size_bytes": 14928,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/HillSand001.glb",
+      "git_blob_sha": "d3891abf2a960ea69533177be04328f3b4a4f7ff",
+      "sha256": "da17c0cb36e4ec49ddbd65afff1315aad5409b233b2b52960be4aa4adce00610",
+      "size_bytes": 15292,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/HillSand002.glb",
+      "git_blob_sha": "98f2f7e02d60aca3bddbeaaf4c5882ec0b38fa54",
+      "sha256": "c7768b3a9e17010deef8f06efd0bd7d925cc0f5a6ca897f947761b96a667aa42",
+      "size_bytes": 15308,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/HillSand003.glb",
+      "git_blob_sha": "b3636c30c499dcdc8a15ad1e1014e00c8b6cf826",
+      "sha256": "8f1f4baf369d3338cd914c187fc81a720d466959769b1e3ff8587f2562dd10a8",
+      "size_bytes": 15276,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Mountain001.glb",
+      "git_blob_sha": "8bc47a3e18852256b1d6c3ba1d6d221897226ab0",
+      "sha256": "9a42fe9cbda3f03f39c32928fe9f38e5e2d98b3a8cc08bedbfce15a75cb3c7c0",
+      "size_bytes": 15288,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Mountain002.glb",
+      "git_blob_sha": "76e62a3fa8bfa6483ba418989bbaafa72f1a2949",
+      "sha256": "4fdfc240edae49cda093ace8cc8fb20f290c224811ab633fdea9ceb64ac3afc4",
+      "size_bytes": 15304,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Mountain003.glb",
+      "git_blob_sha": "05108f9498ceb2e4abd03ed5f82faa260766d9ff",
+      "sha256": "1f3496901618c67e3495c422d5d2aa001742c108537baffbe99c759b5e321441",
+      "size_bytes": 15280,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/MountainFar001.glb",
+      "git_blob_sha": "7fa096f2122c507009a103e0412a975a70b60bb5",
+      "sha256": "4accc732cd96b662a4b6be52c13c54e1f7e7a6b00b7c03caee8f6ae9fc68241c",
+      "size_bytes": 14604,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/MountainFar002.glb",
+      "git_blob_sha": "195597edb36b37a9ebc0fbe35a7415b821035941",
+      "sha256": "b73d1d6f7c06cbfde537e5807fc10c94f1e2c1519d40d460e14935bd95105980",
+      "size_bytes": 14624,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/MountainFar003.glb",
+      "git_blob_sha": "bd17594b4f7d003827d0abb8951e7565b90314b2",
+      "sha256": "e335210f384f3efe555c81ff1fb20856ef451391f4a76a15c9afb985363e84cb",
+      "size_bytes": 14620,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Reed001.glb",
+      "git_blob_sha": "562b308b43752ec88142e5615b7986aeba1acfb4",
+      "sha256": "0d4e7d27d3abb2f0150533d8aab7069f037627fdff4339be8816f03f290de4b3",
+      "size_bytes": 15372,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Reed002.glb",
+      "git_blob_sha": "2bd88a6e1431b27f077a023c10e95d5c884f1a65",
+      "sha256": "b54b0e544709c70838f92c976ff8c7a554694ca9b4b495edd203dcb98c357565",
+      "size_bytes": 15376,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Rock001.glb",
+      "git_blob_sha": "6469ac78c6e2d7bc5a6d9a6f427308356ee0a5f5",
+      "sha256": "2fff2e77d18d338e7250906a8a58e0ab73c971d28a030861dd98b1b41ccb2139",
+      "size_bytes": 15108,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Rock002.glb",
+      "git_blob_sha": "ef9e0121f620830db2cf367495189252e73417cb",
+      "sha256": "2f53fbd464c31b92aa37f5c3aefadd046e9b71a1d4bac97cb404858895386436",
+      "size_bytes": 15144,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Rock003.glb",
+      "git_blob_sha": "31593de00580818e2e737b254b21249a04b86ab0",
+      "sha256": "94d8add589438c48653331c1d89cf41047a154c7d4133eb15541351c37d5e1e7",
+      "size_bytes": 15112,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Stalactite001.glb",
+      "git_blob_sha": "ab67f7a6e28eea2ef21a57c8e5b77de32cd8677b",
+      "sha256": "1d2ffc8b4e1437564169d3af2db7cf78a4426b41c24e5689c6025a153eab9eb1",
+      "size_bytes": 15292,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Stalactite002.glb",
+      "git_blob_sha": "1729d7389fdbcb3ca6a4987e850e0c273ee52bc5",
+      "sha256": "33c051cba835ba25f3707ee21657620f06e1182eed321771af2ccba6203891c4",
+      "size_bytes": 15312,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/Stalactite003.glb",
+      "git_blob_sha": "07a773153827616b7c57a8ab3cdeab2887bd3e4b",
+      "sha256": "9b3cf14d62e6aebffed0d89199e3a17691b03b2d0c1fdaef7f8245730a023068",
+      "size_bytes": 15376,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeHigh001.glb",
+      "git_blob_sha": "91b15d2869178335f78b7a1aaee98975c0e7981c",
+      "sha256": "57af6bf02cb6574bc745bbbe0a8142342e5e7f8a1871d4536bc551d39272d464",
+      "size_bytes": 15620,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeHigh002.glb",
+      "git_blob_sha": "b32bc76c85f57a2bd1e574fd24640d4be76905d3",
+      "sha256": "0184b9df0985de2d0f7e34d8fe51a4c8080c3b45aeb4c533d3b9f4b906d4c0be",
+      "size_bytes": 15616,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeHigh003.glb",
+      "git_blob_sha": "e71474e53d214082bcb0ae27437f01d03d56c400",
+      "sha256": "94c9a5737385dd8e63585031a3db537671b45178bb22ed449de5c781e9d01abc",
+      "size_bytes": 15620,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeLow001.glb",
+      "git_blob_sha": "f22fdffa6b162ef678cde896b7896ce20d39224d",
+      "sha256": "5fac1ed08835016d8a672c00d563c2fc3ab62aa79399e20eace607087a86a149",
+      "size_bytes": 15612,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeLow002.glb",
+      "git_blob_sha": "2dfc69b53048a0fc6e6cd18c6a736cc862c46987",
+      "sha256": "c1925f45268db55977760eafe8f54e41a3bb8d3d41e792e59b4e918034a173c8",
+      "size_bytes": 15612,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeLow003.glb",
+      "git_blob_sha": "59b59dff401737d4ed45844052f10d359577ca12",
+      "sha256": "4ab46e6bfd67b389d5395f69e8f565d8c61b915d80061e17d3c75bab7a2c5801",
+      "size_bytes": 15620,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeLow004.glb",
+      "git_blob_sha": "99919d9264fe266ee7911acda20291392e3f4ac9",
+      "sha256": "2c837f13b17cd188d35be96b11b33d38526f9c3a26cc52851d480a17ef906677",
+      "size_bytes": 15616,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeMed001.glb",
+      "git_blob_sha": "aea483a7a58714601821147654ba711887d428dc",
+      "sha256": "2979b1bf5480488464305f6525ed083635cffa161bd1a0bda435d69091e6d52a",
+      "size_bytes": 16404,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeMed002.glb",
+      "git_blob_sha": "c9f4a21a5959961b2cd79721ea533e157b155ff0",
+      "sha256": "ede436b8567354d096a00a4d0336facde4b10ccbc806fbcf0898255045d57710",
+      "size_bytes": 16408,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/TreeMed003.glb",
+      "git_blob_sha": "24a0580755057a6db5d4cc6ee9d2c400c8191fc8",
+      "sha256": "69c3c8352170a43282c5a2c9030d2c53ecfbfb955cff9cf48b544eb0cceecc56",
+      "size_bytes": 17200,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 1,
+      "materials": 1
+    },
+    {
+      "path": "nature/nature-kit-scene.glb",
+      "git_blob_sha": "f15884d3b2b4cf59a27d41984312a5a508f4af8c",
+      "sha256": "5a883adfb705c5789b8449ba3a1ad508600cadc56425798e8b3aca60845bdf5e",
+      "size_bytes": 119676,
+      "license": "CC0-1.0",
+      "animations": [],
+      "skins": 0,
+      "meshes": 41,
+      "materials": 1
+    }
+  ],
+  "summary": {
+    "file_count": 62,
+    "glb_count": 60,
+    "animated_glb_count": 18,
+    "total_bytes": 2806990
+  }
+}

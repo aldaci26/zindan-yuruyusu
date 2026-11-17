@@ -1,0 +1,249 @@
+{
+  "name": "Original Painterly Fantasy Material Atlas",
+  "seed": 26061118,
+  "resolution": [
+    1024,
+    1024
+  ],
+  "grid": [
+    4,
+    4
+  ],
+  "tile_size": [
+    256,
+    256
+  ],
+  "license": "Original project-generated textures",
+  "maps": {
+    "albedo": "painterly_fantasy_albedo.png",
+    "roughness": "painterly_fantasy_roughness.png",
+    "metallic": "painterly_fantasy_metallic.png"
+  },
+  "tiles": [
+    {
+      "index": 0,
+      "name": "snow_stone",
+      "uv_origin": [
+        0.0,
+        0.0
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.88,
+      "metallic": 0.02
+    },
+    {
+      "index": 1,
+      "name": "dark_stone",
+      "uv_origin": [
+        0.25,
+        0.0
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.94,
+      "metallic": 0.03
+    },
+    {
+      "index": 2,
+      "name": "warm_stone",
+      "uv_origin": [
+        0.5,
+        0.0
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.91,
+      "metallic": 0.02
+    },
+    {
+      "index": 3,
+      "name": "oak_wood",
+      "uv_origin": [
+        0.75,
+        0.0
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.82,
+      "metallic": 0
+    },
+    {
+      "index": 4,
+      "name": "iron",
+      "uv_origin": [
+        0.0,
+        0.25
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.36,
+      "metallic": 0.78
+    },
+    {
+      "index": 5,
+      "name": "gold",
+      "uv_origin": [
+        0.25,
+        0.25
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.29,
+      "metallic": 0.88
+    },
+    {
+      "index": 6,
+      "name": "leather",
+      "uv_origin": [
+        0.5,
+        0.25
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.91,
+      "metallic": 0
+    },
+    {
+      "index": 7,
+      "name": "blue_cloth",
+      "uv_origin": [
+        0.75,
+        0.25
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.96,
+      "metallic": 0
+    },
+    {
+      "index": 8,
+      "name": "red_cloth",
+      "uv_origin": [
+        0.0,
+        0.5
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.96,
+      "metallic": 0
+    },
+    {
+      "index": 9,
+      "name": "green_cloth",
+      "uv_origin": [
+        0.25,
+        0.5
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.96,
+      "metallic": 0
+    },
+    {
+      "index": 10,
+      "name": "ice",
+      "uv_origin": [
+        0.5,
+        0.5
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.22,
+      "metallic": 0.12
+    },
+    {
+      "index": 11,
+      "name": "moss",
+      "uv_origin": [
+        0.75,
+        0.5
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.98,
+      "metallic": 0
+    },
+    {
+      "index": 12,
+      "name": "grass",
+      "uv_origin": [
+        0.0,
+        0.75
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.99,
+      "metallic": 0
+    },
+    {
+      "index": 13,
+      "name": "bone",
+      "uv_origin": [
+        0.25,
+        0.75
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.87,
+      "metallic": 0
+    },
+    {
+      "index": 14,
+      "name": "fur",
+      "uv_origin": [
+        0.5,
+        0.75
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.99,
+      "metallic": 0
+    },
+    {
+      "index": 15,
+      "name": "ember",
+      "uv_origin": [
+        0.75,
+        0.75
+      ],
+      "uv_size": [
+        0.25,
+        0.25
+      ],
+      "roughness": 0.72,
+      "metallic": 0.02
+    }
+  ],
+  "note": "Procedural brush-painted style; not extracted from WoW or third-party games."
+}

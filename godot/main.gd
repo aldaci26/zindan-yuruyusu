@@ -3152,6 +3152,7 @@ func kill_mob(m) -> void:
 	m.bleed_t = 0.0
 	m.died_at = T
 	m.state = "idle"
+	WowAssets.play_death(m.node)
 	if P["target"] == m:
 		P["target"] = null
 		P["auto"] = false

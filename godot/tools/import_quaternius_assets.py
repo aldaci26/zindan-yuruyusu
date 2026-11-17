@@ -37,6 +37,21 @@ PACKS = {
     "easy_enemies_pack": "https://quaternius.com/packs/easyenemy.html",
     "nature_pack": "https://quaternius.com/packs/ultimatenature.html",
     "rpg_items_pack": "https://quaternius.com/packs/ultimaterpg.html",
+    "buildings_pack_2": "https://quaternius.com/packs/buildings.html",
+    "buildings_pack_3": "https://quaternius.com/packs/ultimatetexturedbuildings.html",
+    "crops_pack": "https://quaternius.com/packs/ultimatecrops.html",
+    "cute_fish_pack": "https://quaternius.com/packs/cutefish.html",
+    "dinosaurs_pack": "https://quaternius.com/packs/animateddinosaurs.html",
+    "fish_pack": "https://quaternius.com/packs/animatedfish.html",
+    "house_interior_pack": "https://quaternius.com/packs/ultimatehomeinterior.html",
+    "modular_dungeon_pack": "https://quaternius.com/packs/medievaldungeon.html",
+    "modular_medieval_buildings_pack": "https://quaternius.com/packs/modularmedievalbuildings.html",
+    "modular_women": "https://quaternius.com/packs/ultimatemodularwomen.html",
+    "real_time_strategy_pack": "https://quaternius.com/packs/ultimatefantasyrts.html",
+    "simple_nature_pack": "https://quaternius.com/packs/simplenature.html",
+    "single_knight_pack": "https://quaternius.com/packs/knightcharacter.html",
+    "street_pack": "https://quaternius.com/packs/modularstreets.html",
+    "survival_pack": "https://quaternius.com/packs/survival.html",
 }
 
 

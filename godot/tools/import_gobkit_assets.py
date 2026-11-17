@@ -208,6 +208,22 @@ def main() -> int:
             "total_bytes": sum(item.get("size_bytes", 0) for item in records) + sum(item.get("size_bytes", 0) for item in legacy_nature),
         },
     }
+    segment_assets = {}
+    for record in records:
+        ranged = [
+            item for item in record.get("animations", [])
+            if isinstance(item, dict) and "from" in item and "to" in item
+        ]
+        if ranged:
+            segment_assets[record["path"]] = {
+                "fps": record.get("fps", 24),
+                "animations": ranged,
+            }
+    (DEST / "ANIMATION_SEGMENTS.json").write_text(
+        json.dumps({"assets": segment_assets}, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    manifest["animation_segments_file"] = "ANIMATION_SEGMENTS.json"
     old_manifest_path.write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",

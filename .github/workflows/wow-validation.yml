@@ -1,0 +1,31 @@
+name: WoW branch validation
+
+on:
+  push:
+    branches: [wow]
+    paths:
+      - "godot/**"
+      - ".github/workflows/wow-validation.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "godot/**"
+      - ".github/workflows/wow-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  godot-4-3:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import and parse project with Godot 4.3
+        working-directory: godot
+        run: godot --headless --editor --path . --quit
+      - name: Run MMORPG service tests
+        working-directory: godot
+        run: godot --headless --path . --script res://mmorpg/tests/test_core.gd

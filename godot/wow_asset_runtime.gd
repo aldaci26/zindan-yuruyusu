@@ -80,6 +80,75 @@ static func attach_equipment(character: Node3D, slot: String, equipment_scene: P
 	_apply_item_transform(equipment, local_position, local_rotation_degrees, local_scale)
 	return equipment
 
+static func refresh_equipment(character: Node3D, equipped: Dictionary) -> void:
+	if character == null or not is_instance_valid(character):
+		return
+	var previous: Dictionary = character.get_meta("wow_equipment_ids", {})
+	if previous == equipped:
+		return
+	_clear_imported_equipment(character)
+	character.set_meta("wow_equipment_ids", equipped.duplicate(true))
+	for slot in equipped:
+		var item_id := str(equipped[slot])
+		if item_id.is_empty():
+			continue
+		var path := "res://assets/wotlk/equipment/%s.glb" % item_id
+		if not ResourceLoader.exists(path):
+			continue
+		var packed := load(path) as PackedScene
+		if packed == null:
+			continue
+		var item := packed.instantiate() as Node3D
+		if item == null:
+			continue
+		if not _attach_equipment_node(character, str(slot), item):
+			item.queue_free()
+
+static func _attach_equipment_node(character: Node3D, slot: String, item: Node3D) -> bool:
+	var skeleton := _find_skeleton(character)
+	var bone_map := {
+		"head": ["Head", "head"],
+		"shoulder": ["Shoulder.R", "RightShoulder", "shoulder_r"],
+		"back": ["Back", "Spine2", "spine_03"],
+		"chest": ["Chest", "Spine2", "spine_02"],
+		"wrist": ["Forearm.R", "LowerArm.R", "RightForeArm"],
+		"hands": ["Hand.R", "RightHand", "hand_r"],
+		"waist": ["Pelvis", "Hips", "pelvis"],
+		"legs": ["Thigh.R", "UpperLeg.R", "LeftUpLeg"],
+		"feet": ["Foot.R", "RightFoot", "foot_r"],
+		"mainhand": ["Hand.R", "RightHand", "hand_r"],
+		"offhand": ["Hand.L", "LeftHand", "hand_l"],
+	}
+	if skeleton != null:
+		for bone_name in bone_map.get(slot, []):
+			if skeleton.find_bone(bone_name) >= 0:
+				var attachment := BoneAttachment3D.new()
+				attachment.name = "ImportedEquipment_%s" % slot
+				attachment.bone_name = bone_name
+				attachment.set_meta("wow_imported_equipment", true)
+				skeleton.add_child(attachment)
+				attachment.add_child(item)
+				return true
+	var sockets: Dictionary = character.get_meta("gear_sockets", {})
+	var socket := sockets.get(slot) as Node3D
+	if socket == null:
+		var rig: Dictionary = character.get_meta("rig", {})
+		var fallback_key := "armR" if slot == "mainhand" else ("armL" if slot == "offhand" else "")
+		socket = rig.get(fallback_key) as Node3D if not fallback_key.is_empty() else null
+	if socket == null:
+		return false
+	item.set_meta("wow_imported_equipment", true)
+	socket.add_child(item)
+	return true
+
+static func _clear_imported_equipment(root: Node) -> void:
+	for child in root.get_children():
+		if child.has_meta("wow_imported_equipment"):
+			root.remove_child(child)
+			child.queue_free()
+		else:
+			_clear_imported_equipment(child)
+
 static func _find_skeleton(root: Node) -> Skeleton3D:
 	if root is Skeleton3D:
 		return root as Skeleton3D

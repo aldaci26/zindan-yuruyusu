@@ -280,7 +280,7 @@ func _build_bag() -> void:
 	bag_win.anchor_bottom = 1.0
 	bag_win.offset_left = -262
 	bag_win.offset_right = -14
-	bag_win.offset_top = -472
+	bag_win.offset_top = -520
 	bag_win.offset_bottom = -112
 	var filters := [
 		{"id": "all", "text": "Tümü"},
@@ -315,14 +315,14 @@ func _build_bag() -> void:
 	sort_btn.tooltip_text = "Eşyaları tür, nadirlik ve ada göre sırala"
 	sort_btn.pressed.connect(_sort_bag)
 	bag_win.add_child(sort_btn)
-	for i in 16:
-		bag_slots.append(_slot("bag", i, 48.0, bag_win, Vector2(12 + (i % 4) * 50, 101 + (i / 4) * 50)))
+	for i in Inv.BAG_SIZE:
+		bag_slots.append(_slot("bag", i, 42.0, bag_win, Vector2(12 + (i % 5) * 45, 101 + (i / 5) * 45)))
 	bag_count_lbl = _label("", 11, Color("b9ad96"))
-	bag_count_lbl.position = Vector2(12, 304)
+	bag_count_lbl.position = Vector2(12, 375)
 	bag_count_lbl.size = Vector2(224, 18)
 	bag_win.add_child(bag_count_lbl)
 	money_lbl = _rich(220, 24)
-	money_lbl.position = Vector2(12, 326)
+	money_lbl.position = Vector2(12, 397)
 	bag_win.add_child(money_lbl)
 
 func _set_bag_filter(kind: String) -> void:
@@ -631,7 +631,7 @@ func refresh() -> void:
 	var lvl: int = game.P["lvl"]
 	var held = game.held
 	var occupied := 0
-	for i in 16:
+	for i in inv.bag.size():
 		var s: ItemSlot = bag_slots[i]
 		var e = inv.bag[i]
 		s.item = {} if e == null else Items.get_item(e["id"])

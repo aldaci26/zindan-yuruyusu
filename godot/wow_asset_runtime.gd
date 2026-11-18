@@ -1,4 +1,6 @@
 extends RefCounted
+
+const Items = preload("res://items.gd")
 ## Runtime loader for independently licensed WotLK-style glTF assets.
 ## Missing assets always fall back to the existing procedural models.
 
@@ -301,6 +303,138 @@ static func attach_equipment(character: Node3D, slot: String, equipment_scene: P
 	_apply_item_transform(equipment, local_position, local_rotation_degrees, local_scale)
 	return equipment
 
+static func _gear_material(item_id: String) -> StandardMaterial3D:
+	var data: Dictionary = Items.get_item(item_id)
+	var material := StandardMaterial3D.new()
+	material.albedo_color = data.get("col", Color("8a919c"))
+	material.metallic = 0.62 if str(data.get("type", "")) in ["Plaka", "Zincir", "Kalkan"] else 0.12
+	material.roughness = 0.72
+	return material
+
+static func _gear_piece(parent: Node3D, mesh: Mesh, material: Material, position: Vector3, rotation_degrees: Vector3 = Vector3.ZERO) -> MeshInstance3D:
+	var piece := MeshInstance3D.new()
+	piece.mesh = mesh
+	piece.material_override = material
+	piece.position = position
+	piece.rotation_degrees = rotation_degrees
+	parent.add_child(piece)
+	return piece
+
+static func _gear_box(parent: Node3D, size: Vector3, material: Material, position: Vector3, rotation_degrees: Vector3 = Vector3.ZERO) -> MeshInstance3D:
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	return _gear_piece(parent, mesh, material, position, rotation_degrees)
+
+static func _gear_sphere(parent: Node3D, radius: float, material: Material, position: Vector3, scale_value: Vector3 = Vector3.ONE) -> MeshInstance3D:
+	var mesh := SphereMesh.new()
+	mesh.radius = radius
+	mesh.height = radius * 2.0
+	mesh.radial_segments = 16
+	mesh.rings = 8
+	var piece := _gear_piece(parent, mesh, material, position)
+	piece.scale = scale_value
+	return piece
+
+static func _make_wearable_overlay(item_id: String, slot: String) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Wearable_" + item_id
+	root.set_meta("wow_imported_equipment", true)
+	var material := _gear_material(item_id)
+	var dark := material.duplicate() as StandardMaterial3D
+	dark.albedo_color = material.albedo_color.darkened(0.28)
+	var trim := StandardMaterial3D.new()
+	trim.albedo_color = Color("d7b56b")
+	trim.metallic = 0.72
+	trim.roughness = 0.38
+	match slot:
+		"chest":
+			_gear_box(root, Vector3(0.98, 0.72, 0.13), material, Vector3(0, 0, 0))
+			_gear_box(root, Vector3(0.18, 0.72, 0.15), dark, Vector3(-0.42, 0, -0.005))
+			_gear_box(root, Vector3(0.18, 0.72, 0.15), dark, Vector3(0.42, 0, -0.005))
+			_gear_box(root, Vector3(0.14, 0.64, 0.035), trim, Vector3(0, 0, 0.085))
+			_gear_box(root, Vector3(0.56, 0.1, 0.04), trim, Vector3(0, 0.28, 0.09))
+		"head":
+			var helmet := SphereMesh.new()
+			helmet.radius = 0.34
+			helmet.height = 0.44
+			helmet.is_hemisphere = true
+			helmet.radial_segments = 18
+			helmet.rings = 8
+			_gear_piece(root, helmet, material, Vector3(0, 0.09, 0))
+			_gear_box(root, Vector3(0.58, 0.09, 0.12), dark, Vector3(0, -0.02, 0.2))
+			_gear_box(root, Vector3(0.08, 0.2, 0.05), trim, Vector3(0, -0.04, 0.265))
+		"shoulder":
+			for side in [-1.0, 1.0]:
+				_gear_sphere(root, 0.31, material, Vector3(side * 0.59, 0.02, 0), Vector3(1.0, 0.82, 1.0))
+				_gear_box(root, Vector3(0.28, 0.09, 0.36), trim, Vector3(side * 0.59, -0.16, 0))
+		"back":
+			_gear_box(root, Vector3(0.82, 1.12, 0.07), material, Vector3(0, -0.55, -0.03), Vector3(-8, 0, 0))
+			_gear_box(root, Vector3(0.9, 0.1, 0.1), trim, Vector3(0, -0.06, -0.02))
+		"wrist":
+			var cuff := CylinderMesh.new()
+			cuff.top_radius = 0.18
+			cuff.bottom_radius = 0.2
+			cuff.height = 0.24
+			cuff.radial_segments = 16
+			_gear_piece(root, cuff, material, Vector3.ZERO)
+		"hands":
+			_gear_box(root, Vector3(0.34, 0.28, 0.34), material, Vector3(0, -0.02, 0))
+			_gear_box(root, Vector3(0.14, 0.2, 0.24), dark, Vector3(0, -0.2, 0.04))
+		"waist":
+			_gear_box(root, Vector3(1.0, 0.15, 0.7), material, Vector3(0, 0, 0))
+			_gear_box(root, Vector3(0.2, 0.18, 0.08), trim, Vector3(0, 0, 0.37))
+		"legs":
+			for side in [-1.0, 1.0]:
+				_gear_box(root, Vector3(0.39, 0.72, 0.48), material, Vector3(side * 0.24, -0.08, 0))
+				_gear_box(root, Vector3(0.41, 0.1, 0.5), trim, Vector3(side * 0.24, -0.42, 0.01))
+		"feet":
+			for side in [-1.0, 1.0]:
+				_gear_box(root, Vector3(0.46, 0.24, 0.62), material, Vector3(side * 0.24, -0.03, 0.08))
+				_gear_box(root, Vector3(0.47, 0.06, 0.63), dark, Vector3(side * 0.24, -0.16, 0.08))
+	return root
+
+static func _equipment_bounds(root: Node3D) -> AABB:
+	var bounds := AABB()
+	var has_bounds := false
+	for candidate in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := candidate as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+		var transform := mesh_instance.transform
+		var parent := mesh_instance.get_parent()
+		while parent != null and parent != root:
+			transform = (parent as Node3D).transform * transform
+			parent = parent.get_parent()
+		var mesh_bounds := transform * mesh_instance.mesh.get_aabb()
+		if not has_bounds:
+			bounds = mesh_bounds
+			has_bounds = true
+		else:
+			bounds = bounds.merge(mesh_bounds)
+	return bounds if has_bounds else AABB(Vector3(-0.25, -0.25, -0.25), Vector3(0.5, 0.5, 0.5))
+
+static func _fit_equipment_model(item: Node3D, slot: String) -> void:
+	var bounds := _equipment_bounds(item)
+	var dimensions := bounds.size
+	var center := bounds.position + dimensions * 0.5
+	var target := 1.0
+	match slot:
+		"mainhand": target = 1.12
+		"offhand": target = 0.88
+		"head": target = 0.62
+		"shoulder": target = 1.22
+	var longest := maxf(dimensions.x, maxf(dimensions.y, dimensions.z))
+	var scale_value := target / maxf(longest, 0.001)
+	item.scale = Vector3.ONE * scale_value
+	if slot == "mainhand":
+		item.position = Vector3(-center.x * scale_value, -bounds.position.y * scale_value, -center.z * scale_value)
+	else:
+		item.position = -center * scale_value
+	if slot == "head":
+		item.position.y += 0.06
+	elif slot == "shoulder":
+		item.position.y += 0.04
+
 static func refresh_equipment(character: Node3D, equipped: Dictionary) -> void:
 	if character == null or not is_instance_valid(character):
 		return
@@ -309,29 +443,39 @@ static func refresh_equipment(character: Node3D, equipped: Dictionary) -> void:
 		return
 	_clear_imported_equipment(character)
 	character.set_meta("wow_equipment_ids", equipped.duplicate(true))
-	for slot in equipped:
-		var item_id := str(equipped[slot])
+	for slot_value in equipped:
+		var slot := str(slot_value)
+		var item_id := str(equipped[slot_value])
 		if item_id.is_empty():
 			continue
-		var local_path := "res://assets/wotlk_local/equipment/%s.glb" % item_id
-		var public_path := "res://assets/wotlk/equipment/%s.glb" % item_id
-		var mapped_path := str(EQUIPMENT_ASSET_MAP.get(item_id, ""))
-		var path := ""
-		if ResourceLoader.exists(local_path):
-			path = local_path
-		elif ResourceLoader.exists(public_path):
-			path = public_path
-		elif not mapped_path.is_empty() and ResourceLoader.exists(mapped_path):
-			path = mapped_path
-		if path.is_empty():
-			continue
-		var packed := load(path) as PackedScene
-		if packed == null:
-			continue
-		var item := packed.instantiate() as Node3D
+		var item: Node3D = null
+		# Torso and soft-armor slots use fitted wearable geometry rather than
+		# attaching a world-pickup prop to the character.
+		if slot in ["chest", "back", "wrist", "hands", "waist", "legs", "feet"]:
+			item = _make_wearable_overlay(item_id, slot)
+		else:
+			var local_path := "res://assets/wotlk_local/equipment/%s.glb" % item_id
+			var public_path := "res://assets/wotlk/equipment/%s.glb" % item_id
+			var mapped_path := str(EQUIPMENT_ASSET_MAP.get(item_id, ""))
+			var path := ""
+			if ResourceLoader.exists(local_path):
+				path = local_path
+			elif ResourceLoader.exists(public_path):
+				path = public_path
+			elif not mapped_path.is_empty() and ResourceLoader.exists(mapped_path):
+				path = mapped_path
+			if not path.is_empty():
+				var packed := load(path) as PackedScene
+				if packed != null:
+					item = packed.instantiate() as Node3D
+			if item == null and slot in ["head", "shoulder"]:
+				item = _make_wearable_overlay(item_id, slot)
 		if item == null:
 			continue
-		if not _attach_equipment_node(character, str(slot), item):
+		if not item.has_meta("wow_imported_equipment"):
+			item.set_meta("wow_imported_equipment", true)
+			_fit_equipment_model(item, slot)
+		if not _attach_equipment_node(character, slot, item):
 			item.queue_free()
 
 static func _attach_equipment_node(character: Node3D, slot: String, item: Node3D) -> bool:

@@ -13,7 +13,14 @@ This folder contains an isolated, data-driven foundation for gradually expanding
 
 ## Integration status
 
-These services are intentionally isolated. The current playable game still uses its existing quest, inventory, combat and save systems. They have not yet been connected to the main scene, and this test build should be treated as a playable baseline rather than a completed MMORPG conversion.
+`mmorpg_bridge.gd` (`MMORPGBridge`) connects these services to the game without replacing anything:
+
+- At startup it builds item, quest, creature and spell definitions from the game's own data (`Items.db()`, `QUESTS`, the `*_MTYPES` tables, `HudScript.ABIL`) and validates them; problems are logged with `push_warning("mmorpg: ...")`.
+- `main.gd` mirrors quest accept, kill progress and turn-in into `MMORPGQuestLog`, and mirrors the bag and money into `MMORPGInventoryService` on every inventory change. After loading a save the mirror is rebuilt from the saved quest state.
+- The game's own quest, inventory and save systems remain the source of truth. The save format is unchanged.
+- Check: `godot --headless --path . --script tests/mmorpg_check.gd` prints `MMORPG OK`.
+
+Equipment stats, spell execution, creature AI and loot are still driven by the existing game code.
 
 ## Architecture and licensing rules
 

@@ -8,6 +8,7 @@ const HudScript = preload("res://hud.gd")
 const SfxScript = preload("res://sfx.gd")
 const Items = preload("res://items.gd")
 const Inv = preload("res://inv.gd")
+const MMBridge = preload("res://mmorpg/mmorpg_bridge.gd")
 const SaveManager = preload("res://systems/save_manager.gd")
 const CombatRules = preload("res://systems/combat_rules.gd")
 const SpawnDirector = preload("res://systems/spawn_director.gd")
@@ -304,6 +305,7 @@ var hud
 var sfx
 var paused := false
 var inv
+var mm  # mmorpg köprüsü: veri tanımları + görev/çanta aynası
 var invui
 var talui
 var progui
@@ -1511,6 +1513,7 @@ func _spawn_player() -> void:
 		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
+	_mm_setup()
 	G = Items.totals(inv.eq)
 	WowAssets.refresh_equipment(player, inv.eq)
 	P["hp"] = float(max_hp())
@@ -1543,6 +1546,8 @@ func potion_count() -> int:
 ## Eşya/seviye değişince istatistikleri ve pencereleri yenile.
 func inv_changed() -> void:
 	G = Items.totals(inv.eq)
+	if mm != null:
+		mm.sync_inventory(inv.bag, inv.money)
 	WowAssets.refresh_equipment(player, inv.eq)
 	if P.has("hp"):
 		P["hp"] = minf(P["hp"], float(max_hp()))
@@ -2988,6 +2993,8 @@ func load_game() -> bool:
 				var e: Dictionary = d["qs"][id]
 				qs[id] = {"st": str(e.get("st", "active")), "n": int(e.get("n", 0))}
 	P["y"] = height_at(P["x"], P["z"])
+	if mm != null:
+		mm.sync_quests(qs, P["lvl"])
 	render_quests()
 	inv_changed()
 	return true
@@ -3179,6 +3186,8 @@ func kill_mob(m) -> void:
 	if m.rare:
 		m.loot_money = roundi(m.loot_money * SpawnDirector.rare_reward_multiplier()) + 20
 		hud.say("Nadir düşman düştü!", Color("ffd23a"))
+	if mm != null:
+		mm.on_kill(m.nm)
 	quest_kill(m)
 	if not m.temp:
 		stat_add("kills")
@@ -3636,6 +3645,12 @@ func render_quests() -> void:
 		lines.append("%s  %d/%d%s" % [QUESTS[id]["title"], s["n"], QUESTS[id]["n"], " — Teslim et" if s["st"] == "ready" else ""])
 	hud.set_quests(lines)
 
+func _mm_setup() -> void:
+	mm = MMBridge.new()
+	mm.build(Items.db(), QUESTS, [MTYPES, SWAMP_MTYPES, MINE_MTYPES, ASH_MTYPES], HudScript.ABIL)
+	for e in mm.errors:
+		push_warning("mmorpg: " + e)
+
 func quest_kill(m) -> void:
 	for id in qs:
 		var s: Dictionary = qs[id]
@@ -3950,6 +3965,8 @@ func reward_pick(qid: String) -> void:
 		var it := Items.get_item(id)
 		buttons.append({"label": "%s  (%s)" % [it["name"], item_brief(it)], "disabled": inv.free_slots() < 1, "cb": func():
 			qs[qid]["st"] = "done"
+			if mm != null:
+				mm.on_turn_in(qid)
 			stat_add("quests")
 			rep_add(Prog.faction_of_quest(qid, SWAMP_QS), (300 + q["lvl"] * 20) * (2 if q["n"] == 1 else 1))
 			inv.add(id, 1)
@@ -4070,6 +4087,8 @@ func render_dialog() -> void:
 					body = "%s\n\nGörev: %d %s öldür.\nÖdül: %d tecrübe, %s ve bir eşya seçimi." % [q["text"], q["n"], q["kill"], q["xp"], Items.money_plain(q["money"])]
 					buttons.append({"label": "Görevi kabul et", "cb": func():
 						qs[qid] = {"st": "active", "n": 0}
+						if mm != null:
+							mm.on_accept(qid, P["lvl"])
 						sfx.play("quest")
 						hud.say("Görev alındı: " + q["title"], Color("f2c75c"))
 						save_game()

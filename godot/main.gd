@@ -1194,6 +1194,12 @@ func _wow_mm(relative_path: String, transforms: Array) -> void:
 		_add_multimesh(mesh_instance.mesh, null, combined)
 	source.free()
 
+func _flame(parent: Node, pos: Vector3, size: float) -> void:
+	var m := Dwarf.mat(Color.html("ffa030"), 0.0, 0.5, Color.html("ff8a1a"), 4.0)
+	var f := Dwarf.cone(parent, 0.5 * size, 1.5 * size, m, pos, 7)
+	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	flame_nodes.append(f)
+
 func _house(x: float, z: float, rot: float, w: float, d: float, bog: bool = false) -> void:
 	var house_index := 1 + (absi(roundi(x * 3.0 + z * 7.0)) % 4)
 	if bog:

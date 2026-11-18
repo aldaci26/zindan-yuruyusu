@@ -9,6 +9,7 @@ const SfxScript = preload("res://sfx.gd")
 const Items = preload("res://items.gd")
 const Inv = preload("res://inv.gd")
 const MMBridge = preload("res://mmorpg/mmorpg_bridge.gd")
+const WorldDressing = preload("res://systems/world_dressing.gd")
 const SaveManager = preload("res://systems/save_manager.gd")
 const CombatRules = preload("res://systems/combat_rules.gd")
 const SpawnDirector = preload("res://systems/spawn_director.gd")
@@ -1265,6 +1266,8 @@ func _build_village() -> void:
 		fl.rotation.y = i * 0.4
 		Dwarf.sph(self, 0.14, m_gold, Vector3(p[0], y0 + 5.05, p[1]))
 	_village_props()
+	WorldDressing.farm_plot(self, Vector2(-26.0, 2.0), 4, 6)
+	WorldDressing.circling_birds(self, "res://assets/third_party/gobkit/birds/Eagle.glb", Vector3(0, 15.0, 0), 30.0, 3)
 
 func _prop(kit: String, nm: String, x: float, z: float, rot: float, s: float, r := 0.0, tint: Color = Color(1.0, 0.93, 0.84)) -> void:
 	# [model, ölçek çarpanı]: çağıranların verdiği ölçekler Kenney modellerine göre ayarlı;
@@ -2441,6 +2444,7 @@ func _build_swamp() -> void:
 		_prop("fantasy-town", "fence", -8.0 + i * 2.0, 17.5, PI / 2.0, 2.2)
 	_make_portal(0.0, 22.0, Color("ffa040"), "snow", 16.0, -44.0, 0.0, "Demirkazan")
 	_make_portal(14.0, 21.0, Color("ff5a2a"), "ash", 0.0, 17.0, PI, "Kül Diyarı (Sv 14+)")
+	WorldDressing.shallows_birds(self, "res://assets/third_party/gobkit/birds/Flamingo.glb", 7, 77, -0.9, -0.25, 22.0, 75.0)
 
 func _ash_near_pool(x: float, z: float, pad: float) -> bool:
 	for p in ASH_POOLS:

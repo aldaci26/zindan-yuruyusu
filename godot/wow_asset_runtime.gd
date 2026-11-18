@@ -290,33 +290,6 @@ static func _slice_animation(source: Animation, start_time: float, end_time: flo
 		return null
 	return result
 
-static func attach_equipment(character: Node3D, slot: String, equipment_scene: PackedScene, bone_candidates: Array[String] = [], local_position: Vector3 = Vector3.ZERO, local_rotation_degrees: Vector3 = Vector3.ZERO, local_scale: Vector3 = Vector3.ONE) -> Node3D:
-	if character == null or equipment_scene == null:
-		return null
-	var equipment := equipment_scene.instantiate() as Node3D
-	if equipment == null:
-		return null
-	var skeleton := _find_skeleton(character)
-	if skeleton != null:
-		for bone_name in bone_candidates:
-			if skeleton.find_bone(bone_name) >= 0:
-				var attachment := BoneAttachment3D.new()
-				attachment.name = "%s_Attachment" % slot.capitalize()
-				attachment.bone_name = bone_name
-				skeleton.add_child(attachment)
-				attachment.add_child(equipment)
-				_apply_item_transform(equipment, local_position, local_rotation_degrees, local_scale)
-				return equipment
-	var rig: Dictionary = character.get_meta("rig", {})
-	var socket_key := "armR" if slot in ["weapon", "right_hand"] else ("armL" if slot in ["shield", "left_hand"] else slot)
-	var socket: Node3D = rig.get(socket_key) as Node3D
-	if socket == null:
-		equipment.queue_free()
-		return null
-	socket.add_child(equipment)
-	_apply_item_transform(equipment, local_position, local_rotation_degrees, local_scale)
-	return equipment
-
 static func _gear_material(item_id: String) -> StandardMaterial3D:
 	var data: Dictionary = Items.get_item(item_id)
 	var material := StandardMaterial3D.new()

@@ -1,13 +1,9 @@
 extends RefCounted
-## Versioned, validated save envelopes with automatic backup and three-slot paths.
+## Versioned, validated save envelopes with automatic backup.
 
 const CURRENT_VERSION := 2
 const DEFAULT_PATH := "user://cuce_save.json"
 const BACKUP_SUFFIX := ".bak"
-
-static func path_for_slot(slot: int) -> String:
-	var safe_slot := clampi(slot, 1, 3)
-	return DEFAULT_PATH if safe_slot == 1 else "user://cuce_save_slot_%d.json" % safe_slot
 
 static func encode(payload: Dictionary) -> String:
 	return JSON.stringify({
@@ -66,10 +62,6 @@ static func read(path: String) -> Dictionary:
 				return recovered
 	return {"ok": false, "error": "No valid primary or backup save found."}
 
-static func slot_exists(slot: int) -> bool:
-	var path := path_for_slot(slot)
-	return FileAccess.file_exists(path) or FileAccess.file_exists(path + BACKUP_SUFFIX)
-
 static func delete_path(path: String) -> bool:
 	var absolute := ProjectSettings.globalize_path(path)
 	var backup := absolute + BACKUP_SUFFIX
@@ -83,19 +75,3 @@ static func delete_path(path: String) -> bool:
 		if backup_error != OK:
 			return false
 	return had_file
-
-static func copy_path(source_path: String, target_path: String) -> bool:
-	if source_path == target_path or (not FileAccess.file_exists(source_path) and not FileAccess.file_exists(source_path + BACKUP_SUFFIX)):
-		return false
-	var loaded := read(source_path)
-	if not loaded.ok:
-		return false
-	return write(target_path, loaded.data).ok
-
-static func delete_slot(slot: int) -> bool:
-	return delete_path(path_for_slot(slot))
-
-static func copy_slot(source_slot: int, target_slot: int) -> bool:
-	if source_slot == target_slot or not slot_exists(source_slot):
-		return false
-	return copy_path(path_for_slot(source_slot), path_for_slot(target_slot))

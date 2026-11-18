@@ -1267,22 +1267,24 @@ func _build_village() -> void:
 	_village_props()
 
 func _prop(kit: String, nm: String, x: float, z: float, rot: float, s: float, r := 0.0, tint: Color = Color(1.0, 0.93, 0.84)) -> void:
+	# [model, ölçek çarpanı]: çağıranların verdiği ölçekler Kenney modellerine göre ayarlı;
+	# Quaternius modelleri gerçek boyutta olduğu için çarpanla küçültülür.
 	var replacements := {
-		"survival|barrel": "medieval_village_pack/Barrel.glb",
-		"survival|box-large": "medieval_village_pack/Crate.glb",
-		"survival|chest": "modular_dungeon_pack/Chest.glb",
-		"survival|campfire-pit": "medieval_village_pack/Bonfire_Lit.glb",
-		"fantasy-town|cart": "medieval_village_pack/Cart.glb",
-		"fantasy-town|stall-red": "medieval_village_pack/MarketStand_1.glb",
-		"fantasy-town|lantern": "modular_dungeon_pack/Torch_wall.glb",
-		"fantasy-town|fence": "medieval_village_pack/Fence.glb",
-		"fantasy-town|stairs-wood": "medieval_village_pack/Stairs.glb",
+		"survival|barrel": ["medieval_village_pack/Barrel.glb", 1.0],
+		"survival|box-large": ["medieval_village_pack/Crate.glb", 1.0],
+		"survival|chest": ["modular_dungeon_pack/Chest.glb", 0.3],
+		"survival|campfire-pit": ["medieval_village_pack/Bonfire_Lit.glb", 0.5],
+		"fantasy-town|cart": ["medieval_village_pack/Cart.glb", 1.0],
+		"fantasy-town|stall-red": ["medieval_village_pack/MarketStand_1.glb", 0.7],
+		"fantasy-town|lantern": ["modular_dungeon_pack/Torch_wall.glb", 0.3],
+		"fantasy-town|fence": ["medieval_village_pack/Fence.glb", 1.15],
+		"fantasy-town|stairs-wood": ["medieval_village_pack/Stairs.glb", 1.0],
 	}
 	var key := kit + "|" + nm
 	var pos := Vector3(x, height_at(x, z), z)
 	var spawned: Node3D = null
 	if replacements.has(key):
-		spawned = _wow_spawn(str(replacements[key]), pos, rot, s)
+		spawned = _wow_spawn(str(replacements[key][0]), pos, rot, s * float(replacements[key][1]))
 	if spawned == null:
 		Kit.spawn(self, kit, nm, pos, rot, s, tint)
 	if r > 0.0:
@@ -5053,13 +5055,26 @@ func _step_mob(m, dt: float) -> void:
 		var hd := Vector2(m.x - m.hx, m.z - m.hz).length()
 		if hd > 38.0:
 			m.state = "return"
+		elif m.boss == "" and m.ranged > 0.0 and m.eat_t <= 0.0 and NavSteer.ranged_move_direction(Vector2(m.x, m.z), Vector2(P["x"], P["z"]), m.ranged) != Vector2.ZERO:
+			# Menzilli düşmanlar çok yaklaşınca geri çekilir, uzaklaşınca tercih ettiği mesafeye döner.
+			var kd := NavSteer.ranged_move_direction(Vector2(m.x, m.z), Vector2(P["x"], P["z"]), m.ranged)
+			var kc := collide(m.x + kd.x * msp * 0.85 * dt, m.z + kd.y * msp * 0.85 * dt, m.rad * 0.6)
+			m.x = kc.x
+			m.z = kc.y
+			moving = true
 		elif d > (m.rad + 0.9 if m.ranged <= 0.0 else m.ranged - 2.0) and m.eat_t <= 0.0:
 			var near: Array = []
 			if m.boss == "":
 				for o in mobs:
 					if o != m and not o.dead and absf(o.x - m.x) < 2.4 and absf(o.z - m.z) < 2.4:
 						near.append(Vector2(o.x, o.z))
-			var dir := NavSteer.blend_direction(Vector2(dx, dz) / d, NavSteer.separation_vector(Vector2(m.x, m.z), near, 2.2), 0.55)
+			var aim := Vector2(dx, dz) / d
+			if m.boss == "" and m.ranged <= 0.0 and d < 7.0:
+				# Yakın dövüşçüler oyuncunun etrafında kendi payına düşen noktaya yürür, tek noktada yığılmaz.
+				var spot := NavSteer.melee_approach_point(Vector2(P["x"], P["z"]), m.id, m.rad + 0.9) - Vector2(m.x, m.z)
+				if spot.length() > 0.3:
+					aim = spot.normalized()
+			var dir := NavSteer.blend_direction(aim, NavSteer.separation_vector(Vector2(m.x, m.z), near, 2.2), 0.55)
 			var c := collide(m.x + dir.x * msp * dt, m.z + dir.y * msp * dt, m.rad * 0.6)
 			m.x = c.x
 			m.z = c.y

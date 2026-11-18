@@ -20,14 +20,8 @@ static func incoming_damage(raw: float, armor: float, attacker_level: int, defen
 static func combo_multiplier(combo_count: int) -> float:
 	return 1.0 + minf(0.25, float(maxi(0, combo_count - 1)) * 0.025)
 
-static func status_duration(base_seconds: float, resistance: float) -> float:
-	return maxf(0.0, base_seconds) * (1.0 - clampf(resistance, 0.0, 0.9))
-
 static func evade_chance(agility: float, level_difference: int = 0) -> float:
 	return clampf(0.025 + maxf(0.0, agility) * 0.0015 - float(level_difference) * 0.01, 0.01, 0.22)
 
 static func should_evade(roll_value: float, agility: float, level_difference: int = 0) -> bool:
 	return clampf(roll_value, 0.0, 1.0) < evade_chance(agility, level_difference)
-
-static func threat_score(damage_done: float, healing_done: float) -> float:
-	return maxf(0.0, damage_done) + maxf(0.0, healing_done) * 0.5

@@ -19,8 +19,8 @@ static func greeting(npc_name: String, interactions: int, reputation: int) -> St
 	if reputation >= 3500:
 		return "Tekrar hoş geldin, dostum. %s sana güveniyor." % npc_name
 	if interactions >= 5:
-		return "Yine karşılaştık. %s yaptıklarını hatırlıyor." % npc_name
-	return "%s seni hatırlıyor." % npc_name
+		return "Yine karşılaştık. %s yaptıklarını hatırlıyor; sana %s gözüyle bakıyor." % [npc_name, reputation_tone(reputation)]
+	return "%s seni hatırlıyor. Sana %s gözüyle bakıyor." % [npc_name, reputation_tone(reputation)]
 
 static func reputation_tone(reputation: int) -> String:
 	if reputation >= 6500:

@@ -1961,12 +1961,13 @@ func _make_boss_model(id: String) -> Node3D:
 		"hogger": return WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(true))
 		"vancleef": return WowAssets.spawn_creature("defias", func(): return Dwarf.make_dwarf({"skin": Color("e8c0a0"), "metal": Color("5a2a2a"), "cloth": Color("a32a2a"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"}))
 		"gruff": return WowAssets.spawn_creature("croc", func(): return Dwarf.make_croc(true))
-		"gorduk": return Dwarf.make_golem(true)
+		"gorduk": return WowAssets.spawn_creature("gorduk", func(): return Dwarf.make_golem(true))
 		"thokk": return Dwarf.make_frost()
-		"vurgan": return Dwarf.make_dwarf({"skin": Color("8a7060"), "metal": Color("2a2a30"), "cloth": Color("a32a1a"), "beard": Color("c8402a"), "helm": true, "prop": "hammer"})
-		"golemagg": return _tint_model(Dwarf.make_golem(true), Color("d4501a"), 0.45, 0.6)
-		"geddon": return Dwarf.make_ember()
-		"sulfuron": return _tint_model(Dwarf.make_ogre(), Color("8a2a1a"), 0.6, 0.3)
+		"vurgan": return WowAssets.spawn_creature("vurgan", func(): return Dwarf.make_dwarf({"skin": Color("8a7060"), "metal": Color("2a2a30"), "cloth": Color("a32a1a"), "beard": Color("c8402a"), "helm": true, "prop": "hammer"}))
+		"golemagg": return WowAssets.spawn_creature("golemagg", func(): return _tint_model(Dwarf.make_golem(true), Color("d4501a"), 0.45, 0.6))
+		"geddon": return WowAssets.spawn_creature("geddon", func(): return Dwarf.make_ember())
+		"sulfuron": return WowAssets.spawn_creature("sulfuron", func(): return _tint_model(Dwarf.make_ogre(), Color("8a2a1a"), 0.6, 0.3))
+		"ragnaros": return WowAssets.spawn_creature("ragnaros", func(): return Dwarf.make_ragnaros())
 		_: return Dwarf.make_ragnaros()
 
 ## Modelin malzemelerini renge doğru kaydırır (kopya malzeme)
@@ -1974,7 +1975,9 @@ func _tint_model(node: Node3D, col: Color, amt: float, glow: float = 0.0) -> Nod
 	var cache := {}
 	for mi in node.find_children("*", "MeshInstance3D", true, false):
 		var inst := mi as MeshInstance3D
-		var mt := inst.material_override
+		var mt: Material = inst.material_override
+		if mt == null:
+			mt = inst.get_active_material(0)
 		if mt is StandardMaterial3D and not (mt as StandardMaterial3D).emission_enabled:
 			if not cache.has(mt):
 				var sm: StandardMaterial3D = mt.duplicate()
@@ -2044,22 +2047,22 @@ func _camp_model(kind: String) -> Node3D:
 		"trogg": return WowAssets.spawn_creature("trogg", func(): return Dwarf.make_trogg(false))
 		"gnoll": return WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(false))
 		"murloc": return Dwarf.make_murloc(false)
-		"shaman": return WowAssets.spawn_creature("shaman", func(): return Dwarf.make_murloc(true))
+		"shaman": return Dwarf.make_murloc(true)
 		"croc": return Dwarf.make_croc(false)
-		"bog": return Dwarf.make_bogbeast()
+		"bog": return WowAssets.spawn_creature("bog", func(): return Dwarf.make_bogbeast())
 		"cinder":
-			var em := Dwarf.make_ember()
+			var em := WowAssets.spawn_creature("cinder", func(): return Dwarf.make_ember())
 			for l in em.find_children("*", "OmniLight3D", true, false):
 				l.get_parent().remove_child(l)
 				l.free()
 			return em
-		"slag": return _tint_model(Dwarf.make_golem(false), Color("8a3a22"), 0.5)
+		"slag": return WowAssets.spawn_creature("slag", func(): return _tint_model(Dwarf.make_golem(false), Color("8a3a22"), 0.5))
 		"ashogre": return WowAssets.spawn_creature("ashogre", func(): return _tint_model(Dwarf.make_ogre(), Color("5a3a34"), 0.55))
 		"ashbone": return WowAssets.spawn_creature("ashbone", func(): return _tint_model(Dwarf.make_skeleton(), Color("3a3030"), 0.6))
 		"miner": return WowAssets.spawn_creature("miner", func(): return Dwarf.make_dwarf({"skin": Color("6a5448"), "metal": Color("3a3238"), "cloth": Color("4a3a2a"), "beard": Color("1a1410"), "helm": true, "prop": "hammer"}))
-		"golem": return Dwarf.make_golem(false)
+		"golem": return WowAssets.spawn_creature("golem", func(): return Dwarf.make_golem(false))
 		"spider": return WowAssets.spawn_creature("spider", func(): return Dwarf.make_spider())
-		"frost": return Dwarf.make_frost()
+		"frost": return _tint_model(WowAssets.spawn_creature("frost_wolf", func(): return Dwarf.make_frost()), Color("b9d9ff"), 0.42)
 		"skeleton": return WowAssets.spawn_creature("skeleton", func(): return Dwarf.make_skeleton())
 		"guard": return WowAssets.spawn_creature("guard", func(): return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"}))
 		"defias": return WowAssets.spawn_creature("defias", func(): return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"}))
@@ -2166,9 +2169,9 @@ func spawn_add(owner_m, nm: String, model: String, lvl: int, hp: float, dmg: flo
 	next_id += 1
 	match model:
 		"gnoll": m.node = WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(false))
-		"ember": m.node = Dwarf.make_ember()
+		"ember": m.node = WowAssets.spawn_creature("cinder", func(): return Dwarf.make_ember())
 		"croc": m.node = Dwarf.make_croc(false)
-		"golem": m.node = Dwarf.make_golem(false)
+		"golem": m.node = WowAssets.spawn_creature("golem", func(): return Dwarf.make_golem(false))
 		"guard": m.node = WowAssets.spawn_creature("guard", func(): return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"}))
 		_: m.node = Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 	m.node.scale = Vector3.ONE * sc

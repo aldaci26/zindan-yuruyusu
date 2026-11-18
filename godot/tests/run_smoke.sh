@@ -7,7 +7,7 @@ SRC="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d)"
 cp -r "$SRC"/. "$TMP"/
 rm -rf "$TMP/tests"
-cat "$SRC/tests/smoke_append.gd" >> "$TMP/main.gd"
+cat "$SRC/tests/smoke_append.txt" >> "$TMP/main.gd"
 python3 - "$TMP/main.gd" <<'PY'
 import sys
 p = sys.argv[1]

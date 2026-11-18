@@ -346,8 +346,8 @@ func _build_char() -> void:
 	preview_camera.position = Vector3(0, 1.15, 3.8)
 	preview_camera.fov = 34.0
 	preview_camera.current = true
-	preview_camera.look_at(Vector3(0, 0.95, 0), Vector3.UP)
 	preview_world.add_child(preview_camera)
+	preview_camera.look_at(Vector3(0, 0.95, 0), Vector3.UP)
 	char_preview_model = Dwarf.make_dwarf()
 	char_preview_model.position = Vector3.ZERO
 	char_preview_model.rotation.y = 0.28

@@ -189,6 +189,11 @@ static func make_dwarf(o: Dictionary = {}) -> Node3D:
 	g.set_meta("rig", rig)
 	var gear_sockets := {
 		"head": head,
+		"neck": pivot(g, Vector3(0, 1.48, 0.31)),
+		"ring1": pivot(rig["armR"], Vector3(0, -0.68, 0.18)),
+		"ring2": pivot(rig["armL"], Vector3(0, -0.68, 0.18)),
+		"trinket1": pivot(g, Vector3(-0.22, 0.68, 0.39)),
+		"trinket2": pivot(g, Vector3(0.22, 0.68, 0.39)),
 		"mainhand": pivot(rig["armR"], Vector3(0, -0.68, 0.05)),
 		"offhand": pivot(rig["armL"], Vector3(-0.22, -0.55, 0.12)),
 		"chest": pivot(g, Vector3(0, 0.98, 0.35)),

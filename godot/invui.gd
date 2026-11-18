@@ -21,6 +21,7 @@ class ItemSlot extends Control:
 	var ghost := ""
 	var dim := false
 	var bad := false
+	var hot := false
 	var interactive := true
 
 	func _init(sz: float = 42.0) -> void:
@@ -37,18 +38,25 @@ class ItemSlot extends Control:
 
 	func _notification(what: int) -> void:
 		if what == NOTIFICATION_MOUSE_ENTER:
+			hot = true
+			queue_redraw()
 			hovered.emit(kind, key, true)
 		elif what == NOTIFICATION_MOUSE_EXIT:
+			hot = false
+			queue_redraw()
 			hovered.emit(kind, key, false)
 
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
-		draw_rect(r, Color(0.05, 0.045, 0.04, 0.95))
-		var inner := r.grow(-3)
+		var outer := Color("d0b16a") if hot else Color("75603b")
+		draw_rect(r, Color("090806"))
+		draw_rect(r.grow(-1), Color("403321") if hot else Color("211a12"))
+		var inner := r.grow(-4)
+		draw_rect(inner, Color("090a0d"))
 		if item.is_empty():
 			if ghost != "":
-				Glyph.slot_ghost(self, ghost, inner)
-			draw_rect(r, Color(0.36, 0.3, 0.2, 0.9), false, 2.0)
+				Glyph.slot_ghost(self, ghost, inner.grow(-2))
+			draw_rect(r.grow(-1), outer, false, 1.5)
 			return
 		Glyph.item(self, item, inner)
 		if bad:
@@ -56,7 +64,10 @@ class ItemSlot extends Control:
 		if dim:
 			draw_rect(inner, Color(0, 0, 0, 0.6))
 		var rc: Color = Items.RARITY_COL[item["rar"]]
-		draw_rect(r, rc if item["rar"] > 1 else Color(0.45, 0.4, 0.3, 0.95), false, 2.0)
+		var border := rc if item["rar"] > 1 else Color("88744c")
+		draw_rect(r.grow(-1), border, false, 2.0)
+		if hot:
+			draw_rect(r.grow(-2), Color(1.0, 0.9, 0.55, 0.8), false, 1.0)
 		if count > 1:
 			var f := ThemeDB.fallback_font
 			draw_string_outline(f, Vector2(0, size.y - 4), str(count), HORIZONTAL_ALIGNMENT_RIGHT, size.x - 3, 13, 4, Color(0, 0, 0, 0.95))
@@ -146,7 +157,13 @@ var char_win: Panel
 var vend_win: Panel
 var loot_win: Panel
 var bag_slots: Array = []
+var bag_filter := "all"
+var bag_filter_buttons: Array = []
+var bag_search_input: LineEdit
+var bag_count_lbl: Label
 var eq_slots := {}
+var eq_slot_labels := {}
+var set_lbl: RichTextLabel
 var money_lbl: RichTextLabel
 var stats_l: RichTextLabel
 var stats_r: RichTextLabel
@@ -261,34 +278,140 @@ func _build_bag() -> void:
 	bag_win.anchor_right = 1.0
 	bag_win.anchor_top = 1.0
 	bag_win.anchor_bottom = 1.0
-	bag_win.offset_left = -226
+	bag_win.offset_left = -262
 	bag_win.offset_right = -14
-	bag_win.offset_top = -392
+	bag_win.offset_top = -472
 	bag_win.offset_bottom = -112
+	var filters := [
+		{"id": "all", "text": "Tümü"},
+		{"id": "gear", "text": "Ekipman"},
+		{"id": "use", "text": "Tüketim"},
+		{"id": "mat", "text": "Malzeme"}
+	]
+	for i in filters.size():
+		var b := Button.new()
+		b.text = filters[i]["text"]
+		b.toggle_mode = true
+		b.focus_mode = Control.FOCUS_NONE
+		b.position = Vector2(10 + i * 57, 34)
+		b.size = Vector2(55, 25)
+		b.add_theme_font_size_override("font_size", 10)
+		b.pressed.connect(_set_bag_filter.bind(str(filters[i]["id"])))
+		bag_win.add_child(b)
+		bag_filter_buttons.append(b)
+	bag_search_input = LineEdit.new()
+	bag_search_input.placeholder_text = "Eşya ara..."
+	bag_search_input.position = Vector2(12, 65)
+	bag_search_input.size = Vector2(154, 25)
+	bag_search_input.add_theme_font_size_override("font_size", 12)
+	bag_search_input.text_changed.connect(_on_bag_search_changed)
+	bag_win.add_child(bag_search_input)
+	var sort_btn := Button.new()
+	sort_btn.text = "Düzenle"
+	sort_btn.position = Vector2(172, 65)
+	sort_btn.size = Vector2(64, 25)
+	sort_btn.focus_mode = Control.FOCUS_NONE
+	sort_btn.add_theme_font_size_override("font_size", 11)
+	sort_btn.tooltip_text = "Eşyaları tür, nadirlik ve ada göre sırala"
+	sort_btn.pressed.connect(_sort_bag)
+	bag_win.add_child(sort_btn)
 	for i in 16:
-		bag_slots.append(_slot("bag", i, 44.0, bag_win, Vector2(12 + (i % 4) * 48, 34 + (i / 4) * 48)))
-	money_lbl = _rich(190, 24)
-	money_lbl.position = Vector2(14, 250)
+		bag_slots.append(_slot("bag", i, 48.0, bag_win, Vector2(12 + (i % 4) * 50, 101 + (i / 4) * 50)))
+	bag_count_lbl = _label("", 11, Color("b9ad96"))
+	bag_count_lbl.position = Vector2(12, 304)
+	bag_count_lbl.size = Vector2(224, 18)
+	bag_win.add_child(bag_count_lbl)
+	money_lbl = _rich(220, 24)
+	money_lbl.position = Vector2(12, 326)
 	bag_win.add_child(money_lbl)
+
+func _set_bag_filter(kind: String) -> void:
+	bag_filter = kind
+	for i in bag_filter_buttons.size():
+		var b := bag_filter_buttons[i] as Button
+		b.button_pressed = ["all", "gear", "use", "mat"][i] == bag_filter
+	refresh()
+
+func _on_bag_search_changed(_value: String) -> void:
+	refresh()
+
+func _bag_matches(it: Dictionary) -> bool:
+	if it.is_empty():
+		return true
+	var slot: String = str(it.get("slot", ""))
+	var icon: String = str(it.get("icon", ""))
+	match bag_filter:
+		"gear":
+			if slot == "":
+				return false
+		"use":
+			if slot != "" or (it.get("heal", 0.0) <= 0.0 and icon != "potion"):
+				return false
+		"mat":
+			if slot != "" or icon not in ["ore", "bar", "pelt", "claw"]:
+				return false
+	var query := bag_search_input.text.strip_edges().to_lower() if bag_search_input != null else ""
+	return query == "" or str(it.get("name", "")).to_lower().contains(query)
+
+func _sort_bag() -> void:
+	if game == null or game.held != null:
+		return
+	game.inv.bag.sort_custom(func(a, b):
+		if a == null:
+			return false
+		if b == null:
+			return true
+		var ia: Dictionary = Items.get_item(str(a["id"]))
+		var ib: Dictionary = Items.get_item(str(b["id"]))
+		var ea := Items.is_equip(ia)
+		var eb := Items.is_equip(ib)
+		if ea != eb:
+			return ea
+		if int(ia["rar"]) != int(ib["rar"]):
+			return int(ia["rar"]) > int(ib["rar"])
+		return str(ia["name"]) < str(ib["name"])
+	)
+	refresh()
 
 func _build_char() -> void:
 	char_win = _window("Karakter", "char")
 	char_win.position = Vector2(14, 96)
-	char_win.size = Vector2(336, 480)
+	char_win.size = Vector2(430, 550)
 	var left := ["head", "neck", "shoulder", "back", "chest", "wrist"]
 	var right := ["hands", "waist", "legs", "feet", "ring1", "ring2"]
+	var left_names := ["Baş", "Boyun", "Omuz", "Sırt", "Göğüs", "Bilek"]
+	var right_names := ["Eller", "Bel", "Bacak", "Ayak", "Yüzük", "Yüzük"]
 	for i in 6:
-		eq_slots[left[i]] = _slot("eq", left[i], 40.0, char_win, Vector2(14, 36 + i * 44))
-		eq_slots[right[i]] = _slot("eq", right[i], 40.0, char_win, Vector2(282, 36 + i * 44))
+		var y := 42 + i * 44
+		eq_slots[left[i]] = _slot("eq", left[i], 40.0, char_win, Vector2(12, y))
+		var ll := _label(left_names[i], 10, Color("c6b58f"))
+		ll.position = Vector2(56, y + 12)
+		ll.size = Vector2(70, 16)
+		char_win.add_child(ll)
+		eq_slot_labels[left[i]] = ll
+		eq_slots[right[i]] = _slot("eq", right[i], 40.0, char_win, Vector2(378, y))
+		var rl := _label(right_names[i], 10, Color("c6b58f"))
+		rl.position = Vector2(298, y + 12)
+		rl.size = Vector2(76, 16)
+		rl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		char_win.add_child(rl)
+		eq_slot_labels[right[i]] = rl
 	var bottom := ["trinket1", "mainhand", "offhand", "trinket2"]
+	var bottom_names := ["Mücevher", "Ana el", "Yan el", "Mücevher"]
 	for i in 4:
-		eq_slots[bottom[i]] = _slot("eq", bottom[i], 40.0, char_win, Vector2(67 + i * 54, 304))
+		var x := 98 + i * 58
+		eq_slots[bottom[i]] = _slot("eq", bottom[i], 40.0, char_win, Vector2(x, 316))
+		var bl := _label(bottom_names[i], 9, Color("c6b58f"))
+		bl.position = Vector2(x - 8, 357)
+		bl.size = Vector2(56, 14)
+		bl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		char_win.add_child(bl)
+		eq_slot_labels[bottom[i]] = bl
 	for k in eq_slots:
 		eq_slots[k].ghost = k
-	# Gerçek karakter görünümü: ekipman takılmış 3D cüce modeli SubViewport içinde çizilir.
 	var preview_frame := Panel.new()
-	preview_frame.position = Vector2(90, 41)
-	preview_frame.size = Vector2(156, 156)
+	preview_frame.position = Vector2(136, 42)
+	preview_frame.size = Vector2(158, 158)
 	var frame_style := StyleBoxFlat.new()
 	frame_style.bg_color = Color("11100e")
 	frame_style.border_color = Color("9b7839")
@@ -296,7 +419,7 @@ func _build_char() -> void:
 	preview_frame.add_theme_stylebox_override("panel", frame_style)
 	char_win.add_child(preview_frame)
 	char_preview_container = SubViewportContainer.new()
-	char_preview_container.position = Vector2(93, 44)
+	char_preview_container.position = Vector2(140, 46)
 	char_preview_container.size = Vector2(150, 150)
 	char_preview_container.stretch = true
 	char_preview_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -356,20 +479,23 @@ func _build_char() -> void:
 	char_portrait = Parts.Portrait.new()
 	char_portrait.kind = "dwarf"
 	char_portrait.size = Vector2(150, 150)
-	char_portrait.position = Vector2(93, 44)
+	char_portrait.position = Vector2(140, 46)
 	char_portrait.visible = false
 	char_win.add_child(char_portrait)
 	char_name = _label("", 14, Color("ffd100"))
-	char_name.position = Vector2(0, 246)
-	char_name.size = Vector2(336, 20)
+	char_name.position = Vector2(0, 270)
+	char_name.size = Vector2(430, 20)
 	char_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	char_win.add_child(char_name)
-	stats_l = _rich(150, 110)
-	stats_l.position = Vector2(18, 360)
+	stats_l = _rich(190, 78)
+	stats_l.position = Vector2(18, 382)
 	char_win.add_child(stats_l)
-	stats_r = _rich(150, 110)
-	stats_r.position = Vector2(176, 360)
+	stats_r = _rich(194, 78)
+	stats_r.position = Vector2(218, 382)
 	char_win.add_child(stats_r)
+	set_lbl = _rich(394, 68)
+	set_lbl.position = Vector2(18, 466)
+	char_win.add_child(set_lbl)
 
 func _build_vendor() -> void:
 	vend_win = _window("Satıcı", "vendor")
@@ -504,6 +630,7 @@ func refresh() -> void:
 		WowAssets.refresh_equipment(char_preview_model, inv.eq)
 	var lvl: int = game.P["lvl"]
 	var held = game.held
+	var occupied := 0
 	for i in 16:
 		var s: ItemSlot = bag_slots[i]
 		var e = inv.bag[i]
@@ -511,7 +638,14 @@ func refresh() -> void:
 		s.count = 0 if e == null else e["n"]
 		s.dim = held != null and held["from"] == "bag" and held["i"] == i
 		s.bad = not s.item.is_empty() and Items.is_equip(s.item) and lvl < s.item["req"]
+		s.visible = _bag_matches(s.item)
+		if e != null:
+			occupied += 1
 		s.queue_redraw()
+	if bag_count_lbl != null:
+		bag_count_lbl.text = "Dolu yuva: %d / %d    Boş: %d" % [occupied, inv.bag.size(), inv.free_slots()]
+	for i in bag_filter_buttons.size():
+		(bag_filter_buttons[i] as Button).button_pressed = ["all", "gear", "use", "mat"][i] == bag_filter
 	for k in eq_slots:
 		var s2: ItemSlot = eq_slots[k]
 		var id: String = inv.eq[k]
@@ -538,6 +672,17 @@ func refresh() -> void:
 		+ "[color=#ffd100]Hasar[/color]  %d-%d\n" % [roundi(G["wmin"]), roundi(G["wmax"])]
 		+ "[color=#ffd100]Hız[/color]  %.2f\n" % G["wspd"]
 		+ "[color=#ffd100]Kritik[/color]  %.1f%%" % (game.crit_chance() * 100.0))
+	var set_text := "[color=#ffd100]Zırh takımları[/color]\n"
+	for set_id in Items.SETS:
+		var sd: Dictionary = Items.SETS[set_id]
+		var have := Items.set_count(set_id, inv.eq)
+		var color := "#9be8a8" if have > 0 else "#77736a"
+		set_text += "[color=%s]%s  %d/%d[/color]" % [color, sd["name"], have, sd["pieces"].size()]
+		for bonus in sd["bonus"]:
+			if have >= int(bonus["n"]):
+				set_text += "  [color=#1eff00]✓ %s[/color]" % bonus["txt"]
+		set_text += "\n"
+	set_lbl.text = set_text
 	cursor.visible = held != null
 	if held != null:
 		var hid := ""

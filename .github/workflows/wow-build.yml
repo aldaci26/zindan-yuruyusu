@@ -55,7 +55,7 @@ jobs:
             exit 1
           fi
           cat /tmp/godot-import.log
-          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|ERROR:" /tmp/godot-import.log; then
+          if grep -v -E "ALSA|audio_driver|init_output_device|audio_server" /tmp/godot-import.log | grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|ERROR:"; then
             echo "Godot reported script or resource errors during project import."
             exit 1
           fi
@@ -69,12 +69,13 @@ jobs:
             apt-get update
             apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
           fi
-          if ! xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --rendering-method gl_compatibility --rendering-driver opengl3 --path . --quit-after 5 asset_gallery.tscn > /tmp/asset-gallery.log 2>&1; then
+          if ! xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --path . --quit-after 5 asset_gallery.tscn > /tmp/asset-gallery.log 2>&1; then
             cat /tmp/asset-gallery.log
             exit 1
           fi
           cat /tmp/asset-gallery.log
-          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|ERROR:" /tmp/asset-gallery.log; then
+          # CI'da ses cihazı yoktur; ALSA/ses sürücüsü satırları gerçek hata sayılmaz
+          if grep -v -E "ALSA|audio_driver|init_output_device|audio_server" /tmp/asset-gallery.log | grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|ERROR:"; then
             echo "Asset gallery runtime smoke test reported errors."
             exit 1
           fi

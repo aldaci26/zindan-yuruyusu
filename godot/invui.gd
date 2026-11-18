@@ -4,6 +4,8 @@ extends Control
 const Items = preload("res://items.gd")
 const Glyph = preload("res://glyph.gd")
 const Parts = preload("res://ui_parts.gd")
+const Dwarf = preload("res://dwarf.gd")
+const WowAssets = preload("res://wow_asset_runtime.gd")
 const GOLD := Color("f2c75c")
 
 ## Çanta / ekipman kutusu
@@ -149,6 +151,9 @@ var money_lbl: RichTextLabel
 var stats_l: RichTextLabel
 var stats_r: RichTextLabel
 var char_portrait
+var char_preview_container: SubViewportContainer
+var char_preview_viewport: SubViewport
+var char_preview_model: Node3D
 var char_name: Label
 var vend_title: Label
 var vend_list: VBoxContainer
@@ -176,9 +181,11 @@ func _ready() -> void:
 	cursor.visible = false
 	add_child(cursor)
 
-func _process(_dt: float) -> void:
+func _process(dt: float) -> void:
 	if cursor.visible:
 		cursor.position = get_viewport().get_mouse_position() - Vector2(20, 20)
+	if char_preview_model != null and is_instance_valid(char_preview_model) and char_win != null and char_win.visible:
+		char_preview_model.rotation.y += dt * 0.18
 
 # ---------- yardımcılar ----------
 func _style(bg: Color = Color(0.06, 0.05, 0.04, 0.96)) -> StyleBoxFlat:
@@ -278,10 +285,79 @@ func _build_char() -> void:
 		eq_slots[bottom[i]] = _slot("eq", bottom[i], 40.0, char_win, Vector2(67 + i * 54, 304))
 	for k in eq_slots:
 		eq_slots[k].ghost = k
+	# Gerçek karakter görünümü: ekipman takılmış 3D cüce modeli SubViewport içinde çizilir.
+	var preview_frame := Panel.new()
+	preview_frame.position = Vector2(90, 41)
+	preview_frame.size = Vector2(156, 156)
+	var frame_style := StyleBoxFlat.new()
+	frame_style.bg_color = Color("11100e")
+	frame_style.border_color = Color("9b7839")
+	frame_style.set_border_width_all(2)
+	preview_frame.add_theme_stylebox_override("panel", frame_style)
+	char_win.add_child(preview_frame)
+	char_preview_container = SubViewportContainer.new()
+	char_preview_container.position = Vector2(93, 44)
+	char_preview_container.size = Vector2(150, 150)
+	char_preview_container.stretch = true
+	char_preview_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	char_win.add_child(char_preview_container)
+	char_preview_viewport = SubViewport.new()
+	char_preview_viewport.size = Vector2i(300, 300)
+	char_preview_viewport.transparent_bg = true
+	char_preview_viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
+	char_preview_container.add_child(char_preview_viewport)
+	var preview_world := Node3D.new()
+	char_preview_viewport.add_child(preview_world)
+	var preview_environment := WorldEnvironment.new()
+	var preview_env := Environment.new()
+	preview_env.background_mode = Environment.BG_COLOR
+	preview_env.background_color = Color(0.035, 0.03, 0.025, 0.0)
+	preview_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	preview_env.ambient_light_color = Color("b7a88c")
+	preview_env.ambient_light_energy = 0.65
+	preview_environment.environment = preview_env
+	preview_world.add_child(preview_environment)
+	var platform := MeshInstance3D.new()
+	var platform_mesh := CylinderMesh.new()
+	platform_mesh.top_radius = 0.78
+	platform_mesh.bottom_radius = 0.78
+	platform_mesh.height = 0.08
+	platform.mesh = platform_mesh
+	var platform_material := StandardMaterial3D.new()
+	platform_material.albedo_color = Color("30271d")
+	platform_material.metallic = 0.45
+	platform_material.roughness = 0.5
+	platform.material_override = platform_material
+	platform.position.y = -0.06
+	preview_world.add_child(platform)
+	var key_light := DirectionalLight3D.new()
+	key_light.rotation_degrees = Vector3(-38, -28, 0)
+	key_light.light_energy = 1.15
+	key_light.shadow_enabled = false
+	preview_world.add_child(key_light)
+	var fill_light := OmniLight3D.new()
+	fill_light.position = Vector3(1.4, 1.7, 2.2)
+	fill_light.light_color = Color("a9c8ff")
+	fill_light.light_energy = 0.55
+	fill_light.omni_range = 5.0
+	fill_light.shadow_enabled = false
+	preview_world.add_child(fill_light)
+	var preview_camera := Camera3D.new()
+	preview_camera.position = Vector3(0, 1.15, 3.8)
+	preview_camera.fov = 34.0
+	preview_camera.current = true
+	preview_camera.look_at(Vector3(0, 0.95, 0), Vector3.UP)
+	preview_world.add_child(preview_camera)
+	char_preview_model = Dwarf.make_dwarf()
+	char_preview_model.position = Vector3.ZERO
+	char_preview_model.rotation.y = 0.28
+	char_preview_model.scale = Vector3.ONE * 0.88
+	preview_world.add_child(char_preview_model)
 	char_portrait = Parts.Portrait.new()
 	char_portrait.kind = "dwarf"
 	char_portrait.size = Vector2(150, 150)
 	char_portrait.position = Vector2(93, 44)
+	char_portrait.visible = false
 	char_win.add_child(char_portrait)
 	char_name = _label("", 14, Color("ffd100"))
 	char_name.position = Vector2(0, 246)
@@ -424,6 +500,8 @@ func _on_slot_hover(kind: String, key, on: bool) -> void:
 # ---------- yenileme ----------
 func refresh() -> void:
 	var inv = game.inv
+	if char_preview_model != null and is_instance_valid(char_preview_model):
+		WowAssets.refresh_equipment(char_preview_model, inv.eq)
 	var lvl: int = game.P["lvl"]
 	var held = game.held
 	for i in 16:

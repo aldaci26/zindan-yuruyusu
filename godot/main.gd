@@ -5030,7 +5030,7 @@ func _step_effects(_dt: float) -> void:
 	if gate_light:
 		gate_light.light_energy = 2.0 + sin(T * 11.0) * 0.4
 	if lava_mat:
-		lava_mat.emission_energy_multiplier = 3.5 + sin(T * 3.0) * 0.6
+		lava_mat.emission_energy_multiplier = (0.8 if map == "ash" else 3.5) + sin(T * 3.0) * 0.2
 
 func _lvl_color(l: int) -> Color:
 	var d: int = l - P["lvl"]

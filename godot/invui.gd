@@ -2,6 +2,7 @@ extends Control
 ## Çanta, karakter, satıcı ve ganimet pencereleri + eşya ipuçları + imleçte taşınan eşya.
 
 const Items = preload("res://items.gd")
+const Inv = preload("res://inv.gd")
 const Glyph = preload("res://glyph.gd")
 const Parts = preload("res://ui_parts.gd")
 const Dwarf = preload("res://dwarf.gd")

@@ -16,7 +16,7 @@ var quests: Dictionary = {}
 var creatures: Dictionary = {}
 var spells: Dictionary = {}
 var quest_log = QuestLogScript.new()
-var inventory = InventoryScript.new(16)
+var inventory = InventoryScript.new(26)
 var errors: PackedStringArray = PackedStringArray()
 
 const CATEGORY_BY_SLOT := {"mainhand": "weapon", "offhand": "armor"}
@@ -135,8 +135,10 @@ func sync_inventory(bag: Array, money: int) -> void:
 			slots.append({"id": str(e["id"]), "count": clampi(int(e["n"]), 1, int(items[str(e["id"])].max_stack))})
 		else:
 			slots.append(null)
+	inventory.resize_slots(slots.size())
 	inventory.slots = slots
 	inventory.currency = maxi(0, money)
+	inventory.changed.emit()
 
 ## Ayna ile oyun durumu uyuşuyor mu? Uyuşmazlık listesi döner (boş = tutarlı).
 func check_against(game_qs: Dictionary) -> PackedStringArray:

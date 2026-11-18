@@ -1141,12 +1141,6 @@ func _build_forest() -> void:
 	for model_name in rock_groups:
 		_wow_mm("nature_pack/" + str(model_name), rock_groups[model_name])
 
-func _flame(parent: Node, pos: Vector3, size: float) -> void:
-	var material := Dwarf.mat(Color.html("ffa030"), 0.0, 0.5, Color.html("ff8a1a"), 4.0)
-	var fire_mesh := Dwarf.cone(parent, 0.5 * size, 1.5 * size, material, pos, 7)
-	fire_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	flame_nodes.append(fire_mesh)
-
 func _wow_spawn(relative_path: String, pos: Vector3, rot: float = 0.0, scale_value: float = 1.0) -> Node3D:
 	var path := "res://assets/wotlk/third_party/quaternius/" + relative_path
 	if not ResourceLoader.exists(path):

@@ -10,6 +10,7 @@ const Items = preload("res://items.gd")
 const Inv = preload("res://inv.gd")
 const MMBridge = preload("res://mmorpg/mmorpg_bridge.gd")
 const WorldDressing = preload("res://systems/world_dressing.gd")
+const Interiors = preload("res://systems/interiors.gd")
 const SaveManager = preload("res://systems/save_manager.gd")
 const CombatRules = preload("res://systems/combat_rules.gd")
 const SpawnDirector = preload("res://systems/spawn_director.gd")
@@ -307,6 +308,9 @@ var hud
 var sfx
 var paused := false
 var inv
+const ROOM_X := 400.0  # ev iç mekânlarının kurulduğu uzak bölge
+const ROOM_STEP := 14.0
+var house_doors: Array = []
 var mm  # mmorpg köprüsü: veri tanımları + görev/çanta aynası
 var invui
 var talui
@@ -487,6 +491,8 @@ func _mine_color(x: float, z: float, _y: float) -> Color:
 	return Color(c.r + g * 0.5, c.g + g * 0.27, c.b + g * 0.08)
 
 func height_at(x: float, z: float) -> float:
+	if x > ROOM_X - 30.0:
+		return 0.0
 	if map == "mine":
 		return _mine_h(x, z)
 	if map == "swamp":
@@ -629,6 +635,7 @@ func _clear_world() -> void:
 	npcs.clear()
 	obs.clear()
 	flame_nodes.clear()
+	house_doors.clear()
 	rings.clear()
 	portals.clear()
 	res_nodes.clear()
@@ -1199,6 +1206,88 @@ func _flame(parent: Node, pos: Vector3, size: float) -> void:
 	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	flame_nodes.append(f)
 
+## Evin kapısı: evin köy meydanına bakan tarafında; içi ROOM_X civarında bir odadır.
+func _register_house(x: float, z: float, kind: String, label: String) -> void:
+	var idx := house_doors.size()
+	var cx := ROOM_X + float(idx) * ROOM_STEP
+	Interiors.build(self, kind, cx, 0.0)
+	var dir := Vector2(-x, -z).normalized()
+	house_doors.append({"x": x, "z": z, "name": label, "cx": cx, "out": Vector2(x, z) + dir * 6.2, "dir": dir})
+
+func _room_idx() -> int:
+	if P["x"] < ROOM_X - 30.0 or house_doors.is_empty():
+		return -1
+	return clampi(roundi((P["x"] - ROOM_X) / ROOM_STEP), 0, house_doors.size() - 1)
+
+func near_house_door() -> int:
+	if _room_idx() >= 0:
+		return -1
+	for i in house_doors.size():
+		var hd: Dictionary = house_doors[i]
+		if Vector2(hd["x"] - P["x"], hd["z"] - P["z"]).length() < 6.8:
+			return i
+	return -1
+
+func near_room_exit() -> bool:
+	var ri := _room_idx()
+	if ri < 0:
+		return false
+	var hd: Dictionary = house_doors[ri]
+	return Vector2(hd["cx"] + Interiors.EXIT_SPOT.x - P["x"], Interiors.EXIT_SPOT.y - P["z"]).length() < 2.8
+
+func try_house_door() -> bool:
+	if mode != "play" or P["dead"] or traveling:
+		return false
+	var ri := _room_idx()
+	if ri >= 0:
+		if not near_room_exit():
+			return false
+		var hd: Dictionary = house_doors[ri]
+		var out: Vector2 = hd["out"]
+		var dir: Vector2 = hd["dir"]
+		_fade_move(out.x, out.y, atan2(dir.x, dir.y))
+		return true
+	var di := near_house_door()
+	if di < 0:
+		return false
+	if T - float(P["combat_t"]) < 5.0:
+		hud.say("Savaş sırasında içeri giremezsin.", Color("ff9a8a"))
+		return true
+	var h: Dictionary = house_doors[di]
+	hud.banner(String(h["name"]).to_upper(), "İç mekân")
+	_fade_move(float(h["cx"]) + Interiors.SPAWN.x, Interiors.SPAWN.y, PI)
+	return true
+
+## Aynı haritada kararma ile ışınlanma (iç mekân girişi/çıkışı).
+func _fade_move(x: float, z: float, yaw: float) -> void:
+	traveling = true
+	mode = "travel"
+	P["auto"] = false
+	P["target"] = null
+	var cl := CanvasLayer.new()
+	cl.layer = 100
+	var cr := ColorRect.new()
+	cr.color = Color(0, 0, 0, 0)
+	cr.set_anchors_preset(Control.PRESET_FULL_RECT)
+	cr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cl.add_child(cr)
+	get_tree().root.add_child(cl)
+	var tw := create_tween()
+	tw.tween_property(cr, "color:a", 1.0, 0.3)
+	await tw.finished
+	P["x"] = x
+	P["z"] = z
+	P["y"] = height_at(x, z)
+	P["yaw"] = yaw
+	cam_yaw = yaw - PI
+	await get_tree().process_frame
+	var tw2 := create_tween()
+	tw2.tween_property(cr, "color:a", 0.0, 0.4)
+	await tw2.finished
+	cl.queue_free()
+	mode = "play"
+	traveling = false
+
 func _house(x: float, z: float, rot: float, w: float, d: float, bog: bool = false) -> void:
 	var house_index := 1 + (absi(roundi(x * 3.0 + z * 7.0)) % 4)
 	if bog:
@@ -1227,6 +1316,10 @@ func _build_village() -> void:
 	_house(10, -3, -0.6, 6.5, 5.0)
 	_house(-8, 10, PI - 0.3, 5.5, 5.0)
 	_house(11, 10, PI + 0.5, 5.0, 4.5)
+	_register_house(-10.0, -4.0, "tavern", "Taverna")
+	_register_house(10.0, -3.0, "bedroom", "Konak")
+	_register_house(-8.0, 10.0, "library", "Kütüphane")
+	_register_house(11.0, 10.0, "bedroom", "Misafirhane")
 	# kamp ateşi
 	var fg := Node3D.new()
 	fg.position = Vector3(0, height_at(0, 0), 0)
@@ -3095,7 +3188,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 							open_loot(m)
 							looted = true
 							break
-					if not looted and not try_read_wall():
+					if not looted and not try_house_door() and not try_read_wall():
 						try_gather()
 			KEY_TAB:
 				var m = nearest_mob(14.0)
@@ -5327,6 +5420,8 @@ func _update_hud() -> void:
 	var ptxt := ""
 	if nn != null and not dlg_open and mode == "play" and not P["dead"]:
 		ptxt = "G — Konuş: " + nn["name"]
+	elif mode == "play" and not P["dead"] and (near_room_exit() or near_house_door() >= 0):
+		ptxt = "G — Dışarı çık" if near_room_exit() else "G — İçeri gir: " + String(house_doors[near_house_door()]["name"])
 	elif mode == "play" and not P["dead"] and not near_wall().is_empty():
 		var nw := near_wall()
 		ptxt = "G — Kelime duvarını oku" if not P["walls"].has(nw["id"]) else "Kelime duvarı (okundu): " + Shouts.word_text(nw)
@@ -5342,7 +5437,9 @@ func _update_hud() -> void:
 	var dc := Vector2(P["x"] - CITY.x, P["z"] - CITY.z).length()
 	var dv := Vector2(P["x"], P["z"]).length()
 	var z := "c" if dc < 27.0 else ("v" if dv < 16.0 else "w")
-	if map == "swamp":
+	if _room_idx() >= 0:
+		z = "v"
+	elif map == "swamp":
 		z = "sv" if dv < 16.0 else "sw"
 	elif map == "mine":
 		z = "mn"

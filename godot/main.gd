@@ -1217,6 +1217,51 @@ func _house(x: float, z: float, rot: float, w: float, d: float, bog: bool = fals
 				Dwarf.cyl(self, 0.2, 0.26, 1.6, m_wood, Vector3(x + px * w * 0.42, height_at(x, z) + 0.5, z + pz * d * 0.42), 6)
 	_add_obs(x, z, maxf(w, d) * 0.55)
 
+func _build_village() -> void:
+	_house(-10, -4, 0.5, 6.0, 5.0)
+	_house(10, -3, -0.6, 6.5, 5.0)
+	_house(-8, 10, PI - 0.3, 5.5, 5.0)
+	_house(11, 10, PI + 0.5, 5.0, 4.5)
+	# kamp ateşi
+	var fg := Node3D.new()
+	fg.position = Vector3(0, height_at(0, 0), 0)
+	add_child(fg)
+	for i in 6:
+		var lg := Dwarf.cyl(fg, 0.12, 0.12, 1.4, m_wood, Vector3(0, 0.3, 0), 6)
+		lg.rotation = Vector3(0, i * PI / 3.0, 0)
+		lg.rotation.z = PI / 2.6
+	for j in 8:
+		Dwarf.sph(fg, 0.28, m_stone, Vector3(cos(j * 0.785) * 1.1, 0.15, sin(j * 0.785) * 1.1), Vector3(1, 0.7, 1))
+	_flame(fg, Vector3(0, 0.9, 0), 1.0)
+	fire_light = OmniLight3D.new()
+	fire_light.light_color = Color("ff9a40")
+	fire_light.omni_range = 24.0
+	fire_light.light_energy = 2.4
+	fire_light.shadow_enabled = false
+	fire_light.position = Vector3(0, 1.6, 0)
+	fg.add_child(fire_light)
+	_add_obs(0, 0, 1.3)
+	# örs
+	var an := Node3D.new()
+	an.position = Vector3(5, height_at(5, 5), 5)
+	an.rotation.y = 0.5
+	add_child(an)
+	var am := Dwarf.mat(Color.html("3a3f47"), 0.7, 0.45)
+	Dwarf.box(an, Vector3(0.8, 0.5, 1.6), am, Vector3(0, 0.75, 0))
+	Dwarf.box(an, Vector3(0.5, 0.3, 0.6), am, Vector3(0, 1.1, 0.9))
+	Dwarf.box(an, Vector3(0.6, 0.6, 0.6), m_wood, Vector3(0, 0.3, 0))
+	_add_obs(5, 5, 1.0)
+	# sancaklar
+	var pts := [[-4, 12], [4, 13], [-3, -9], [3, -10]]
+	for i in pts.size():
+		var p = pts[i]
+		var y0 := height_at(p[0], p[1])
+		Dwarf.cyl(self, 0.07, 0.09, 5.0, m_wood, Vector3(p[0], y0 + 2.5, p[1]), 6)
+		var fl := Dwarf.box(self, Vector3(1.2, 2.0, 0.04), m_blue, Vector3(p[0] + 0.65, y0 + 3.9, p[1]))
+		fl.rotation.y = i * 0.4
+		Dwarf.sph(self, 0.14, m_gold, Vector3(p[0], y0 + 5.05, p[1]))
+	_village_props()
+
 func _prop(kit: String, nm: String, x: float, z: float, rot: float, s: float, r := 0.0, tint: Color = Color(1.0, 0.93, 0.84)) -> void:
 	var replacements := {
 		"survival|barrel": "medieval_village_pack/Barrel.glb",

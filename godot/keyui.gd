@@ -6,7 +6,7 @@ var rows := {}
 var waiting := ""
 
 func _init() -> void:
-	size = Vector2(380, 590)
+	size = Vector2(380, 650)
 	visible = false
 	z_index = 40
 	add_theme_stylebox_override("panel", _box())

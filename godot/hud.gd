@@ -74,6 +74,7 @@ var tip_note: Label
 var tip_idx := -1
 var minimap
 var waypoints
+var shout_lbl
 var zone_lbl: Label
 var coord_lbl: Label
 var buff_box: HBoxContainer
@@ -273,6 +274,11 @@ func _build_minimap() -> void:
 	root.add_child(_reg(minimap))
 	waypoints = Parts.Waypoints.new()
 	root.add_child(waypoints)
+	shout_lbl = _label("", 13, Color("66d8ff"), 3)
+	_place(shout_lbl, 0.5, 0.0, 0.5, 0.0, -150, 64, 150, 84)
+	shout_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	shout_lbl.visible = false
+	root.add_child(shout_lbl)
 	coord_lbl = _label("", 11, Color("d9e4ee"), 3)
 	_place(coord_lbl, 1.0, 0.0, 1.0, 0.0, -176, 186, -26, 202)
 	coord_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -874,6 +880,11 @@ func hide_dialog() -> void:
 
 func toggle_help() -> void:
 	help_box.visible = not help_box.visible
+
+func set_shout(text: String) -> void:
+	shout_lbl.text = text
+	shout_lbl.visible = text != ""
+	shout_lbl.add_theme_color_override("font_color", Color("66d8ff") if text.ends_with("hazır") else Color("8a9aa8"))
 
 func set_waypoints(items: Array) -> void:
 	waypoints.items = items

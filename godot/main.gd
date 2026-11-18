@@ -2044,7 +2044,7 @@ func _camp_model(kind: String) -> Node3D:
 		"trogg": return WowAssets.spawn_creature("trogg", func(): return Dwarf.make_trogg(false))
 		"gnoll": return WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(false))
 		"murloc": return Dwarf.make_murloc(false)
-		"shaman": return Dwarf.make_murloc(true)
+		"shaman": return WowAssets.spawn_creature("shaman", func(): return Dwarf.make_murloc(true))
 		"croc": return Dwarf.make_croc(false)
 		"bog": return Dwarf.make_bogbeast()
 		"cinder":
@@ -2165,11 +2165,11 @@ func spawn_add(owner_m, nm: String, model: String, lvl: int, hp: float, dmg: flo
 	m.id = next_id
 	next_id += 1
 	match model:
-		"gnoll": m.node = Dwarf.make_gnoll(false)
+		"gnoll": m.node = WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(false))
 		"ember": m.node = Dwarf.make_ember()
 		"croc": m.node = Dwarf.make_croc(false)
 		"golem": m.node = Dwarf.make_golem(false)
-		"guard": m.node = Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"})
+		"guard": m.node = WowAssets.spawn_creature("guard", func(): return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"}))
 		_: m.node = Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
 	m.node.scale = Vector3.ONE * sc
 	m.legs = _humanoid_legs(m.node)

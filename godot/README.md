@@ -88,6 +88,9 @@ Demirkazan'ın sol portalından (turuncu) girilir, Sv 12+ önerilir. Dört odal�
 ## Üçüncü harita: Kül Diyarı
 Bataklık Karakolu'ndaki kırmızı portaldan girilir, Sv 14–20. Gökten kül yağan, lav havuzlarıyla dolu bir diyardır (havuzlara girilemez). Düşmanlar: Kül Elementali (uzaktan vurur), Cüruf Golemi, Kül Ogresi, Yanık İskelet. Üç boss vardır: **Golemagg** (Magma Dalgası, çekirdek köpekleri), **Baron Geddon** (Cehennem halkası, Yaşayan Bomba, Armagedon), **Sulfuron** (hizmetkâr çağırma, Kül Dalgası, öfke). Kül Nöbetçileri Kampı'nda iki görev vericisi (Nöbetçi Torga, Kor Avcısı Zeyra) ve tüccar Rolf bulunur; yedi görev, "Kül Dövmesi" eşya takımı ve yeni bir itibar grubu (Kül Nöbetçileri) eklendi. Kampın portalları Bataklık'a ve Demirkazan'a döndürür.
 
+## Savaş Çığlıkları
+Kar Dağı, Bataklık ve Kül Diyarı'nda üçer **kelime duvarı** (parlayan mavi rünlü taş) vardır; yanına gidip **G** ile okuyunca bir çığlık kelimesi öğrenirsin ve tecrübe kazanırsın. Üç çığlık var, her biri 3 kelimeyle güçlenir: **Taş Yıkan** (önündeki düşmanları geri savurur), **Demir Deri** (süreli hasar azaltma), **Kül Nefesi** (önündeki düşmanları yakar). **Z** çığlığı kullanır, **X** çığlık değiştirir (tuşlar değiştirilebilir). Tüm çığlıklar ortak bir bekleme süresini paylaşır; durum ekranın üstünde görünür. Öğrenilen kelimeler kayda girer.
+
 ## Banka, dünya haritası, ayarlar
 - **Bankacı Gundri** (Demirkazan): 28 yuvalık depo; "Banka" ve "Çantam" sekmeleriyle eşya koyup alırsın, çantada sağ tık da bankaya koyar. Banka kayda dahildir.
 - **M**: dünya haritası (kamplar, bosslar, portallar, `!`/`?` NPC'ler).

@@ -25,6 +25,34 @@ func _selftest() -> void:
 			if not Items.db().has(r):
 				print("EKSİK ÖDÜL ", qid, " ", r)
 				fails += 1
+	# savaş çığlıkları: duvarlar kurulmalı, her çığlık hatasız kullanılmalı
+	for mp3 in ["snow", "swamp", "ash"]:
+		_enter_map(mp3)
+		for i in 3:
+			step(0.1)
+		var want := 0
+		for w3 in Shouts.WALLS:
+			if w3["map"] == mp3:
+				want += 1
+		if wall_list.size() != want:
+			print("ÇIĞLIK duvar sayısı ", mp3, " ", wall_list.size(), "/", want)
+			fails += 1
+		P["x"] = wall_list[0]["x"]
+		P["z"] = wall_list[0]["z"] + 2.0
+		P["walls"].clear()
+		if not try_read_wall() or P["walls"].size() != 1:
+			print("ÇIĞLIK okunamadı ", mp3)
+			fails += 1
+	for w4 in Shouts.WALLS:
+		P["walls"][w4["id"]] = true
+	for sid in Shouts.ORDER:
+		P["shout_sel"] = sid
+		P["shout_cd"] = 0.0
+		use_shout()
+		step(0.1)
+	P["walls"].clear()
+	P["skin_t"] = 0.0
+	_enter_map("snow")
 	# görev işaretleri: her etkin/teslim görev için her haritada bir işaret çıkmalı
 	for mp2 in ["snow", "swamp", "mine", "ash"]:
 		_enter_map(mp2)

@@ -17,6 +17,7 @@ const TalentUI = preload("res://talentui.gd")
 const ProgUI = preload("res://progui.gd")
 const Skills = preload("res://systems/skills.gd")
 const Journal = preload("res://systems/journal.gd")
+const Shouts = preload("res://systems/shouts.gd")
 const DialogueTrees = preload("res://systems/dialogue_trees.gd")
 const Prog = preload("res://prog.gd")
 const SWAMP_QS := ["q_murloc", "q_shaman", "q_croc", "q_bog", "q_gruff"]
@@ -307,6 +308,7 @@ var invui
 var talui
 var progui
 var res_nodes: Array = []
+var wall_list: Array = []
 var held = null
 var G := {}
 var vendor_npc = null
@@ -601,6 +603,7 @@ func _build_world() -> void:
 		_spawn_nodes()
 	if map != "mine" and map != "ash":
 		_setup_rain()
+	_spawn_walls()
 	_apply_env()
 
 func _clear_world() -> void:
@@ -625,6 +628,7 @@ func _clear_world() -> void:
 	rings.clear()
 	portals.clear()
 	res_nodes.clear()
+	wall_list.clear()
 	snow_node = null
 	rain_node = null
 	swamp_fx = null
@@ -1507,7 +1511,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	G = Items.totals(inv.eq)
@@ -2758,10 +2762,11 @@ const SETTINGS_PATH := "user://ayarlar.cfg"
 ## Tuş atama: işlem -> tuş. Boş bırakılan her işlem varsayılan tuşunda çalışır.
 const BIND_NAMES := {"fwd": "İleri", "back": "Geri", "left": "Sola", "right": "Sağa", "turnl": "Sola dön", "turnr": "Sağa dön",
 	"jump": "Zıpla", "interact": "Konuş / topla", "potion": "İksir", "auto": "Otomatik saldırı", "target": "Hedef seç",
-	"bag": "Çanta", "char": "Karakter", "tal": "Yetenekler", "prog": "Meslek / başarım", "map": "Dünya haritası", "help": "Yardım"}
+	"bag": "Çanta", "char": "Karakter", "tal": "Yetenekler", "prog": "Meslek / başarım", "map": "Dünya haritası", "help": "Yardım",
+	"shout": "Savaş çığlığı", "shoutsel": "Çığlık değiştir"}
 const BIND_DEFAULTS := {"fwd": KEY_W, "back": KEY_S, "left": KEY_A, "right": KEY_D, "turnl": KEY_Q, "turnr": KEY_E,
 	"jump": KEY_SPACE, "interact": KEY_G, "potion": KEY_F, "auto": KEY_R, "target": KEY_TAB,
-	"bag": KEY_B, "char": KEY_C, "tal": KEY_N, "prog": KEY_K, "map": KEY_M, "help": KEY_H}
+	"bag": KEY_B, "char": KEY_C, "tal": KEY_N, "prog": KEY_K, "map": KEY_M, "help": KEY_H, "shout": KEY_Z, "shoutsel": KEY_X}
 var binds: Dictionary = BIND_DEFAULTS.duplicate()
 
 func reset_binds() -> void:
@@ -2880,7 +2885,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	d["npc_mem"] = npc_mem
 	SaveManager.write(SAVE_PATH, d)
 
@@ -2947,6 +2952,10 @@ func load_game() -> bool:
 		P["perks"] = {}
 	P["lore"] = {}
 	P["talked"] = {}
+	P["walls"] = Shouts.sanitize(d.get("walls"))
+	P["shout_sel"] = str(d.get("shout_sel", "force")) if Shouts.SHOUTS.has(str(d.get("shout_sel", ""))) else "force"
+	P["shout_cd"] = 0.0
+	P["skin_t"] = 0.0
 	if typeof(d.get("lore")) == TYPE_DICTIONARY:
 		for k in d["lore"]:
 			if Journal.LORE.has(str(k)):
@@ -3018,6 +3027,8 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_9: abil_at(8)
 			KEY_0: use_potion()
 			KEY_F: use_potion()
+			KEY_Z: use_shout()
+			KEY_X: cycle_shout()
 			KEY_H: hud.toggle_help()
 			KEY_B: toggle_win("bag")
 			KEY_C: toggle_win("char")
@@ -3042,7 +3053,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 							open_loot(m)
 							looted = true
 							break
-					if not looted:
+					if not looted and not try_read_wall():
 						try_gather()
 			KEY_TAB:
 				var m = nearest_mob(14.0)
@@ -3541,6 +3552,8 @@ func hurt_player(raw: float, m) -> void:
 		return
 	var blocked: bool = P["sb_t"] > 0.0
 	var d := CombatRules.incoming_damage(raw, arm, m.lvl, (1.2 if P["rk_t"] > 0.0 else 1.0) * (1.0 - 0.02 * trk("pro_dr") - Skills.perk_sum(P["perks"], "dr")), blocked)
+	if T < P["skin_t"]:
+		d = roundi(d * (1.0 - P["skin_red"]))
 	skill_xp("heavy", 1.0)
 	if blocked:
 		skill_xp("block", 1.5)
@@ -3788,6 +3801,133 @@ func craft(rid: String) -> void:
 	ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.6, Color("ffb040"), 0.5)
 	hud.say("Üretildi: " + it["name"], Items.RARITY_COL[it["rar"]])
 	inv_changed()
+
+# ---------- Savaş Çığlıkları ----------
+func _spawn_walls() -> void:
+	for w in Shouts.WALLS:
+		if w["map"] != map:
+			continue
+		var sp := _free_spot(w["x"], w["z"])
+		for k in 12:
+			if height_at(sp.x, sp.y) > -0.3:
+				break
+			sp = _free_spot(w["x"] + 5.0 * float(k + 1), w["z"] - 4.0 * float(k + 1))
+		var y := height_at(sp.x, sp.y)
+		var stone := Dwarf.mat(Color.html("5a5a62"), 0.0, 0.9)
+		var rune := Dwarf.mat(Color.html("66d8ff"), 0.0, 0.4, Color.html("40c8ff"), 2.0)
+		var root := Node3D.new()
+		root.position = Vector3(sp.x, y, sp.y)
+		root.rotation.y = atan2(-sp.x, -sp.y)
+		add_child(root)
+		Dwarf.box(root, Vector3(2.2, 4.6, 0.8), stone, Vector3(0, 2.3, 0))
+		Dwarf.box(root, Vector3(2.7, 0.5, 1.1), stone, Vector3(0, 0.25, 0))
+		var bars: Array = []
+		for i in 4:
+			var bm := Dwarf.box(root, Vector3(1.4 - 0.2 * float(i % 2), 0.12, 0.05), rune, Vector3(0, 1.4 + 0.75 * float(i), 0.43))
+			bm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			bars.append(bm)
+		_add_obs(sp.x, sp.y, 1.6)
+		var li := OmniLight3D.new()
+		li.light_color = Color("66d8ff")
+		li.omni_range = 7.0
+		li.light_energy = 0.9
+		li.position = Vector3(0, 3.0, 1.2)
+		root.add_child(li)
+		wall_list.append({"id": w["id"], "x": sp.x, "z": sp.y, "light": li, "bars": bars, "rune": rune})
+	_refresh_walls()
+
+func _refresh_walls() -> void:
+	for wl in wall_list:
+		var done: bool = P["walls"].has(wl["id"])
+		(wl["light"] as OmniLight3D).light_energy = 0.25 if done else 0.9
+		(wl["rune"] as StandardMaterial3D).emission_energy_multiplier = 0.6 if done else 2.0
+
+func near_wall() -> Dictionary:
+	for wl in wall_list:
+		if Vector2(wl["x"] - P["x"], wl["z"] - P["z"]).length() < 4.0:
+			return Shouts.wall_def(wl["id"])
+	return {}
+
+func try_read_wall() -> bool:
+	var w := near_wall()
+	if w.is_empty():
+		return false
+	if P["walls"].has(w["id"]):
+		hud.say("Bu duvardaki kelimeyi zaten biliyorsun: %s" % Shouts.word_text(w), Color("66d8ff"))
+		return true
+	P["walls"][w["id"]] = true
+	var n := Shouts.known(P["walls"], w["shout"])
+	var sd: Dictionary = Shouts.SHOUTS[w["shout"]]
+	hud.banner("YENİ ÇIĞLIK KELİMESİ", Shouts.word_text(w))
+	hud.say("%s: %d/3 kelime. %s" % [sd["name"], n, "Çığlığı kullanmak için Z, değiştirmek için X." if n == 1 else "Çığlık güçlendi."], Color("66d8ff"))
+	if n == 1:
+		P["shout_sel"] = w["shout"]
+	sfx.play("quest")
+	gain_xp(120.0 + 40.0 * float(P["lvl"]))
+	_refresh_walls()
+	save_game()
+	return true
+
+func cycle_shout() -> void:
+	if mode != "play" or P["dead"]:
+		return
+	var start: int = Shouts.ORDER.find(P["shout_sel"])
+	for i in range(1, Shouts.ORDER.size() + 1):
+		var id: String = Shouts.ORDER[(start + i) % Shouts.ORDER.size()]
+		if Shouts.known(P["walls"], id) > 0:
+			P["shout_sel"] = id
+			hud.say("Çığlık: %s (%d/3)" % [Shouts.SHOUTS[id]["name"], Shouts.known(P["walls"], id)], Color("66d8ff"))
+			return
+	hud.say("Henüz hiç çığlık kelimesi bilmiyorsun. Kelime duvarlarını ara.", Color("ff9a8a"))
+
+func shout_status() -> String:
+	var id: String = P["shout_sel"]
+	var n := Shouts.known(P["walls"], id)
+	if n == 0:
+		return ""
+	var sd: Dictionary = Shouts.SHOUTS[id]
+	var cd: float = P["shout_cd"]
+	return "Z — %s %d/3  %s" % [sd["name"], n, "hazır" if cd <= 0.0 else "%d sn" % ceili(cd)]
+
+func use_shout() -> void:
+	if mode != "play" or P["dead"] or dlg_open:
+		return
+	var id: String = P["shout_sel"]
+	var n := Shouts.known(P["walls"], id)
+	if n == 0:
+		hud.say("Bu çığlığın kelimesini henüz bilmiyorsun. Kelime duvarlarını ara.", Color("ff9a8a"))
+		return
+	if P["shout_cd"] > 0.0:
+		hud.say("Çığlık hazır değil (%d sn)." % ceili(P["shout_cd"]), Color("ff9a8a"))
+		return
+	P["shout_cd"] = Shouts.cooldown(id, n)
+	P["combat_t"] = T
+	var sd: Dictionary = Shouts.SHOUTS[id]
+	var pos := Vector3(P["x"], height_at(P["x"], P["z"]), P["z"])
+	var fwd := Vector2(sin(P["yaw"]), cos(P["yaw"]))
+	hud.banner(sd["name"].to_upper(), Shouts.SHOUTS[id]["words"][n - 1][0])
+	match id:
+		"force", "flame":
+			var rng: float = sd["range"]
+			var col := Color("9ad8ff") if id == "force" else Color("ff8a3a")
+			sfx.play("thunder" if id == "force" else "whirl", -2)
+			ring_fx(pos, rng * 0.8, col, 0.6)
+			for m in mobs.duplicate():
+				if m.dead:
+					continue
+				var off := Vector2(m.x - P["x"], m.z - P["z"])
+				var d := off.length()
+				if d > rng or (d > 1.5 and off.normalized().dot(fwd) < 0.2):
+					continue
+				hit_mob(m, roll(atk() * Shouts.power(id, "mult", n)), col)
+				if id == "force" and not m.dead:
+					knockback(m, Shouts.power(id, "knock", n) * (0.4 if m.boss != "" else 1.0))
+		"skin":
+			P["skin_t"] = T + Shouts.power(id, "dur", n)
+			P["skin_red"] = Shouts.power(id, "red", n)
+			sfx.play("block", -2)
+			ring_fx(pos, 2.6, Color("c8d8e8"), 0.8)
+			float_text(pos + Vector3(0, 3.0, 0), "Demir Deri!", Color("c8d8e8"), false)
 
 func near_node() -> Dictionary:
 	for n in res_nodes:
@@ -4290,6 +4430,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 		P["atk_t"] = maxf(0.0, P["atk_t"] - dt)
 		P["gcd"] = maxf(0.0, P["gcd"] - dt)
 		P["pot_cd"] = maxf(0.0, P["pot_cd"] - dt)
+		P["shout_cd"] = maxf(0.0, P["shout_cd"] - dt)
 		for i in P["cd"].size():
 			P["cd"][i] = maxf(0.0, P["cd"][i] - dt)
 		P["rk_t"] = maxf(0.0, P["rk_t"] - dt)
@@ -5095,6 +5236,7 @@ func _update_hud() -> void:
 	for w in qwp:
 		qmini.append({"p": w["p"], "kind": w["kind"]})
 	hud.update_minimap({"px": P["x"], "pz": P["z"], "cam_yaw": cam_yaw, "pyaw": P["yaw"], "mobs": mp, "npcs": np, "swamp": map == "swamp", "mine": map == "mine", "ash": map == "ash", "qt": qmini})
+	hud.set_shout(shout_status() if mode == "play" and not P["dead"] else "")
 	hud.set_waypoints(_waypoint_screen(qwp) if mode == "play" and not P["dead"] else [])
 	# isim levhaları
 	for m in mobs:
@@ -5115,6 +5257,9 @@ func _update_hud() -> void:
 	var ptxt := ""
 	if nn != null and not dlg_open and mode == "play" and not P["dead"]:
 		ptxt = "G — Konuş: " + nn["name"]
+	elif mode == "play" and not P["dead"] and not near_wall().is_empty():
+		var nw := near_wall()
+		ptxt = "G — Kelime duvarını oku" if not P["walls"].has(nw["id"]) else "Kelime duvarı (okundu): " + Shouts.word_text(nw)
 	elif mode == "play" and not P["dead"] and not near_node().is_empty():
 		var nd: Dictionary = Prog.NODES[near_node()["kind"]]
 		ptxt = ("G — Topla: " + nd["name"]) if P["prof"].has("mine") else (nd["name"] + " (Madencilik gerekli)")

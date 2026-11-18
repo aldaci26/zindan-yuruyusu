@@ -84,6 +84,30 @@ func _ready() -> void:
 	pts_lbl = _label("", 14, Color("9be8a8"))
 	pts_lbl.position = Vector2(14, 34)
 	win.add_child(pts_lbl)
+	# Üç uzmanlık dalı için ayrı zemin ve düğümleri birbirine bağlayan ilerleme hattı.
+	for tix in 3:
+		var branch_panel := Panel.new()
+		branch_panel.position = Vector2(12 + tix * 132, 84)
+		branch_panel.size = Vector2(126, 250)
+		var branch_style := StyleBoxFlat.new()
+		var branch_bg: Color = TREE_COL[tix].darkened(0.82)
+		branch_bg.a = 0.32
+		branch_style.bg_color = branch_bg
+		var branch_border: Color = TREE_COL[tix]
+		branch_border.a = 0.42
+		branch_style.border_color = branch_border
+		branch_style.set_border_width_all(1)
+		branch_style.set_corner_radius_all(5)
+		branch_panel.add_theme_stylebox_override("panel", branch_style)
+		win.add_child(branch_panel)
+		var path_line := ColorRect.new()
+		path_line.position = Vector2(64 + tix * 132, 136)
+		path_line.size = Vector2(2, 166)
+		var line_color: Color = TREE_COL[tix]
+		line_color.a = 0.38
+		path_line.color = line_color
+		path_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		win.add_child(path_line)
 	var names := ["Silahlar", "Öfke", "Koruma"]
 	for tix in 3:
 		var hx := 18 + tix * 132

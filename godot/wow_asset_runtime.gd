@@ -76,21 +76,7 @@ const EQUIPMENT_ASSET_MAP := {
 	"so_iron": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
 	"so_boar": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
 	"so_peak": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
-	# Additional weapons already present in the imported CC0 packs.
 	"axe_marsh": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
-	"axe_mine": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe.glb",
-	"axe_ash": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
-	"axe_vurgan": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Axe_Double_Golden.glb",
-	"axe_gruff": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Axe_Double_Golden.glb",
-	"axe_grik": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
-	"axe_craft1": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe.glb",
-	"axe_craft2": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Axe_Double.glb",
-	"sword_cruel": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Claymore.glb",
-	"hammer_chok": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Hammer_Double.glb",
-	"hammer_gorduk": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Hammer_Double.glb",
-	"hammer_ash": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Hammer_Double.glb",
-	"hammer_golemagg": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Hammer_Double_Golden.glb",
-	# Reuse the verified metal armor model for chest-slot visuals.
 	"ch_plate": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Armor_Metal.glb",
 	"ch_deep": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Armor_Metal.glb",
 	"ch_rag": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Armor_Metal.glb",
@@ -100,7 +86,6 @@ const EQUIPMENT_ASSET_MAP := {
 	"ch_ash": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Armor_Metal.glb",
 	"ch_geddon": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Armor_Metal.glb",
 	"ch_craft1": "res://assets/wotlk/third_party/quaternius/rpg_items_pack/Armor_Metal.glb",
-	# More helmets and shields use verified models from the same packs.
 	"helm_bear": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet2.glb",
 	"helm_marsh": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
 	"helm_defias": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet2.glb",
@@ -110,8 +95,6 @@ const EQUIPMENT_ASSET_MAP := {
 	"helm_ash": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
 	"helm_geddon": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
 	"sh_thokk": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Celtic_Golden.glb",
-	"sh_ash": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Heater_2.glb",
-	"sh_sulf": "res://assets/wotlk/third_party/quaternius/medieval_weapons_pack/Shield_Celtic_Golden.glb",
 }
 const ANIMATION_ALIASES := {
 	"idle": ["idle", "stand", "breathing"],

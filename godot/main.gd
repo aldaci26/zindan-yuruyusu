@@ -1084,151 +1084,133 @@ func _add_obs(x: float, z: float, r: float) -> void:
 func _build_forest() -> void:
 	var rnd := RandomNumberGenerator.new()
 	rnd.seed = 2026
-	var trees: Array = []
+	var tree_groups: Dictionary = {}
+	var bush_groups: Dictionary = {}
+	var rock_groups: Dictionary = {}
 	var tries := 0
-	while tries < 3000 and trees.size() < 260:
+	while tries < 3000 and tree_groups.values().reduce(func(total, group): return total + group.size(), 0) < 260:
 		tries += 1
 		var a := rnd.randf() * TAU
 		var r := 16.0 + sqrt(rnd.randf()) * 74.0
 		var x := cos(a) * r
 		var z := sin(a) * r
-		var ok := Vector2(x - CITY.x, z - CITY.z).length() > 27.0
-		if ok:
-			for t in trees:
-				if Vector2(t.x - x, t.z - z).length() < 3.2:
-					ok = false
-					break
-		var sc := 0.8 + rnd.randf() * 0.9
-		if ok:
-			trees.append({"x": x, "z": z, "s": sc, "y": height_at(x, z), "rot": rnd.randf() * TAU})
-	# çam: 4 katman, her katmanın üstünde kar; ağaç başına renk ve boy farkı
-	var trunk: Array = []
-	var tiers: Array = [[], [], [], []]
-	var snows: Array = [[], [], [], []]
-	var tcols: Array = []
-	var radii := [2.3, 1.8, 1.35, 0.9]
-	var ys := [2.7, 4.2, 5.6, 6.9]
-	var dead_trunk: Array = []
-	var dead_branch: Array = []
-	for t in trees:
-		var tall := 0.85 + hash2(int(t.x * 3.0), int(t.z * 3.0)) * 0.5
-		var b := Basis(Vector3.UP, t.rot).scaled(Vector3(t.s, t.s * tall, t.s))
-		var p := Vector3(t.x, t.y, t.z)
-		if hash2(int(t.x * 11.0), int(t.z * 13.0)) < 0.2:
-			# kuru, yapraksız ağaç
-			dead_trunk.append(Transform3D(b.scaled(Vector3(0.8, 2.2, 0.8)), p + Vector3(0, 2.6 * t.s * tall, 0)))
-			for k in 3:
-				var ang: float = t.rot + k * 2.1
-				var br := Basis(Vector3.UP, ang) * Basis(Vector3(0, 0, 1), -0.9 + k * 0.15) * Basis.from_scale(Vector3(0.5, 0.9, 0.5) * t.s)
-				dead_branch.append(Transform3D(br, p + Vector3(0, (3.6 + k * 0.9) * t.s * tall, 0)))
-			_add_obs(t.x, t.z, 0.45 * t.s)
+		if Vector2(x - CITY.x, z - CITY.z).length() <= 27.0:
 			continue
-		trunk.append(Transform3D(b, p + Vector3(0, 1.2 * t.s * tall, 0)))
-		var tint := 0.82 + hash2(int(t.x * 5.0), int(t.z * 7.0)) * 0.32
-		tcols.append(Color(tint, tint * (0.96 + hash2(int(t.z), int(t.x)) * 0.1), tint))
-		for k in 4:
-			tiers[k].append(Transform3D(b, p + Vector3(0, ys[k] * t.s * tall, 0)))
-			snows[k].append(Transform3D(b.scaled(Vector3(0.78, 0.5, 0.78)), p + Vector3(0, (ys[k] + 0.95) * t.s * tall, 0)))
-		_add_obs(t.x, t.z, 0.55 * t.s)
-	var tm := CylinderMesh.new()
-	tm.top_radius = 0.25
-	tm.bottom_radius = 0.42
-	tm.height = 2.4
-	tm.radial_segments = 6
-	var wm := Dwarf.mat(Color.html("ffffff"), 0.0, 0.95)
-	wm.vertex_color_use_as_albedo = true
-	var trunk_m := Dwarf.mat(Color.html("5a4030"), 0.0, 0.95)
-	trunk_m.vertex_color_use_as_albedo = true
-	_add_multimesh(tm, trunk_m, trunk, tcols)
-	var dead_m := Dwarf.mat(Color.html("4a3a34"), 0.0, 0.95)
-	_add_multimesh(tm, dead_m, dead_trunk)
-	var brm := CylinderMesh.new()
-	brm.top_radius = 0.05
-	brm.bottom_radius = 0.16
-	brm.height = 1.8
-	brm.radial_segments = 5
-	_add_multimesh(brm, dead_m, dead_branch)
-	var greens := ["1f4f46", "26604a", "2f7050", "3a8058"]
-	for k in 4:
-		var cm := CylinderMesh.new()
-		cm.top_radius = 0.0
-		cm.bottom_radius = radii[k]
-		cm.height = 2.9 - k * 0.2
-		cm.radial_segments = 7
-		var gm := Dwarf.mat(Color.html(greens[k]), 0.0, 0.92)
-		gm.vertex_color_use_as_albedo = true
-		_add_multimesh(cm, gm, tiers[k], tcols)
-		var sm := CylinderMesh.new()
-		sm.top_radius = 0.0
-		sm.bottom_radius = radii[k] * 1.02
-		sm.height = 2.9 - k * 0.2
-		sm.radial_segments = 7
-		_add_multimesh(sm, m_snow, snows[k])
-	# çalılar ve kuru ot demetleri
-	var bush: Array = []
-	var bcols: Array = []
-	var tuft: Array = []
-	var tucols: Array = []
-	for q in 220:
-		var a3 := rnd.randf() * TAU
-		var r3 := 6.0 + sqrt(rnd.randf()) * 82.0
-		var x3 := cos(a3) * r3
-		var z3 := sin(a3) * r3
-		if Vector2(x3 - CITY.x, z3 - CITY.z).length() < 26.0 or Vector2(x3, z3).length() < 12.0:
-			continue
-		var y3 := height_at(x3, z3)
-		var s3 := 0.5 + rnd.randf() * 0.7
-		if q % 3 == 0:
-			bush.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3(s3 * 1.2, s3 * 0.8, s3 * 1.2)), Vector3(x3, y3 + 0.3 * s3, z3)))
-			bcols.append(Color.from_hsv(0.3 + rnd.randf() * 0.08, 0.45, 0.55 + rnd.randf() * 0.2))
-		else:
-			tuft.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3(s3 * 1.4, s3 * 0.6, s3 * 1.4)), Vector3(x3, y3 + 0.1 * s3, z3)))
-			tucols.append(Color.from_hsv(0.12 + rnd.randf() * 0.05, 0.4, 0.62 + rnd.randf() * 0.2))
-	var bm := SphereMesh.new()
-	bm.radius = 0.6
-	bm.height = 1.0
-	bm.radial_segments = 6
-	bm.rings = 3
-	var bmat := Dwarf.mat(Color.html("ffffff"), 0.0, 0.95)
-	bmat.vertex_color_use_as_albedo = true
-	_add_multimesh(bm, bmat, bush, bcols)
-	var tf := CylinderMesh.new()
-	tf.top_radius = 0.0
-	tf.bottom_radius = 0.4
-	tf.height = 0.6
-	tf.radial_segments = 7
-	_add_multimesh(tf, bmat, tuft, tucols)
-	# kayalar
-	var rocks: Array = []
-	var caps: Array = []
-	for q in 50:
+		var scale_value := 2.6 + rnd.randf() * 1.25
+		var model_name := "PineTree_Snow_%d.glb" % rnd.randi_range(1, 5)
+		if rnd.randf() < 0.18:
+			model_name = "BirchTree_Dead_Snow_%d.glb" % rnd.randi_range(1, 5)
+		var transform := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * scale_value), Vector3(x, height_at(x, z), z))
+		if not tree_groups.has(model_name):
+			tree_groups[model_name] = []
+		tree_groups[model_name].append(transform)
+		_add_obs(x, z, 0.62 * scale_value)
+	for model_name in tree_groups:
+		_wow_mm("nature_pack/" + str(model_name), tree_groups[model_name])
+	# Kar kaplı çalılar: iki ayrı varyantla doğal kümeler.
+	for i in 150:
 		var a2 := rnd.randf() * TAU
-		var r2 := 15.0 + rnd.randf() * 75.0
+		var r2 := 8.0 + sqrt(rnd.randf()) * 82.0
 		var x2 := cos(a2) * r2
 		var z2 := sin(a2) * r2
-		var s2 := 0.7 + rnd.randf() * 1.6
-		if Vector2(x2 - CITY.x, z2 - CITY.z).length() < 27.0 or Vector2(x2, z2).length() < 16.0:
+		if Vector2(x2 - CITY.x, z2 - CITY.z).length() < 25.0 or Vector2(x2, z2).length() < 12.0:
 			continue
-		var y2 := height_at(x2, z2)
-		var rb := Basis.from_euler(Vector3(rnd.randf() * 3.0, rnd.randf() * 3.0, 0.0)).scaled(Vector3(s2, s2 * 0.75, s2))
-		rocks.append(Transform3D(rb, Vector3(x2, y2 + s2 * 0.3, z2)))
-		caps.append(Transform3D(Basis().scaled(Vector3(s2 * 0.7, s2 * 0.3, s2 * 0.7)), Vector3(x2, y2 + s2 * 0.75, z2)))
-		_add_obs(x2, z2, s2 * 0.9)
-	var rm := SphereMesh.new()
-	rm.radius = 1.0
-	rm.height = 2.0
-	rm.radial_segments = 6
-	rm.rings = 4
-	_add_multimesh(rm, Dwarf.mat(Color.html("737f8e"), 0.0, 0.95), rocks)
-	_add_multimesh(rm, m_snow, caps)
+		var bush_name := "Bush_Snow_%d.glb" % rnd.randi_range(1, 2)
+		var bush_scale := 0.65 + rnd.randf() * 0.8
+		var bush_xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * bush_scale), Vector3(x2, height_at(x2, z2), z2))
+		if not bush_groups.has(bush_name):
+			bush_groups[bush_name] = []
+		bush_groups[bush_name].append(bush_xf)
+	for model_name in bush_groups:
+		_wow_mm("nature_pack/" + str(model_name), bush_groups[model_name])
+	# Kayalık alanlar; gerçek Quaternius kar kayaları, her birine ayrı varyant.
+	for i in 54:
+		var a3 := rnd.randf() * TAU
+		var r3 := 18.0 + rnd.randf() * 78.0
+		var x3 := cos(a3) * r3
+		var z3 := sin(a3) * r3
+		if Vector2(x3 - CITY.x, z3 - CITY.z).length() < 25.0:
+			continue
+		var rock_name := "Rock_Snow_%d.glb" % rnd.randi_range(1, 7)
+		var rock_scale := 1.0 + rnd.randf() * 2.0
+		var rock_xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3(rock_scale * 1.2, rock_scale * 0.8, rock_scale)), Vector3(x3, height_at(x3, z3) - 0.1, z3))
+		if not rock_groups.has(rock_name):
+			rock_groups[rock_name] = []
+		rock_groups[rock_name].append(rock_xf)
+		_add_obs(x3, z3, 0.9 * rock_scale)
+	for model_name in rock_groups:
+		_wow_mm("nature_pack/" + str(model_name), rock_groups[model_name])
 
-func _flame(parent: Node, pos: Vector3, size: float) -> void:
-	var m := Dwarf.mat(Color.html("ffa030"), 0.0, 0.5, Color.html("ff8a1a"), 4.0)
-	var f := Dwarf.cone(parent, 0.5 * size, 1.5 * size, m, pos, 7)
-	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	flame_nodes.append(f)
+func _wow_spawn(relative_path: String, pos: Vector3, rot: float = 0.0, scale_value: float = 1.0) -> Node3D:
+	var path := "res://assets/wotlk/third_party/quaternius/" + relative_path
+	if not ResourceLoader.exists(path):
+		return null
+	var packed := load(path) as PackedScene
+	if packed == null:
+		return null
+	var instance := packed.instantiate() as Node3D
+	if instance == null:
+		return null
+	instance.position = pos
+	instance.rotation.y = rot
+	instance.scale = Vector3.ONE * scale_value
+	add_child(instance)
+	return instance
+
+func _wow_mm(relative_path: String, transforms: Array) -> void:
+	if transforms.is_empty():
+		return
+	var path := "res://assets/wotlk/third_party/quaternius/" + relative_path
+	if not ResourceLoader.exists(path):
+		push_warning("Missing Quaternius environment model: " + path)
+		return
+	var packed := load(path) as PackedScene
+	if packed == null:
+		return
+	var source := packed.instantiate()
+	var candidates: Array = source.find_children("*", "MeshInstance3D", true, false)
+	if source is MeshInstance3D:
+		candidates.push_front(source)
+	for candidate in candidates:
+		var mesh_instance := candidate as MeshInstance3D
+		if mesh_instance == null or mesh_instance.mesh == null:
+			continue
+		var local_transform := mesh_instance.transform
+		var parent := mesh_instance.get_parent()
+		while parent != null and parent != source:
+			if parent is Node3D:
+				local_transform = (parent as Node3D).transform * local_transform
+			parent = parent.get_parent()
+		var combined: Array = []
+		for base_transform in transforms:
+			combined.append((base_transform as Transform3D) * local_transform)
+		# Keep the GLB's own surface materials and texture atlas intact.
+		_add_multimesh(mesh_instance.mesh, null, combined)
+	source.free()
 
 func _house(x: float, z: float, rot: float, w: float, d: float, bog: bool = false) -> void:
+	var house_index := 1 + (absi(roundi(x * 3.0 + z * 7.0)) % 4)
+	if bog:
+		house_index = 3 + (absi(roundi(x * 2.0 + z * 5.0)) % 2)
+	var model_name := "House_%d.glb" % house_index
+	var house_scale := clampf(minf(w, d) / 3.2, 1.45, 2.15)
+	var house := _wow_spawn("medieval_village_pack/" + model_name, Vector3(x, height_at(x, z), z), rot, house_scale)
+	if house == null:
+		# Keep the existing modular house as a safe fallback if an imported model is unavailable.
+		var fallback := Node3D.new()
+		fallback.position = Vector3(x, height_at(x, z), z)
+		fallback.rotation.y = rot
+		add_child(fallback)
+		var tw := maxi(2, roundi(w / 2.2))
+		var td := maxi(2, roundi(d / 2.2))
+		var fallback_house := Kit.house(fallback, tw, td, 2.2, Color(1.0, 0.93, 0.84), m_roof)
+		fallback_house.scale = Vector3(1.0, 1.15, 1.0)
+	if bog:
+		for px in [-1.0, 1.0]:
+			for pz in [-1.0, 1.0]:
+				Dwarf.cyl(self, 0.2, 0.26, 1.6, m_wood, Vector3(x + px * w * 0.42, height_at(x, z) + 0.5, z + pz * d * 0.42), 6)
+	_add_obs(x, z, maxf(w, d) * 0.55)
+
 	var g := Node3D.new()
 	g.position = Vector3(x, height_at(x, z), z)
 	g.rotation.y = rot
@@ -1298,7 +1280,24 @@ func _build_village() -> void:
 	_village_props()
 
 func _prop(kit: String, nm: String, x: float, z: float, rot: float, s: float, r := 0.0, tint: Color = Color(1.0, 0.93, 0.84)) -> void:
-	Kit.spawn(self, kit, nm, Vector3(x, height_at(x, z), z), rot, s, tint)
+	var replacements := {
+		"survival|barrel": "medieval_village_pack/Barrel.glb",
+		"survival|box-large": "medieval_village_pack/Crate.glb",
+		"survival|chest": "modular_dungeon_pack/Chest.glb",
+		"survival|campfire-pit": "medieval_village_pack/Bonfire_Lit.glb",
+		"fantasy-town|cart": "medieval_village_pack/Cart.glb",
+		"fantasy-town|stall-red": "medieval_village_pack/MarketStand_1.glb",
+		"fantasy-town|lantern": "modular_dungeon_pack/Torch_wall.glb",
+		"fantasy-town|fence": "medieval_village_pack/Fence.glb",
+		"fantasy-town|stairs-wood": "medieval_village_pack/Stairs.glb",
+	}
+	var key := kit + "|" + nm
+	var pos := Vector3(x, height_at(x, z), z)
+	var spawned: Node3D = null
+	if replacements.has(key):
+		spawned = _wow_spawn(str(replacements[key]), pos, rot, s)
+	if spawned == null:
+		Kit.spawn(self, kit, nm, pos, rot, s, tint)
 	if r > 0.0:
 		_add_obs(x, z, r)
 
@@ -2329,11 +2328,10 @@ func _build_swamp() -> void:
 		var h := 22.0 + hash2(i, 5) * 26.0
 		var w := 30.0 + hash2(i, 7) * 18.0
 		_cone_mi(w, h, hm2 if far else hm, Vector3(cos(a) * r, h / 2.0 - 8.0, sin(a) * r), false, 6)
-	# ağaçlar
-	var crooked: Array = []
-	var tall: Array = []
+	# Bataklıkta Quaternius söğütleri ve ölü söğütler.
+	var willow_groups: Dictionary = {}
 	var tries := 0
-	while crooked.size() + tall.size() < 190 and tries < 3000:
+	while willow_groups.values().reduce(func(total, group): return total + group.size(), 0) < 190 and tries < 3000:
 		tries += 1
 		var a2 := rnd.randf() * TAU
 		var r2 := 10.0 + rnd.randf() * 80.0
@@ -2342,15 +2340,17 @@ func _build_swamp() -> void:
 		if Vector2(x, z).length() < 18.0 or Vector2(x, z - 22.0).length() < 7.0:
 			continue
 		var y := height_at(x, z)
-		var s := 3.0 + rnd.randf() * 2.0
-		var xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * s), Vector3(x, y - 0.1, z))
-		if rnd.randf() < 0.35:
-			tall.append(xf)
-		else:
-			crooked.append(xf)
-		_add_obs(x, z, 0.8)
-	_kit_mm("fantasy-town", "tree-crooked", crooked, Color(0.46, 0.52, 0.34))
-	_kit_mm("fantasy-town", "tree-high-crooked", tall, Color(0.42, 0.48, 0.32))
+		var scale_value := 2.8 + rnd.randf() * 1.8
+		var model_name := "Willow_%d.glb" % rnd.randi_range(1, 5)
+		if rnd.randf() < 0.22:
+			model_name = "Willow_Dead_%d.glb" % rnd.randi_range(1, 5)
+		var xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * scale_value), Vector3(x, y - 0.1, z))
+		if not willow_groups.has(model_name):
+			willow_groups[model_name] = []
+		willow_groups[model_name].append(xf)
+		_add_obs(x, z, 0.85)
+	for model_name in willow_groups:
+		_wow_mm("nature_pack/" + str(model_name), willow_groups[model_name])
 	# sazlar ve kayalar
 	var reeds: Array = []
 	tries = 0
@@ -2390,16 +2390,30 @@ func _build_swamp() -> void:
 	cathead.height = 0.38
 	cathead.radial_segments = 6
 	_add_multimesh(cathead, Dwarf.mat(Color.html("5a3a22"), 0.0, 0.9), heads)
-	for rn in ["rock-a", "rock-b", "rock-c"]:
-		var rx: Array = []
-		for i in 12:
-			var x4 := rnd.randf_range(-85.0, 85.0)
-			var z4 := rnd.randf_range(-85.0, 85.0)
-			if Vector2(x4, z4).length() < 18.0:
-				continue
-			rx.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * (3.0 + rnd.randf() * 3.0)), Vector3(x4, height_at(x4, z4) - 0.1, z4)))
-			_add_obs(x4, z4, 1.4)
-		_kit_mm("survival", rn, rx, Color(0.7, 0.72, 0.62))
+	# Yosunlu kayalar ve nilüferler.
+	var moss_groups: Dictionary = {}
+	for rock_i in 36:
+		var x4 := rnd.randf_range(-85.0, 85.0)
+		var z4 := rnd.randf_range(-85.0, 85.0)
+		if Vector2(x4, z4).length() < 18.0:
+			continue
+		var rock_name := "Rock_Moss_%d.glb" % rnd.randi_range(1, 7)
+		var rock_scale := 1.4 + rnd.randf() * 2.2
+		var rock_xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * rock_scale), Vector3(x4, height_at(x4, z4) - 0.1, z4))
+		if not moss_groups.has(rock_name):
+			moss_groups[rock_name] = []
+		moss_groups[rock_name].append(rock_xf)
+		_add_obs(x4, z4, 1.0)
+	for model_name in moss_groups:
+		_wow_mm("nature_pack/" + str(model_name), moss_groups[model_name])
+	var lily_groups: Array = []
+	for lily_i in 34:
+		var lx := rnd.randf_range(-82.0, 82.0)
+		var lz := rnd.randf_range(-82.0, 82.0)
+		if Vector2(lx, lz).length() < 18.0:
+			continue
+		lily_groups.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * (0.7 + rnd.randf() * 0.7)), Vector3(lx, -0.68, lz)))
+	_wow_mm("nature_pack/Lilypad.glb", lily_groups)
 	# karakol
 	_house(-13.0, -4.0, 0.5, 6.6, 4.4, true)
 	_house(13.0, -5.0, -0.5, 6.6, 4.4, true)
@@ -2483,10 +2497,10 @@ func _build_ash() -> void:
 		_cone_mi(w2, h2, spire, Vector3(x, height_at(x, z) + h2 / 2.0 - 0.2, z), true, 5)
 		_add_obs(x, z, w2 + 0.4)
 		n += 1
-	# ölü ağaçlar
-	var trees: Array = []
+	# Kül bölgesinde yanmış Quaternius huş ağaçları ve koyu kayalar.
+	var dead_groups: Dictionary = {}
 	tries = 0
-	while trees.size() < 70 and tries < 1500:
+	while dead_groups.values().reduce(func(total, group): return total + group.size(), 0) < 70 and tries < 1500:
 		tries += 1
 		var a3 := rnd.randf() * TAU
 		var r3 := 20.0 + rnd.randf() * 64.0
@@ -2494,20 +2508,30 @@ func _build_ash() -> void:
 		var z3 := sin(a3) * r3
 		if _ash_near_pool(x3, z3, 5.0) or Vector2(x3, z3 - 22.0).length() < 8.0:
 			continue
-		var sc := 3.0 + rnd.randf() * 2.0
-		trees.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * sc), Vector3(x3, height_at(x3, z3) - 0.1, z3)))
+		var sc := 2.8 + rnd.randf() * 1.5
+		var dead_name := "BirchTree_Dead_%d.glb" % rnd.randi_range(1, 5)
+		var xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * sc), Vector3(x3, height_at(x3, z3) - 0.1, z3))
+		if not dead_groups.has(dead_name):
+			dead_groups[dead_name] = []
+		dead_groups[dead_name].append(xf)
 		_add_obs(x3, z3, 0.8)
-	_kit_mm("fantasy-town", "tree-crooked", trees, Color(0.2, 0.17, 0.16))
-	for rn in ["rock-a", "rock-b", "rock-c"]:
-		var rx: Array = []
-		for i in 10:
-			var x4 := rnd.randf_range(-85.0, 85.0)
-			var z4 := rnd.randf_range(-85.0, 85.0)
-			if Vector2(x4, z4).length() < 18.0 or _ash_near_pool(x4, z4, 3.0):
-				continue
-			rx.append(Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3.ONE * (3.0 + rnd.randf() * 3.0)), Vector3(x4, height_at(x4, z4) - 0.1, z4)))
-			_add_obs(x4, z4, 1.4)
-		_kit_mm("survival", rn, rx, Color(0.38, 0.33, 0.3))
+	for model_name in dead_groups:
+		_wow_mm("nature_pack/" + str(model_name), dead_groups[model_name])
+	var ash_rocks: Dictionary = {}
+	for rock_i in 34:
+		var x4 := rnd.randf_range(-85.0, 85.0)
+		var z4 := rnd.randf_range(-85.0, 85.0)
+		if Vector2(x4, z4).length() < 18.0 or _ash_near_pool(x4, z4, 3.0):
+			continue
+		var rock_name := "Rock_%d.glb" % rnd.randi_range(1, 7)
+		var rock_scale := 1.5 + rnd.randf() * 2.5
+		var rock_xf := Transform3D(Basis(Vector3.UP, rnd.randf() * TAU).scaled(Vector3(rock_scale * 1.2, rock_scale, rock_scale)), Vector3(x4, height_at(x4, z4) - 0.1, z4))
+		if not ash_rocks.has(rock_name):
+			ash_rocks[rock_name] = []
+		ash_rocks[rock_name].append(rock_xf)
+		_add_obs(x4, z4, 1.4)
+	for model_name in ash_rocks:
+		_wow_mm("nature_pack/" + str(model_name), ash_rocks[model_name])
 	# Kül Nöbetçileri Kampı
 	_house(-13.0, -4.0, 0.5, 6.6, 4.4)
 	_house(13.0, -5.0, -0.5, 6.6, 4.4)

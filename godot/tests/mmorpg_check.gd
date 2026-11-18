@@ -4,6 +4,8 @@ const MMBridge = preload("res://mmorpg/mmorpg_bridge.gd")
 const Items = preload("res://items.gd")
 const Inv = preload("res://inv.gd")
 const Hud = preload("res://hud.gd")
+const Dwarf = preload("res://dwarf.gd")
+const WowAssets = preload("res://wow_asset_runtime.gd")
 
 func _init() -> void:
 	var main = load("res://main.gd")
@@ -32,8 +34,31 @@ func _init() -> void:
 	if not mm.quest_log.from_dict(save): print("HATA: quest from_dict"); bad += 1
 	# çanta
 	var inv = Inv.new()
+	if inv.bag.size() != 26: print("HATA: oyun cantasi 26 yuva degil"); bad += 1
 	mm.sync_inventory(inv.bag, inv.money)
+	if mm.inventory.slots.size() != 26: print("HATA: MMORPG envanter aynasi 26 yuva degil"); bad += 1
 	if mm.inventory.count_item("pot_heal") != 3: print("HATA: iksir sayisi"); bad += 1
+	if not mm.inventory.from_dict(mm.inventory.to_dict(), mm.items): print("HATA: envanter from_dict"); bad += 1
+	# Tüm karakter ekipman yuvalarının görünür bir model/overlay almasını doğrula.
+	var character := Dwarf.make_dwarf()
+	var gear := {
+		"head": "helm_iron", "neck": "nk_tooth", "shoulder": "so_iron", "back": "bk_cloak",
+		"chest": "ch_tunic", "wrist": "wr_cloth", "hands": "hd_glove", "waist": "wt_belt",
+		"legs": "lg_pants", "feet": "ft_boots", "ring1": "rg_iron", "ring2": "rg_sig",
+		"trinket1": "tr_whet", "trinket2": "tr_horn", "mainhand": "axe_old", "offhand": "sh_wood"
+	}
+	WowAssets.refresh_equipment(character, gear)
+	var sockets: Dictionary = character.get_meta("gear_sockets", {})
+	for slot in gear:
+		var socket: Variant = sockets.get(slot)
+		var attached := false
+		if socket is Array:
+			for part in socket:
+				if part is Node3D and (part as Node3D).get_child_count() > 0: attached = true
+		elif socket is Node3D:
+			attached = (socket as Node3D).get_child_count() > 0
+		if not attached: print("HATA: ekipman gorunur degil: ", slot); bad += 1
+	character.free()
 	if not mm.inventory.from_dict(mm.inventory.to_dict(), mm.items): print("HATA: envanter from_dict"); bad += 1
 	print("MMORPG OK" if bad == 0 else "MMORPG HATA %d" % bad)
 	quit(1 if bad else 0)

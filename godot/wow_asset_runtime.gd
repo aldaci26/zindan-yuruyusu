@@ -384,6 +384,26 @@ static func _make_wearable_overlay(item_id: String, slot: String) -> Node3D:
 		"back":
 			_gear_box(root, Vector3(0.82, 1.12, 0.07), material, Vector3(0, -0.55, -0.03), Vector3(-8, 0, 0))
 			_gear_box(root, Vector3(0.9, 0.1, 0.1), trim, Vector3(0, -0.06, -0.02))
+		"neck":
+			var necklace := TorusMesh.new()
+			necklace.inner_radius = 0.22
+			necklace.outer_radius = 0.28
+			necklace.rings = 20
+			necklace.ring_segments = 8
+			_gear_piece(root, necklace, material, Vector3(0, -0.02, 0))
+			_gear_sphere(root, 0.09, trim, Vector3(0, -0.27, 0.08))
+		"ring1", "ring2":
+			var ring_mesh := TorusMesh.new()
+			ring_mesh.inner_radius = 0.055
+			ring_mesh.outer_radius = 0.085
+			ring_mesh.rings = 16
+			ring_mesh.ring_segments = 8
+			_gear_piece(root, ring_mesh, material, Vector3.ZERO)
+			_gear_sphere(root, 0.045, trim, Vector3(0, 0.055, 0))
+		"trinket1", "trinket2":
+			_gear_box(root, Vector3(0.2, 0.26, 0.07), material, Vector3(0, -0.04, 0))
+			_gear_box(root, Vector3(0.1, 0.12, 0.035), trim, Vector3(0, -0.04, 0.055))
+			_gear_sphere(root, 0.045, trim, Vector3(0, -0.2, 0.02))
 		"wrist":
 			var cuff := CylinderMesh.new()
 			cuff.top_radius = 0.18
@@ -465,7 +485,7 @@ static func refresh_equipment(character: Node3D, equipped: Dictionary) -> void:
 		var item: Node3D = null
 		# Torso and soft-armor slots use fitted wearable geometry rather than
 		# attaching a world-pickup prop to the character.
-		if slot in ["chest", "back", "wrist", "hands", "waist", "legs", "feet"]:
+		if slot in ["neck", "chest", "back", "wrist", "hands", "waist", "legs", "feet", "ring1", "ring2", "trinket1", "trinket2"]:
 			item = _make_wearable_overlay(item_id, slot)
 		else:
 			var local_path := "res://assets/wotlk_local/equipment/%s.glb" % item_id

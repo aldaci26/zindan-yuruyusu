@@ -2,7 +2,7 @@ extends RefCounted
 ## Çanta, giyilen eşyalar ve para (bakır cinsinden). Saf veri/mantık, arayüz yok.
 
 const Items = preload("res://items.gd")
-const BAG_SIZE := 16
+const BAG_SIZE := 26
 
 var bag: Array = []
 var eq := {}

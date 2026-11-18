@@ -42,7 +42,12 @@ static func arc(ci: CanvasItem, r: Rect2, x: float, y: float, rad: float, a0: fl
 static func draw(ci: CanvasItem, kind: String, r: Rect2) -> void:
 	var bg: Array = BG.get(kind, [Color(0.12, 0.12, 0.14), Color(0.05, 0.05, 0.07)])
 	var v := PackedVector2Array([r.position, r.position + Vector2(r.size.x, 0), r.end, r.position + Vector2(0, r.size.y)])
-	ci.draw_polygon(v, PackedColorArray([bg[0], bg[0], bg[1], bg[1]]))
+	ci.draw_polygon(v, PackedColorArray([bg[0].lightened(0.12), bg[0].lightened(0.12), bg[1].darkened(0.18), bg[1].darkened(0.18)]))
+	# Metal frame, inset shadow and top-left glint for a more finished ability icon.
+	ci.draw_rect(r, Color("090806"), false, maxf(1.0, r.size.x * 0.055))
+	ci.draw_rect(r.grow(-2), Color("9b8150"), false, maxf(1.0, r.size.x * 0.035))
+	ci.draw_line(r.position + Vector2(3, 3), r.position + Vector2(r.size.x - 3, 3), Color(1, 0.9, 0.65, 0.28), 1.0, true)
+	ci.draw_line(r.position + Vector2(3, 3), r.position + Vector2(3, r.size.y - 3), Color(1, 0.9, 0.65, 0.18), 1.0, true)
 	var steel := Color("e4eaf4")
 	var gold := Color("f2c75c")
 	match kind:
@@ -185,6 +190,12 @@ static func item(ci: CanvasItem, it: Dictionary, r: Rect2) -> void:
 			circ(ci, r, 0.68, 0.72, 0.1, c)
 			line(ci, r, [0.38, 0.44], [0.46, 0.66], d, 0.03)
 			line(ci, r, [0.56, 0.4], [0.62, 0.64], d, 0.03)
+		elif ic == "claw":
+			for k in 3:
+				var x := 0.28 + float(k) * 0.22
+				line(ci, r, [x, 0.82], [x - 0.07, 0.3], c, 0.075)
+				line(ci, r, [x - 0.07, 0.3], [x + 0.02, 0.16], l, 0.045)
+			line(ci, r, [0.18, 0.78], [0.82, 0.78], d, 0.045)
 		else:
 			for k in 3:
 				arc(ci, r, 0.3 + 0.2 * k, 0.9, 0.5, 4.3, 5.4, c, 0.08)
@@ -265,26 +276,39 @@ static func item(ci: CanvasItem, it: Dictionary, r: Rect2) -> void:
 			poly(ci, r, [[0.5, 0.1], [0.56, 0.2], [0.44, 0.2]], Color("e6b440"))
 		"mainhand":
 			var hd := Color("6a4325")
-			if look == 3:
-				poly(ci, r, [[0.46, 0.12], [0.54, 0.12], [0.58, 0.62], [0.42, 0.62]], c.lightened(0.25))
-				poly(ci, r, [[0.46, 0.12], [0.5, 0.06], [0.54, 0.12]], c.lightened(0.4))
-				poly(ci, r, [[0.28, 0.62], [0.72, 0.62], [0.72, 0.7], [0.28, 0.7]], Color("e6b440"))
-				poly(ci, r, [[0.46, 0.7], [0.54, 0.7], [0.54, 0.88], [0.46, 0.88]], hd)
-			elif look == 2:
-				line(ci, r, [0.5, 0.12], [0.5, 0.92], hd, 0.07)
-				poly(ci, r, [[0.26, 0.14], [0.74, 0.14], [0.74, 0.42], [0.26, 0.42]], c)
-				poly(ci, r, [[0.26, 0.14], [0.74, 0.14], [0.74, 0.2], [0.26, 0.2]], l)
+			var item_id: String = str(it.get("id", ""))
+			if item_id.begins_with("hammer_"):
+				line(ci, r, [0.5, 0.28], [0.5, 0.92], hd, 0.075)
+				poly(ci, r, [[0.18, 0.12], [0.82, 0.12], [0.9, 0.3], [0.72, 0.46], [0.28, 0.46], [0.1, 0.3]], c)
+				poly(ci, r, [[0.18, 0.12], [0.82, 0.12], [0.76, 0.2], [0.24, 0.2]], l)
+				line(ci, r, [0.24, 0.3], [0.76, 0.3], d, 0.035)
+				poly(ci, r, [[0.44, 0.76], [0.56, 0.76], [0.58, 0.9], [0.42, 0.9]], Color("b8782e"))
+			elif item_id.begins_with("sword_"):
+				poly(ci, r, [[0.5, 0.05], [0.62, 0.24], [0.55, 0.68], [0.45, 0.68], [0.38, 0.24]], c.lightened(0.18))
+				poly(ci, r, [[0.5, 0.05], [0.62, 0.24], [0.5, 0.19]], Color("f5f7ff"))
+				line(ci, r, [0.5, 0.2], [0.5, 0.7], l, 0.025)
+				poly(ci, r, [[0.28, 0.68], [0.72, 0.68], [0.68, 0.77], [0.32, 0.77]], Color("e6b440"))
+				poly(ci, r, [[0.46, 0.77], [0.54, 0.77], [0.58, 0.94], [0.42, 0.94]], hd)
 			else:
-				line(ci, r, [0.28, 0.9], [0.66, 0.2], hd, 0.07)
-				poly(ci, r, [[0.6, 0.12], [0.88, 0.2], [0.9, 0.46], [0.62, 0.42], [0.58, 0.3]], c)
-				poly(ci, r, [[0.6, 0.12], [0.88, 0.2], [0.84, 0.26], [0.6, 0.2]], l)
+				line(ci, r, [0.5, 0.48], [0.5, 0.94], hd, 0.085)
+				poly(ci, r, [[0.48, 0.14], [0.7, 0.08], [0.9, 0.18], [0.84, 0.43], [0.62, 0.5], [0.5, 0.38]], c)
+				poly(ci, r, [[0.48, 0.14], [0.7, 0.08], [0.84, 0.18], [0.62, 0.25]], l)
 				if look == 1:
-					poly(ci, r, [[0.52, 0.2], [0.28, 0.1], [0.2, 0.34], [0.5, 0.36], [0.56, 0.3]], c)
+					poly(ci, r, [[0.54, 0.2], [0.28, 0.12], [0.12, 0.3], [0.42, 0.42], [0.58, 0.34]], c)
+				elif look >= 2:
+					poly(ci, r, [[0.64, 0.12], [0.82, 0.02], [0.78, 0.22]], Color("ffe45c"))
+				poly(ci, r, [[0.44, 0.68], [0.56, 0.68], [0.56, 0.77], [0.44, 0.77]], Color("e6b440"))
 		"offhand":
-			poly(ci, r, [[0.16, 0.14], [0.84, 0.14], [0.84, 0.5], [0.5, 0.9], [0.16, 0.5]], d)
-			poly(ci, r, [[0.22, 0.2], [0.78, 0.2], [0.78, 0.48], [0.5, 0.82], [0.22, 0.48]], c)
-			circ(ci, r, 0.5, 0.42, 0.1, Color("e6b440"))
+			poly(ci, r, [[0.16, 0.12], [0.84, 0.12], [0.84, 0.5], [0.5, 0.9], [0.16, 0.5]], d)
+			poly(ci, r, [[0.22, 0.19], [0.78, 0.19], [0.78, 0.48], [0.5, 0.82], [0.22, 0.48]], c)
+			poly(ci, r, [[0.3, 0.25], [0.7, 0.25], [0.7, 0.45], [0.5, 0.72], [0.3, 0.45]], l.darkened(0.2))
+			circ(ci, r, 0.5, 0.42, 0.11, Color("e6b440"))
+			circ(ci, r, 0.5, 0.42, 0.045, Color("fff0a8"))
 			line(ci, r, [0.5, 0.2], [0.5, 0.8], d, 0.025)
+	if int(it.get("rar", 0)) >= 3:
+		var rune := Color("fff0a8") if int(it.get("rar", 0)) >= 4 else Color("a8dcff")
+		poly(ci, r, [[0.84, 0.08], [0.9, 0.16], [0.84, 0.24], [0.78, 0.16]], rune)
+
 
 ## Boş yuva silueti (yuva adı)
 static func slot_ghost(ci: CanvasItem, slot: String, r: Rect2) -> void:

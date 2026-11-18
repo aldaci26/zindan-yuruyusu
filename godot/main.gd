@@ -2201,8 +2201,10 @@ func _build_mine() -> void:
 	var iron := Dwarf.mat(Color.html("3a3a42"), 0.4, 0.6)
 	for t in _mine_torches():
 		var tp := Vector3(t.x, height_at(t.x, t.y), t.y)
-		Dwarf.box(self, Vector3(0.14, 1.5, 0.14), wood, tp + Vector3(0, 0.75, 0))
-		Dwarf.box(self, Vector3(0.3, 0.12, 0.3), iron, tp + Vector3(0, 1.5, 0))
+		var torch := _wow_spawn("modular_dungeon_pack/Torch.glb", tp + Vector3(0, 0.25, 0), 0.0, 1.35)
+		if torch == null:
+			Dwarf.box(self, Vector3(0.14, 1.5, 0.14), wood, tp + Vector3(0, 0.75, 0))
+			Dwarf.box(self, Vector3(0.3, 0.12, 0.3), iron, tp + Vector3(0, 1.5, 0))
 		_flame(self, tp + Vector3(0, 1.75, 0), 0.22)
 	for i in range(1, MINE_ROOMS.size()):
 		var r: Array = MINE_ROOMS[i]
@@ -2231,20 +2233,28 @@ func _build_mine() -> void:
 		ll.light_energy = 1.6
 		ll.position = Vector3(lp.x, 2.0, lp.y)
 		add_child(ll)
-	# duvar kenarında sarkıt ve dikitler
+	# Mağara duvarlarındaki sarkıt ve dikitler: Quaternius modüler zindan kayaları.
+	var cave_rock_groups: Dictionary = {}
 	for i in MINE_ROOMS.size():
-		var r2: Array = MINE_ROOMS[i]
+		var room: Array = MINE_ROOMS[i]
 		for k in 9:
 			var ang := rnd.randf() * TAU
-			var rr := float(r2[2]) - 1.2 - rnd.randf() * 3.0
-			var px := float(r2[0]) + cos(ang) * rr
-			var pz := float(r2[1]) + sin(ang) * rr
+			var rr := float(room[2]) - 1.2 - rnd.randf() * 3.0
+			var px := float(room[0]) + cos(ang) * rr
+			var pz := float(room[1]) + sin(ang) * rr
 			if _mine_sd(px + cos(ang) * 3.5, pz + sin(ang) * 3.5) < -0.3:
 				continue
 			var h := 1.2 + rnd.randf() * 2.6
 			var w := 0.45 + rnd.randf() * 0.5
-			Dwarf.cone(self, w, h, rock, Vector3(px, height_at(px, pz) + h / 2.0 - 0.1, pz), 5)
+			var rock_name := "Rock%d.glb" % rnd.randi_range(1, 5)
+			var rock_basis := Basis(Vector3.UP, ang).scaled(Vector3(w, h, w))
+			var rock_xf := Transform3D(rock_basis, Vector3(px, height_at(px, pz) + h * 0.5 - 0.1, pz))
+			if not cave_rock_groups.has(rock_name):
+				cave_rock_groups[rock_name] = []
+			cave_rock_groups[rock_name].append(rock_xf)
 			_add_obs(px, pz, w * 0.8)
+	for model_name in cave_rock_groups:
+		_wow_mm("modular_dungeon_pack/" + str(model_name), cave_rock_groups[model_name])
 	# koridor destek çerçeveleri
 	for i in range(1, MINE_ROOMS.size()):
 		var ra: Array = MINE_ROOMS[i - 1]

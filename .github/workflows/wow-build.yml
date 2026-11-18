@@ -60,7 +60,7 @@ jobs:
             exit 1
           fi
 
-      - name: Smoke-test imported asset gallery and animation setup
+      - name: Smoke-test the actual game scene
         working-directory: godot
         shell: bash
         run: |
@@ -69,14 +69,13 @@ jobs:
             apt-get update
             apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0
           fi
-          if ! xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --path . --quit-after 5 asset_gallery.tscn > /tmp/asset-gallery.log 2>&1; then
-            cat /tmp/asset-gallery.log
+          if ! xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --path . --quit-after 8 > /tmp/game-smoke.log 2>&1; then
+            cat /tmp/game-smoke.log
             exit 1
           fi
-          cat /tmp/asset-gallery.log
-          # CI'da ses cihazı yoktur; ALSA/ses sürücüsü satırları gerçek hata sayılmaz
-          if grep -v -E "ALSA|audio_driver|init_output_device|audio_server" /tmp/asset-gallery.log | grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|ERROR:"; then
-            echo "Asset gallery runtime smoke test reported errors."
+          cat /tmp/game-smoke.log
+          if grep -v -E "ALSA|audio_driver|init_output_device|audio_server" /tmp/game-smoke.log | grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|Invalid call|ERROR:"; then
+            echo "Main game scene reported script or runtime errors."
             exit 1
           fi
 

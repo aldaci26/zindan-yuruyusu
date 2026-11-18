@@ -74,7 +74,6 @@ const EQUIPMENT_ASSET_MAP := {
 	"helm_cap": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet1.glb",
 	"helm_iron": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet2.glb",
 	"helm_horn": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
-	"helm_ward": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
 	"helm_king": "res://assets/wotlk/third_party/quaternius/single_knight_pack/Helmet3.glb",
 	"so_pad": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",
 	"so_iron": "res://assets/wotlk/third_party/quaternius/single_knight_pack/ShoulderPads.glb",

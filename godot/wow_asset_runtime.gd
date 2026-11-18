@@ -505,7 +505,23 @@ static func _attach_equipment_node(character: Node3D, slot: String, item: Node3D
 				_set_default_part_visibility(character, slot, false)
 				return true
 	var sockets: Dictionary = character.get_meta("gear_sockets", {})
-	var socket := sockets.get(slot) as Node3D
+	var socket_value: Variant = sockets.get(slot)
+	if socket_value is Array:
+		var socket_list: Array = socket_value
+		if socket_list.is_empty():
+			return false
+		for socket_index in range(socket_list.size()):
+			var paired_socket := socket_list[socket_index] as Node3D
+			if paired_socket == null:
+				continue
+			var paired_item := item if socket_index == 0 else item.duplicate() as Node3D
+			if paired_item == null:
+				continue
+			paired_item.set_meta("wow_imported_equipment", true)
+			paired_socket.add_child(paired_item)
+		_set_default_part_visibility(character, slot, false)
+		return true
+	var socket := socket_value as Node3D
 	if socket == null:
 		var rig: Dictionary = character.get_meta("rig", {})
 		var fallback_key := "armR" if slot == "mainhand" else ("armL" if slot == "offhand" else "")
@@ -528,6 +544,10 @@ static func _set_default_part_visibility(character: Node3D, slot: String, visibl
 		for part in rig.get("helm", []):
 			if part is Node3D:
 				(part as Node3D).visible = visible
+	if slot == "shoulder":
+		for part in rig.get("shoulder", []):
+			if part is Node3D:
+				(part as Node3D).visible = visible
 
 static func _clear_imported_equipment(root: Node) -> void:
 	for child in root.get_children():
@@ -543,6 +563,9 @@ static func _clear_imported_equipment(root: Node) -> void:
 			part.visible = true
 	var helm_parts: Array = rig.get("helm", [])
 	for part in helm_parts:
+		if part is Node3D:
+			(part as Node3D).visible = true
+	for part in rig.get("shoulder", []):
 		if part is Node3D:
 			(part as Node3D).visible = true
 

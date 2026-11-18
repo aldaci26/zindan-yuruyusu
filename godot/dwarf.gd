@@ -99,12 +99,15 @@ static func make_dwarf(o: Dictionary = {}) -> Node3D:
 	box(g, Vector3(0.5, 0.62, 0.05), blue, Vector3(0, 0.96, 0.33))
 	box(g, Vector3(0.1, 0.62, 0.06), gold, Vector3(0, 0.96, 0.34))
 	box(g, Vector3(0.9, 0.2, 0.58), blue, Vector3(0, 0.55, 0))
-	# omuzluklar
+	# omuzluklar: ayrı referanslar, böylece takılan ekipman varsayılan parçaları gizleyebilir.
+	var shoulder_nodes: Array = []
 	for s in [-1.0, 1.0]:
-		sph(g, 0.34, steel, Vector3(s * 0.62, 1.3, 0), Vector3(1, 0.8, 1))
-		torus(g, 0.3, 0.05, gold, Vector3(s * 0.62, 1.22, 0))
+		shoulder_nodes.append(sph(g, 0.34, steel, Vector3(s * 0.62, 1.3, 0), Vector3(1, 0.8, 1)))
+		shoulder_nodes.append(torus(g, 0.3, 0.05, gold, Vector3(s * 0.62, 1.22, 0)))
 		var sp := cone(g, 0.1, 0.32, gold, Vector3(s * 0.72, 1.56, 0), 5)
 		sp.rotation.z = -s * 0.4
+		shoulder_nodes.append(sp)
+	rig["shoulder"] = shoulder_nodes
 	# kafa
 	var head := pivot(g, Vector3(0, 1.62, 0))
 	rig["head"] = head
@@ -191,8 +194,14 @@ static func make_dwarf(o: Dictionary = {}) -> Node3D:
 		"chest": pivot(g, Vector3(0, 0.98, 0.35)),
 		"shoulder": pivot(g, Vector3(0, 1.3, 0)),
 		"back": pivot(g, Vector3(0, 1.1, -0.36)),
-		"wrist": pivot(rig["armR"], Vector3(0, -0.5, 0)),
-		"hands": pivot(rig["armR"], Vector3(0, -0.68, 0.05)),
+		"wrist": [
+			pivot(rig["armR"], Vector3(0, -0.5, 0)),
+			pivot(rig["armL"], Vector3(0, -0.5, 0)),
+		],
+		"hands": [
+			pivot(rig["armR"], Vector3(0, -0.68, 0.05)),
+			pivot(rig["armL"], Vector3(0, -0.68, 0.05)),
+		],
 		"waist": pivot(g, Vector3(0, 0.68, 0.34)),
 		"legs": pivot(g, Vector3(0, 0.45, 0)),
 		"feet": pivot(g, Vector3(0, 0.18, 0)),

@@ -1872,7 +1872,8 @@ func _spawn_mobs() -> void:
 		m.id = n
 		match kind:
 			"wolf": m.node = WowAssets.spawn_creature("wolf", func(): return Dwarf.make_wolf())
-			"boar": m.node = Dwarf.make_boar()
+			"boar": m.node = WowAssets.spawn_creature("boar", func(): return Dwarf.make_boar())
+			"bear": m.node = WowAssets.spawn_creature("bear", func(): return Dwarf.make_bear())
 			_: m.node = Dwarf.make_bear()
 		m.node.scale = Vector3.ONE * m.sc
 		m.legs = m.node.get_meta("legs", [])
@@ -1954,12 +1955,12 @@ func _free_spot(x: float, z: float) -> Vector2:
 
 func _make_boss_model(id: String) -> Node3D:
 	match id:
-		"arctikus": return Dwarf.make_bear({"fur": Color("e8eef4"), "dk": Color("9aa8b8"), "lt": Color("ffffff")})
-		"grik": return Dwarf.make_trogg(true)
-		"choksul": return Dwarf.make_ogre()
-		"hogger": return Dwarf.make_gnoll(true)
-		"vancleef": return Dwarf.make_dwarf({"skin": Color("e8c0a0"), "metal": Color("5a2a2a"), "cloth": Color("a32a2a"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"})
-		"gruff": return Dwarf.make_croc(true)
+		"arctikus": return WowAssets.spawn_creature("bear", func(): return Dwarf.make_bear({"fur": Color("e8eef4"), "dk": Color("9aa8b8"), "lt": Color("ffffff")}))
+		"grik": return WowAssets.spawn_creature("trogg", func(): return Dwarf.make_trogg(true))
+		"choksul": return WowAssets.spawn_creature("ashogre", func(): return Dwarf.make_ogre())
+		"hogger": return WowAssets.spawn_creature("gnoll", func(): return Dwarf.make_gnoll(true))
+		"vancleef": return WowAssets.spawn_creature("defias", func(): return Dwarf.make_dwarf({"skin": Color("e8c0a0"), "metal": Color("5a2a2a"), "cloth": Color("a32a2a"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"}))
+		"gruff": return WowAssets.spawn_creature("croc", func(): return Dwarf.make_croc(true))
 		"gorduk": return Dwarf.make_golem(true)
 		"thokk": return Dwarf.make_frost()
 		"vurgan": return Dwarf.make_dwarf({"skin": Color("8a7060"), "metal": Color("2a2a30"), "cloth": Color("a32a1a"), "beard": Color("c8402a"), "helm": true, "prop": "hammer"})

@@ -590,6 +590,8 @@ func _build_world() -> void:
 		_spawn_bosses()
 		_spawn_camps()
 		_spawn_nodes()
+		_setup_mine_fx()
+		_spawn_discoveries()
 	elif map == "ash":
 		camps_now = ASH_CAMPS
 		_build_terrain()
@@ -599,6 +601,7 @@ func _build_world() -> void:
 		_spawn_bosses()
 		_spawn_camps()
 		_setup_ash_fx()
+		_spawn_discoveries()
 	elif map == "swamp":
 		camps_now = SWAMP_CAMPS
 		_build_terrain()
@@ -608,6 +611,7 @@ func _build_world() -> void:
 		_spawn_bosses()
 		_spawn_camps()
 		_setup_swamp_fx()
+		_spawn_discoveries()
 	else:
 		camps_now = CAMPS
 		_build_terrain()
@@ -621,6 +625,7 @@ func _build_world() -> void:
 		_spawn_camps()
 		_setup_snow()
 		_spawn_nodes()
+		_spawn_discoveries()
 	if map != "mine" and map != "ash":
 		_setup_rain()
 	_spawn_walls()
@@ -932,7 +937,7 @@ func _step_daynight(dt: float) -> void:
 		rain_node.emitting = map == "swamp" and storm_k > 0.05
 		rain_node.amount_ratio = clampf(storm_k, 0.05, 1.0)
 	if swamp_fx:
-		swamp_fx.visible = map == "swamp" and storm_k < 0.5
+		swamp_fx.visible = (map == "swamp" and storm_k < 0.5) or map == "ash" or map == "mine"
 
 func _setup_rain() -> void:
 	var pm := ParticleProcessMaterial.new()
@@ -1604,7 +1609,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "disc": {}, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	_mm_setup()
@@ -2811,6 +2816,78 @@ func _setup_swamp_fx() -> void:
 	swamp_fx.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(swamp_fx)
 
+## Maden: yavaş süzülen toz zerrecikleri.
+func _setup_mine_fx() -> void:
+	var pm := ParticleProcessMaterial.new()
+	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	pm.emission_box_extents = Vector3(14, 3.0, 14)
+	pm.direction = Vector3(0, 1, 0)
+	pm.spread = 180.0
+	pm.initial_velocity_min = 0.05
+	pm.initial_velocity_max = 0.25
+	pm.gravity = Vector3(0.02, -0.02, 0.0)
+	pm.scale_min = 0.5
+	pm.scale_max = 1.2
+	var q := QuadMesh.new()
+	q.size = Vector2(0.06, 0.06)
+	var qm := StandardMaterial3D.new()
+	qm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	qm.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	qm.albedo_color = Color(0.85, 0.78, 0.65, 0.5)
+	qm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	q.material = qm
+	swamp_fx = GPUParticles3D.new()
+	swamp_fx.amount = 90
+	swamp_fx.lifetime = 9.0
+	swamp_fx.preprocess = 9.0
+	swamp_fx.process_material = pm
+	swamp_fx.draw_pass_1 = q
+	swamp_fx.visibility_aabb = AABB(Vector3(-16, -4, -16), Vector3(32, 10, 32))
+	swamp_fx.local_coords = false
+	swamp_fx.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(swamp_fx)
+
+## Keşif noktaları: yaklaşınca bir kez deneyim ve başlık verir. Konumlar kamp bölgelerine yakın, ulaşılabilir yerlerdir.
+const DISCOVERIES := {
+	"snow": [
+		{"id": "d_snow1", "name": "Gözcü Taşı", "x": 50.0, "z": 9.0},
+		{"id": "d_snow2", "name": "Fısıldayan Kayalık", "x": -22.0, "z": 45.0},
+		{"id": "d_snow3", "name": "Eski Cüce Anıtı", "x": -56.0, "z": 6.0},
+		{"id": "d_snow4", "name": "Don Çeşmesi", "x": 45.0, "z": 37.0},
+	],
+	"swamp": [
+		{"id": "d_sw1", "name": "Çürük Köprü", "x": -40.0, "z": 19.0},
+		{"id": "d_sw2", "name": "Batık Çan Kulesi", "x": 37.0, "z": -22.0},
+		{"id": "d_sw3", "name": "Ateşböceği Çayırı", "x": 30.0, "z": 40.0},
+		{"id": "d_sw4", "name": "Solucan Yuvası", "x": -33.0, "z": -32.0},
+	],
+	"ash": [
+		{"id": "d_ash1", "name": "Kül Sunağı", "x": -36.0, "z": 22.0},
+		{"id": "d_ash2", "name": "Kırık Dev Kaburgası", "x": 36.0, "z": -25.0},
+		{"id": "d_ash3", "name": "Kor Kaynağı", "x": 29.0, "z": 37.0},
+		{"id": "d_ash4", "name": "Dumanlı Geçit", "x": 3.0, "z": 48.0},
+	],
+}
+
+func _spawn_discoveries() -> void:
+	for dd in DISCOVERIES.get(map, []):
+		var gy := height_at(dd["x"], dd["z"])
+		var col := Color("66d8ff") if not P["disc"].has(dd["id"]) else Color("6a7a88")
+		var pil := Dwarf.cyl(self, 0.12, 0.12, 2.6, Dwarf.mat(col, 0.0, 0.4, col, 1.6 if not P["disc"].has(dd["id"]) else 0.2), Vector3(dd["x"], gy + 1.3, dd["z"]), 6)
+		pil.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+func _check_discoveries() -> void:
+	for dd in DISCOVERIES.get(map, []):
+		if P["disc"].has(dd["id"]):
+			continue
+		if Vector2(dd["x"] - P["x"], dd["z"] - P["z"]).length() < 6.0:
+			P["disc"][dd["id"]] = true
+			hud.banner("KEŞİF", dd["name"])
+			hud.say("Yeni yer keşfettin: %s (+%d deneyim)" % [dd["name"], 80 + 20 * int(P["lvl"])], Color("66d8ff"))
+			sfx.play("quest")
+			gain_xp(80.0 + 20.0 * float(P["lvl"]))
+			save_game()
+
 func _setup_snow() -> void:
 	var pm := ParticleProcessMaterial.new()
 	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
@@ -3152,7 +3229,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "pity": P["pity"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "pity": P["pity"], "disc": P["disc"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	d["npc_mem"] = npc_mem
 	SaveManager.write(SAVE_PATH, d)
 
@@ -3221,6 +3298,10 @@ func load_game() -> bool:
 	P["talked"] = {}
 	P["walls"] = Shouts.sanitize(d.get("walls"))
 	P["pity"] = clampi(int(d.get("pity", 0)), 0, 10)
+	P["disc"] = {}
+	if typeof(d.get("disc")) == TYPE_DICTIONARY:
+		for dk in d["disc"]:
+			P["disc"][str(dk)] = true
 	P["shout_sel"] = str(d.get("shout_sel", "force")) if Shouts.SHOUTS.has(str(d.get("shout_sel", ""))) else "force"
 	P["shout_cd"] = 0.0
 	P["skin_t"] = 0.0
@@ -3577,6 +3658,24 @@ func close_loot() -> void:
 	if m != null and m.sparkle != null and m.loot.is_empty():
 		m.sparkle.queue_free()
 		m.sparkle = null
+
+## Ganimet penceresindeki tüm eşyaları sırayla alır; çanta dolarsa durur.
+func take_all_loot() -> void:
+	var m = loot_mob
+	if m == null:
+		return
+	if m.loot_money > 0:
+		inv.money += m.loot_money
+		hud.say("+%s" % Items.money_plain(m.loot_money), Color("f2c75c"))
+		m.loot_money = 0
+	var guard: int = m.loot.size()
+	while guard > 0 and loot_mob == m and not m.loot.is_empty():
+		guard -= 1
+		var before: int = m.loot.size()
+		take_loot(0)
+		if loot_mob != m or m.loot.size() >= before and m.loot.size() > 0 and inv.free_slots() == 0:
+			break
+	inv_changed()
 
 func take_loot(i: int) -> void:
 	var m = loot_mob
@@ -5548,6 +5647,8 @@ func _update_camera(dt: float) -> void:
 		pos.y = gh
 	cam.position = pos
 	cam.look_at(tgt, Vector3.UP)
+	if swamp_fx:
+		swamp_fx.position = Vector3(P["x"], P["y"] + (1.5 if map == "ash" else 1.0), P["z"])
 	if snow_node:
 		snow_node.position = Vector3(P["x"], P["y"] + 16.0, P["z"])
 
@@ -5685,6 +5786,8 @@ func _update_hud() -> void:
 	var dc := Vector2(P["x"] - CITY.x, P["z"] - CITY.z).length()
 	var dv := Vector2(P["x"], P["z"]).length()
 	var z := "c" if dc < 27.0 else ("v" if dv < 16.0 else "w")
+	if mode == "play" and not P["dead"]:
+		_check_discoveries()
 	if _room_idx() >= 0:
 		z = "v"
 	elif map == "swamp":

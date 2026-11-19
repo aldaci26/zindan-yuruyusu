@@ -181,6 +181,7 @@ var disenchant_btn: Button
 var vend_tab_btns: Array = []
 var loot_title: Label
 var loot_list: VBoxContainer
+var loot_all_btn: Button
 var tip: PanelContainer
 var tip_lbl: RichTextLabel
 var tip2: PanelContainer
@@ -540,6 +541,13 @@ func _build_loot() -> void:
 	loot_list.position = Vector2(10, 34)
 	loot_list.add_theme_constant_override("separation", 3)
 	loot_win.add_child(loot_list)
+	loot_all_btn = Button.new()
+	loot_all_btn.text = "Hepsini al"
+	loot_all_btn.focus_mode = Control.FOCUS_NONE
+	loot_all_btn.size = Vector2(304, 26)
+	loot_all_btn.add_theme_font_size_override("font_size", 12)
+	loot_all_btn.pressed.connect(func(): game.take_all_loot())
+	loot_win.add_child(loot_all_btn)
 
 func _build_tips() -> void:
 	for i in 2:
@@ -810,7 +818,9 @@ func refresh_loot() -> void:
 		r2.hovered.connect(func(idx, on): _row_hover(it, on))
 		loot_list.add_child(r2)
 		rows += 1
-	loot_win.size = Vector2(324, 44 + rows * 43)
+	loot_all_btn.position = Vector2(10, 38 + rows * 43)
+	loot_all_btn.visible = rows > 0
+	loot_win.size = Vector2(324, 44 + rows * 43 + (32 if rows > 0 else 0))
 
 func _row_hover(it: Dictionary, on: bool) -> void:
 	if on:

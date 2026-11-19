@@ -29,6 +29,23 @@ const SETS := {
 		{"n": 4, "txt": "Verdiğin hasar %8 artar, her vuruşta +2 öfke", "dmg": 0.08, "rage": 2.0}]},
 }
 
+## Silah türüne göre saldırı animasyonu: süre, kolun başlangıç/bitiş açısı ve yana savruluş.
+const SWING_STYLES := {
+	"axe": {"dur": 0.38, "from": -2.5, "to": 0.5, "side": 0.0},
+	"hammer": {"dur": 0.55, "from": -3.2, "to": 0.8, "side": 0.0},
+	"blade": {"dur": 0.30, "from": -1.6, "to": 0.9, "side": -0.9},
+}
+
+static func weapon_style(id: String) -> String:
+	if id == "":
+		return "axe"
+	var nm: String = str(get_item(id).get("name", ""))
+	if id.begins_with("hammer") or nm.contains("Çekiç") or nm.contains("Ezici") or nm.contains("Yıkıcı"):
+		return "hammer"
+	if nm.contains("Kılıç") or nm.contains("Diken") or nm.contains("Yarıcı"):
+		return "blade"
+	return "axe"
+
 static var _db := {}
 
 static func db() -> Dictionary:

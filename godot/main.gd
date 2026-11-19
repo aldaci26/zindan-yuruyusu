@@ -11,6 +11,7 @@ const Inv = preload("res://inv.gd")
 const MMBridge = preload("res://mmorpg/mmorpg_bridge.gd")
 const WorldDressing = preload("res://systems/world_dressing.gd")
 const Interiors = preload("res://systems/interiors.gd")
+const Combos = preload("res://systems/combos.gd")
 const SaveManager = preload("res://systems/save_manager.gd")
 const CombatRules = preload("res://systems/combat_rules.gd")
 const SpawnDirector = preload("res://systems/spawn_director.gd")
@@ -312,6 +313,10 @@ const ROOM_X := 400.0  # ev iç mekânlarının kurulduğu uzak bölge
 const ROOM_STEP := 14.0
 var house_doors: Array = []
 var disenchant_mode := false
+var last_ab := ""
+var last_ab_t := -99.0
+var combo_mult := 1.0
+var swing_style := "axe"
 var dis_rng := RandomNumberGenerator.new()
 var set_aura: Node3D
 var set_aura_key := ""
@@ -3403,6 +3408,11 @@ func hit_mob(m, r: Dictionary, col: Color = Color.WHITE) -> void:
 	add_rage((9.0 if r["crit"] else 6.0) + G["rage"])
 	if m.state == "idle":
 		m.state = "chase"
+		# aynı türden yakındaki sürü üyeleri yardıma gelir
+		if m.boss == "" and not m.temp:
+			for o in mobs:
+				if o != m and not o.dead and o.boss == "" and o.kind == m.kind and o.state == "idle" and Vector2(o.x - m.x, o.z - m.z).length() < 9.0:
+					o.state = "chase"
 	if m.hp <= 0.0:
 		kill_mob(m)
 
@@ -3574,6 +3584,7 @@ func gain_xp(n: float) -> void:
 
 func swing() -> void:
 	swing_t = 0.001
+	swing_style = Items.weapon_style(inv.eq["mainhand"])
 	sfx.play("swing", -10)
 
 func auto_attack() -> void:
@@ -3649,10 +3660,17 @@ func ability(i: int) -> void:
 	P["gcd"] = 1.0
 	P["cd"][i] = a["cd"] - (10.0 * trk("fur_reck") if kind == "reck" else 0.0)
 	P["combat_t"] = T
+	combo_mult = 1.0
+	var cb := Combos.bonus(last_ab, T - last_ab_t, kind, m != null and m.bleed_t > 0.0)
+	if cb["mult"] > 1.0 and m != null:
+		combo_mult = cb["mult"]
+		float_text(Vector3(m.x, 3.0 * m.sc + m.node.position.y, m.z), cb["text"], Color("ffb347"), true)
+	last_ab = kind
+	last_ab_t = T
 	match kind:
 		"strike":
 			swing()
-			hit_mob(m, roll(atk() * 2.3), Color("ffd8a0"))
+			hit_mob(m, roll(atk() * 2.3 * combo_mult), Color("ffd8a0"))
 		"throw":
 			swing()
 			sfx.play("whirl", -2)
@@ -3709,11 +3727,11 @@ func ability(i: int) -> void:
 		"mortal":
 			swing()
 			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.6, Color("ff5040"), 0.45)
-			hit_mob(m, roll(atk() * 3.4), Color("ff9a8a"))
+			hit_mob(m, roll(atk() * 3.4 * combo_mult), Color("ff9a8a"))
 		"execute":
 			swing()
 			ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 1.8, Color("ffe45c"), 0.5)
-			hit_mob(m, roll(atk() * 5.0 * (1.0 + 0.2 * trk("arm_exec"))), Color("ffe08a"))
+			hit_mob(m, roll(atk() * 5.0 * combo_mult * (1.0 + 0.2 * trk("arm_exec"))), Color("ffe08a"))
 		"rend":
 			swing()
 			m.bleed_t = 8.0
@@ -3756,7 +3774,7 @@ func ability(i: int) -> void:
 			ring_fx(pp, 5.0, Color("c8f0f8"), 0.55)
 			for o in mobs:
 				if not o.dead and dist_to(o) <= 5.0:
-					hit_mob(o, roll(atk() * 1.7 * (1.0 + 0.1 * trk("fur_cleave"))), Color("d8f4ff"))
+					hit_mob(o, roll(atk() * 1.7 * combo_mult * (1.0 + 0.1 * trk("fur_cleave"))), Color("d8f4ff"))
 	if melee and not P["auto"] and P["target"] != null:
 		P["auto"] = true
 
@@ -5294,6 +5312,11 @@ func _step_mob(m, dt: float) -> void:
 			moving = true
 		m.yaw = atan2(dx, dz)
 		m.atk_t -= dt
+		if m.boss == "" and not m.flags.has("enr") and m.hp < m.maxhp * 0.25:
+			m.flags["enr"] = true
+			m.dmg *= 1.25
+			m.atk_int *= 0.8
+			float_text(Vector3(m.x, 2.6 * m.sc + m.node.position.y, m.z), "Öfkelendi!", Color("ff5a3a"), false)
 		var busy := false
 		if m.boss != "":
 			busy = _boss_ai(m, dt, d)
@@ -5381,12 +5404,15 @@ func _animate_player(dt: float) -> void:
 	var bob: float = absf(sin(walk_ph)) * 0.07 * P["spd"]
 	if swing_t > 0.0:
 		swing_t += dt
-		var u := swing_t / 0.38
+		var prof: Dictionary = Items.SWING_STYLES.get(swing_style, Items.SWING_STYLES["axe"])
+		var u: float = swing_t / float(prof["dur"])
 		if u >= 1.0:
 			swing_t = 0.0
 			rig["armR"].rotation.x = sw * 0.35
+			rig["armR"].rotation.z = 0.0
 		else:
-			rig["armR"].rotation.x = lerpf(-2.5, 0.5, u * u)
+			rig["armR"].rotation.x = lerpf(float(prof["from"]), float(prof["to"]), u * u)
+			rig["armR"].rotation.z = lerpf(float(prof["side"]), 0.0, u)
 	else:
 		rig["armR"].rotation.x = sw * 0.35 - 0.2 + sin(T * 2.0) * 0.03
 	player.position = Vector3(P["x"], P["y"] + bob, P["z"])

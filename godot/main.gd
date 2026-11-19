@@ -86,13 +86,14 @@ const SWAMP_CAMPS := [
 ]
 
 ## Kara Demir Madeni: odalar [x, z, yarıçap], yan odalar [x, z, yarıçap, bağlı oda]
-const MINE_ROOMS := [[0.0, 79.0, 9.0], [-8.0, 48.0, 14.0], [8.0, 11.0, 15.0], [-8.0, -26.0, 14.0], [0.0, -68.0, 20.0]]
+const MINE_ROOMS := [[0.0, 79.0, 9.0], [-8.0, 48.0, 14.0], [8.0, 11.0, 15.0], [-8.0, -26.0, 14.0], [0.0, -68.0, 20.0], [16.0, -98.0, 9.0], [16.0, -128.0, 15.0], [-6.0, -158.0, 19.0]]  # son üçü Kara Demir Zindanı
 const MINE_ALC := [[-26.0, 48.0, 5.0, 1], [26.0, 11.0, 5.0, 2], [-30.0, -26.0, 5.0, 3]]
 const MINE_MTYPES := {
 	"miner": {"name": "Kara Demir Madencisi", "lo": 12, "hi": 13, "hp": 70.0, "dmg": 3.2, "spd": 3.6, "aggro": 9.0, "rad": 0.6, "sc": 1.0},
 	"spider": {"name": "Mağara Örümceği", "lo": 12, "hi": 14, "hp": 55.0, "dmg": 3.0, "spd": 4.6, "aggro": 10.0, "rad": 0.7, "sc": 1.15},
 	"golem": {"name": "Taş Golem", "lo": 13, "hi": 14, "hp": 100.0, "dmg": 3.4, "spd": 2.6, "aggro": 7.0, "rad": 1.0, "sc": 1.3},
 	"guard": {"name": "Kara Demir Muhafızı", "lo": 14, "hi": 15, "hp": 90.0, "dmg": 3.6, "spd": 3.4, "aggro": 9.0, "rad": 0.7, "sc": 1.1},
+	"ironclad": {"name": "Kara Demir Zindan Muhafızı", "lo": 17, "hi": 19, "hp": 130.0, "dmg": 4.0, "spd": 3.2, "aggro": 10.0, "rad": 0.75, "sc": 1.15},
 }
 const MINE_CAMPS := [
 	{"kind": "miner", "x": -8.0, "z": 48.0, "n": 5, "sp": 9.0},
@@ -102,6 +103,9 @@ const MINE_CAMPS := [
 	{"kind": "miner", "x": -8.0, "z": -26.0, "n": 3, "sp": 9.0},
 	{"kind": "guard", "x": -8.0, "z": -26.0, "n": 2, "sp": 8.0},
 	{"kind": "guard", "x": 0.0, "z": -58.0, "n": 2, "sp": 6.0},
+	# Kara Demir Zindanı: madenin güneyindeki mühürlü koridorların ardında
+	{"kind": "ironclad", "x": 16.0, "z": -98.0, "n": 4, "sp": 8.0},
+	{"kind": "ironclad", "x": 16.0, "z": -128.0, "n": 3, "sp": 10.0},
 ]
 
 ## Kül Diyarı (Sv 14-20): lav havuzları [x, z, yarıçap]
@@ -238,6 +242,12 @@ const BOSSES := {
 	"ragnaros": {"name": "Ragnaros", "title": "Ateş Efendisi", "lvl": 10, "hp": 24000.0, "dmg": 60.0, "spd": 0.0, "rad": 4.6, "sc": 1.0, "aggro": 0.0, "reach": 1.9, "yoff": 1.3,
 		"x": 0.0, "z": -64.0, "model": "ragnaros", "kind": "skull", "respawn": 600.0, "xp": 900,
 		"say": "Ragnaros: SİZİ KÜÇÜK FANİLER! ATEŞİMDE YANACAKSINIZ!", "drops": ["helm_rag", "ch_rag", "tr_core"]},
+	"kezan": {"name": "Kezan Kırgazık", "title": "Zindan Gardiyanı", "lvl": 18, "hp": 21000.0, "dmg": 50.0, "spd": 3.6, "rad": 1.3, "sc": 1.65, "aggro": 12.0, "map": "mine",
+		"x": 16.0, "z": -124.0, "model": "kezan", "kind": "skull", "respawn": 540.0, "xp": 1700,
+		"say": "Kezan Kırgazık: Zindanın derinliklerinden kimse canlı çıkmaz!", "drops": ["axe_kezan", "so_kezan", "ft_kezan"]},
+	"modrek": {"name": "Lord Modrek Karataş", "title": "Kara Demir İmparatoru", "lvl": 20, "hp": 46000.0, "dmg": 66.0, "spd": 3.5, "rad": 1.5, "sc": 1.95, "aggro": 12.0, "map": "mine",
+		"x": -6.0, "z": -154.0, "model": "modrek", "kind": "skull", "respawn": 900.0, "xp": 3200,
+		"say": "Lord Modrek: Bu zindan benim tahtım! Dize gelin, fanilar!", "drops": ["hammer_modrek", "ch_modrek", "helm_modrek"]},
 }
 
 const VENDORS := {
@@ -2141,6 +2151,8 @@ func _make_boss_model(id: String) -> Node3D:
 		"geddon": return WowAssets.spawn_creature("geddon", func(): return Dwarf.make_ember())
 		"sulfuron": return WowAssets.spawn_creature("sulfuron", func(): return _tint_model(Dwarf.make_ogre(), Color("8a2a1a"), 0.6, 0.3))
 		"ragnaros": return WowAssets.spawn_creature("ragnaros", func(): return Dwarf.make_ragnaros())
+		"kezan": return WowAssets.spawn_creature("kezan", func(): return Dwarf.make_dwarf({"skin": Color("6a5448"), "metal": Color("4a4a52"), "cloth": Color("2a3a4a"), "beard": Color("1a1410"), "helm": true, "prop": "axe"}))
+		"modrek": return WowAssets.spawn_creature("modrek", func(): return _tint_model(Dwarf.make_golem(true), Color("c8a030"), 0.5, 0.4))
 		_: return Dwarf.make_ragnaros()
 
 ## Modelin malzemelerini renge doğru kaydırır (kopya malzeme)
@@ -2238,6 +2250,7 @@ func _camp_model(kind: String) -> Node3D:
 		"frost": return _tint_model(WowAssets.spawn_creature("frost_wolf", func(): return Dwarf.make_frost()), Color("b9d9ff"), 0.42)
 		"skeleton": return WowAssets.spawn_creature("skeleton", func(): return Dwarf.make_skeleton())
 		"guard": return WowAssets.spawn_creature("guard", func(): return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("5a1a1a"), "beard": Color("101010"), "helm": true, "prop": "axe"}))
+		"ironclad": return WowAssets.spawn_creature("ironclad", func(): return Dwarf.make_dwarf({"skin": Color("6a5a56"), "metal": Color("343038"), "cloth": Color("1a2a38"), "beard": Color("201812"), "helm": true, "prop": "hammer"}))
 		"defias": return WowAssets.spawn_creature("defias", func(): return Dwarf.make_dwarf({"skin": Color("e0b898"), "metal": Color("4a3030"), "cloth": Color("8a2020"), "beard": Color("2a1a10"), "helm": false, "prop": "axe"}))
 		"darkiron": return WowAssets.spawn_creature("darkiron", func(): return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"}))
 		_: return Dwarf.make_dwarf({"skin": Color("7a6a6a"), "metal": Color("2a2226"), "cloth": Color("3a1a1a"), "beard": Color("101010"), "helm": true, "prop": "hammer"})
@@ -3609,7 +3622,7 @@ func _elite_loot(m) -> void:
 	m.loot.append({"id": "dust_arc", "n": 1 + randi() % 3})
 
 ## Boss başına nadir eşya: taban şans %6, her şanssız boss öldürmede +%2 (en fazla 10 kez); düşünce sayaç sıfırlanır.
-const BOSS_RARE := {"gorduk": ["tr_gorduk_rare"], "vurgan": ["bk_vurgan_rare"], "geddon": ["hammer_ember"], "golemagg": ["tr_golem_heart"]}
+const BOSS_RARE := {"gorduk": ["tr_gorduk_rare"], "vurgan": ["bk_vurgan_rare"], "geddon": ["hammer_ember"], "golemagg": ["tr_golem_heart"], "modrek": ["tr_modrek_rare"]}
 
 func _boss_loot(m) -> void:
 	var d: Dictionary = BOSSES[m.boss]
@@ -5398,6 +5411,61 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 			if d > m.rad + m.reach + 1.5 and d < 34.0 and _bready(m, "magma"):
 				_bset(m, "magma", 3.0)
 				boss_spell(m, 1.0, "Magma Topu", Color("ff9a40"))
+		"kezan":
+			if hpf < 0.6 and not m.flags.has("call"):
+				m.flags["call"] = true
+				boss_say(m, "Kezan Kırgazık: Zindan muhafızları, bana yardım edin!")
+				_boss_summon(m, "Kara Demir Zindan Muhafızı", "ironclad", 2, 240.0, 15.0, 3.4, 1.0, 4.0)
+			if hpf < 0.3 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.35
+				m.atk_int = 1.9
+				boss_say(m, "Kezan Kırgazık: Kaçışınız yok!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if d > m.rad + m.reach + 1.0 and d < 16.0 and _bready(m, "charge"):
+				_bset(m, "charge", 9.0)
+				boss_say(m, "Kezan Kırgazık hücum ediyor!")
+				boss_spell(m, 1.3, "Baltalı Hücum", Color("c83a3a"))
+				knockback(m, 5.0)
+				return true
+			if melee and _bready(m, "cleave"):
+				_bset(m, "cleave", 5.0)
+				boss_hit(m, 1.8, "Zincirleme Vuruş")
+				apply_dot(5.0, m.dmg * 0.1, "Kanama", Color("c82a2a"))
+				return true
+		"modrek":
+			if hpf < 0.7 and not m.flags.has("p1"):
+				m.flags["p1"] = true
+				boss_say(m, "Lord Modrek: Zindanım sizi gömecek!")
+				_boss_summon(m, "Kara Demir Zindan Muhafızı", "ironclad", 3, 260.0, 16.0, 3.4, 1.0, 5.0)
+			if hpf < 0.4 and not m.flags.has("p2"):
+				m.flags["p2"] = true
+				m.dmg *= 1.25
+				m.spd *= 1.1
+				boss_say(m, "Lord Modrek: Tahtımı savunacağım!")
+				float_text(_bpos(m), "İkinci Evre!", Color("ffcc33"), true)
+				sfx.play("shout")
+			if hpf < 0.18 and not m.flags.has("p3"):
+				m.flags["p3"] = true
+				m.dmg *= 1.2
+				boss_say(m, "Lord Modrek: BU ZİNDAN BENİMLE BİRLİKTE ÇÖKECEK!")
+				_boss_summon(m, "Kara Demir Zindan Muhafızı", "ironclad", 2, 260.0, 16.0, 3.4, 1.0, 5.0)
+			if d <= 9.0 and _bready(m, "quake"):
+				_bset(m, "quake", 11.0)
+				boss_spell(m, 1.5, "Taht Sarsıntısı", Color("d8b070"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 9.0, Color("d8b070"), 0.65)
+				knockback(m, 6.5)
+				sfx.play("thunder", -4)
+				return true
+			if melee and _bready(m, "smash"):
+				_bset(m, "smash", 5.5)
+				boss_hit(m, 2.1, "İmparator Yargısı")
+				return true
+			if d > m.rad + m.reach + 1.5 and d < 24.0 and _bready(m, "rocks"):
+				_bset(m, "rocks", 7.5)
+				boss_spell(m, 1.0, "Kara Demir Parçası", Color("8a8070"))
+				return true
 	return false
 
 func _step_mob(m, dt: float) -> void:
@@ -5793,7 +5861,7 @@ func _update_hud() -> void:
 	elif map == "swamp":
 		z = "sv" if dv < 16.0 else "sw"
 	elif map == "mine":
-		z = "mn"
+		z = "zd" if P["z"] < -90.0 else "mn"
 	elif map == "ash":
 		z = "ak" if dv < 16.0 else "ad"
 	if z != zone_now:
@@ -5801,6 +5869,8 @@ func _update_hud() -> void:
 		if mode == "play":
 			if z == "mn":
 				hud.banner("KARA DEMİR MADENİ", "Demirkazan'ın altı")
+			elif z == "zd":
+				hud.banner("KARA DEMİR ZİNDANI", "Buradan canlı dönen az")
 			elif z == "ak":
 				hud.banner("KÜL NÖBETÇİLERİ KAMPI", "Güvenli sığınak")
 			elif z == "ad":
@@ -5815,6 +5885,6 @@ func _update_hud() -> void:
 				hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 			else:
 				hud.banner("KAR DAĞI VADİSİ", "Cüce toprakları")
-		hud.set_zone({"c": "Demirkazan", "v": "Kar Dağı Köyü", "w": "Kar Dağı Vadisi", "sv": "Bataklık Karakolu", "sw": "Sisli Bataklık", "mn": "Kara Demir Madeni", "ak": "Kül Nöbetçileri Kampı", "ad": "Kül Diyarı"}[z])
+		hud.set_zone({"c": "Demirkazan", "v": "Kar Dağı Köyü", "w": "Kar Dağı Vadisi", "sv": "Bataklık Karakolu", "sw": "Sisli Bataklık", "mn": "Kara Demir Madeni", "zd": "Kara Demir Zindanı", "ak": "Kül Nöbetçileri Kampı", "ad": "Kül Diyarı"}[z])
 
 # ---------- kendi kendine test ----------

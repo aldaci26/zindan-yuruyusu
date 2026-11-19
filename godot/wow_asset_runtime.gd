@@ -32,6 +32,9 @@ const CREATURE_SCENES := {
 	"darkiron": ["res://assets/wotlk_local/creatures/darkiron.glb", "res://assets/third_party/gobkit/human010/BloodironKnight.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
 	"miner": ["res://assets/wotlk_local/creatures/miner.glb", "res://assets/third_party/gobkit/human010/BloodironSmith.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Barbarian.glb"],
 	"guard": ["res://assets/wotlk_local/creatures/guard.glb", "res://assets/third_party/gobkit/human003/Footman.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Knight.glb"],
+	"ironclad": ["res://assets/third_party/gobkit/human010/BloodironHalberdier.glb"],
+	"kezan": ["res://assets/third_party/gobkit/human010/BloodironShieldwall.glb"],
+	"modrek": ["res://assets/third_party/gobkit/human016/Berserker.glb"],
 	# Murloc shaman remains procedural: an orc shaman is not a suitable species match.
 	"shaman": [],
 	"defias": ["res://assets/wotlk_local/creatures/defias.glb", "res://assets/third_party/kaykit/adventurers/Characters/gltf/Rogue_Hooded.glb"],

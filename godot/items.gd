@@ -228,6 +228,16 @@ static func _build() -> void:
 	_eq("tr_golem_heart", "Golemagg'ın Kalbi", "trinket", 5, 19, 0, 12, 4, 12, 13000, "", "red")
 	for bid in ["tr_gorduk_rare", "bk_vurgan_rare", "hammer_ember", "tr_golem_heart", "hammer_golemagg", "lg_golemagg", "nk_golemagg", "ch_geddon", "helm_geddon", "rg_geddon", "tr_geddon", "axe_sulf", "sh_sulf", "bk_sulf", "tr_sulf"]:
 		_db[bid]["boss"] = true
+	# Kara Demir Zindanı (maden altı dungeon): gardiyan Kezan ve zindan imparatoru Modrek
+	_wp("axe_kezan", "Kezan'ın Parçalayıcısı", 4, 18, 64, 96, 2.5, 11, 3, 8, 7200, "dark", 0)
+	_eq("so_kezan", "Zindan Gardiyanı Omuzluğu", "shoulder", 4, 18, 92, 7, 0, 9, 6400, "Plaka", "dark")
+	_eq("ft_kezan", "Gardiyan Çizmeleri", "feet", 4, 18, 70, 5, 2, 7, 5800, "Plaka", "dark")
+	_wp("hammer_modrek", "Modrek'in Yargı Çekici", 5, 20, 76, 112, 2.7, 14, 3, 11, 16000, "gold", 2)
+	_eq("ch_modrek", "Kara Demir İmparator Zırhı", "chest", 5, 20, 168, 11, 0, 15, 15000, "Plaka", "gold")
+	_eq("helm_modrek", "İmparator Tacı", "head", 5, 20, 96, 9, 0, 12, 13000, "Plaka", "gold")
+	_eq("tr_modrek_rare", "Karataş Kalbi", "trinket", 5, 20, 0, 13, 5, 13, 17000, "", "gold")
+	for bid in ["axe_kezan", "so_kezan", "ft_kezan", "hammer_modrek", "ch_modrek", "helm_modrek", "tr_modrek_rare"]:
+		_db[bid]["boss"] = true
 	# meslek malzemeleri ve üretim ürünleri
 	_misc("ore_iron", "Demir Cevheri", 1, 1, 30, 20, "ore", 0.0, "iron")
 	_misc("ore_dark", "Kara Demir Cevheri", 2, 1, 80, 20, "ore", 0.0, "dark")

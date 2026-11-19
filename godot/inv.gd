@@ -9,6 +9,9 @@ var eq := {}
 var money := 0
 var buyback: Array = []
 const BANK_SIZE := 28
+const BANK_MAX := 84
+const BANK_STEP := 7
+var bank_size := BANK_SIZE
 var bank: Array = []
 
 func _init() -> void:
@@ -24,6 +27,7 @@ func reset() -> void:
 	money = 0
 	buyback.clear()
 	bank.clear()
+	bank_size = BANK_SIZE
 	eq["mainhand"] = "axe_old"
 	eq["offhand"] = "sh_wood"
 	eq["chest"] = "ch_tunic"
@@ -201,7 +205,7 @@ func bank_put(i: int) -> String:
 			b["n"] += e["n"]
 			bag[i] = null
 			return ""
-	if bank.size() >= BANK_SIZE:
+	if bank.size() >= bank_size:
 		return "Banka dolu."
 	bank.append({"id": e["id"], "n": e["n"]})
 	bag[i] = null
@@ -217,6 +221,107 @@ func bank_take(i: int) -> String:
 	bank.remove_at(i)
 	return ""
 
+## Banka genişletme: her adım 7 yuva; maliyet adım sayısının karesiyle artar (bakır).
+func bank_expand_cost() -> int:
+	if bank_size >= BANK_MAX:
+		return -1
+	var step := (bank_size - BANK_SIZE) / BANK_STEP + 1
+	return 1500 * step * step
+
+func bank_expand() -> String:
+	var cost := bank_expand_cost()
+	if cost < 0:
+		return "Banka en büyük boyutta."
+	if money < cost:
+		return "Yeterli paran yok."
+	money -= cost
+	bank_size += BANK_STEP
+	return ""
+
+## Aynı eşyaları yığınlara birleştirir; tür, nadirlik ve ada göre dizer.
+static func _merge_sort(list: Array) -> Array:
+	var merged: Array = []
+	for e in list:
+		if e == null:
+			continue
+		var st: int = Items.get_item(e["id"])["stack"]
+		var left: int = e["n"]
+		for m in merged:
+			if m["id"] == e["id"] and m["n"] < st and left > 0:
+				var k := mini(left, st - m["n"])
+				m["n"] += k
+				left -= k
+		if left > 0:
+			merged.append({"id": e["id"], "n": left})
+	merged.sort_custom(func(a, b):
+		var ia: Dictionary = Items.get_item(str(a["id"]))
+		var ib: Dictionary = Items.get_item(str(b["id"]))
+		var ea := Items.is_equip(ia)
+		var eb := Items.is_equip(ib)
+		if ea != eb:
+			return ea
+		if int(ia["rar"]) != int(ib["rar"]):
+			return int(ia["rar"]) > int(ib["rar"])
+		if str(ia["name"]) != str(ib["name"]):
+			return str(ia["name"]) < str(ib["name"])
+		return int(a["n"]) > int(b["n"]))
+	return merged
+
+func sort_bag() -> void:
+	var merged := _merge_sort(bag)
+	for i in BAG_SIZE:
+		bag[i] = merged[i] if i < merged.size() else null
+
+func sort_bank() -> void:
+	bank = _merge_sort(bank)
+
+## Çantadaki tüm malzemeleri (cevher, külçe, deri, toz...) bankaya taşır; sığmayanlar kalır. Taşınan yığın sayısı döner.
+func bank_put_materials() -> int:
+	var moved := 0
+	for i in BAG_SIZE:
+		var e = bag[i]
+		if e == null:
+			continue
+		var it := Items.get_item(e["id"])
+		if Items.is_equip(it) or float(it.get("heal", 0.0)) > 0.0 or str(it.get("icon", "")) not in ["ore", "bar", "pelt", "claw"]:
+			continue
+		if bank_put(i) == "":
+			moved += 1
+	return moved
+
+## Gri (çerçöp) eşyaların hepsini satar. [kazanç, yığın sayısı] döner.
+func sell_junk() -> Array:
+	var gain := 0
+	var count_sold := 0
+	for i in BAG_SIZE:
+		var e = bag[i]
+		if e != null and int(Items.get_item(e["id"])["rar"]) == 0:
+			gain += sell(i)
+			count_sold += 1
+	return [gain, count_sold]
+
+## Eşya parçalama: yeşil ve üzeri ekipmandan büyülü toz / öz çıkar. Çanta dolu kalırsa reddeder.
+func disenchant(i: int, rng: RandomNumberGenerator) -> Dictionary:
+	var e = bag[i]
+	if e == null:
+		return {"err": "Boş yuva."}
+	var it := Items.get_item(e["id"])
+	if not Items.is_equip(it) or int(it["rar"]) < 2:
+		return {"err": "Yalnızca yeşil ve üzeri ekipman parçalanır."}
+	var rar: int = int(it["rar"])
+	var dust := rng.randi_range(1 + rar - 2, 2 + (rar - 2) * 2) + int(it["req"]) / 8
+	var ess := 0
+	if rar >= 3 and rng.randf() < 0.3 + 0.2 * float(rar - 3):
+		ess = rng.randi_range(1, rar - 2)
+	bag[i] = null
+	if not can_add("dust_arc", dust) or (ess > 0 and not can_add("ess_arc", ess)):
+		bag[i] = e
+		return {"err": "Çantada yer yok."}
+	add("dust_arc", dust)
+	if ess > 0:
+		add("ess_arc", ess)
+	return {"err": "", "name": it["name"], "dust": dust, "ess": ess}
+
 func to_dict() -> Dictionary:
 	var bg: Array = []
 	for e in bag:
@@ -224,7 +329,7 @@ func to_dict() -> Dictionary:
 	var bk: Array = []
 	for b in bank:
 		bk.append([b["id"], b["n"]])
-	return {"bag": bg, "eq": eq.duplicate(), "money": money, "bank": bk}
+	return {"bag": bg, "eq": eq.duplicate(), "money": money, "bank": bk, "bank_size": bank_size}
 
 func from_dict(d: Dictionary) -> bool:
 	if typeof(d.get("bag")) != TYPE_ARRAY or typeof(d.get("eq")) != TYPE_DICTIONARY:
@@ -245,8 +350,9 @@ func from_dict(d: Dictionary) -> bool:
 			eq[s] = str(d["eq"][s])
 	money = maxi(0, int(d.get("money", 0)))
 	bank.clear()
+	bank_size = clampi(int(d.get("bank_size", BANK_SIZE)), BANK_SIZE, BANK_MAX)
 	if typeof(d.get("bank")) == TYPE_ARRAY:
 		for e2 in d["bank"]:
-			if typeof(e2) == TYPE_ARRAY and e2.size() == 2 and Items.db().has(str(e2[0])) and bank.size() < BANK_SIZE:
+			if typeof(e2) == TYPE_ARRAY and e2.size() == 2 and Items.db().has(str(e2[0])) and bank.size() < bank_size:
 				bank.append({"id": str(e2[0]), "n": clampi(int(e2[1]), 1, Items.get_item(str(e2[0]))["stack"])})
 	return true

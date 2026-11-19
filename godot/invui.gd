@@ -176,6 +176,8 @@ var char_name: Label
 var vend_title: Label
 var vend_list: VBoxContainer
 var vend_money: RichTextLabel
+var vend_actions: Array = []
+var disenchant_btn: Button
 var vend_tab_btns: Array = []
 var loot_title: Label
 var loot_list: VBoxContainer
@@ -320,8 +322,18 @@ func _build_bag() -> void:
 		bag_slots.append(_slot("bag", i, 42.0, bag_win, Vector2(12 + (i % 5) * 45, 101 + (i / 5) * 45)))
 	bag_count_lbl = _label("", 11, Color("b9ad96"))
 	bag_count_lbl.position = Vector2(12, 375)
-	bag_count_lbl.size = Vector2(224, 18)
+	bag_count_lbl.size = Vector2(150, 18)
 	bag_win.add_child(bag_count_lbl)
+	disenchant_btn = Button.new()
+	disenchant_btn.text = "Parçala"
+	disenchant_btn.toggle_mode = true
+	disenchant_btn.focus_mode = Control.FOCUS_NONE
+	disenchant_btn.position = Vector2(166, 372)
+	disenchant_btn.size = Vector2(70, 22)
+	disenchant_btn.add_theme_font_size_override("font_size", 11)
+	disenchant_btn.tooltip_text = "Açıkken Demirkazan'da bir ekipmana sağ tıkla: yeşil ve üzeri eşya büyülü toza dönüşür"
+	disenchant_btn.toggled.connect(func(on): game.disenchant_mode = on)
+	bag_win.add_child(disenchant_btn)
 	money_lbl = _rich(220, 24)
 	money_lbl.position = Vector2(12, 397)
 	bag_win.add_child(money_lbl)
@@ -357,21 +369,7 @@ func _bag_matches(it: Dictionary) -> bool:
 func _sort_bag() -> void:
 	if game == null or game.held != null:
 		return
-	game.inv.bag.sort_custom(func(a, b):
-		if a == null:
-			return false
-		if b == null:
-			return true
-		var ia: Dictionary = Items.get_item(str(a["id"]))
-		var ib: Dictionary = Items.get_item(str(b["id"]))
-		var ea := Items.is_equip(ia)
-		var eb := Items.is_equip(ib)
-		if ea != eb:
-			return ea
-		if int(ia["rar"]) != int(ib["rar"]):
-			return int(ia["rar"]) > int(ib["rar"])
-		return str(ia["name"]) < str(ib["name"])
-	)
+	game.inv.sort_bag()
 	refresh()
 
 func _build_char() -> void:
@@ -501,7 +499,7 @@ func _build_char() -> void:
 func _build_vendor() -> void:
 	vend_win = _window("Satıcı", "vendor")
 	vend_win.position = Vector2(14, 96)
-	vend_win.size = Vector2(336, 480)
+	vend_win.size = Vector2(336, 512)
 	vend_title = vend_win.get_node("title")
 	for i in 2:
 		var b := Button.new()
@@ -521,8 +519,17 @@ func _build_vendor() -> void:
 	vend_list.add_theme_constant_override("separation", 3)
 	sc.add_child(vend_list)
 	vend_money = _rich(300, 24)
-	vend_money.position = Vector2(14, 446)
+	vend_money.position = Vector2(14, 440)
 	vend_win.add_child(vend_money)
+	for i in 3:
+		var ab := Button.new()
+		ab.focus_mode = Control.FOCUS_NONE
+		ab.position = Vector2(12 + i * 104, 472)
+		ab.size = Vector2(100, 26)
+		ab.add_theme_font_size_override("font_size", 11)
+		ab.pressed.connect(func(): game.ui_vendor_action(i))
+		vend_win.add_child(ab)
+		vend_actions.append(ab)
 
 func _build_loot() -> void:
 	loot_win = _window("Ganimet", "loot")
@@ -724,6 +731,18 @@ func refresh_vendor() -> void:
 	var is_bank: bool = npc["role"] == "bank"
 	(vend_tab_btns[0] as Button).text = "Banka" if is_bank else "Satın al"
 	(vend_tab_btns[1] as Button).text = "Çantam" if is_bank else "Geri alım"
+	vend_title.text = "%s (%d/%d)" % [npc["name"], game.inv.bank.size(), game.inv.bank_size] if is_bank else npc["name"]
+	var bank_cost: int = game.inv.bank_expand_cost()
+	var labels: Array = ["Genişlet", "Düzenle", "Malzemeleri koy"] if is_bank else ["Çerçöpü sat", "", ""]
+	for ai in 3:
+		var ab2 := vend_actions[ai] as Button
+		ab2.text = labels[ai]
+		ab2.visible = labels[ai] != ""
+		ab2.tooltip_text = ""
+	if is_bank:
+		(vend_actions[0] as Button).text = "Genişlet" if bank_cost < 0 else "Genişlet (%s)" % Items.money_plain(bank_cost)
+		(vend_actions[0] as Button).disabled = bank_cost < 0
+		(vend_actions[0] as Button).tooltip_text = "+%d yuva" % Inv.BANK_STEP
 	if is_bank:
 		var src: Array = []
 		if game.vendor_tab == 0:

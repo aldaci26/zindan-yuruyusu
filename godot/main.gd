@@ -311,6 +311,10 @@ var inv
 const ROOM_X := 400.0  # ev iç mekânlarının kurulduğu uzak bölge
 const ROOM_STEP := 14.0
 var house_doors: Array = []
+var disenchant_mode := false
+var dis_rng := RandomNumberGenerator.new()
+var set_aura: Node3D
+var set_aura_key := ""
 var mm  # mmorpg köprüsü: veri tanımları + görev/çanta aynası
 var invui
 var talui
@@ -1628,11 +1632,80 @@ func potion_count() -> int:
 	return inv.count("pot_heal") + inv.count("pot_big")
 
 ## Eşya/seviye değişince istatistikleri ve pencereleri yenile.
+## Takım bonusu aktifken karakterin ayağında dönen bir halka, ışık ve (3. kademede) kıvılcımlar.
+const SET_AURA_COLORS := {"deep": "66aaff", "ash": "ff6a2a", "king": "ffd24a"}
+
+func _update_set_aura() -> void:
+	if player == null:
+		return
+	var best := ""
+	var tier := 0
+	for k in Items.SETS:
+		var have := Items.set_count(k, inv.eq)
+		var t := 0
+		for b in Items.SETS[k]["bonus"]:
+			if have >= int(b["n"]):
+				t += 1
+		if t > tier:
+			tier = t
+			best = k
+	var key := "%s%d" % [best, tier]
+	if key == set_aura_key and (tier == 0 or is_instance_valid(set_aura)):
+		return
+	set_aura_key = key
+	if is_instance_valid(set_aura):
+		set_aura.queue_free()
+	set_aura = null
+	if tier == 0:
+		return
+	var col := Color(SET_AURA_COLORS.get(best, "ffffff"))
+	set_aura = Node3D.new()
+	set_aura.name = "SetAura"
+	player.add_child(set_aura)
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.78
+	tm.outer_radius = 0.86
+	ring.mesh = tm
+	ring.position = Vector3(0, 0.06, 0)
+	ring.material_override = Dwarf.mat(col, 0.0, 0.4, col, 1.4 + 0.5 * float(tier))
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	set_aura.add_child(ring)
+	var tw := set_aura.create_tween().set_loops()
+	tw.tween_property(ring, "rotation:y", TAU, 6.0 - float(tier))
+	if tier >= 2:
+		var li := OmniLight3D.new()
+		li.light_color = col
+		li.light_energy = 0.5 + 0.2 * float(tier)
+		li.omni_range = 4.0
+		li.position = Vector3(0, 1.0, 0)
+		li.shadow_enabled = false
+		set_aura.add_child(li)
+	if tier >= 3:
+		var sp := CPUParticles3D.new()
+		sp.amount = 20
+		sp.lifetime = 1.6
+		sp.direction = Vector3.UP
+		sp.spread = 20.0
+		sp.initial_velocity_min = 0.6
+		sp.initial_velocity_max = 1.2
+		sp.gravity = Vector3.ZERO
+		sp.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+		sp.emission_sphere_radius = 0.7
+		var sm := SphereMesh.new()
+		sm.radius = 0.035
+		sm.height = 0.07
+		sp.mesh = sm
+		sp.material_override = Dwarf.mat(col, 0.0, 0.4, col, 3.0)
+		sp.position = Vector3(0, 0.3, 0)
+		set_aura.add_child(sp)
+
 func inv_changed() -> void:
 	G = Items.totals(inv.eq)
 	if mm != null:
 		mm.sync_inventory(inv.bag, inv.money)
 	WowAssets.refresh_equipment(player, inv.eq)
+	_update_set_aura()
 	if P.has("hp"):
 		P["hp"] = minf(P["hp"], float(max_hp()))
 	if invui != null:
@@ -2792,6 +2865,36 @@ func ui_close(name: String) -> void:
 		"loot": close_loot()
 	invui.refresh()
 
+func ui_vendor_action(i: int) -> void:
+	if vendor_npc == null:
+		return
+	if vendor_npc["role"] == "bank":
+		match i:
+			0:
+				var cost: int = inv.bank_expand_cost()
+				var err: String = inv.bank_expand()
+				if err != "":
+					hud.say(err, Color("ff6a5a"))
+				else:
+					hud.say("Banka genişledi: %d yuva (-%s)" % [inv.bank_size, Items.money_plain(cost)], Color("f2c75c"))
+					sfx.play("coin", -6)
+			1:
+				inv.sort_bank()
+				sfx.play("click", -4)
+			2:
+				var moved: int = inv.bank_put_materials()
+				hud.say("%d malzeme yığını bankaya taşındı." % moved if moved > 0 else "Taşınacak malzeme yok ya da banka dolu.", Color("f2c75c"))
+				sfx.play("click", -4)
+	elif i == 0:
+		var res: Array = inv.sell_junk()
+		if res[1] == 0:
+			hud.say("Satılacak çerçöp yok.", Color("9aa7b4"))
+		else:
+			hud.say("%d çerçöp yığını satıldı (+%s)" % [res[1], Items.money_plain(res[0])], Color("f2c75c"))
+			sfx.play("coin", -6)
+			skill_xp("speech", 1.0)
+	inv_changed()
+
 func ui_vendor_tab(i: int) -> void:
 	vendor_tab = i
 	invui.refresh()
@@ -2837,7 +2940,20 @@ func ui_slot_click(kind: String, key, button: int) -> void:
 			if e == null:
 				return
 			var it := Items.get_item(e["id"])
-			if vendor_npc != null and invui.vend_win.visible and vendor_npc["role"] == "bank":
+			if disenchant_mode and vendor_npc == null:
+				if not can_craft_here():
+					hud.say("Parçalamak için Demirkazan'ın ocağına yakın olmalısın.", Color("ff6a5a"))
+				else:
+					var dr: Dictionary = inv.disenchant(key, dis_rng)
+					if dr["err"] != "":
+						hud.say(dr["err"], Color("ff6a5a"))
+					else:
+						hud.say("Parçalandı: %s → %d Büyülü Toz%s" % [dr["name"], dr["dust"], (", %d Parlak Öz" % dr["ess"]) if dr["ess"] > 0 else ""], Color("c8a2ff"))
+						ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.4, Color("c8a2ff"), 0.5)
+						sfx.play("block", -4)
+						if P["prof"].has("smith"):
+							prof_gain("smith")
+			elif vendor_npc != null and invui.vend_win.visible and vendor_npc["role"] == "bank":
 				err = inv.bank_put(key)
 			elif vendor_npc != null and invui.vend_win.visible:
 				var gain: int = inv.sell(key)
@@ -4361,7 +4477,7 @@ func render_dialog() -> void:
 		body = "Taze iksirler, sıcak çorba, sağlam zırhlar! Ne lazım?"
 		buttons.append({"label": "Alışveriş", "cb": func(): open_vendor(n)})
 	elif n["role"] == "bank":
-		body = "Eşyaların bende güvende, savaşçı. Banka %d yuvalık, şu an %d dolu." % [Inv.BANK_SIZE, inv.bank.size()]
+		body = "Eşyaların bende güvende, savaşçı. Banka %d yuvalık, şu an %d dolu. Yuva eklemek istersen bana söyle." % [inv.bank_size, inv.bank.size()]
 		buttons.append({"label": "Bankayı aç", "cb": func(): open_vendor(n)})
 	elif n["role"] == "smith":
 		var cost: int = 300 + 250 * P["wep_lvl"]

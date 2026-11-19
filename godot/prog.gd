@@ -21,6 +21,8 @@ const RECIPES := [
 	{"id": "r_ch2", "prof": "smith", "name": "Kara Demir Göğüslük", "skill": 45, "mats": {"bar_dark": 8, "hide_cured": 3}, "out": "ch_craft2", "n": 1},
 	{"id": "r_sh", "prof": "smith", "name": "Kara Demir Kalkan", "skill": 50, "mats": {"bar_dark": 6, "hide_cured": 2}, "out": "sh_craft", "n": 1},
 	{"id": "r_axe2", "prof": "smith", "name": "Kara Demir Balta", "skill": 60, "mats": {"bar_dark": 6, "hide_cured": 2}, "out": "axe_craft2", "n": 1},
+	{"id": "r_axe3", "prof": "smith", "name": "Büyülü Çelik Balta", "skill": 70, "mats": {"bar_dark": 4, "dust_arc": 8}, "out": "axe_craft3", "n": 1},
+	{"id": "r_ch3", "prof": "smith", "name": "Büyülü Plaka Göğüslük", "skill": 75, "mats": {"bar_dark": 6, "dust_arc": 10, "ess_arc": 1}, "out": "ch_craft3", "n": 1},
 ]
 
 ## Maden damarı türleri

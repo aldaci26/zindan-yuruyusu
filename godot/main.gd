@@ -299,6 +299,7 @@ class Mob:
 	var base_spd := 0.0
 	var owner_m = null
 	var rare := false
+	var elite := false
 	var thr := 0.0
 	var node: Node3D
 	var legs: Array = []
@@ -1603,7 +1604,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	_mm_setup()
@@ -2304,7 +2305,19 @@ func _spawn_camps() -> void:
 				m.sc *= 1.3
 				m.rad *= 1.25
 				m.aggro += 3.0
+			elif m.lvl >= 3 and rnd.randf() < 0.06:
+				# Elit: üç kat can, 1,5 kat hasar, altın parıltılı; üç kat ödül verir
+				m.elite = true
+				m.title = "Elit"
+				m.maxhp = round(m.maxhp * 3.0)
+				m.hp = m.maxhp
+				m.dmg *= 1.5
+				m.sc *= 1.25
+				m.rad *= 1.2
+				m.aggro += 2.0
 			m.node = _camp_model(c["kind"])
+			if m.elite:
+				_tint_model(m.node, Color("ffcc33"), 0.22, 0.3)
 			m.node.scale = Vector3.ONE * m.sc
 			m.legs = _humanoid_legs(m.node)
 			add_child(m.node)
@@ -3139,7 +3152,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "pity": P["pity"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	d["npc_mem"] = npc_mem
 	SaveManager.write(SAVE_PATH, d)
 
@@ -3207,6 +3220,7 @@ func load_game() -> bool:
 	P["lore"] = {}
 	P["talked"] = {}
 	P["walls"] = Shouts.sanitize(d.get("walls"))
+	P["pity"] = clampi(int(d.get("pity", 0)), 0, 10)
 	P["shout_sel"] = str(d.get("shout_sel", "force")) if Shouts.SHOUTS.has(str(d.get("shout_sel", ""))) else "force"
 	P["shout_cd"] = 0.0
 	P["skin_t"] = 0.0
@@ -3431,6 +3445,8 @@ func kill_mob(m) -> void:
 		_boss_reset(m)
 		hud.banner("BOSS ÖLDÜ", m.nm)
 		sfx.play("quest")
+	if m.elite:
+		xp *= 3
 	if m.rare:
 		xp = roundi(xp * SpawnDirector.rare_reward_multiplier())
 	hud.say("%s öldü. +%d tecrübe" % [m.nm, xp], Color("c9a8ff"))
@@ -3486,6 +3502,8 @@ func roll_loot(m) -> void:
 			m.loot.append({"id": "pot_heal", "n": 1})
 	else:
 		_normal_loot(m)
+		if m.elite:
+			_elite_loot(m)
 	m.fade_t = T + (90.0 if m.boss != "" else 25.0)
 	var sp := MeshInstance3D.new()
 	var sm := SphereMesh.new()
@@ -3500,6 +3518,18 @@ func roll_loot(m) -> void:
 	add_child(sp)
 	m.sparkle = sp
 
+## Elit: üç kat para, en az bir yeşil/mavi eşya ve büyülü toz.
+func _elite_loot(m) -> void:
+	m.loot_money *= 3
+	var rar := 3 if randf() < 0.25 else 2
+	var pl: Array = Items.pool(rar, maxi(1, m.lvl - 2), m.lvl + 3)
+	if not pl.is_empty():
+		m.loot.append({"id": pl[randi() % pl.size()], "n": 1})
+	m.loot.append({"id": "dust_arc", "n": 1 + randi() % 3})
+
+## Boss başına nadir eşya: taban şans %6, her şanssız boss öldürmede +%2 (en fazla 10 kez); düşünce sayaç sıfırlanır.
+const BOSS_RARE := {"gorduk": ["tr_gorduk_rare"], "vurgan": ["bk_vurgan_rare"], "geddon": ["hammer_ember"], "golemagg": ["tr_golem_heart"]}
+
 func _boss_loot(m) -> void:
 	var d: Dictionary = BOSSES[m.boss]
 	m.loot_money = 300 + m.lvl * 120 + randi() % 200
@@ -3512,6 +3542,14 @@ func _boss_loot(m) -> void:
 	if m.boss == "ragnaros" and randf() < 0.15:
 		m.loot.append({"id": "hammer_sulf", "n": 1})
 	m.loot.append({"id": "pot_big", "n": 2})
+	if BOSS_RARE.has(m.boss):
+		if randf() < 0.06 + 0.02 * float(P["pity"]):
+			var rid: String = BOSS_RARE[m.boss][0]
+			m.loot.append({"id": rid, "n": 1})
+			P["pity"] = 0
+			hud.banner("NADİR EŞYA", Items.get_item(rid)["name"])
+		else:
+			P["pity"] = mini(10, int(P["pity"]) + 1)
 
 func open_loot(m) -> void:
 	if m.loot.is_empty() and m.loot_money <= 0:
@@ -4921,6 +4959,74 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 			if d > m.rad + m.reach + 1.5 and d < 22.0 and _bready(m, "rocks"):
 				_bset(m, "rocks", 7.0)
 				boss_spell(m, 0.9, "Kaya Fırlatma", Color("8a8070"))
+				return true
+		"arctikus":
+			if hpf < 0.5 and not m.flags.has("pack"):
+				m.flags["pack"] = true
+				boss_say(m, "Arctikus uludu; kar kurtları çağrıya geldi!")
+				_boss_summon(m, "Kar Kurdu", "wolf", 2, 180.0, 9.0, 5.0, 1.0, 3.0)
+			if d <= 8.0 and _bready(m, "roar"):
+				_bset(m, "roar", 12.0)
+				boss_spell(m, 1.0, "Donduran Kükreme", Color("8ad0ff"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 8.0, Color("8ad0ff"), 0.6)
+				P["slow_t"] = 4.0
+				return true
+			if melee and _bready(m, "claw"):
+				_bset(m, "claw", 6.0)
+				boss_hit(m, 1.8, "Pençe Darbesi")
+				return true
+		"grik":
+			if hpf < 0.4 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.3
+				m.spd *= 1.15
+				boss_say(m, "Grik'nir: Donmuş baltam seni bulacak!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if melee and _bready(m, "axe"):
+				_bset(m, "axe", 7.0)
+				boss_hit(m, 2.0, "Buz Baltası")
+				return true
+			if d > m.rad + m.reach + 1.5 and d < 20.0 and _bready(m, "spear"):
+				_bset(m, "spear", 9.0)
+				boss_spell(m, 0.9, "Buz Mızrağı", Color("a8e0ff"))
+				return true
+		"choksul":
+			if hpf < 0.5 and not m.flags.has("aides"):
+				m.flags["aides"] = true
+				boss_say(m, "Chok'sul: Çıraklar, ezin onları!")
+				_boss_summon(m, "Ogre Çırağı", "trogg", 2, 300.0, 14.0, 3.6, 1.1, 3.0)
+			if d <= 7.0 and _bready(m, "quake"):
+				_bset(m, "quake", 10.0)
+				boss_spell(m, 1.3, "Yer Sarsıntısı", Color("c8a070"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 7.0, Color("c8a070"), 0.6)
+				knockback(m, 4.0)
+				return true
+		"hogger":
+			for t in [0.66, 0.33]:
+				var hk := "h%d" % roundi(t * 100.0)
+				if hpf < t and not m.flags.has(hk):
+					m.flags[hk] = true
+					boss_say(m, "Hogger: Gnoll'lar! Taze et!")
+					_boss_summon(m, "Gnoll Yardımcısı", "gnoll", 2, 220.0, 11.0, 4.2, 1.0, 3.0)
+			if melee and _bready(m, "maul"):
+				_bset(m, "maul", 6.0)
+				boss_hit(m, 1.9, "Parçalama")
+				return true
+		"vancleef":
+			if hpf < 0.5 and not m.flags.has("guards"):
+				m.flags["guards"] = true
+				boss_say(m, "VanCleef: Muhafızlar, saldırın!")
+				_boss_summon(m, "Defias Muhafızı", "defias", 2, 260.0, 13.0, 4.2, 1.0, 3.0)
+			if hpf < 0.25 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.25
+				m.atk_int *= 0.8
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if melee and _bready(m, "stab"):
+				_bset(m, "stab", 5.0)
+				boss_hit(m, 1.7, "Kör Bıçak")
 				return true
 		"thokk":
 			if hpf < 0.5 and not m.flags.has("ele"):

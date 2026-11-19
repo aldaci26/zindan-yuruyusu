@@ -222,7 +222,11 @@ static func _build() -> void:
 	_eq("sh_sulf", "Kül Lordu Kalkanı", "offhand", 4, 19, 150, 0, 0, 13, 8200, "Kalkan", "red")
 	_eq("bk_sulf", "Kor Pelerin", "back", 4, 19, 24, 7, 4, 9, 6800, "Kumaş", "red")
 	_eq("tr_sulf", "Kül Kralı Mührü", "trinket", 4, 19, 0, 11, 5, 10, 8200, "", "gold")
-	for bid in ["hammer_golemagg", "lg_golemagg", "nk_golemagg", "ch_geddon", "helm_geddon", "rg_geddon", "tr_geddon", "axe_sulf", "sh_sulf", "bk_sulf", "tr_sulf"]:
+	_eq("tr_gorduk_rare", "Granit Yürek", "trinket", 4, 15, 0, 8, 4, 9, 5200, "", "gold")
+	_eq("bk_vurgan_rare", "Kor Dövme Pelerin", "back", 4, 17, 22, 6, 4, 8, 6200, "Kumaş", "red")
+	_wp("hammer_ember", "Geddon'un Kor Çekici", 5, 19, 62, 92, 2.6, 12, 3, 9, 14000, "red", 2)
+	_eq("tr_golem_heart", "Golemagg'ın Kalbi", "trinket", 5, 19, 0, 12, 4, 12, 13000, "", "red")
+	for bid in ["tr_gorduk_rare", "bk_vurgan_rare", "hammer_ember", "tr_golem_heart", "hammer_golemagg", "lg_golemagg", "nk_golemagg", "ch_geddon", "helm_geddon", "rg_geddon", "tr_geddon", "axe_sulf", "sh_sulf", "bk_sulf", "tr_sulf"]:
 		_db[bid]["boss"] = true
 	# meslek malzemeleri ve üretim ürünleri
 	_misc("ore_iron", "Demir Cevheri", 1, 1, 30, 20, "ore", 0.0, "iron")

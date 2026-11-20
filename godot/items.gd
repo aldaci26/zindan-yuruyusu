@@ -261,8 +261,8 @@ static func _build() -> void:
 	_eq("ch_craft2", "Kara Demir Göğüslük", "chest", 3, 13, 118, 6, 0, 9, 1900, "Plaka", "dark")
 	_eq("sh_craft", "Kara Demir Kalkan", "offhand", 3, 13, 102, 0, 0, 8, 1500, "Kalkan", "dark")
 	_wp("axe_craft2", "Kara Demir Balta", 3, 14, 38, 58, 2.4, 7, 2, 4, 1800, "dark", 2)
-	_misc("dust_arc", "Büyülü Toz", 2, 1, 120, 50, "ore", 0.0, "gold")
-	_misc("ess_arc", "Parlak Öz", 3, 1, 600, 20, "bar", 0.0, "gold")
+	_misc("dust_arc", "Büyülü Toz", 2, 1, 120, 50, "dust", 0.0, "gold")
+	_misc("ess_arc", "Parlak Öz", 3, 1, 600, 20, "ess", 0.0, "gold")
 	_wp("axe_craft3", "Büyülü Çelik Balta", 4, 16, 46, 70, 2.4, 9, 3, 6, 3200, "dark", 2)
 	_eq("ch_craft3", "Büyülü Plaka Göğüslük", "chest", 4, 16, 150, 8, 0, 12, 3400, "Plaka", "dark")
 	for cid in ["axe_craft1", "bk_hunter", "ch_craft1", "wt_craft", "ch_craft2", "sh_craft", "axe_craft2", "axe_craft3", "ch_craft3"]:

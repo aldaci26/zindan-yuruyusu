@@ -196,6 +196,20 @@ static func item(ci: CanvasItem, it: Dictionary, r: Rect2) -> void:
 				line(ci, r, [x, 0.82], [x - 0.07, 0.3], c, 0.075)
 				line(ci, r, [x - 0.07, 0.3], [x + 0.02, 0.16], l, 0.045)
 			line(ci, r, [0.18, 0.78], [0.82, 0.78], d, 0.045)
+		elif ic == "dust":
+			for k in 7:
+				var ang := float(k) * 0.9 + 0.3
+				var rr := 0.18 + 0.1 * (k % 3)
+				circ(ci, r, 0.5 + cos(ang) * rr, 0.52 + sin(ang) * rr * 0.8, 0.045, c if k % 2 == 0 else l)
+			circ(ci, r, 0.5, 0.5, 0.07, Color(1, 1, 1, 0.8))
+		elif ic == "ess":
+			circ(ci, r, 0.5, 0.52, 0.28, bgt.darkened(0.2))
+			circ(ci, r, 0.5, 0.52, 0.2, c)
+			circ(ci, r, 0.5, 0.52, 0.1, l)
+			circ(ci, r, 0.44, 0.44, 0.04, Color(1, 1, 1, 0.9))
+			for k in 4:
+				var ang2 := float(k) * 1.57 + 0.4
+				line(ci, r, [0.5 + cos(ang2) * 0.3, 0.52 + sin(ang2) * 0.3], [0.5 + cos(ang2) * 0.4, 0.52 + sin(ang2) * 0.4], l, 0.02)
 		else:
 			for k in 3:
 				arc(ci, r, 0.3 + 0.2 * k, 0.9, 0.5, 4.3, 5.4, c, 0.08)

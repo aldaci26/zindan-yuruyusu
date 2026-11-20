@@ -1871,6 +1871,41 @@ const NPCDEF := [
 		"o": {"beard": Color("aab0b8"), "cloth": Color("8a1f1f"), "metal": Color("c0c8d4"), "helm": true, "prop": "axe"}},
 ]
 
+# ---------- günlük hayat: başıboş dolaşan süs köylüleri (etkileşimsiz) ----------
+const AMB_NPCS := [
+	{"id": "amb_tomas", "name": "Köylü Tomas", "title": "Demirkazan Sakini", "role": "amb", "x": 2.0, "z": 3.0, "face": 0.0, "wr": 5.5,
+		"o": {"beard": Color("8a6a4a"), "cloth": Color("4a6a3a"), "metal": Color("8a8a8a"), "helm": false, "prop": "none"}},
+	{"id": "amb_greta", "name": "Köylü Greta", "title": "Demirkazan Sakini", "role": "amb", "x": -6.0, "z": -2.0, "face": 1.2, "wr": 4.5,
+		"o": {"beard": Color("c9b068"), "cloth": Color("7a3a4a"), "metal": Color("8a8a8a"), "helm": false, "prop": "none"}},
+	{"id": "amb_borin", "name": "Köylü Borin", "title": "Demirkazan Sakini", "role": "amb", "x": 8.0, "z": 7.0, "face": 2.0, "wr": 5.0,
+		"o": {"beard": Color("5a4a3a"), "cloth": Color("3a4a6a"), "metal": Color("8a8a8a"), "helm": false, "prop": "none"}},
+]
+
+func _update_amb_npcs(delta: float) -> void:
+	if mode != "play" or map != "snow":
+		return
+	for n in npcs:
+		if n["role"] != "amb":
+			continue
+		var ph: float = n.get("wander_t", randf() * TAU) + delta * 0.18
+		n["wander_t"] = ph
+		var cx: float = n.get("wander_cx", n["x"])
+		var cz: float = n.get("wander_cz", n["z"])
+		if not n.has("wander_cx"):
+			n["wander_cx"] = cx
+			n["wander_cz"] = cz
+		var r: float = float(n.get("wr", 4.0))
+		var nx := cx + cos(ph) * r
+		var nz := cz + sin(ph * 0.7) * r
+		var dx: float = nx - float(n["x"])
+		var dz: float = nz - float(n["z"])
+		if absf(dx) > 0.001 or absf(dz) > 0.001:
+			n["node"].rotation.y = lerp_angle(n["node"].rotation.y, atan2(dx, dz), 0.08)
+		n["x"] = nx
+		n["z"] = nz
+		n["y"] = height_at(nx, nz)
+		n["node"].position = Vector3(nx, n["y"], nz)
+
 # ---------- görev yön işaretleri (WoW tarzı waypoint) ----------
 const MAP_LINKS := {"snow": ["swamp", "mine"], "swamp": ["snow", "ash"], "mine": ["snow"], "ash": ["swamp", "snow"]}
 
@@ -2005,7 +2040,7 @@ func _npc_defs() -> Array:
 		"mine": return []
 		"swamp": return SWAMP_NPCS
 		"ash": return ASH_NPCS
-	return NPCDEF
+	return NPCDEF + AMB_NPCS
 
 func _rep_key() -> String:
 	return {"snow": "dem", "swamp": "kar", "mine": "mad", "ash": "kul"}.get(map, "dem")
@@ -4500,6 +4535,8 @@ func near_npc():
 	var best = null
 	var bd := 4.2
 	for n in npcs:
+		if n["role"] == "amb":
+			continue
 		var d := Vector2(n["x"] - P["x"], n["z"] - P["z"]).length()
 		if d < bd:
 			bd = d
@@ -4767,6 +4804,7 @@ func collide(x: float, z: float, r: float) -> Vector2:
 func step(dt: float) -> void:
 	T += dt
 	_check_windows()
+	_update_amb_npcs(dt)
 	if mode == "play" and not P["dead"]:
 		save_t += dt
 		if save_t >= 20.0:

@@ -238,6 +238,15 @@ static func _build() -> void:
 	_eq("tr_modrek_rare", "Karataş Kalbi", "trinket", 5, 20, 0, 13, 5, 13, 17000, "", "gold")
 	for bid in ["axe_kezan", "so_kezan", "ft_kezan", "hammer_modrek", "ch_modrek", "helm_modrek", "tr_modrek_rare"]:
 		_db[bid]["boss"] = true
+	# zindan görev ödülleri (loot'tan ayrı)
+	_eq("hd_kezan", "Gardiyan Eldivenleri", "hands", 4, 18, 80, 6, 2, 8, 6000, "Plaka", "dark")
+	_eq("wt_kezan", "Zindan Kemeri", "waist", 4, 18, 60, 5, 2, 6, 4800, "Plaka", "dark")
+	_eq("rg_dungeon1", "Gardiyan Mührü", "ring", 4, 18, 0, 8, 3, 7, 7000, "", "dark")
+	_eq("nk_modrek", "İmparator Gerdanlığı", "neck", 5, 20, 0, 10, 4, 11, 14000, "", "gold")
+	_eq("sh_modrek", "Karataş Kalkanı", "offhand", 5, 20, 140, 0, 0, 14, 15500, "Kalkan", "gold")
+	_eq("rg_modrek", "Kara Demir Mührü", "ring", 5, 20, 0, 12, 4, 12, 16000, "", "gold")
+	for bid in ["hd_kezan", "wt_kezan", "rg_dungeon1", "nk_modrek", "sh_modrek", "rg_modrek"]:
+		_db[bid]["boss"] = true
 	# meslek malzemeleri ve üretim ürünleri
 	_misc("ore_iron", "Demir Cevheri", 1, 1, 30, 20, "ore", 0.0, "iron")
 	_misc("ore_dark", "Kara Demir Cevheri", 2, 1, 80, 20, "ore", 0.0, "dark")

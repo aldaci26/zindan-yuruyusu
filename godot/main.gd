@@ -363,6 +363,7 @@ var cam_pitch := 0.34
 var cam_dist := 8.5
 var cam_dist_t := 8.5
 var rmb := false
+var mouse_sens := 1.0
 var dlg_open := false
 var cur_npc = null
 var last_rest := -999.0
@@ -581,6 +582,7 @@ func _ready() -> void:
 	sfx = SfxScript.new()
 	add_child(sfx)
 	hud.volume_changed.connect(sfx.set_volume)
+	hud.sens_changed.connect(func(x): mouse_sens = x; save_settings())
 	hud.order_changed.connect(save_settings)
 	hud.quality_changed.connect(func(q): apply_quality(q); save_settings())
 	hud.volume_changed.connect(func(_x): save_settings())
@@ -3167,6 +3169,7 @@ func save_settings() -> void:
 	var cf := ConfigFile.new()
 	cf.set_value("ayar", "kalite", hud.q_level)
 	cf.set_value("ayar", "ses", hud.vol_slider.value)
+	cf.set_value("ayar", "hassasiyet", mouse_sens)
 	for a in binds:
 		cf.set_value("tus", a, binds[a])
 	cf.set_value("cubuk", "sira", hud.bar_order())
@@ -3185,6 +3188,8 @@ func load_settings() -> void:
 	var v: float = float(cf.get_value("ayar", "ses", 0.8))
 	hud.set_volume_ui(v)
 	sfx.set_volume(v)
+	mouse_sens = float(cf.get_value("ayar", "hassasiyet", 1.0))
+	hud.set_sens_ui(mouse_sens)
 
 func abil_at(p: int) -> void:
 	ability(hud.slots[p].idx)
@@ -3374,8 +3379,8 @@ func _unhandled_input(ev: InputEvent) -> void:
 		elif ev.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			cam_dist_t = clampf(cam_dist_t + 0.9, 3.0, 18.0)
 	elif ev is InputEventMouseMotion and rmb:
-		cam_yaw -= ev.relative.x * 0.005
-		cam_pitch = clampf(cam_pitch + ev.relative.y * 0.004, 0.05, 1.25)
+		cam_yaw -= ev.relative.x * 0.005 * mouse_sens
+		cam_pitch = clampf(cam_pitch + ev.relative.y * 0.004 * mouse_sens, 0.05, 1.25)
 	elif ev is InputEventKey and ev.pressed and not ev.echo:
 		match _xlate(ev.keycode):
 			KEY_SPACE: jump()
@@ -5796,6 +5801,10 @@ func _update_hud() -> void:
 	var exec_ok: bool = t0 != null and not t0.dead and t0.hp <= t0.maxhp * 0.2 and P["lvl"] >= 4
 	hud.update_player({"lvl": P["lvl"], "hp": P["hp"], "maxhp": max_hp(), "rage": P["rage"], "xp": P["xp"], "xpneed": xp_need(P["lvl"]),
 		"cd": P["cd"], "gcd": P["gcd"], "pot": potion_count(), "potcd": P["pot_cd"], "exec_ok": exec_ok, "buffs": buffs})
+	if t0 != null and not t0.dead and t0.boss != "":
+		hud.update_boss({"name": t0.nm, "hp": t0.hp, "maxhp": t0.maxhp, "enr": t0.flags.has("enr") or (t0.hp < t0.maxhp * 0.25)})
+	else:
+		hud.update_boss({})
 	var t = P["target"]
 	if t != null and not t.dead:
 		hud.update_target({"name": t.nm, "lvl": t.lvl, "hp": t.hp, "maxhp": t.maxhp, "color": _lvl_color(t.lvl), "kind": _mob_kind(t),

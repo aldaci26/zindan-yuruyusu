@@ -8,6 +8,7 @@ signal start_pressed(continue_game: bool)
 signal resume_pressed
 signal quit_pressed
 signal volume_changed(v: float)
+signal sens_changed(v: float)
 signal fullscreen_pressed
 signal keys_pressed
 signal order_changed
@@ -55,6 +56,10 @@ var rage_lbl: Label
 var xp_bar: ProgressBar
 var xp_lbl: Label
 var tf: Control
+var boss_box: Control
+var boss_name: Label
+var boss_bar: ProgressBar
+var boss_lbl: Label
 var tf_portrait
 var tf_name: Label
 var tf_bar: ProgressBar
@@ -90,6 +95,7 @@ var title_box: Control
 var continue_btn: Button
 var pause_box: PanelContainer
 var vol_slider: HSlider
+var sens_slider: HSlider
 var help_box: PanelContainer
 var plates := {}
 
@@ -169,6 +175,7 @@ func _ready() -> void:
 	add_child(root)
 	_build_player_frame()
 	_build_target_frame()
+	_build_boss_bar()
 	_build_minimap()
 	_build_quest_tracker()
 	_build_chat()
@@ -222,6 +229,26 @@ func _build_player_frame() -> void:
 	rage_bar.position = Vector2(78, 47)
 	rage_lbl = _overlay_label(rage_bar, 10)
 	f.add_child(rage_bar)
+
+func _build_boss_bar() -> void:
+	boss_box = Control.new()
+	boss_box.size = Vector2(520, 56)
+	boss_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	boss_box.visible = false
+	boss_box.z_index = 12
+	_place(boss_box, 0.5, 0.0, 0.5, 0.0, -260, 10, 260, 66)
+	root.add_child(boss_box)
+	boss_box.add_child(_wood_panel(Rect2(0, 0, 520, 56)))
+	boss_name = _label("", 17, Color("ff5a3a"), 3)
+	boss_name.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	boss_name.position = Vector2(10, 4)
+	boss_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_name.size = Vector2(500, 20)
+	boss_box.add_child(boss_name)
+	boss_bar = _bar(Color("b5202f"), 18.0, 496.0)
+	boss_bar.position = Vector2(12, 28)
+	boss_lbl = _overlay_label(boss_bar)
+	boss_box.add_child(boss_bar)
 
 func _build_target_frame() -> void:
 	tf = Control.new()
@@ -569,6 +596,18 @@ func _build_pause() -> void:
 	vol_slider.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	vol_slider.value_changed.connect(func(x): volume_changed.emit(x))
 	v.add_child(vol_slider)
+	var sl := _label("Fare hassasiyeti", 14, Color("e9eef2"), 3)
+	sl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(sl)
+	sens_slider = HSlider.new()
+	sens_slider.min_value = 0.4
+	sens_slider.max_value = 2.0
+	sens_slider.step = 0.05
+	sens_slider.value = 1.0
+	sens_slider.custom_minimum_size = Vector2(240, 22)
+	sens_slider.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	sens_slider.value_changed.connect(func(x): sens_changed.emit(x))
+	v.add_child(sens_slider)
 	var qb := _menu_button("Kaydet ve çık")
 	qb.pressed.connect(func(): quit_pressed.emit())
 	v.add_child(qb)
@@ -603,6 +642,9 @@ func swap_slots(a: int, b: int) -> void:
 	o[b] = t
 	set_bar_order(o)
 	order_changed.emit()
+
+func set_sens_ui(v: float) -> void:
+	sens_slider.value = v
 
 func set_quality(q: int) -> void:
 	q_level = clampi(q, 0, 2)
@@ -792,6 +834,17 @@ func update_target(d: Dictionary) -> void:
 	if d.has("tot"):
 		tot_name.text = d["tot"]
 		tot_bar.value = clampf(d["tot_hp"], 0.0, 100.0)
+
+func update_boss(d: Dictionary) -> void:
+	if d.is_empty():
+		boss_box.visible = false
+		return
+	boss_box.visible = true
+	boss_name.text = d["name"]
+	var pct: float = clampf(d["hp"] / d["maxhp"] * 100.0, 0.0, 100.0)
+	boss_bar.value = pct
+	boss_bar.add_theme_color_override("fill", Color("7a1a22") if d.get("enr", false) else Color("b5202f"))
+	boss_lbl.text = ("ÖFKELİ! " if d.get("enr", false) else "") + "%d%%" % roundi(pct)
 
 func update_minimap(d: Dictionary) -> void:
 	minimap.px = d["px"]

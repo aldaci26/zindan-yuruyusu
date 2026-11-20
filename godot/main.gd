@@ -1351,6 +1351,8 @@ func _build_village() -> void:
 	_register_house(10.0, -3.0, "bedroom", "Konak")
 	_register_house(-8.0, 10.0, "library", "Kütüphane")
 	_register_house(11.0, 10.0, "bedroom", "Misafirhane")
+	_house(-18, -8, 1.1, 5.0, 4.5)
+	_house(18, 8, -1.4, 5.0, 4.5)
 	# kamp ateşi
 	var fg := Node3D.new()
 	fg.position = Vector3(0, height_at(0, 0), 0)
@@ -1380,6 +1382,26 @@ func _build_village() -> void:
 	Dwarf.box(an, Vector3(0.5, 0.3, 0.6), am, Vector3(0, 1.1, 0.9))
 	Dwarf.box(an, Vector3(0.6, 0.6, 0.6), m_wood, Vector3(0, 0.3, 0))
 	_add_obs(5, 5, 1.0)
+	# örsün üstünde basit bir çatı (demirci kulübesi)
+	var forge_roof := Node3D.new()
+	forge_roof.position = Vector3(5, height_at(5, 5), 5)
+	add_child(forge_roof)
+	for px in [-1.0, 1.0]:
+		for pz in [-1.0, 1.0]:
+			Dwarf.cyl(forge_roof, 0.1, 0.1, 2.6, m_wood, Vector3(px * 1.3, 1.3, pz * 1.3), 6)
+	var roof_slab := Dwarf.box(forge_roof, Vector3(3.2, 0.12, 3.2), m_roof, Vector3(0, 2.65, 0))
+	roof_slab.rotation.y = 0.78
+	# köy kuyusu
+	var well := Node3D.new()
+	well.position = Vector3(-3.0, height_at(-3.0, 1.0), 1.0)
+	add_child(well)
+	for j in 10:
+		Dwarf.cyl(well, 0.16, 0.16, 0.7, m_stone, Vector3(cos(j * 0.628) * 0.9, 0.35, sin(j * 0.628) * 0.9), 6)
+	for px in [-0.9, 0.9]:
+		Dwarf.cyl(well, 0.07, 0.07, 1.6, m_wood, Vector3(px, 1.1, 0), 6)
+	var well_roof := Dwarf.box(well, Vector3(2.2, 0.1, 1.6), m_roof, Vector3(0, 1.95, 0))
+	well_roof.rotation.y = 0.5
+	_add_obs(-3.0, 1.0, 1.1)
 	# sancaklar
 	var pts := [[-4, 12], [4, 13], [-3, -9], [3, -10]]
 	for i in pts.size():
@@ -1428,6 +1450,10 @@ func _village_props() -> void:
 	_prop("fantasy-town", "cart", 6.5, 14.0, 0.7, 3.4, 1.3)
 	_prop("fantasy-town", "stall-red", -13.5, 3.5, 1.2, 3.6, 1.5)
 	_prop("fantasy-town", "lantern", -2.2, 4.6, 0.0, 3.2)
+	_prop("fantasy-town", "stall-red", 13.0, 2.5, -1.0, 3.6, 1.5)
+	_prop("fantasy-town", "cart", -14.5, -2.0, 0.9, 3.4, 1.3)
+	_prop("survival", "barrel", 8.5, 2.5, 0.0, 3.6, 0.6)
+	_prop("survival", "box-large", 9.2, 3.2, 0.4, 3.6, 0.7)
 	_prop("fantasy-town", "lantern", 2.6, 4.2, 0.0, 3.2)
 	for i in 7:
 		_prop("fantasy-town", "fence", -9.5 + i * 2.0, 16.0, PI / 2.0, 2.2)

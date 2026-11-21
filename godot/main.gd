@@ -1882,12 +1882,66 @@ const AMB_NPCS := [
 		"o": {"beard": Color("5a4a3a"), "cloth": Color("3a4a6a"), "metal": Color("8a8a8a"), "helm": false, "prop": "none"}},
 ]
 
+## En yakın ev kapısının "out" noktasının indeksini döndürür (yoksa -1).
+func _nearest_house_idx(x: float, z: float) -> int:
+	var best := -1
+	var bd := INF
+	for i in house_doors.size():
+		var hd: Dictionary = house_doors[i]
+		var d: float = Vector2(hd["out"].x - x, hd["out"].y - z).length_squared()
+		if d < bd:
+			bd = d
+			best = i
+	return best
+
+## Köylülerin günlük rutini: gündüz posta yakın serbest dolaşır, gece olunca
+## en yakın eve yürüyüp içeri girer (görünmez olur), gün doğunca geri çıkar.
 func _update_amb_npcs(delta: float) -> void:
 	if mode != "play" or map != "snow":
 		return
+	var night: bool = day_k < 0.4
 	for n in npcs:
 		if n["role"] != "amb":
 			continue
+		if not n.has("home_idx"):
+			n["home_idx"] = _nearest_house_idx(n["x"], n["z"])
+		var home_idx: int = n["home_idx"]
+		var inside: bool = n.get("inside", false)
+		if night and not inside:
+			# Eve doğru yürü; yeterince yaklaşınca içeri gir ve gizlen.
+			if home_idx < 0:
+				continue
+			var hd: Dictionary = house_doors[home_idx]
+			var tx: float = hd["out"].x
+			var tz: float = hd["out"].y
+			var dx: float = tx - float(n["x"])
+			var dz: float = tz - float(n["z"])
+			var dd := Vector2(dx, dz).length()
+			if dd < 0.6:
+				n["inside"] = true
+				n["node"].visible = false
+				continue
+			var step: float = minf(dd, delta * 1.6)
+			var nx: float = n["x"] + dx / maxf(dd, 0.001) * step
+			var nz: float = n["z"] + dz / maxf(dd, 0.001) * step
+			n["node"].rotation.y = lerp_angle(n["node"].rotation.y, atan2(dx, dz), 0.12)
+			n["x"] = nx
+			n["z"] = nz
+			n["y"] = height_at(nx, nz)
+			n["node"].position = Vector3(nx, n["y"], nz)
+			continue
+		if inside:
+			if night:
+				continue
+			# Gün doğdu: kapının önünde tekrar belir.
+			n["inside"] = false
+			if home_idx >= 0:
+				var hd2: Dictionary = house_doors[home_idx]
+				n["x"] = hd2["out"].x
+				n["z"] = hd2["out"].y
+				n["y"] = height_at(n["x"], n["z"])
+				n["node"].position = Vector3(n["x"], n["y"], n["z"])
+			n["node"].visible = true
 		var ph: float = n.get("wander_t", randf() * TAU) + delta * 0.18
 		n["wander_t"] = ph
 		var cx: float = n.get("wander_cx", n["x"])
@@ -1896,16 +1950,16 @@ func _update_amb_npcs(delta: float) -> void:
 			n["wander_cx"] = cx
 			n["wander_cz"] = cz
 		var r: float = float(n.get("wr", 4.0))
-		var nx := cx + cos(ph) * r
-		var nz := cz + sin(ph * 0.7) * r
-		var dx: float = nx - float(n["x"])
-		var dz: float = nz - float(n["z"])
-		if absf(dx) > 0.001 or absf(dz) > 0.001:
-			n["node"].rotation.y = lerp_angle(n["node"].rotation.y, atan2(dx, dz), 0.08)
-		n["x"] = nx
-		n["z"] = nz
-		n["y"] = height_at(nx, nz)
-		n["node"].position = Vector3(nx, n["y"], nz)
+		var wx := cx + cos(ph) * r
+		var wz := cz + sin(ph * 0.7) * r
+		var wdx: float = wx - float(n["x"])
+		var wdz: float = wz - float(n["z"])
+		if absf(wdx) > 0.001 or absf(wdz) > 0.001:
+			n["node"].rotation.y = lerp_angle(n["node"].rotation.y, atan2(wdx, wdz), 0.08)
+		n["x"] = wx
+		n["z"] = wz
+		n["y"] = height_at(wx, wz)
+		n["node"].position = Vector3(wx, n["y"], wz)
 
 # ---------- görev yön işaretleri (WoW tarzı waypoint) ----------
 const MAP_LINKS := {"snow": ["swamp", "mine"], "swamp": ["snow", "ash"], "mine": ["snow"], "ash": ["swamp", "snow"]}

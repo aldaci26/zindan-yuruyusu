@@ -318,6 +318,7 @@ class Mob:
 	var node: Node3D
 	var legs: Array = []
 	var id: int
+	var pending: Array = []  # bekleyen alan saldırıları (telegraph): [{t, warn, pos, radius, dmg, label, col, ring}]
 
 # ---------- durum ----------
 var hud
@@ -5004,13 +5005,61 @@ func boss_hit(m, mult: float, label: String) -> void:
 	m.lunge = 0.25
 	m.atk_t = maxf(m.atk_t, 1.2)
 
-## Büyü hasarı: zırh sayılmaz, bloklanmaz.
+## Büyü hasarı: zırh sayılmaz, bloklanmaz. Yere bir uyarı halkası koyar, kısa
+## bir süre sonra o noktada hâlâ duran oyuncuya hasar verir; kaçan oyuncu ıskalanır.
 func boss_spell(m, mult: float, label: String, col: Color) -> void:
 	var dmg := maxi(1, roundi(m.dmg * mult * (0.9 + randf() * 0.2) * 0.75))
-	player_hp_loss(dmg)
+	var radius := clampf(1.4 + mult * 0.7, 1.6, 3.2)
+	var warn := 0.85
+	var pos := Vector3(P["x"], P["y"], P["z"])
+	var disc := CylinderMesh.new()
+	disc.top_radius = radius
+	disc.bottom_radius = radius
+	disc.height = 0.04
+	disc.radial_segments = 24
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.albedo_color = Color(col.r, col.g, col.b, 0.45)
+	var ring := MeshInstance3D.new()
+	ring.mesh = disc
+	ring.material_override = mat
+	ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	ring.position = Vector3(pos.x, height_at(pos.x, pos.z) + 0.07, pos.z)
+	ring.scale = Vector3(0.001, 1.0, 0.001)
+	add_child(ring)
+	var tw := create_tween()
+	tw.tween_property(ring, "scale", Vector3.ONE, warn * 0.6).set_trans(Tween.TRANS_SINE)
 	float_text(_bpos(m), label, col, true)
-	ring_fx(Vector3(P["x"], P["y"], P["z"]), 1.8, col, 0.5)
+	m.pending.append({"t": warn, "warn": warn, "pos": pos, "radius": radius, "dmg": dmg, "label": label, "col": col, "ring": ring})
 	m.atk_t = maxf(m.atk_t, 1.0)
+
+## Bekleyen (telegraph'lı) alan saldırılarını işler: uyarı halkasını titretir,
+## süresi dolunca hâlâ alan içindeyse oyuncuya vurur, değilse "Kaçındın!" yazar.
+func _tick_pending(m, dt: float) -> void:
+	var i: int = m.pending.size() - 1
+	while i >= 0:
+		var p: Dictionary = m.pending[i]
+		p["t"] -= dt
+		var ring = p.get("ring")
+		if ring != null and is_instance_valid(ring):
+			var mt := (ring as MeshInstance3D).material_override as StandardMaterial3D
+			if mt != null:
+				mt.albedo_color.a = 0.3 + 0.3 * sin(T * 16.0)
+		if p["t"] <= 0.0:
+			if ring != null and is_instance_valid(ring):
+				(ring as Node3D).queue_free()
+			var pos: Vector3 = p["pos"]
+			var dd := Vector2(P["x"] - pos.x, P["z"] - pos.z).length()
+			if dd <= float(p["radius"]):
+				player_hp_loss(int(p["dmg"]))
+				ring_fx(pos, float(p["radius"]), p["col"], 0.4)
+				sfx.play("thunder", -8)
+			else:
+				float_text(Vector3(P["x"], P["y"] + 2.2, P["z"]), "Kaçındın!", Color("8be89a"), false)
+			m.pending.remove_at(i)
+		i -= 1
 
 func knockback(m, dist: float) -> void:
 	var dx: float = P["x"] - m.x
@@ -5542,6 +5591,8 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 	return false
 
 func _step_mob(m, dt: float) -> void:
+	if not m.pending.is_empty():
+		_tick_pending(m, dt)
 	var node: Node3D = m.node
 	if m.dead:
 		var k: float = T - m.died_at

@@ -508,10 +508,14 @@ func _build_tip() -> void:
 	v.add_child(tip_desc)
 	v.add_child(tip_note)
 
+## Diyalog kutusunun taban dikdörtgeni; her açılışta buna sıfırlanır ki
+## bir önceki (uzun metinli) konuşmadan kalan büyüme yukarı doğru birikmesin.
+const DLG_BASE := [0.5, 1.0, 0.5, 1.0, -270.0, -420.0, 270.0, -110.0]
+
 func _build_dialog() -> void:
 	dlg = PanelContainer.new()
 	dlg.add_theme_stylebox_override("panel", _box(PARCH, Color("5a3a1a"), 5, 6))
-	_place(dlg, 0.5, 1.0, 0.5, 1.0, -270, -420, 270, -110)
+	_place(dlg, DLG_BASE[0], DLG_BASE[1], DLG_BASE[2], DLG_BASE[3], DLG_BASE[4], DLG_BASE[5], DLG_BASE[6], DLG_BASE[7])
 	dlg.visible = false
 	dlg.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	root.add_child(dlg)
@@ -926,6 +930,10 @@ func show_dialog(title: String, sub: String, body: String, buttons: Array) -> vo
 		b.add_theme_color_override("font_disabled_color", Color("c9bb9a"))
 		b.pressed.connect(bd["cb"])
 		dlg_buttons.add_child(b)
+	# Önce taban dikdörtgene sıfırla: yoksa her uzun diyalogdan sonra yukarı
+	# doğru büyüyen kutu bir daha hiç küçülmez, birkaç konuşma sonra seçenekler
+	# ekranın üstünden taşar.
+	_place(dlg, DLG_BASE[0], DLG_BASE[1], DLG_BASE[2], DLG_BASE[3], DLG_BASE[4], DLG_BASE[5], DLG_BASE[6], DLG_BASE[7])
 	dlg.visible = true
 	dlg.reset_size()
 

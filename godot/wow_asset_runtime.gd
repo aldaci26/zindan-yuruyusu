@@ -17,7 +17,7 @@ const CREATURE_SCENES := {
 	"geddon": ["res://assets/third_party/gobkit/human010/OrcPyromancer.glb"],
 	"sulfuron": ["res://assets/third_party/gobkit/minion/minion-d01.glb"],
 	"ragnaros": ["res://assets/third_party/gobkit/human011/StitchedBrute.glb"],
-	"boar": ["res://assets/wotlk_local/creatures/boar.glb", "res://assets/third_party/gobkit/animalB/Boar.glb", "res://assets/third_party/gobkit/animal012/WildBoar.glb"],
+	"boar": ["res://assets/wotlk_local/creatures/boar.glb", "res://assets/third_party/gobkit/animal012/WildBoar.glb", "res://assets/third_party/gobkit/animalB/Boar.glb"],
 	"gobkit_wild_boar": ["res://assets/third_party/gobkit/animal012/WildBoar.glb"],
 	"rat": ["res://assets/wotlk_local/creatures/rat.glb", "res://assets/third_party/gobkit/animalB/Rat.glb", "res://assets/wotlk/third_party/quaternius/easy_enemies_pack/Rat.glb"],
 	"deer": ["res://assets/wotlk_local/creatures/deer.glb", "res://assets/third_party/gobkit/animal006/Doe.glb", "res://assets/wotlk/third_party/quaternius/animals_pack/Deer.glb"],
@@ -200,6 +200,17 @@ static func _sanitize_imported_scene(root: Node3D) -> void:
 			if parent != null:
 				parent.remove_child(mesh_instance)
 			mesh_instance.free()
+			continue
+		# Some imported rigs store vertex positions in joint-local space, so the
+		# mesh resource's own (unskinned) AABB is a few centimetres across even
+		# though the skinned result is character-sized. Godot's frustum culling
+		# uses that tiny bind-pose AABB, so the creature pops out of view the
+		# moment the camera is more than a step away. A generous cull margin on
+		# any suspiciously small mesh keeps it from ever being culled like that.
+		if mesh_instance != null and mesh_instance.mesh != null:
+			var local_aabb := mesh_instance.mesh.get_aabb()
+			if maxf(local_aabb.size.x, maxf(local_aabb.size.y, local_aabb.size.z)) < 0.6:
+				mesh_instance.extra_cull_margin = 10.0
 	for candidate in root.find_children("*", "MultiMeshInstance3D", true, false):
 		var multimesh_instance := candidate as MultiMeshInstance3D
 		if multimesh_instance != null and (multimesh_instance.multimesh == null or multimesh_instance.multimesh.mesh == null):

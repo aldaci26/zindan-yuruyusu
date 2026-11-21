@@ -5209,6 +5209,22 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 				_bset(m, "claw", 6.0)
 				boss_hit(m, 1.8, "Pençe Darbesi")
 				return true
+			if hpf < 0.35 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.3
+				m.spd *= 1.25
+				boss_say(m, "Büyük Baba Arctikus öfkelendi!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+				sfx.play("shout")
+			if melee and _bready(m, "maul"):
+				_bset(m, "maul", 7.0)
+				boss_hit(m, 2.2, "Parçala!")
+				return true
+			if melee and _bready(m, "rend"):
+				_bset(m, "rend", 15.0)
+				apply_dot(8.0, m.dmg * 0.14, "Yırtma", Color("ff4a4a"))
+				m.atk_t = maxf(m.atk_t, 1.0)
+				return true
 		"grik":
 			if hpf < 0.4 and not m.flags.has("rage"):
 				m.flags["rage"] = true
@@ -5225,6 +5241,12 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 				_bset(m, "spear", 9.0)
 				boss_spell(m, 0.9, "Buz Mızrağı", Color("a8e0ff"))
 				return true
+			if d <= 6.5 and _bready(m, "nova"):
+				_bset(m, "nova", 9.0)
+				boss_spell(m, 1.3, "Don Dalgası", Color("8ae0ff"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 6.0, Color("8ae0ff"), 0.6)
+				P["slow_t"] = 4.0
+				return true
 		"choksul":
 			if hpf < 0.5 and not m.flags.has("aides"):
 				m.flags["aides"] = true
@@ -5236,6 +5258,19 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 7.0, Color("c8a070"), 0.6)
 				knockback(m, 4.0)
 				return true
+			if hpf < 0.3 and not m.flags.has("rage"):
+				m.flags["rage"] = true
+				m.dmg *= 1.35
+				m.atk_int = 1.8
+				boss_say(m, "Chok'sul: EZİN!")
+				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
+			if d <= 7.0 and _bready(m, "slam"):
+				_bset(m, "slam", 9.0)
+				boss_spell(m, 1.5, "Yer Yarığı", Color("d8b070"))
+				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 7.0, Color("d8b070"), 0.6)
+				knockback(m, 7.0)
+				sfx.play("thunder", -4)
+				return true
 		"hogger":
 			for t in [0.66, 0.33]:
 				var hk := "h%d" % roundi(t * 100.0)
@@ -5246,6 +5281,16 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 			if melee and _bready(m, "maul"):
 				_bset(m, "maul", 6.0)
 				boss_hit(m, 1.9, "Parçalama")
+				return true
+			if hpf < 0.4 and not m.flags.has("eat"):
+				m.flags["eat"] = true
+				m.eat_t = 4.0
+				boss_say(m, "Hogger yemek yiyor ve canını yeniliyor!")
+				float_text(_bpos(m), "Yiyor...", Color("43d17f"), true)
+				return true
+			if melee and _bready(m, "cleave"):
+				_bset(m, "cleave", 8.0)
+				boss_hit(m, 1.7, "Pençe!")
 				return true
 		"vancleef":
 			if hpf < 0.5 and not m.flags.has("guards"):
@@ -5261,6 +5306,14 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 			if melee and _bready(m, "stab"):
 				_bset(m, "stab", 5.0)
 				boss_hit(m, 1.7, "Kör Bıçak")
+				return true
+			if hpf < 0.75 and not m.flags.has("w75"):
+				m.flags["w75"] = true
+				boss_say(m, "VanCleef: Muhafızlar! Şunları öldürün!")
+				_boss_summon(m, "Defias Haydudu", "defias", 2, 150.0, 11.0, 4.2, 1.0, 3.0)
+			if melee and _bready(m, "poison"):
+				_bset(m, "poison", 12.0)
+				apply_dot(10.0, m.dmg * 0.1, "Ölümcül Zehir", Color("7be85a"))
 				return true
 		"thokk":
 			if hpf < 0.5 and not m.flags.has("ele"):
@@ -5430,85 +5483,6 @@ func _boss_ai(m, dt: float, d: float) -> bool:
 				_bset(m, "mud", 6.0)
 				boss_spell(m, 0.9, "Çamur Püskürtme", Color("6a5a30"))
 				return true
-		"arctikus":
-			if hpf < 0.35 and not m.flags.has("rage"):
-				m.flags["rage"] = true
-				m.dmg *= 1.3
-				m.spd *= 1.25
-				boss_say(m, "Büyük Baba Arctikus öfkelendi!")
-				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
-				sfx.play("shout")
-			if melee and _bready(m, "maul"):
-				_bset(m, "maul", 7.0)
-				boss_hit(m, 2.2, "Parçala!")
-				return true
-			if melee and _bready(m, "rend"):
-				_bset(m, "rend", 15.0)
-				apply_dot(8.0, m.dmg * 0.14, "Yırtma", Color("ff4a4a"))
-				m.atk_t = maxf(m.atk_t, 1.0)
-				return true
-		"grik":
-			if d <= 6.5 and _bready(m, "nova"):
-				_bset(m, "nova", 9.0)
-				boss_spell(m, 1.3, "Don Dalgası", Color("8ae0ff"))
-				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 6.0, Color("8ae0ff"), 0.6)
-				P["slow_t"] = 4.0
-				return true
-			if d > 5.0 and d < 17.0 and _bready(m, "bolt"):
-				_bset(m, "bolt", 5.0)
-				boss_spell(m, 0.9, "Buz Oku", Color("b8f0ff"))
-		"choksul":
-			if hpf < 0.3 and not m.flags.has("rage"):
-				m.flags["rage"] = true
-				m.dmg *= 1.35
-				m.atk_int = 1.8
-				boss_say(m, "Chok'sul: EZİN!")
-				float_text(_bpos(m), "Öfke!", Color("ff6a3a"), true)
-			if d <= 7.0 and _bready(m, "slam"):
-				_bset(m, "slam", 9.0)
-				boss_spell(m, 1.5, "Yer Yarığı", Color("d8b070"))
-				ring_fx(Vector3(m.x, height_at(m.x, m.z), m.z), 7.0, Color("d8b070"), 0.6)
-				knockback(m, 7.0)
-				sfx.play("thunder", -4)
-				return true
-		"hogger":
-			if not m.flags.has("s0"):
-				m.flags["s0"] = true
-				boss_say(m, "Hogger gnoll çıraklarını çağırdı!")
-				_boss_summon(m, "Gnoll Çırağı", "gnoll", 2, 100.0, 9.0, 4.0, 0.9, 3.0)
-			if hpf < 0.5 and not m.flags.has("s1"):
-				m.flags["s1"] = true
-				boss_say(m, "Hogger: Yiiipe! Gelin, gelin!")
-				_boss_summon(m, "Gnoll Çırağı", "gnoll", 2, 100.0, 9.0, 4.0, 0.9, 3.0)
-			if hpf < 0.4 and not m.flags.has("eat"):
-				m.flags["eat"] = true
-				m.eat_t = 4.0
-				boss_say(m, "Hogger yemek yiyor ve canını yeniliyor!")
-				float_text(_bpos(m), "Yiyor...", Color("43d17f"), true)
-				return true
-			if melee and _bready(m, "cleave"):
-				_bset(m, "cleave", 8.0)
-				boss_hit(m, 1.7, "Pençe!")
-				return true
-		"vancleef":
-			for t in [0.75, 0.5, 0.25]:
-				var key := "w%d" % roundi(t * 100.0)
-				if hpf < t and not m.flags.has(key):
-					m.flags[key] = true
-					boss_say(m, "VanCleef: Muhafızlar! Şunları öldürün!")
-					_boss_summon(m, "Defias Haydudu", "defias", 2, 150.0, 11.0, 4.2, 1.0, 3.0)
-			if hpf < 0.5 and not m.flags.has("thrash"):
-				m.flags["thrash"] = true
-				m.atk_int = 1.5
-				boss_say(m, "VanCleef: Hiçbir şey beni durduramaz!")
-				float_text(_bpos(m), "Çılgınlık!", Color("ff6a3a"), true)
-			if melee and _bready(m, "stab"):
-				_bset(m, "stab", 8.0)
-				boss_hit(m, 2.0, "Sırttan Bıçak!")
-				return true
-			if melee and _bready(m, "poison"):
-				_bset(m, "poison", 12.0)
-				apply_dot(10.0, m.dmg * 0.1, "Ölümcül Zehir", Color("7be85a"))
 		"ragnaros":
 			if hpf < 0.5 and not m.flags.has("s1"):
 				m.flags["s1"] = true

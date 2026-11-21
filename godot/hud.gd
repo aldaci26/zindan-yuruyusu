@@ -810,6 +810,7 @@ func update_player(d: Dictionary) -> void:
 			buff_box.add_child(nb)
 			buffs[b["kind"]] = nb
 		buffs[b["kind"]].t = b["t"]
+		buffs[b["kind"]].neg = b.get("neg", false)
 		buffs[b["kind"]].queue_redraw()
 	for k in buffs.keys():
 		if not seen.has(k):

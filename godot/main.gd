@@ -5916,6 +5916,10 @@ func _update_hud() -> void:
 		buffs.append({"kind": "reck", "t": P["rk_t"]})
 	if P["bst_t"] > 0.0:
 		buffs.append({"kind": "bstorm", "t": P["bst_t"]})
+	if P["dot_t"] > 0.0:
+		buffs.append({"kind": "poison", "t": P["dot_t"], "neg": true})
+	if P["slow_t"] > 0.0:
+		buffs.append({"kind": "slow", "t": P["slow_t"], "neg": true})
 	var t0 = P["target"]
 	var exec_ok: bool = t0 != null and not t0.dead and t0.hp <= t0.maxhp * 0.2 and P["lvl"] >= 4
 	hud.update_player({"lvl": P["lvl"], "hp": P["hp"], "maxhp": max_hp(), "rage": P["rage"], "xp": P["xp"], "xpneed": xp_need(P["lvl"]),

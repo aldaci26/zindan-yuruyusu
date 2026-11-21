@@ -19,6 +19,8 @@ const BG := {
 	"bstorm": [Color("7a7a8a"), Color("20202a")],
 	"throw": [Color("7a5a2a"), Color("24180a")],
 	"pummel": [Color("6a4a2a"), Color("1c1208")],
+	"poison": [Color("3a6a1c"), Color("0f2008")],
+	"slow": [Color("3a4a6a"), Color("0d1420")],
 }
 
 static func pt(r: Rect2, x: float, y: float) -> Vector2:
@@ -147,6 +149,18 @@ static func draw(ci: CanvasItem, kind: String, r: Rect2) -> void:
 			poly(ci, r, [[0.34, 0.6], [0.66, 0.6], [0.78, 0.8], [0.22, 0.8]], Color("e02a3a"))
 			poly(ci, r, [[0.42, 0.14], [0.58, 0.14], [0.58, 0.23], [0.42, 0.23]], Color("8a5a2a"))
 			circ(ci, r, 0.4, 0.68, 0.03, Color(1, 1, 1, 0.7))
+		"poison":
+			poly(ci, r, [[0.5, 0.14], [0.76, 0.56], [0.76, 0.72], [0.62, 0.86], [0.38, 0.86], [0.24, 0.72], [0.24, 0.56]], Color("5ad02a"))
+			poly(ci, r, [[0.5, 0.3], [0.64, 0.58], [0.64, 0.7], [0.56, 0.78], [0.44, 0.78], [0.36, 0.7], [0.36, 0.58]], Color("1a3a0a"))
+			circ(ci, r, 0.5, 0.64, 0.05, Color("9aff6a"))
+		"slow":
+			circ(ci, r, 0.5, 0.5, 0.36, Color("3a5a8a"))
+			circ(ci, r, 0.5, 0.5, 0.28, Color("0d1420"))
+			line(ci, r, [0.5, 0.5], [0.5, 0.28], Color("cfe0ff"), 0.035)
+			line(ci, r, [0.5, 0.5], [0.66, 0.56], Color("cfe0ff"), 0.03)
+			for k in 3:
+				var a: float = float(k) * TAU / 3.0 + 0.3
+				line(ci, r, [0.5 + cos(a) * 0.4, 0.5 + sin(a) * 0.4], [0.5 + cos(a) * 0.46, 0.5 + sin(a) * 0.46], Color("9ab8e8"), 0.03)
 
 static func text(ci: CanvasItem, s: String, pos: Vector2, w: float, size: int, col: Color, outline: int = 4) -> void:
 	var f := ThemeDB.fallback_font

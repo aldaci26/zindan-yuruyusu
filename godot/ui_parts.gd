@@ -114,6 +114,7 @@ class Slot extends Control:
 class Buff extends Control:
 	var kind := ""
 	var t := 0.0
+	var neg := false  # true: olumsuz etki (zehir, yavaşlama...), kırmızı çerçeve
 	const Glyph = preload("res://glyph.gd")
 
 	func _init() -> void:
@@ -124,7 +125,7 @@ class Buff extends Control:
 		var r := Rect2(0, 0, 34, 34)
 		Glyph.draw(self, kind, r.grow(-1))
 		draw_rect(r, Color("0e0a05"), false, 2.0)
-		draw_rect(r.grow(-1), Color(0.35, 0.65, 0.3), false, 1.5)
+		draw_rect(r.grow(-1), Color(0.7, 0.2, 0.2) if neg else Color(0.35, 0.65, 0.3), false, 1.5)
 		Glyph.text(self, "%d sn" % ceili(t), Vector2(0, 43), 34, 11, Color("f0f0f0"), 4)
 
 ## Yuvarlak portre (oyuncu ve hedef)

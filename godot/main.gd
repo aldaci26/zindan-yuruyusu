@@ -1652,7 +1652,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "disc": {}, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "disc": {}, "bosskill": {}, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	_mm_setup()
@@ -3367,7 +3367,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "pity": P["pity"], "disc": P["disc"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "pity": P["pity"], "disc": P["disc"], "bosskill": P["bosskill"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	d["npc_mem"] = npc_mem
 	SaveManager.write(SAVE_PATH, d)
 
@@ -3444,6 +3444,11 @@ func load_game() -> bool:
 	if typeof(d.get("disc")) == TYPE_DICTIONARY:
 		for dk in d["disc"]:
 			P["disc"][str(dk)] = true
+	P["bosskill"] = {}
+	if typeof(d.get("bosskill")) == TYPE_DICTIONARY:
+		for bk in d["bosskill"]:
+			if BOSSES.has(str(bk)):
+				P["bosskill"][str(bk)] = true
 	P["shout_sel"] = str(d.get("shout_sel", "force")) if Shouts.SHOUTS.has(str(d.get("shout_sel", ""))) else "force"
 	P["shout_cd"] = 0.0
 	P["skin_t"] = 0.0
@@ -3686,7 +3691,10 @@ func kill_mob(m) -> void:
 		rep_add(_rep_key(), 120 if m.boss != "" else 4)
 	if m.boss != "":
 		stat_add("boss_" + m.boss)
-		stat_add("bosses")
+		# "bosses" başarımı (13 farklı boss) tekrar öldürülen aynı bossla
+		# istismar edilmesin diye benzersiz boss kümesini tutuyoruz.
+		P["bosskill"][m.boss] = true
+		ach_check()
 	gain_xp(xp)
 
 func _normal_loot(m) -> void:
@@ -4263,6 +4271,7 @@ func ach_value(a: Dictionary) -> int:
 					c2 += 1
 			return c2
 		"quests": return quests_done()
+		"bosses": return P["bosskill"].size()
 		_: return int(P["stats"].get(a["stat"], 0))
 
 func ach_check() -> void:

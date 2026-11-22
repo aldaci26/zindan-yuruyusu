@@ -878,6 +878,11 @@ func say(text: String, color: Color = Color("e9eef2")) -> void:
 		log_box.remove_child(old)
 		old.queue_free()
 
+## Panel sabit bir dikdörtgene yerleşik (taşma kesilmiyor); çok sayıda aktif
+## görev varsa altı satırdan sonra kısaltıp sayaç göstererek diğer HUD
+## öğelerinin üstüne taşmasını önlüyoruz.
+const QUEST_TRACK_MAX := 6
+
 func set_quests(lines: Array) -> void:
 	for c in quest_box.get_children():
 		quest_box.remove_child(c)
@@ -888,12 +893,19 @@ func set_quests(lines: Array) -> void:
 	h.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	quest_box.add_child(h)
-	for ln in lines:
+	var shown: int = mini(lines.size(), QUEST_TRACK_MAX)
+	for i in shown:
+		var ln: String = lines[i]
 		var ready: bool = ln.find("Teslim") >= 0
 		var l := _label(ln, 13, Color("7fe08a") if ready else Color("f2e2a8"), 3)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		quest_box.add_child(l)
+	if lines.size() > shown:
+		var more := _label("+%d görev daha..." % (lines.size() - shown), 12, Color("c8b888"), 3)
+		more.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		more.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		quest_box.add_child(more)
 
 func banner(title: String, sub: String = "") -> void:
 	banner_lbl.text = title

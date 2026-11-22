@@ -80,6 +80,7 @@ var tip_idx := -1
 var minimap
 var waypoints
 var shout_lbl
+var sneak_lbl: Label
 var zone_lbl: Label
 var coord_lbl: Label
 var buff_box: HBoxContainer
@@ -306,6 +307,11 @@ func _build_minimap() -> void:
 	shout_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	shout_lbl.visible = false
 	root.add_child(shout_lbl)
+	sneak_lbl = _label("● GİZLENİYORSUN", 14, Color("b060ff"), 3)
+	_place(sneak_lbl, 0.5, 0.0, 0.5, 0.0, -150, 90, 150, 110)
+	sneak_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sneak_lbl.visible = false
+	root.add_child(sneak_lbl)
 	coord_lbl = _label("", 11, Color("d9e4ee"), 3)
 	_place(coord_lbl, 1.0, 0.0, 1.0, 0.0, -176, 186, -26, 202)
 	coord_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -678,6 +684,7 @@ func _build_help() -> void:
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
 		["1 - 9", "Yetenekler"], ["Shift + 1-7", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Beceriler, günlük, meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"], ["M", "Dünya haritası"],
 		["G", "Konuş, ganimet al, maden damarı topla"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
+		["V", "Gizlenme (yavaş hareket, fark edilmezsin, ilk vuruş 3 kat hasar)"],
 	]
 	for r in rows:
 		var h := HBoxContainer.new()
@@ -867,6 +874,9 @@ func update_minimap(d: Dictionary) -> void:
 
 func set_zone(s: String) -> void:
 	zone_lbl.text = s
+
+func set_sneak(v: bool) -> void:
+	sneak_lbl.visible = v
 
 func say(text: String, color: Color = Color("e9eef2")) -> void:
 	var l := _label(text, 13, color, 3)

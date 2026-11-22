@@ -1652,7 +1652,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "disc": {}, "bosskill": {}, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "disc": {}, "bosskill": {}, "sneak": false, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	_mm_setup()
@@ -3553,6 +3553,11 @@ func _unhandled_input(ev: InputEvent) -> void:
 							break
 					if not looted and not try_house_door() and not try_read_wall():
 						try_gather()
+			KEY_V:
+				if mode == "play" and not P["dead"]:
+					P["sneak"] = not P["sneak"]
+					hud.say("Gizleniyorsun." if P["sneak"] else "Gizlenmeyi bıraktın.", Color("b060ff") if P["sneak"] else Color("c9c9d0"))
+					hud.set_sneak(P["sneak"])
 			KEY_TAB:
 				var m = nearest_mob(14.0)
 				if m:
@@ -3641,11 +3646,14 @@ func nearest_mob(max_d: float):
 func hit_mob(m, r: Dictionary, col: Color = Color.WHITE) -> void:
 	if m.dead:
 		return
-	m.hp -= r["v"]
+	var sneak_hit: bool = P["sneak"] and m.state == "idle" and m.boss == "" and not m.temp
+	var dmg: int = roundi(r["v"] * 3.0) if sneak_hit else int(r["v"])
+	m.hp -= dmg
 	skill_xp("onehand", 1.2 if r["crit"] else 1.0)
-	hud.clog("%s%s hedefine %d hasar verdin." % ["KRİTİK! " if r["crit"] else "", m.nm, r["v"]], Color("ffd23a") if r["crit"] else Color("e9eef2"))
-	sfx.play("crit" if r["crit"] else "hit", -4)
-	float_text(Vector3(m.x, 1.9 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), str(r["v"]), Color("ffd23a") if r["crit"] else col, r["crit"])
+	var tag: String = "GİZLİ SALDIRI! " if sneak_hit else ("KRİTİK! " if r["crit"] else "")
+	hud.clog("%s%s hedefine %d hasar verdin." % [tag, m.nm, dmg], Color("b060ff") if sneak_hit else (Color("ffd23a") if r["crit"] else Color("e9eef2")))
+	sfx.play("crit" if (r["crit"] or sneak_hit) else "hit", -4)
+	float_text(Vector3(m.x, 1.9 * m.sc, m.z) + Vector3(0, m.node.position.y, 0), str(dmg), Color("b060ff") if sneak_hit else (Color("ffd23a") if r["crit"] else col), r["crit"] or sneak_hit)
 	P["combat_t"] = T
 	add_rage((9.0 if r["crit"] else 6.0) + G["rage"])
 	if m.state == "idle":
@@ -4136,6 +4144,9 @@ func player_hp_loss(d: int) -> void:
 		stat_add("deaths")
 		P["dot_t"] = 0.0
 		P["slow_t"] = 0.0
+		if P["sneak"]:
+			P["sneak"] = false
+			hud.set_sneak(false)
 		sfx.play("die")
 		P["dead_t"] = T
 		P["auto"] = false
@@ -4940,7 +4951,7 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 		var fz := -cos(cam_yaw)
 		var rx := -fz
 		var rz := fx
-		var sp := 5.0 * (0.5 if P["slow_t"] > 0.0 else 1.0) * (1.0 + 0.003 * skl("athletics") + Skills.perk_sum(P["perks"], "spd"))
+		var sp := 5.0 * (0.5 if P["slow_t"] > 0.0 else 1.0) * (0.55 if P["sneak"] else 1.0) * (1.0 + 0.003 * skl("athletics") + Skills.perk_sum(P["perks"], "spd"))
 		var chm = P["charge"]
 		if chm != null and (chm.dead or P["charge_t"] > 2.0):
 			P["charge"] = null
@@ -5709,7 +5720,7 @@ func _step_mob(m, dt: float) -> void:
 			if m.hp <= 0.0:
 				kill_mob(m)
 				return
-	if mode == "play" and not P["dead"] and m.state == "idle" and d < m.aggro:
+	if mode == "play" and not P["dead"] and m.state == "idle" and d < m.aggro * (0.4 if P["sneak"] else 1.0):
 		m.state = "chase"
 	if m.boss != "":
 		if m.state == "chase" and not m.engaged:
@@ -5838,9 +5849,12 @@ func _animate_player(dt: float) -> void:
 		sfx.play("step", -16)
 	var sw: float = sin(walk_ph) * 0.75 * P["spd"]
 	var air: bool = P["jy"] > 0.05
-	rig["legL"].rotation.x = -0.7 if air else sw
-	rig["legR"].rotation.x = 0.3 if air else -sw
-	rig["armL"].rotation.x = -2.2 if air else (-0.3 - sw * 0.35)
+	var crouch: float = 0.3 if (P["sneak"] and not air and not P["dead"]) else 0.0
+	rig["legL"].rotation.x = (-0.7 if air else sw) + crouch * 0.6
+	rig["legR"].rotation.x = (0.3 if air else -sw) + crouch * 0.6
+	rig["armL"].rotation.x = -2.2 if air else (-0.3 - sw * 0.35 - crouch * 0.4)
+	if rig.has("head"):
+		rig["head"].rotation.x = lerpf(rig["head"].rotation.x, crouch * 0.7, minf(1.0, dt * 8.0))
 	var bob: float = absf(sin(walk_ph)) * 0.07 * P["spd"]
 	if swing_t > 0.0:
 		swing_t += dt
@@ -5855,13 +5869,13 @@ func _animate_player(dt: float) -> void:
 			rig["armR"].rotation.z = lerpf(float(prof["side"]), 0.0, u)
 	else:
 		rig["armR"].rotation.x = sw * 0.35 - 0.2 + sin(T * 2.0) * 0.03
-	player.position = Vector3(P["x"], P["y"] + bob, P["z"])
+	player.position = Vector3(P["x"], P["y"] + bob - crouch * 0.22, P["z"])
 	player.rotation.y = P["yaw"] + ((1.0 - P["spin"] / 0.6) * TAU if P["spin"] > 0.0 else 0.0)
 	if P["dead"]:
 		player.rotation.x = lerpf(player.rotation.x, -1.4, minf(1.0, dt * 6.0))
 		player.position.y = P["y"] + 0.3
 	else:
-		player.rotation.x = lerpf(player.rotation.x, 0.0, minf(1.0, dt * 10.0))
+		player.rotation.x = lerpf(player.rotation.x, crouch * 0.35, minf(1.0, dt * 10.0))
 
 func _update_camera(dt: float) -> void:
 	cam_dist = lerpf(cam_dist, cam_dist_t, minf(1.0, dt * 10.0))

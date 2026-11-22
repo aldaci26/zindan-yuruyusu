@@ -3388,8 +3388,12 @@ func load_game() -> bool:
 		want_map = "snow"
 	if want_map != map:
 		_enter_map(want_map)
-	P["x"] = clampf(d["x"], -WORLD_R, WORLD_R)
-	P["z"] = clampf(d["z"], -WORLD_R, WORLD_R)
+	if want_map == "snow":
+		P["x"] = clampf(d["x"], -WORLD_R, WORLD_R)
+		P["z"] = clampf(d["z"], -WORLD_R, WORLD_R)
+	else:
+		P["x"] = d["x"]
+		P["z"] = d["z"]
 	P["yaw"] = d["yaw"]
 	P["lvl"] = clampi(int(d["lvl"]), 1, MAX_LVL)
 	P["tal"] = {}
@@ -4961,9 +4965,10 @@ func _step_player(dt: float, ix: float, iy: float) -> void:
 			dx /= dl
 			dz /= dl
 			var c := collide(P["x"] + dx * sp * il * dt, P["z"] + dz * sp * il * dt, 0.5)
-			var rr := c.length()
-			if rr > WORLD_R:
-				c *= WORLD_R / rr
+			if map == "snow":
+				var rr := c.length()
+				if rr > WORLD_R:
+					c *= WORLD_R / rr
 			P["x"] = c.x
 			P["z"] = c.y
 			if not (P["target"] != null and not P["target"].dead):
@@ -5120,9 +5125,10 @@ func knockback(m, dist: float) -> void:
 	var dz: float = P["z"] - m.z
 	var l := maxf(0.01, sqrt(dx * dx + dz * dz))
 	var c := collide(P["x"] + dx / l * dist, P["z"] + dz / l * dist, 0.5)
-	var rr := c.length()
-	if rr > WORLD_R:
-		c *= WORLD_R / rr
+	if map == "snow":
+		var rr := c.length()
+		if rr > WORLD_R:
+			c *= WORLD_R / rr
 	P["x"] = c.x
 	P["z"] = c.y
 

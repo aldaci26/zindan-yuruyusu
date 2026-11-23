@@ -85,6 +85,9 @@ const SWAMP_CAMPS := [
 	{"kind": "bog", "x": -46.0, "z": -44.0, "n": 4},
 ]
 
+## Taş Anıtlar: [taş id, x, z] — yalnızca ana kıtada (kar).
+const STONE_SPOTS := [["warrior", 46.0, -18.0], ["guardian", -24.0, 58.0], ["shadow", -62.0, -40.0]]
+
 ## Kilitli hazine sandıkları: [zorluk, x, z] — harita adına göre gruplanmış.
 const CHEST_SPOTS := {
 	"snow": [["easy", 34.0, 40.0], ["easy", -40.0, -10.0], ["medium", 20.0, -55.0], ["hard", -70.0, 50.0]],
@@ -350,6 +353,7 @@ var talui
 var progui
 var res_nodes: Array = []
 var chest_nodes: Array = []
+var stone_nodes: Array = []
 var wall_list: Array = []
 var held = null
 var G := {}
@@ -657,6 +661,7 @@ func _build_world() -> void:
 		_setup_snow()
 		_spawn_nodes()
 		_spawn_chests()
+		_spawn_stones()
 		_spawn_discoveries()
 	if map != "mine" and map != "ash":
 		_setup_rain()
@@ -687,6 +692,7 @@ func _clear_world() -> void:
 	portals.clear()
 	res_nodes.clear()
 	chest_nodes.clear()
+	stone_nodes.clear()
 	if lockpicking:
 		lockpicking = false
 		lock_chest = null
@@ -1672,7 +1678,7 @@ func _spawn_player() -> void:
 	add_child(player)
 	rig = player.get_meta("rig")
 	P = {"x": 0.0, "z": 7.0, "y": 0.0, "yaw": PI, "hp": 0.0, "rage": 0.0, "lvl": 1, "xp": 0.0,
-		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "disc": {}, "bosskill": {}, "sneak": false, "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
+		"atk_t": 0.0, "gcd": 0.0, "cd": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], "rk_t": 0.0, "bst_t": 0.0, "bst_tick": 0.0, "tal": {}, "prof": {}, "rep": {}, "stats": {}, "ach": {}, "skl": {}, "perks": {}, "lore": {}, "talked": {}, "walls": {}, "shout_sel": "force", "pity": 0, "disc": {}, "bosskill": {}, "sneak": false, "stone": "", "shout_cd": 0.0, "skin_t": 0.0, "skin_red": 0.0, "vy": 0.0, "jy": 0.0, "bs_t": 0.0, "sb_t": 0.0, "charge": null, "charge_t": 0.0, "spin": 0.0, "pot_cd": 0.0, "target": null, "auto": false,
 		"dead": false, "dead_t": 0.0, "combat_t": -99.0, "spd": 0.0, "wep_b": 0.0, "wep_lvl": 0, "dot_t": 0.0, "dot_v": 0.0, "dot_k": 0.0, "slow_t": 0.0, "combo": 0, "combo_t": -99.0}
 	inv = Inv.new()
 	_mm_setup()
@@ -1692,15 +1698,19 @@ func base_sta() -> int:
 func max_hp() -> int:
 	return roundi((110 + 28 * (P["lvl"] - 1) + 7 * G["sta"]) * (1.0 + 0.03 * trk("pro_hp") + Skills.perk_sum(P["perks"], "hp")))
 
+## Taş Anıt kutsaması: seçili taşın ilgili istatistik için verdiği bonus (yoksa 0).
+func stone_bonus(key: String) -> float:
+	return float(Prog.STONES.get(P["stone"], {}).get(key, 0.0))
+
 func atk() -> float:
 	var wd: float = (G["wmin"] + G["wmax"]) * 0.5 / G["wspd"] * 1.5
-	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0) * (1.5 if P["rk_t"] > 0.0 else 1.0) * (1.0 + 0.03 * trk("arm_dmg") + 0.004 * skl("onehand") + Skills.perk_sum(P["perks"], "dmg"))
+	return (wd + (base_str() + G["str"]) * 0.35 + P["lvl"] * 1.6 + P["wep_b"]) * (1.25 if P["bs_t"] > 0.0 else 1.0) * (1.5 if P["rk_t"] > 0.0 else 1.0) * (1.0 + 0.03 * trk("arm_dmg") + 0.004 * skl("onehand") + Skills.perk_sum(P["perks"], "dmg") + stone_bonus("dmg"))
 
 func crit_chance() -> float:
-	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01 + 0.02 * trk("arm_crit") + Skills.perk_sum(P["perks"], "crit")
+	return 0.08 + (base_agi() + G["agi"]) * 0.003 + G["crit"] * 0.01 + 0.02 * trk("arm_crit") + Skills.perk_sum(P["perks"], "crit") + stone_bonus("crit")
 
 func armor_total() -> float:
-	return (G["armor"] * 0.5 + P["lvl"] * 1.5) * (1.0 + 0.05 * trk("pro_armor") + 0.005 * skl("heavy") + Skills.perk_sum(P["perks"], "armor"))
+	return (G["armor"] * 0.5 + P["lvl"] * 1.5) * (1.0 + 0.05 * trk("pro_armor") + 0.005 * skl("heavy") + Skills.perk_sum(P["perks"], "armor") + stone_bonus("armor"))
 
 func potion_count() -> int:
 	return inv.count("pot_heal") + inv.count("pot_big")
@@ -3387,7 +3397,7 @@ func save_game() -> void:
 	if mode != "play" or P["dead"]:
 		return
 	var d := {"x": P["x"], "z": P["z"], "yaw": P["yaw"], "hp": P["hp"], "lvl": P["lvl"], "xp": P["xp"],
-		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "pity": P["pity"], "disc": P["disc"], "bosskill": P["bosskill"], "qs": qs, "inv": inv.to_dict(), "map": map}
+		"wep_b": P["wep_b"], "wep_lvl": P["wep_lvl"], "tal": P["tal"], "prof": P["prof"], "rep": P["rep"], "stats": P["stats"], "ach": P["ach"], "skl": P["skl"], "perks": P["perks"], "lore": P["lore"], "talked": P["talked"], "walls": P["walls"], "shout_sel": P["shout_sel"], "pity": P["pity"], "disc": P["disc"], "bosskill": P["bosskill"], "stone": P["stone"], "qs": qs, "inv": inv.to_dict(), "map": map}
 	d["npc_mem"] = npc_mem
 	SaveManager.write(SAVE_PATH, d)
 
@@ -3469,6 +3479,7 @@ func load_game() -> bool:
 		for bk in d["bosskill"]:
 			if BOSSES.has(str(bk)):
 				P["bosskill"][str(bk)] = true
+	P["stone"] = str(d.get("stone", "")) if Prog.STONES.has(str(d.get("stone", ""))) else ""
 	P["shout_sel"] = str(d.get("shout_sel", "force")) if Shouts.SHOUTS.has(str(d.get("shout_sel", ""))) else "force"
 	P["shout_cd"] = 0.0
 	P["skin_t"] = 0.0
@@ -3573,7 +3584,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 							open_loot(m)
 							looted = true
 							break
-					if not looted and not try_house_door() and not try_read_wall() and not try_chest():
+					if not looted and not try_house_door() and not try_read_wall() and not try_chest() and not try_stone():
 						try_gather()
 			KEY_V:
 				if mode == "play" and not P["dead"]:
@@ -4659,6 +4670,58 @@ func near_chest() -> Dictionary:
 		if Vector2(c["x"] - P["x"], c["z"] - P["z"]).length() < 3.2:
 			return c
 	return {}
+
+## ---------- Taş Anıtlar ----------
+
+func _make_stone(id: String, x: float, z: float) -> void:
+	var pos := Vector3(x, height_at(x, z), z)
+	var g := Node3D.new()
+	g.position = pos
+	add_child(g)
+	var std: Dictionary = Prog.STONES[id]
+	var glow_col: Color = Color("6ad0ff") if id == "guardian" else (Color("ff8a4a") if id == "warrior" else Color("b060ff"))
+	var m_stone := Dwarf.mat(Color("4a4a52"), 0.3, 0.8)
+	var m_glow := Dwarf.mat(glow_col, 0.0, 0.5, glow_col, 1.6)
+	Dwarf.box(g, Vector3(0.5, 2.6, 0.26), m_stone, Vector3(0, 1.3, 0))
+	for k in 3:
+		Dwarf.box(g, Vector3(0.56 - k * 0.06, 0.1, 0.32 - k * 0.06), m_stone, Vector3(0, 0.05 + k * 0.1, 0))
+	Dwarf.sph(g, 0.12, m_glow, Vector3(0, 2.7, 0.15))
+	_add_obs(x, z, 0.7)
+	stone_nodes.append({"id": id, "x": x, "z": z, "node": g})
+
+func _spawn_stones() -> void:
+	stone_nodes.clear()
+	for sp in STONE_SPOTS:
+		_make_stone(str(sp[0]), float(sp[1]), float(sp[2]))
+
+func near_stone() -> Dictionary:
+	for s in stone_nodes:
+		if Vector2(s["x"] - P["x"], s["z"] - P["z"]).length() < 3.2:
+			return s
+	return {}
+
+func try_stone() -> bool:
+	if mode != "play" or P["dead"] or dlg_open or lockpicking:
+		return false
+	var s: Dictionary = near_stone()
+	if s.is_empty():
+		return false
+	dlg_open = true
+	var buttons: Array = []
+	for id in Prog.STONES:
+		var std: Dictionary = Prog.STONES[id]
+		var have: bool = P["stone"] == id
+		var lbl: String = ("%s (seçili)" % std["name"]) if have else ("%s — %s" % [std["name"], std["desc"]])
+		buttons.append({"label": lbl, "disabled": have, "cb": func(): _choose_stone(id)})
+	buttons.append({"label": "Taşa dokunma", "cb": close_dialog})
+	hud.show_dialog("Taş Anıt", "Yalnızca birini seçebilirsin", "Önünde eski bir dwarf taş anıtı duruyor. Üzerine elini koyarsan kalıcı bir kutsama alırsın; başka bir taşa dokunursan kutsaman değişir.", buttons)
+	return true
+
+func _choose_stone(id: String) -> void:
+	P["stone"] = id
+	hud.say("Kutsandın: %s" % String(Prog.STONES[id]["name"]), Color("c9a8ff"))
+	sfx.play("quest")
+	close_dialog()
 
 func try_chest() -> bool:
 	if mode != "play" or P["dead"] or dlg_open or lockpicking:
@@ -6152,6 +6215,8 @@ func _update_hud() -> void:
 		else:
 			var ctd: Dictionary = Prog.CHEST_TIERS[nch["tier"]]
 			ptxt = "G — Kilidi aç: " + String(ctd["name"]) if inv.count("lockpick") > 0 else "Kilitli sandık (maymuncuk gerekli)"
+	elif mode == "play" and not P["dead"] and not near_stone().is_empty():
+		ptxt = "G — Taş Anıta dokun"
 	elif mode == "play" and not P["dead"] and not near_node().is_empty():
 		var nd: Dictionary = Prog.NODES[near_node()["kind"]]
 		ptxt = ("G — Topla: " + nd["name"]) if P["prof"].has("mine") else (nd["name"] + " (Madencilik gerekli)")

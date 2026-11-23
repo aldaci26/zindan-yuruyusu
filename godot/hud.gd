@@ -694,6 +694,7 @@ func _build_help() -> void:
 		["1 - 9", "Yetenekler"], ["Shift + 1-7", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Beceriler, günlük, meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"], ["M", "Dünya haritası"],
 		["G", "Konuş, ganimet al, maden damarı topla, sandık kilidi aç"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 		["V", "Gizlenme (yavaş hareket, fark edilmezsin, ilk vuruş 3 kat hasar)"],
+		["G (Taş Anıt)", "Kalıcı kutsama seç: saldırı / zırh / kritik"],
 	]
 	for r in rows:
 		var h := HBoxContainer.new()

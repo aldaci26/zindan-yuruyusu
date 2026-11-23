@@ -25,6 +25,13 @@ const RECIPES := [
 	{"id": "r_ch3", "prof": "smith", "name": "Büyülü Plaka Göğüslük", "skill": 75, "mats": {"bar_dark": 6, "dust_arc": 10, "ess_arc": 1}, "out": "ch_craft3", "n": 1},
 ]
 
+## Taş Anıtlar: tek seferde yalnızca biri seçilebilen kalıcı kutsamalar (TES "Standing Stones" esintili).
+const STONES := {
+	"warrior": {"name": "Savaşçı Taşı", "desc": "Saldırı gücün %8 artar.", "dmg": 0.08},
+	"guardian": {"name": "Muhafız Taşı", "desc": "Zırhın %12 artar.", "armor": 0.12},
+	"shadow": {"name": "Gölge Taşı", "desc": "Kritik vuruş şansın %4 artar.", "crit": 0.04},
+}
+
 ## Kilitli sandık zorluk kademeleri: "w" kilit açma aralığının genişliği (0..1),
 ## "spd" ibrenin saniyedeki hızı, "money"/"lvl" ganimet ölçeği.
 const CHEST_TIERS := {

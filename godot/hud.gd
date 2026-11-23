@@ -115,6 +115,7 @@ var move_stick
 var action_holder: Control
 var action_holder_2: Control
 var mobile_controls := false
+var hud_is_visible := false
 
 # ---------- stil yardımcıları ----------
 func _box(bg: Color, border: Color = Color("6a5528"), bw: int = 2, radius: int = 4) -> StyleBoxFlat:
@@ -222,8 +223,10 @@ func _ready() -> void:
 var _hud_nodes: Array = []
 
 func _set_hud_visible(v: bool) -> void:
+	hud_is_visible = v
 	for n in _hud_nodes:
 		n.visible = v
+	_layout_mobile_controls()
 
 func _reg(n: Control) -> Control:
 	_hud_nodes.append(n)
@@ -520,7 +523,7 @@ func _layout_mobile_controls() -> void:
 	if not is_instance_valid(move_stick):
 		return
 	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport_rect().size.x < 900.0
-	move_stick.visible = mobile_controls
+	move_stick.visible = mobile_controls and hud_is_visible
 	for node in [action_holder, action_holder_2]:
 		if is_instance_valid(node):
 			node.scale = Vector2.ONE * (0.66 if mobile_controls else 1.0)
@@ -532,7 +535,7 @@ func _layout_mobile_controls() -> void:
 		_place(action_holder_2, 0.5, 1.0, 0.5, 1.0, -183, -160, 183, -102)
 	for n in _hud_nodes:
 		if n is Button and n.text in ["ZIPLA", "İKSİR", "OTO"]:
-			n.visible = mobile_controls
+			n.visible = mobile_controls and hud_is_visible
 
 func movement_vector() -> Vector2:
 	if is_instance_valid(move_stick) and mobile_controls:

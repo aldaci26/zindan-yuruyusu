@@ -15,6 +15,9 @@ signal keys_pressed
 signal order_changed
 signal quality_changed(q: int)
 signal ability_pressed(i: int)
+signal jump_pressed
+signal potion_pressed
+signal auto_pressed
 signal bag_pressed
 signal menu_pressed
 signal help_pressed
@@ -108,6 +111,10 @@ var lock_dir := 1
 var lock_speed := 0.6
 var lock_flash_t := 0.0
 var plates := {}
+var move_stick
+var action_holder: Control
+var action_holder_2: Control
+var mobile_controls := false
 
 # ---------- stil yardımcıları ----------
 func _box(bg: Color, border: Color = Color("6a5528"), bw: int = 2, radius: int = 4) -> StyleBoxFlat:
@@ -190,6 +197,7 @@ func _ready() -> void:
 	_build_quest_tracker()
 	_build_chat()
 	_build_actionbar()
+	_build_mobile_controls()
 	_build_bag()
 	_build_tip()
 	_build_dialog()
@@ -207,6 +215,8 @@ func _ready() -> void:
 	dead_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	dead_lbl.visible = false
 	root.add_child(dead_lbl)
+	get_viewport().size_changed.connect(_layout_mobile_controls)
+	_layout_mobile_controls()
 	_set_hud_visible(false)
 
 var _hud_nodes: Array = []
@@ -413,8 +423,10 @@ func clog(text: String, color: Color = Color("e9eef2")) -> void:
 		old.queue_free()
 
 func _build_actionbar() -> void:
-	var holder := Control.new()
+	action_holder = Control.new()
+	var holder := action_holder
 	_place(holder, 0.5, 1.0, 0.5, 1.0, -258, -96, 258, -12)
+	holder.pivot_offset = Vector2(258, 42)
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(holder))
 	holder.add_child(_wood_panel(Rect2(0, 0, 516, 64), 0.92))
@@ -447,8 +459,10 @@ func _build_actionbar() -> void:
 	pot_slot.hovered.connect(_on_slot_hover)
 	holder.add_child(pot_slot)
 	# ikinci çubuk (Shift + 1-7)
-	var h2 := Control.new()
+	action_holder_2 = Control.new()
+	var h2 := action_holder_2
 	_place(h2, 0.5, 1.0, 0.5, 1.0, -183, -160, 183, -102)
+	h2.pivot_offset = Vector2(183, 29)
 	h2.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(h2))
 	h2.add_child(_wood_panel(Rect2(0, 0, 366, 58), 0.92))
@@ -472,6 +486,58 @@ func _build_actionbar() -> void:
 	var tk = Parts.Ticks.new()
 	tk.set_anchors_preset(Control.PRESET_FULL_RECT)
 	xp_bar.add_child(tk)
+
+func _build_mobile_controls() -> void:
+	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport_rect().size.x < 900.0
+	move_stick = preload("res://touch_joystick.gd").new()
+	_place(move_stick, 0.0, 1.0, 0.0, 1.0, 12, -132, 132, -12)
+	root.add_child(_reg(move_stick))
+	var jump_btn := _mobile_button("ZIPLA")
+	_place(jump_btn, 1.0, 1.0, 1.0, 1.0, -88, -78, -12, -12)
+	jump_btn.pressed.connect(func(): jump_pressed.emit())
+	root.add_child(_reg(jump_btn))
+	var potion_btn := _mobile_button("İKSİR")
+	_place(potion_btn, 1.0, 1.0, 1.0, 1.0, -88, -150, -12, -84)
+	potion_btn.pressed.connect(func(): potion_pressed.emit())
+	root.add_child(_reg(potion_btn))
+	var auto_btn := _mobile_button("OTO")
+	_place(auto_btn, 1.0, 0.0, 1.0, 0.0, -82, 190, -12, 248)
+	auto_btn.pressed.connect(func(): auto_pressed.emit())
+	root.add_child(_reg(auto_btn))
+
+func _mobile_button(caption: String) -> Button:
+	var b := Button.new()
+	b.text = caption
+	b.add_theme_font_size_override("font_size", 13)
+	b.add_theme_color_override("font_color", Color("fff0cc"))
+	b.custom_minimum_size = Vector2(72, 58)
+	b.add_theme_stylebox_override("normal", _box(Color(0.08, 0.07, 0.05, 0.82), Color("c9a24a"), 2, 10))
+	b.add_theme_stylebox_override("pressed", _box(Color(0.28, 0.20, 0.08, 0.95), Color("ffe08a"), 2, 10))
+	b.add_theme_stylebox_override("hover", _box(Color(0.16, 0.13, 0.08, 0.9), Color("e0bd68"), 2, 10))
+	return b
+
+func _layout_mobile_controls() -> void:
+	if not is_instance_valid(move_stick):
+		return
+	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport_rect().size.x < 900.0
+	move_stick.visible = mobile_controls
+	for node in [action_holder, action_holder_2]:
+		if is_instance_valid(node):
+			node.scale = Vector2.ONE * (0.66 if mobile_controls else 1.0)
+	if mobile_controls:
+		_place(action_holder, 0.5, 1.0, 0.5, 1.0, -258, -205, 258, -121)
+		_place(action_holder_2, 0.5, 1.0, 0.5, 1.0, -183, -265, 183, -207)
+	else:
+		_place(action_holder, 0.5, 1.0, 0.5, 1.0, -258, -96, 258, -12)
+		_place(action_holder_2, 0.5, 1.0, 0.5, 1.0, -183, -160, 183, -102)
+	for n in _hud_nodes:
+		if n is Button and n.text in ["ZIPLA", "İKSİR", "OTO"]:
+			n.visible = mobile_controls
+
+func movement_vector() -> Vector2:
+	if is_instance_valid(move_stick) and mobile_controls:
+		return move_stick.vector
+	return Vector2.ZERO
 
 func _build_bag() -> void:
 	var holder := Control.new()

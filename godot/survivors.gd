@@ -6,6 +6,7 @@ extends Node3D
 ## sınırlı bir dairesel arena kullanılıyor.
 
 const Dwarf = preload("res://dwarf.gd")
+const TouchJoystick = preload("res://touch_joystick.gd")
 
 var on_exit: Callable = Callable()
 
@@ -69,6 +70,8 @@ var levelup_box: Control
 var gameover_box: Control
 var charselect_box: Control
 var weapon_row: HBoxContainer
+var move_stick
+var mobile_controls := false
 
 func _ready() -> void:
 	_build_arena()
@@ -128,7 +131,7 @@ func _btn(txt: String, size: int = 20) -> Button:
 	var b := Button.new()
 	b.text = txt
 	b.add_theme_font_size_override("font_size", size)
-	b.custom_minimum_size = Vector2(260, 0)
+	b.custom_minimum_size = Vector2(minf(260.0, get_viewport_rect().size.x - 36.0), 0)
 	return b
 
 func _build_ui() -> void:
@@ -140,14 +143,15 @@ func _build_ui() -> void:
 	top.size = Vector2(0, 60)
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.add_child(top)
+	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport_rect().size.x < 900.0
 	var vb := VBoxContainer.new()
-	vb.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	vb.position = Vector2(60, 10)
-	vb.size = Vector2(420, 70)
+	vb.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	vb.position = Vector2(12 if mobile_controls else 60, 10)
+	vb.size = Vector2(minf(420.0, get_viewport_rect().size.x - 24.0) if mobile_controls else 420.0, 70)
 	ui.add_child(vb)
 	var hrow := HBoxContainer.new()
 	hp_bar = ProgressBar.new()
-	hp_bar.custom_minimum_size = Vector2(300, 18)
+	hp_bar.custom_minimum_size = Vector2(minf(300.0, get_viewport_rect().size.x - 120.0) if mobile_controls else 300.0, 18)
 	hp_bar.max_value = 100.0
 	hp_bar.show_percentage = false
 	hrow.add_child(hp_bar)
@@ -155,7 +159,7 @@ func _build_ui() -> void:
 	hrow.add_child(hp_lbl)
 	vb.add_child(hrow)
 	xp_bar = ProgressBar.new()
-	xp_bar.custom_minimum_size = Vector2(300, 10)
+	xp_bar.custom_minimum_size = Vector2(minf(300.0, get_viewport_rect().size.x - 120.0) if mobile_controls else 300.0, 10)
 	xp_bar.max_value = 100.0
 	xp_bar.show_percentage = false
 	vb.add_child(xp_bar)
@@ -172,9 +176,29 @@ func _build_ui() -> void:
 	ui.add_child(timer_lbl)
 	weapon_row = HBoxContainer.new()
 	weapon_row.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	weapon_row.position = Vector2(-260, 14)
+	weapon_row.position = Vector2(-220 if mobile_controls else -260, 82 if mobile_controls else 14)
+	weapon_row.scale = Vector2.ONE * (0.72 if mobile_controls else 1.0)
 	weapon_row.add_theme_constant_override("separation", 6)
 	ui.add_child(weapon_row)
+	if mobile_controls:
+		move_stick = TouchJoystick.new()
+		move_stick.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+		move_stick.offset_left = 12
+		move_stick.offset_top = -132
+		move_stick.offset_right = 132
+		move_stick.offset_bottom = -12
+		ui.add_child(move_stick)
+		var exit_btn := Button.new()
+		exit_btn.text = "MENÜ"
+		exit_btn.add_theme_font_size_override("font_size", 13)
+		exit_btn.custom_minimum_size = Vector2(76, 48)
+		exit_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		exit_btn.offset_left = -88
+		exit_btn.offset_top = 12
+		exit_btn.offset_right = -12
+		exit_btn.offset_bottom = 60
+		exit_btn.pressed.connect(_exit_run)
+		ui.add_child(exit_btn)
 	_build_charselect()
 	_build_levelup()
 	_build_gameover()
@@ -212,8 +236,8 @@ func _build_charselect() -> void:
 	var t2 := _label("Bir kahraman seç — sonsuz dalgalara karşı hayatta kal.", 18, Color("d5e1ea"))
 	t2.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vb.add_child(t2)
-	var hb := HBoxContainer.new()
-	hb.add_theme_constant_override("separation", 20)
+	var hb: BoxContainer = VBoxContainer.new() if get_viewport_rect().size.x < 700.0 else HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 10 if get_viewport_rect().size.x < 700.0 else 20)
 	vb.add_child(hb)
 	for id in CHAR_DEFS:
 		var cd: Dictionary = CHAR_DEFS[id]
@@ -249,6 +273,8 @@ func _choose_char(id: String) -> void:
 	add_child(player)
 	charselect_box.visible = false
 	state = "play"
+	if is_instance_valid(move_stick):
+		move_stick.visible = true
 	_update_weapon_icons()
 	_update_top_ui()
 
@@ -274,14 +300,14 @@ func _rebuild_levelup_cards() -> void:
 	vb.add_theme_constant_override("separation", 14)
 	levelup_box.add_child(vb)
 	vb.add_child(_label("SEVİYE ATLADIN!", 30, Color("ffd23a")))
-	var hb := HBoxContainer.new()
-	hb.add_theme_constant_override("separation", 18)
+	var hb: BoxContainer = VBoxContainer.new() if get_viewport_rect().size.x < 700.0 else HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 10 if get_viewport_rect().size.x < 700.0 else 18)
 	vb.add_child(hb)
 	for opt in _roll_levelup_options():
 		var card := PanelContainer.new()
 		_panel_bg(card)
 		var cv := VBoxContainer.new()
-		cv.custom_minimum_size = Vector2(230, 0)
+		cv.custom_minimum_size = Vector2(minf(230.0, get_viewport_rect().size.x - 40.0), 0)
 		card.add_child(cv)
 		cv.add_child(_label(String(opt["name"]), 17, Color("ffd23a")))
 		cv.add_child(_label(String(opt["sub"]), 13, Color("93d4a0")))
@@ -318,6 +344,8 @@ func _pick_levelup(opt: Dictionary) -> void:
 		_apply_passives()
 	levelup_box.visible = false
 	state = "play"
+	if is_instance_valid(move_stick):
+		move_stick.visible = true
 	_update_weapon_icons()
 
 func _apply_passives() -> void:
@@ -378,6 +406,8 @@ func _show_gameover() -> void:
 	vb.add_child(back)
 	gameover_box.visible = true
 	state = "gameover"
+	if is_instance_valid(move_stick):
+		move_stick.visible = false
 
 func _restart_run() -> void:
 	for e in enemies:
@@ -441,6 +471,9 @@ func _tick_play(dt: float) -> void:
 func _move_player(dt: float) -> void:
 	var ix := 0.0
 	var iz := 0.0
+	if is_instance_valid(move_stick) and move_stick.visible:
+		ix += move_stick.vector.x
+		iz += move_stick.vector.y
 	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
 		ix -= 1.0
 	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):

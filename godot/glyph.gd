@@ -224,6 +224,13 @@ static func item(ci: CanvasItem, it: Dictionary, r: Rect2) -> void:
 			for k in 4:
 				var ang2 := float(k) * 1.57 + 0.4
 				line(ci, r, [0.5 + cos(ang2) * 0.3, 0.52 + sin(ang2) * 0.3], [0.5 + cos(ang2) * 0.4, 0.52 + sin(ang2) * 0.4], l, 0.02)
+		elif ic == "lockpick":
+			line(ci, r, [0.22, 0.82], [0.6, 0.24], c, 0.07)
+			circ(ci, r, 0.22, 0.82, 0.07, l)
+			line(ci, r, [0.6, 0.24], [0.72, 0.3], c, 0.055)
+			line(ci, r, [0.78, 0.68], [0.5, 0.4], c, 0.07)
+			line(ci, r, [0.78, 0.68], [0.9, 0.62], c, 0.05)
+			line(ci, r, [0.78, 0.68], [0.84, 0.8], c, 0.05)
 		else:
 			for k in 3:
 				arc(ci, r, 0.3 + 0.2 * k, 0.9, 0.5, 4.3, 5.4, c, 0.08)

@@ -506,3 +506,25 @@ class Ticks extends Control:
 		for i in range(1, 20):
 			var x := size.x * i / 20.0
 			draw_line(Vector2(x, 0), Vector2(x, size.y), Color(0, 0, 0, 0.55), 1.0)
+
+## Kilit açma mini oyunu: ileri geri salınan ibre + vurulması gereken dar bölge.
+class LockBar extends Control:
+	var zone_a := 0.4
+	var zone_b := 0.6
+	var marker := 0.0
+	var flash := 0.0
+	var flash_ok := false
+
+	func _init() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		draw_rect(Rect2(Vector2.ZERO, size), Color(0.07, 0.06, 0.05, 0.95))
+		var za := size.x * zone_a
+		var zb := size.x * zone_b
+		draw_rect(Rect2(Vector2(za, 2), Vector2(zb - za, size.y - 4)), Color("5ad02a") if flash <= 0.0 or flash_ok else Color("5ad02a"))
+		var mx := size.x * marker
+		draw_rect(Rect2(Vector2(mx - 2.5, -5), Vector2(5, size.y + 10)), Color("ffe45c"))
+		draw_rect(Rect2(Vector2.ZERO, size), Color("9b8150"), false, 2.0)
+		if flash > 0.0:
+			draw_rect(Rect2(Vector2.ZERO, size), (Color("5ad02a") if flash_ok else Color("e02a2a")) * Color(1, 1, 1, flash * 0.5))

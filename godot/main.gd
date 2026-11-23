@@ -85,6 +85,14 @@ const SWAMP_CAMPS := [
 	{"kind": "bog", "x": -46.0, "z": -44.0, "n": 4},
 ]
 
+## Kilitli hazine sandıkları: [zorluk, x, z] — harita adına göre gruplanmış.
+const CHEST_SPOTS := {
+	"snow": [["easy", 34.0, 40.0], ["easy", -40.0, -10.0], ["medium", 20.0, -55.0], ["hard", -70.0, 50.0]],
+	"swamp": [["easy", -34.0, 40.0], ["medium", 58.0, 18.0]],
+	"ash": [["medium", -12.0, -58.0], ["hard", 58.0, 58.0]],
+	"mine": [["easy", -10.0, 45.0], ["medium", 2.0, -66.0], ["hard", 14.0, -130.0]],
+}
+
 ## Kara Demir Madeni: odalar [x, z, yarıçap], yan odalar [x, z, yarıçap, bağlı oda]
 const MINE_ROOMS := [[0.0, 79.0, 9.0], [-8.0, 48.0, 14.0], [8.0, 11.0, 15.0], [-8.0, -26.0, 14.0], [0.0, -68.0, 20.0], [16.0, -98.0, 9.0], [16.0, -128.0, 15.0], [-6.0, -158.0, 19.0]]  # son üçü Kara Demir Zindanı
 const MINE_ALC := [[-26.0, 48.0, 5.0, 1], [26.0, 11.0, 5.0, 2], [-30.0, -26.0, 5.0, 3]]
@@ -255,11 +263,11 @@ const BOSSES := {
 }
 
 const VENDORS := {
-	"fenn": ["pot_heal", "pot_big", "helm_iron", "helm_ward", "ch_mail", "ch_plate", "lg_mail", "ft_iron", "hd_iron", "sh_rein", "wt_iron", "rg_iron", "nk_tooth", "axe_forge"],
-	"hilda": ["pot_heal", "pot_big", "helm_cap", "helm_iron", "so_pad", "so_iron", "bk_cloak", "ch_leather", "ch_mail", "wr_cloth", "wr_iron",
+	"fenn": ["pot_heal", "pot_big", "lockpick", "helm_iron", "helm_ward", "ch_mail", "ch_plate", "lg_mail", "ft_iron", "hd_iron", "sh_rein", "wt_iron", "rg_iron", "nk_tooth", "axe_forge"],
+	"hilda": ["pot_heal", "pot_big", "lockpick", "helm_cap", "helm_iron", "so_pad", "so_iron", "bk_cloak", "ch_leather", "ch_mail", "wr_cloth", "wr_iron",
 		"hd_glove", "hd_iron", "wt_belt", "wt_iron", "lg_leather", "lg_mail", "ft_hide", "ft_iron", "rg_iron", "nk_tooth"],
-	"rolf": ["pot_heal", "pot_big", "helm_iron", "ch_mail", "ch_plate", "lg_mail", "ft_iron", "hd_iron", "sh_rein", "wt_iron", "rg_iron", "nk_tooth", "axe_forge", "hammer_smith", "tr_whet"],
-	"borga": ["axe_iron", "axe_forge", "axe_boar", "hammer_smith", "sword_gate", "sh_iron", "sh_gate", "sh_rein", "tr_whet"],
+	"rolf": ["pot_heal", "pot_big", "lockpick", "helm_iron", "ch_mail", "ch_plate", "lg_mail", "ft_iron", "hd_iron", "sh_rein", "wt_iron", "rg_iron", "nk_tooth", "axe_forge", "hammer_smith", "tr_whet"],
+	"borga": ["axe_iron", "axe_forge", "axe_boar", "hammer_smith", "sword_gate", "sh_iron", "sh_gate", "sh_rein", "tr_whet", "lockpick"],
 }
 
 class Mob:
@@ -341,6 +349,7 @@ var invui
 var talui
 var progui
 var res_nodes: Array = []
+var chest_nodes: Array = []
 var wall_list: Array = []
 var held = null
 var G := {}
@@ -370,6 +379,8 @@ var cam_dist_t := 8.5
 var rmb := false
 var mouse_sens := 1.0
 var dlg_open := false
+var lockpicking := false
+var lock_chest = null
 var cur_npc = null
 var last_rest := -999.0
 var zone_now := ""
@@ -607,6 +618,7 @@ func _build_world() -> void:
 		_spawn_bosses()
 		_spawn_camps()
 		_spawn_nodes()
+		_spawn_chests()
 		_setup_mine_fx()
 		_spawn_discoveries()
 	elif map == "ash":
@@ -617,6 +629,7 @@ func _build_world() -> void:
 		_spawn_mobs()
 		_spawn_bosses()
 		_spawn_camps()
+		_spawn_chests()
 		_setup_ash_fx()
 		_spawn_discoveries()
 	elif map == "swamp":
@@ -627,6 +640,7 @@ func _build_world() -> void:
 		_spawn_mobs()
 		_spawn_bosses()
 		_spawn_camps()
+		_spawn_chests()
 		_setup_swamp_fx()
 		_spawn_discoveries()
 	else:
@@ -642,6 +656,7 @@ func _build_world() -> void:
 		_spawn_camps()
 		_setup_snow()
 		_spawn_nodes()
+		_spawn_chests()
 		_spawn_discoveries()
 	if map != "mine" and map != "ash":
 		_setup_rain()
@@ -671,6 +686,11 @@ func _clear_world() -> void:
 	rings.clear()
 	portals.clear()
 	res_nodes.clear()
+	chest_nodes.clear()
+	if lockpicking:
+		lockpicking = false
+		lock_chest = null
+		hud.stop_lockpick()
 	wall_list.clear()
 	snow_node = null
 	rain_node = null
@@ -3534,7 +3554,9 @@ func _unhandled_input(ev: InputEvent) -> void:
 			KEY_K: toggle_win("prog")
 			KEY_M: toggle_worldmap()
 			KEY_G:
-				if loot_mob != null:
+				if lockpicking:
+					_attempt_lockpick()
+				elif loot_mob != null:
 					while loot_mob != null and not loot_mob.loot.is_empty():
 						var before: int = loot_mob.loot.size()
 						take_loot(0)
@@ -3551,7 +3573,7 @@ func _unhandled_input(ev: InputEvent) -> void:
 							open_loot(m)
 							looted = true
 							break
-					if not looted and not try_house_door() and not try_read_wall():
+					if not looted and not try_house_door() and not try_read_wall() and not try_chest():
 						try_gather()
 			KEY_V:
 				if mode == "play" and not P["dead"]:
@@ -3566,6 +3588,8 @@ func _unhandled_input(ev: InputEvent) -> void:
 				if held != null:
 					held = null
 					invui.refresh()
+				elif lockpicking:
+					_cancel_lockpick()
 				elif loot_mob != null:
 					close_loot()
 				elif vendor_npc != null:
@@ -3716,6 +3740,8 @@ func _normal_loot(m) -> void:
 		m.loot.append({"id": "hide_raw", "n": 1})
 	if randf() < 0.2:
 		m.loot.append({"id": "pot_big" if (m.lvl >= 4 and randf() < 0.4) else "pot_heal", "n": 1})
+	if randf() < (0.3 if m.nm == "Defias Haydudu" else 0.08):
+		m.loot.append({"id": "lockpick", "n": 1 + randi() % 2})
 	var r := randf()
 	var rar := 0
 	if m.nm == "Dağ Ayısı" and r < 0.04:
@@ -3894,7 +3920,7 @@ func auto_attack() -> void:
 	hit_mob(m, roll(atk()))
 
 func jump() -> void:
-	if mode != "play" or P["dead"] or dlg_open:
+	if mode != "play" or P["dead"] or dlg_open or lockpicking:
 		return
 	if P["jy"] <= 0.001 and P["vy"] <= 0.0 and P["charge"] == null:
 		P["vy"] = 8.6
@@ -3903,7 +3929,7 @@ func _face(m) -> void:
 	P["yaw"] = atan2(m.x - P["x"], m.z - P["z"])
 
 func ability(i: int) -> void:
-	if mode != "play" or P["dead"] or dlg_open:
+	if mode != "play" or P["dead"] or dlg_open or lockpicking:
 		return
 	if i == HudScript.POT:
 		use_potion()
@@ -4099,7 +4125,7 @@ func use_potion(want: String = "") -> void:
 	inv_changed()
 
 func toggle_auto() -> void:
-	if mode != "play" or P["dead"] or dlg_open:
+	if mode != "play" or P["dead"] or dlg_open or lockpicking:
 		return
 	if P["auto"]:
 		P["auto"] = false
@@ -4467,7 +4493,7 @@ func shout_status() -> String:
 	return "Z — %s %d/3  %s" % [sd["name"], n, "hazır" if cd <= 0.0 else "%d sn" % ceili(cd)]
 
 func use_shout() -> void:
-	if mode != "play" or P["dead"] or dlg_open:
+	if mode != "play" or P["dead"] or dlg_open or lockpicking:
 		return
 	var id: String = P["shout_sel"]
 	var n := Shouts.known(P["walls"], id)
@@ -4610,6 +4636,92 @@ func _spawn_nodes() -> void:
 			var al: Array = a2
 			_make_node("dark", float(al[0]) + 2.2, float(al[1]) + 1.6)
 
+## ---------- Kilitli hazine sandıkları (TES esintili kilit açma) ----------
+
+func _make_chest(tier: String, x: float, z: float) -> void:
+	var pos := Vector3(x, height_at(x, z), z)
+	var g := _wow_spawn("modular_dungeon_pack/Chest.glb", pos, randf() * TAU, 1.0)
+	if g == null:
+		g = Node3D.new()
+		g.position = pos
+		add_child(g)
+		Dwarf.box(g, Vector3(0.9, 0.6, 0.6), Dwarf.mat(Color("6a4a2a"), 0.4, 0.6), Vector3(0, 0.3, 0))
+	_add_obs(x, z, 0.8)
+	chest_nodes.append({"tier": tier, "x": x, "z": z, "node": g, "locked": true})
+
+func _spawn_chests() -> void:
+	chest_nodes.clear()
+	for sp in CHEST_SPOTS.get(map, []):
+		_make_chest(str(sp[0]), float(sp[1]), float(sp[2]))
+
+func near_chest() -> Dictionary:
+	for c in chest_nodes:
+		if Vector2(c["x"] - P["x"], c["z"] - P["z"]).length() < 3.2:
+			return c
+	return {}
+
+func try_chest() -> bool:
+	if mode != "play" or P["dead"] or dlg_open or lockpicking:
+		return false
+	var c: Dictionary = near_chest()
+	if c.is_empty():
+		return false
+	if not c["locked"]:
+		hud.say("Sandık zaten boş.", Color("93a1ad"))
+		return true
+	if inv.count("lockpick") <= 0:
+		hud.say("Bu kilidi açmak için maymuncuğun yok.", Color("ff6a5a"))
+		return true
+	var td: Dictionary = Prog.CHEST_TIERS[c["tier"]]
+	lockpicking = true
+	lock_chest = c
+	P["auto"] = false
+	hud.start_lockpick(td["name"], td["w"], td["spd"])
+	return true
+
+func _cancel_lockpick() -> void:
+	lockpicking = false
+	lock_chest = null
+	hud.stop_lockpick()
+
+func _attempt_lockpick() -> void:
+	if lock_chest == null:
+		return
+	var c: Dictionary = lock_chest
+	var ok: bool = hud.lockpick_hit()
+	hud.lockpick_flash(ok)
+	if not ok:
+		inv.remove("lockpick", 1)
+		inv_changed()
+		sfx.play("hurt", -8)
+		hud.clog("Maymuncuk kırıldı! Kilit açılmadı.", Color("ff6a5a"))
+		if inv.count("lockpick") <= 0:
+			_cancel_lockpick()
+		return
+	inv.remove("lockpick", 1)
+	c["locked"] = false
+	_cancel_lockpick()
+	sfx.play("quest")
+	var td: Dictionary = Prog.CHEST_TIERS[c["tier"]]
+	var got_money: int = int(td["money"]) + randi() % int(td["money"])
+	inv.money += got_money
+	hud.say("Kilidi açtın! +%s" % Items.money_plain(got_money), Color("ffd23a"))
+	float_text(Vector3(c["x"], P["y"] + 1.8, c["z"]), "+%s" % Items.money_plain(got_money), Color("ffd23a"), false)
+	ring_fx(Vector3(c["x"], height_at(c["x"], c["z"]), c["z"]), 1.4, Color("ffd23a"), 0.5)
+	var loot_pool := ["pot_heal", "pot_big", "dust_arc"]
+	var tlvl: int = int(td["lvl"])
+	if tlvl >= 2:
+		loot_pool.append("ess_arc")
+	if tlvl >= 3 and randf() < 0.35:
+		loot_pool.append("bar_dark")
+	var item_id: String = loot_pool[randi() % loot_pool.size()]
+	var n := 1 + (randi() % 2 if tlvl < 3 else randi() % 3)
+	inv.add(item_id, n)
+	hud.say("Buldun: %d %s" % [n, Items.get_item(item_id)["name"]], Color("e0e0e0"))
+	inv_changed()
+	stat_add("chests")
+	ach_check()
+
 func near_npc():
 	var best = null
 	var bd := 4.2
@@ -4623,7 +4735,7 @@ func near_npc():
 	return best
 
 func open_talk() -> void:
-	if mode != "play" or P["dead"] or dlg_open:
+	if mode != "play" or P["dead"] or dlg_open or lockpicking:
 		return
 	var n = near_npc()
 	if n == null:
@@ -4906,7 +5018,7 @@ func step(dt: float) -> void:
 			cam_yaw -= dt * 1.8
 	if mode == "title":
 		cam_yaw += dt * 0.12
-	if dlg_open:
+	if dlg_open or lockpicking:
 		ix = 0.0
 		iy = 0.0
 	_step_player(dt, ix, iy)
@@ -6024,13 +6136,22 @@ func _update_hud() -> void:
 			hud.plate_hide("npc_" + n["id"])
 	var nn = near_npc()
 	var ptxt := ""
-	if nn != null and not dlg_open and mode == "play" and not P["dead"]:
+	if lockpicking:
+		ptxt = "G — Dene · Esc — Vazgeç"
+	elif nn != null and not dlg_open and mode == "play" and not P["dead"]:
 		ptxt = "G — Konuş: " + nn["name"]
 	elif mode == "play" and not P["dead"] and (near_room_exit() or near_house_door() >= 0):
 		ptxt = "G — Dışarı çık" if near_room_exit() else "G — İçeri gir: " + String(house_doors[near_house_door()]["name"])
 	elif mode == "play" and not P["dead"] and not near_wall().is_empty():
 		var nw := near_wall()
 		ptxt = "G — Kelime duvarını oku" if not P["walls"].has(nw["id"]) else "Kelime duvarı (okundu): " + Shouts.word_text(nw)
+	elif mode == "play" and not P["dead"] and not near_chest().is_empty():
+		var nch: Dictionary = near_chest()
+		if not nch["locked"]:
+			ptxt = "Sandık (boş)"
+		else:
+			var ctd: Dictionary = Prog.CHEST_TIERS[nch["tier"]]
+			ptxt = "G — Kilidi aç: " + String(ctd["name"]) if inv.count("lockpick") > 0 else "Kilitli sandık (maymuncuk gerekli)"
 	elif mode == "play" and not P["dead"] and not near_node().is_empty():
 		var nd: Dictionary = Prog.NODES[near_node()["kind"]]
 		ptxt = ("G — Topla: " + nd["name"]) if P["prof"].has("mine") else (nd["name"] + " (Madencilik gerekli)")

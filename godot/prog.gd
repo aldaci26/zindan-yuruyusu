@@ -25,6 +25,14 @@ const RECIPES := [
 	{"id": "r_ch3", "prof": "smith", "name": "Büyülü Plaka Göğüslük", "skill": 75, "mats": {"bar_dark": 6, "dust_arc": 10, "ess_arc": 1}, "out": "ch_craft3", "n": 1},
 ]
 
+## Kilitli sandık zorluk kademeleri: "w" kilit açma aralığının genişliği (0..1),
+## "spd" ibrenin saniyedeki hızı, "money"/"lvl" ganimet ölçeği.
+const CHEST_TIERS := {
+	"easy": {"name": "Basit Kilit", "w": 0.30, "spd": 0.55, "money": 30, "lvl": 1},
+	"medium": {"name": "Sağlam Kilit", "w": 0.20, "spd": 0.75, "money": 70, "lvl": 2},
+	"hard": {"name": "Usta Kilidi", "w": 0.13, "spd": 1.0, "money": 160, "lvl": 3},
+}
+
 ## Maden damarı türleri
 const NODES := {
 	"iron": {"name": "Demir Damarı", "item": "ore_iron", "skill": 1, "cap": 45, "col": Color("a8744a"), "glow": Color("ff9a4a")},
@@ -77,6 +85,7 @@ const ACHS := [
 	{"id": "a_friend", "name": "Her Yerde Dost", "desc": "Üç grupta da Dost ol.", "stat": "rep_friend", "goal": 3, "pts": 15},
 	{"id": "a_exalt", "name": "Yüce Dost", "desc": "Bir grupla Yüce itibara ulaş.", "stat": "rep_exalted", "goal": 1, "pts": 25},
 	{"id": "a_die10", "name": "Düşen Kalkar", "desc": "10 kez öl ve yine kalk.", "stat": "deaths", "goal": 10, "pts": 5},
+	{"id": "a_chest", "name": "Hazine Avcısı", "desc": "8 kilitli sandık aç.", "stat": "chests", "goal": 8, "pts": 15},
 ]
 
 static func rank_of(rep: int) -> int:

@@ -268,6 +268,7 @@ static func _build() -> void:
 	for cid in ["axe_craft1", "bk_hunter", "ch_craft1", "wt_craft", "ch_craft2", "sh_craft", "axe_craft2", "axe_craft3", "ch_craft3"]:
 		_db[cid]["craft"] = true
 	# tüketilenler ve çerçöp
+	_misc("lockpick", "Maymuncuk", 1, 1, 12, 20, "lockpick", 0.0, "iron")
 	_misc("pot_heal", "Can İksiri", 1, 1, 20, 20, "potion", 0.45, "red")
 	_misc("pot_big", "Büyük Can İksiri", 1, 5, 60, 20, "potion", 0.7, "red")
 	_misc("j_wolf", "Yıpranmış Kurt Postu", 0, 1, 9, 20, "pelt", 0.0, "fur")

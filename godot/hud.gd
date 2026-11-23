@@ -98,6 +98,14 @@ var pause_box: PanelContainer
 var vol_slider: HSlider
 var sens_slider: HSlider
 var help_box: PanelContainer
+var lock_box: PanelContainer
+var lock_bar
+var lock_title: Label
+var lock_hint: Label
+var lock_t := 0.0
+var lock_dir := 1
+var lock_speed := 0.6
+var lock_flash_t := 0.0
 var plates := {}
 
 # ---------- stil yardımcıları ----------
@@ -186,6 +194,7 @@ func _ready() -> void:
 	_build_dialog()
 	_build_banner()
 	_build_help()
+	_build_lockpick()
 	_build_pause()
 	_build_title()
 	talk_lbl = _label("", 18, Color("9be8a8"))
@@ -683,7 +692,7 @@ func _build_help() -> void:
 		["W A S D", "Yürü"], ["Boşluk", "Zıpla"], ["Sağ tık basılı", "Kamerayı çevir"], ["Sol tık", "Hedef seç"],
 		["Tekerlek", "Yakınlaştır / uzaklaştır"], ["Q  E", "Kamerayı döndür"], ["R", "Otomatik saldırı"],
 		["1 - 9", "Yetenekler"], ["Shift + 1-7", "İkinci çubuk (Sv 8+)"], ["N", "Yetenekler (Sv 10+)"], ["K", "Beceriler, günlük, meslekler, itibar, başarımlar"], ["0  veya  F", "Can iksiri"], ["Tab", "En yakın düşmanı hedefle"], ["M", "Dünya haritası"],
-		["G", "Konuş, ganimet al, maden damarı topla"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
+		["G", "Konuş, ganimet al, maden damarı topla, sandık kilidi aç"], ["B  C", "Çanta / Karakter"], ["Sağ tık (eşya)", "Giy / kullan / sat"], ["Esc", "Hedefi bırak / pencereyi kapat"], ["F11", "Tam ekran"], ["H", "Bu pencere"],
 		["V", "Gizlenme (yavaş hareket, fark edilmezsin, ilk vuruş 3 kat hasar)"],
 	]
 	for r in rows:
@@ -694,6 +703,62 @@ func _build_help() -> void:
 		h.add_child(_label(r[1], 14, Color("e9eef2"), 3))
 		v.add_child(h)
 	v.add_child(_label("Yeni yetenekler seviye atlayınca açılır.", 13, Color("93d4a0"), 3))
+
+func _build_lockpick() -> void:
+	lock_box = PanelContainer.new()
+	lock_box.add_theme_stylebox_override("panel", _box(Color(0.04, 0.035, 0.03, 0.95), Color("c9a24a"), 2, 6))
+	_place(lock_box, 0.5, 0.5, 0.5, 0.5, -170, -62, 170, 62)
+	lock_box.visible = false
+	root.add_child(lock_box)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	lock_box.add_child(v)
+	lock_title = _label("Kilit Açma", 18, GOLD)
+	lock_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(lock_title)
+	lock_bar = Parts.LockBar.new()
+	lock_bar.custom_minimum_size = Vector2(300, 28)
+	v.add_child(lock_bar)
+	lock_hint = _label("İbre yeşil bölgedeyken G'ye bas · Esc: vazgeç", 13, Color("93a1ad"))
+	lock_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(lock_hint)
+
+func start_lockpick(nm: String, w: float, spd: float) -> void:
+	lock_title.text = "Kilit Açma — %s" % nm
+	lock_bar.zone_a = 0.5 - w / 2.0
+	lock_bar.zone_b = 0.5 + w / 2.0
+	lock_t = 0.0
+	lock_dir = 1
+	lock_speed = spd
+	lock_flash_t = 0.0
+	lock_bar.marker = 0.0
+	lock_bar.flash = 0.0
+	lock_box.visible = true
+
+func stop_lockpick() -> void:
+	lock_box.visible = false
+
+func lockpick_hit() -> bool:
+	return lock_bar.zone_a <= lock_t and lock_t <= lock_bar.zone_b
+
+func lockpick_flash(ok: bool) -> void:
+	lock_bar.flash_ok = ok
+	lock_flash_t = 0.35
+
+func _process(dt: float) -> void:
+	if lock_box.visible:
+		lock_t += lock_dir * lock_speed * dt
+		if lock_t >= 1.0:
+			lock_t = 1.0
+			lock_dir = -1
+		elif lock_t <= 0.0:
+			lock_t = 0.0
+			lock_dir = 1
+		lock_bar.marker = lock_t
+		if lock_flash_t > 0.0:
+			lock_flash_t -= dt
+		lock_bar.flash = maxf(lock_flash_t, 0.0)
+		lock_bar.queue_redraw()
 
 func _build_title() -> void:
 	title_box = Control.new()

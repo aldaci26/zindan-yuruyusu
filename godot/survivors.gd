@@ -131,7 +131,7 @@ func _btn(txt: String, size: int = 20) -> Button:
 	var b := Button.new()
 	b.text = txt
 	b.add_theme_font_size_override("font_size", size)
-	b.custom_minimum_size = Vector2(minf(260.0, get_viewport_rect().size.x - 36.0), 0)
+	b.custom_minimum_size = Vector2(minf(260.0, get_viewport().get_visible_rect().size.x - 36.0), 0)
 	return b
 
 func _build_ui() -> void:
@@ -143,15 +143,15 @@ func _build_ui() -> void:
 	top.size = Vector2(0, 60)
 	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.add_child(top)
-	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport_rect().size.x < 900.0
+	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport().get_visible_rect().size.x < 900.0
 	var vb := VBoxContainer.new()
 	vb.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	vb.position = Vector2(12 if mobile_controls else 60, 10)
-	vb.size = Vector2(minf(420.0, get_viewport_rect().size.x - 24.0) if mobile_controls else 420.0, 70)
+	vb.size = Vector2(minf(420.0, get_viewport().get_visible_rect().size.x - 24.0) if mobile_controls else 420.0, 70)
 	ui.add_child(vb)
 	var hrow := HBoxContainer.new()
 	hp_bar = ProgressBar.new()
-	hp_bar.custom_minimum_size = Vector2(minf(300.0, get_viewport_rect().size.x - 120.0) if mobile_controls else 300.0, 18)
+	hp_bar.custom_minimum_size = Vector2(minf(300.0, get_viewport().get_visible_rect().size.x - 120.0) if mobile_controls else 300.0, 18)
 	hp_bar.max_value = 100.0
 	hp_bar.show_percentage = false
 	hrow.add_child(hp_bar)
@@ -159,7 +159,7 @@ func _build_ui() -> void:
 	hrow.add_child(hp_lbl)
 	vb.add_child(hrow)
 	xp_bar = ProgressBar.new()
-	xp_bar.custom_minimum_size = Vector2(minf(300.0, get_viewport_rect().size.x - 120.0) if mobile_controls else 300.0, 10)
+	xp_bar.custom_minimum_size = Vector2(minf(300.0, get_viewport().get_visible_rect().size.x - 120.0) if mobile_controls else 300.0, 10)
 	xp_bar.max_value = 100.0
 	xp_bar.show_percentage = false
 	vb.add_child(xp_bar)
@@ -236,8 +236,8 @@ func _build_charselect() -> void:
 	var t2 := _label("Bir kahraman seç — sonsuz dalgalara karşı hayatta kal.", 18, Color("d5e1ea"))
 	t2.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vb.add_child(t2)
-	var hb: BoxContainer = VBoxContainer.new() if get_viewport_rect().size.x < 700.0 else HBoxContainer.new()
-	hb.add_theme_constant_override("separation", 10 if get_viewport_rect().size.x < 700.0 else 20)
+	var hb: BoxContainer = VBoxContainer.new() if get_viewport().get_visible_rect().size.x < 700.0 else HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 10 if get_viewport().get_visible_rect().size.x < 700.0 else 20)
 	vb.add_child(hb)
 	for id in CHAR_DEFS:
 		var cd: Dictionary = CHAR_DEFS[id]
@@ -300,14 +300,14 @@ func _rebuild_levelup_cards() -> void:
 	vb.add_theme_constant_override("separation", 14)
 	levelup_box.add_child(vb)
 	vb.add_child(_label("SEVİYE ATLADIN!", 30, Color("ffd23a")))
-	var hb: BoxContainer = VBoxContainer.new() if get_viewport_rect().size.x < 700.0 else HBoxContainer.new()
-	hb.add_theme_constant_override("separation", 10 if get_viewport_rect().size.x < 700.0 else 18)
+	var hb: BoxContainer = VBoxContainer.new() if get_viewport().get_visible_rect().size.x < 700.0 else HBoxContainer.new()
+	hb.add_theme_constant_override("separation", 10 if get_viewport().get_visible_rect().size.x < 700.0 else 18)
 	vb.add_child(hb)
 	for opt in _roll_levelup_options():
 		var card := PanelContainer.new()
 		_panel_bg(card)
 		var cv := VBoxContainer.new()
-		cv.custom_minimum_size = Vector2(minf(230.0, get_viewport_rect().size.x - 40.0), 0)
+		cv.custom_minimum_size = Vector2(minf(230.0, get_viewport().get_visible_rect().size.x - 40.0), 0)
 		card.add_child(cv)
 		cv.add_child(_label(String(opt["name"]), 17, Color("ffd23a")))
 		cv.add_child(_label(String(opt["sub"]), 13, Color("93d4a0")))
@@ -754,6 +754,8 @@ func _gain_xp(v: float) -> void:
 		lvl += 1
 		xp_next = 8.0 * pow(1.16, lvl - 1)
 		state = "levelup"
+		if is_instance_valid(move_stick):
+			move_stick.visible = false
 		_rebuild_levelup_cards()
 		levelup_box.visible = true
 

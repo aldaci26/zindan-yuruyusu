@@ -78,7 +78,7 @@ jobs:
       pages: write
       id-token: write
     environment:
-      name: github-pages
+      name: vampir-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Configure GitHub Pages

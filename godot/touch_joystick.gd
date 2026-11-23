@@ -6,7 +6,7 @@ var _touch_index := -1
 var _mouse_down := false
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(144, 144)
+	custom_minimum_size = Vector2(120, 120)
 	size = custom_minimum_size
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	z_index = 30

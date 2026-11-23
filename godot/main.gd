@@ -461,7 +461,14 @@ func _swamp_h(x: float, z: float) -> float:
 	var flat := clampf((d - 14.0) / 16.0, 0.0, 1.0)
 	flat = flat * flat * (3.0 - 2.0 * flat)
 	var edge := maxf(0.0, (d - 78.0) / 20.0)
-	return lerpf(0.5, h, flat) + edge * edge * 16.0
+	var res := lerpf(0.5, h, flat) + edge * edge * 16.0
+	# Zemin yüksekliği su düzlemine (-0.75) çok yaklaştığında ikisi neredeyse
+	# çakışıp titreşen bir görsel bozulma (z-fighting) oluşturuyordu. Bu dar
+	# bandı iterek kıyıyı net bir kademeye dönüştürüyoruz.
+	var gap := res - (-0.75)
+	if absf(gap) < 0.22:
+		res = -0.75 + (0.22 if gap >= 0.0 else -0.22)
+	return res
 
 ## Madenin işaretli mesafe alanı: eksi = boş (yürünebilir), artı = kaya
 func _mine_sd(x: float, z: float) -> float:

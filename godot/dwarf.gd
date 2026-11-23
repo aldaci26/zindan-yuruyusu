@@ -30,6 +30,10 @@ static func _add(parent: Node, mesh: Mesh, m: Material, pos: Vector3 = Vector3.Z
 	mi.position = pos
 	if not shadow:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Bu parçalar (kafa, kol, bacak vb.) kendi yerel AABB'leri küçük olduğu için
+	# Godot'un früstum culling'i uzaktan bakınca tüm yaratığı (örn. murloc,
+	# şaman) erken gizleyebiliyordu. Kenar payını artırarak bunu önlüyoruz.
+	mi.extra_cull_margin = 10.0
 	parent.add_child(mi)
 	return mi
 

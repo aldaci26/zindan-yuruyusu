@@ -1,0 +1,67 @@
+name: Vampir Web Deployment
+
+on:
+  push:
+    branches: [vampir]
+    paths:
+      - "godot/**"
+      - ".github/workflows/vampir-web.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: vampir-web-pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - name: Checkout Vampir branch
+        uses: actions/checkout@v4
+        with:
+          ref: vampir
+
+      - name: Import project resources
+        working-directory: godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --headless --editor --path . --import 2>&1 | tee /tmp/import.log
+          if grep -E "SCRIPT ERROR:|Parse Error:|Failed to load script|ERROR:" /tmp/import.log; then
+            echo "Project import reported errors."
+            exit 1
+          fi
+
+      - name: Export Web build
+        working-directory: godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/web
+          godot --headless --path . --export-release "Web" build/web/index.html
+          test -s build/web/index.html
+          test -s build/web/index.wasm
+          test -s build/web/index.pck
+          cat > build/web/.nojekyll <<'EOF'
+          EOF
+          find build/web -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: godot/build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

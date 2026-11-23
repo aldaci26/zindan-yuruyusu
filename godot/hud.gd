@@ -491,7 +491,7 @@ func _build_actionbar() -> void:
 	xp_bar.add_child(tk)
 
 func _build_mobile_controls() -> void:
-	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport_rect().size.x < 900.0
+	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport().get_visible_rect().size.x < 900.0
 	move_stick = preload("res://touch_joystick.gd").new()
 	_place(move_stick, 0.0, 1.0, 0.0, 1.0, 12, -132, 132, -12)
 	root.add_child(_reg(move_stick))
@@ -522,7 +522,7 @@ func _mobile_button(caption: String) -> Button:
 func _layout_mobile_controls() -> void:
 	if not is_instance_valid(move_stick):
 		return
-	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport_rect().size.x < 900.0
+	mobile_controls = DisplayServer.is_touchscreen_available() or get_viewport().get_visible_rect().size.x < 900.0
 	move_stick.visible = mobile_controls and hud_is_visible
 	for node in [action_holder, action_holder_2]:
 		if is_instance_valid(node):

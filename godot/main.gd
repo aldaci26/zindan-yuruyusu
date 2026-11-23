@@ -603,6 +603,9 @@ func _ready() -> void:
 	inv_changed()
 	hud.start_pressed.connect(_on_start)
 	hud.survivors_pressed.connect(_on_start_survivors)
+	hud.jump_pressed.connect(jump)
+	hud.potion_pressed.connect(use_potion)
+	hud.auto_pressed.connect(toggle_auto)
 	hud.ability_pressed.connect(ability)
 	hud.resume_pressed.connect(toggle_pause)
 	hud.quit_pressed.connect(func():
@@ -3574,6 +3577,9 @@ func _unhandled_input(ev: InputEvent) -> void:
 	elif ev is InputEventMouseMotion and rmb:
 		cam_yaw -= ev.relative.x * 0.005 * mouse_sens
 		cam_pitch = clampf(cam_pitch + ev.relative.y * 0.004 * mouse_sens, 0.05, 1.25)
+	elif ev is InputEventScreenDrag and mode == "play":
+		cam_yaw -= ev.relative.x * 0.005 * mouse_sens
+		cam_pitch = clampf(cam_pitch + ev.relative.y * 0.004 * mouse_sens, 0.05, 1.25)
 	elif ev is InputEventKey and ev.pressed and not ev.echo:
 		match _xlate(ev.keycode):
 			KEY_SPACE: jump()
@@ -5110,6 +5116,9 @@ func step(dt: float) -> void:
 			iy += 1.0
 		if kp("back") or Input.is_key_pressed(KEY_DOWN):
 			iy -= 1.0
+		var touch_move: Vector2 = hud.movement_vector()
+		ix += touch_move.x
+		iy -= touch_move.y
 		if kp("turnl"):
 			cam_yaw += dt * 1.8
 		if kp("turnr"):

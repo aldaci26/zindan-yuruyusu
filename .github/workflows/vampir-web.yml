@@ -29,6 +29,21 @@ jobs:
         with:
           ref: vampir
 
+      - name: Install Godot 4.3 Web export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          TEMPLATE_FILE="$(find / -type f -name 'web_release.zip' -print -quit 2>/dev/null || true)"
+          if [ -z "$TEMPLATE_FILE" ]; then
+            echo "Godot 4.3 web_release.zip template was not found."
+            find /root/.local/share/godot /usr/local/share/godot -maxdepth 5 -type f 2>/dev/null | head -80 || true
+            exit 1
+          fi
+          TARGET_DIR="$HOME/.local/share/godot/export_templates/4.3.stable"
+          mkdir -p "$TARGET_DIR"
+          cp -a "$(dirname "$TEMPLATE_FILE")/." "$TARGET_DIR/"
+          test -s "$TARGET_DIR/web_release.zip"
+
       - name: Import project resources
         working-directory: godot
         shell: bash
@@ -50,8 +65,7 @@ jobs:
           test -s build/web/index.html
           test -s build/web/index.wasm
           test -s build/web/index.pck
-          cat > build/web/.nojekyll <<'EOF'
-          EOF
+          touch build/web/.nojekyll
           find build/web -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
 
       - name: Configure GitHub Pages

@@ -116,6 +116,8 @@ var action_holder: Control
 var action_holder_2: Control
 var mobile_controls := false
 var hud_is_visible := false
+var chat_panel: Panel
+var bag_holder: Control
 
 # ---------- stil yardımcıları ----------
 func _box(bg: Color, border: Color = Color("6a5528"), bw: int = 2, radius: int = 4) -> StyleBoxFlat:
@@ -355,7 +357,8 @@ func _build_quest_tracker() -> void:
 	root.add_child(_reg(quest_box))
 
 func _build_chat() -> void:
-	var p := Panel.new()
+	chat_panel = Panel.new()
+	var p := chat_panel
 	p.add_theme_stylebox_override("panel", _box(Color(0.0, 0.0, 0.0, 0.45), Color(0.0, 0.0, 0.0, 0.0), 0, 0))
 	_place(p, 0.0, 1.0, 0.0, 1.0, 12, -200, 380, -34)
 	for i in 2:
@@ -504,7 +507,7 @@ func _build_mobile_controls() -> void:
 	potion_btn.pressed.connect(func(): potion_pressed.emit())
 	root.add_child(_reg(potion_btn))
 	var auto_btn := _mobile_button("OTO")
-	_place(auto_btn, 1.0, 0.0, 1.0, 0.0, -82, 190, -12, 248)
+	_place(auto_btn, 0.0, 0.0, 0.0, 0.0, 14, 174, 86, 232)
 	auto_btn.pressed.connect(func(): auto_pressed.emit())
 	root.add_child(_reg(auto_btn))
 
@@ -530,9 +533,25 @@ func _layout_mobile_controls() -> void:
 	if mobile_controls:
 		_place(action_holder, 0.5, 1.0, 0.5, 1.0, -258, -205, 258, -121)
 		_place(action_holder_2, 0.5, 1.0, 0.5, 1.0, -183, -265, 183, -207)
+		if is_instance_valid(tf):
+			tf.position = Vector2(14, 94)
+		if is_instance_valid(quest_box):
+			_place(quest_box, 1.0, 0.0, 1.0, 0.0, -270, 244, -16, 390)
+		if is_instance_valid(bag_holder):
+			_place(bag_holder, 1.0, 0.0, 1.0, 0.0, -294, 188, -14, 234)
+		if is_instance_valid(chat_panel):
+			chat_panel.visible = false
 	else:
 		_place(action_holder, 0.5, 1.0, 0.5, 1.0, -258, -96, 258, -12)
 		_place(action_holder_2, 0.5, 1.0, 0.5, 1.0, -183, -160, 183, -102)
+		if is_instance_valid(tf):
+			tf.position = Vector2(300, 14)
+		if is_instance_valid(quest_box):
+			_place(quest_box, 1.0, 0.0, 1.0, 0.0, -270, 214, -16, 340)
+		if is_instance_valid(bag_holder):
+			_place(bag_holder, 1.0, 1.0, 1.0, 1.0, -294, -60, -14, -14)
+		if is_instance_valid(chat_panel):
+			chat_panel.visible = true
 	for n in _hud_nodes:
 		if n is Button and n.text in ["ZIPLA", "İKSİR", "OTO"]:
 			n.visible = mobile_controls and hud_is_visible
@@ -543,7 +562,8 @@ func movement_vector() -> Vector2:
 	return Vector2.ZERO
 
 func _build_bag() -> void:
-	var holder := Control.new()
+	bag_holder = Control.new()
+	var holder := bag_holder
 	_place(holder, 1.0, 1.0, 1.0, 1.0, -294, -60, -14, -14)
 	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_reg(holder))

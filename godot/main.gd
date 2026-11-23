@@ -11,6 +11,7 @@ const Inv = preload("res://inv.gd")
 const MMBridge = preload("res://mmorpg/mmorpg_bridge.gd")
 const WorldDressing = preload("res://systems/world_dressing.gd")
 const Interiors = preload("res://systems/interiors.gd")
+const SurvivorsScript = preload("res://survivors.gd")
 const Combos = preload("res://systems/combos.gd")
 const SaveManager = preload("res://systems/save_manager.gd")
 const CombatRules = preload("res://systems/combat_rules.gd")
@@ -366,6 +367,7 @@ const SAVE_PATH := "user://cuce_save.json"
 var npc_mem: Dictionary = {}
 var dlg_extra := ""
 var cam: Camera3D
+var survivors_run = null
 var sun: DirectionalLight3D
 var player: Node3D
 var rig: Dictionary
@@ -600,6 +602,7 @@ func _ready() -> void:
 	hud.tal_pressed.connect(func(): toggle_win("tal"))
 	inv_changed()
 	hud.start_pressed.connect(_on_start)
+	hud.survivors_pressed.connect(_on_start_survivors)
 	hud.ability_pressed.connect(ability)
 	hud.resume_pressed.connect(toggle_pause)
 	hud.quit_pressed.connect(func():
@@ -3103,6 +3106,27 @@ func _on_start(cont: bool) -> void:
 	hud.banner("KAR DAĞI KÖYÜ", "Kamp ateşi")
 	hud.say("Kurtlar ve domuzlar vadide dolaşıyor. İyi avlar!", Color("f2c75c"))
 
+## ---------- Mermi Cehennemi (bağımsız mod) ----------
+
+func _on_start_survivors() -> void:
+	mode = "survivors"
+	cam.current = false
+	hud.set_process(false)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	survivors_run = SurvivorsScript.new()
+	survivors_run.position = Vector3(0.0, 4000.0, 0.0)
+	survivors_run.on_exit = _end_survivors
+	add_child(survivors_run)
+
+func _end_survivors() -> void:
+	if survivors_run != null:
+		survivors_run.queue_free()
+		survivors_run = null
+	mode = "title"
+	cam.current = true
+	hud.set_process(true)
+	hud.title_box.visible = true
+
 func toggle_win(name: String) -> void:
 	if mode != "play":
 		return
@@ -3531,6 +3555,8 @@ func _notification(what: int) -> void:
 		get_tree().quit()
 
 func _unhandled_input(ev: InputEvent) -> void:
+	if mode == "survivors":
+		return
 	if paused:
 		if ev is InputEventKey and ev.pressed and not ev.echo and ev.keycode == KEY_ESCAPE:
 			toggle_pause()
@@ -5033,6 +5059,8 @@ func render_dialog() -> void:
 
 # ---------- güncelleme ----------
 func _process(delta: float) -> void:
+	if mode == "survivors":
+		return
 	if paused:
 		return
 	step(minf(delta, 0.05))

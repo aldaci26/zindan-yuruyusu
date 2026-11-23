@@ -5,6 +5,7 @@ const Parts = preload("res://ui_parts.gd")
 const Glyph = preload("res://glyph.gd")
 
 signal start_pressed(continue_game: bool)
+signal survivors_pressed()
 signal resume_pressed
 signal quit_pressed
 signal volume_changed(v: float)
@@ -794,6 +795,11 @@ func _build_title() -> void:
 		start_game_without_click()
 		start_pressed.emit(false))
 	v.add_child(nb)
+	var sv := _menu_button("MERMİ CEHENNEMİ", 24)
+	sv.pressed.connect(func():
+		title_box.visible = false
+		survivors_pressed.emit())
+	v.add_child(sv)
 	var h := _label("WASD yürü · Boşluk zıpla · Sağ tık basılı tut: kamera · Sol tık: hedef · H: yardım", 14, Color("93a1ad"))
 	h.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	v.add_child(h)

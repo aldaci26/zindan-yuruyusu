@@ -118,6 +118,7 @@ var mobile_controls := false
 var hud_is_visible := false
 var chat_panel: Panel
 var bag_holder: Control
+var player_frame: Control
 
 # ---------- stil yardımcıları ----------
 func _box(bg: Color, border: Color = Color("6a5528"), bw: int = 2, radius: int = 4) -> StyleBoxFlat:
@@ -235,7 +236,8 @@ func _reg(n: Control) -> Control:
 	return n
 
 func _build_player_frame() -> void:
-	var f := Control.new()
+	player_frame = Control.new()
+	var f := player_frame
 	f.position = Vector2(14, 14)
 	f.size = Vector2(270, 72)
 	f.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -531,6 +533,19 @@ func _layout_mobile_controls() -> void:
 		if is_instance_valid(node):
 			node.scale = Vector2.ONE * (0.66 if mobile_controls else 1.0)
 	if mobile_controls:
+		if is_instance_valid(player_frame):
+			player_frame.scale = Vector2.ONE * 0.82
+		if is_instance_valid(tf):
+			tf.scale = Vector2.ONE * 0.82
+		if is_instance_valid(minimap):
+			_place(minimap, 1.0, 0.0, 1.0, 0.0, -136, 34, -16, 154)
+		if is_instance_valid(zone_lbl):
+			_place(zone_lbl, 1.0, 0.0, 1.0, 0.0, -136, 8, -16, 30)
+			zone_lbl.add_theme_font_size_override("font_size", 10)
+		if is_instance_valid(coord_lbl):
+			_place(coord_lbl, 1.0, 0.0, 1.0, 0.0, -136, 156, -16, 172)
+		if is_instance_valid(buff_box):
+			buff_box.visible = false
 		_place(action_holder, 0.5, 1.0, 0.5, 1.0, -258, -205, 258, -121)
 		_place(action_holder_2, 0.5, 1.0, 0.5, 1.0, -183, -265, 183, -207)
 		if is_instance_valid(tf):
@@ -542,6 +557,19 @@ func _layout_mobile_controls() -> void:
 		if is_instance_valid(chat_panel):
 			chat_panel.visible = false
 	else:
+		if is_instance_valid(player_frame):
+			player_frame.scale = Vector2.ONE
+		if is_instance_valid(tf):
+			tf.scale = Vector2.ONE
+		if is_instance_valid(minimap):
+			_place(minimap, 1.0, 0.0, 1.0, 0.0, -176, 34, -26, 184)
+		if is_instance_valid(zone_lbl):
+			_place(zone_lbl, 1.0, 0.0, 1.0, 0.0, -176, 8, -16, 30)
+			zone_lbl.add_theme_font_size_override("font_size", 13)
+		if is_instance_valid(coord_lbl):
+			_place(coord_lbl, 1.0, 0.0, 1.0, 0.0, -176, 186, -26, 202)
+		if is_instance_valid(buff_box):
+			buff_box.visible = true
 		_place(action_holder, 0.5, 1.0, 0.5, 1.0, -258, -96, 258, -12)
 		_place(action_holder_2, 0.5, 1.0, 0.5, 1.0, -183, -160, 183, -102)
 		if is_instance_valid(tf):

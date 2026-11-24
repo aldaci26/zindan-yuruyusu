@@ -1947,9 +1947,12 @@ func _nearest_house_idx(x: float, z: float) -> int:
 func _update_amb_npcs(delta: float) -> void:
 	if mode != "play" or (map != "snow" and map != "swamp" and map != "ash"):
 		return
-	# Kül Diyarı'nda gece-gündüz döngüsü çalışmıyor (lav ışığıyla aydınlanıyor);
-	# oradaki köylüler hep gündüz davranışıyla dolaşsın, donmuş "gece" durumuna takılmasınlar.
-	var night: bool = day_k < 0.4 and map != "ash"
+	# Kül Diyarı'nda gece-gündüz döngüsü çalışmıyor (lav ışığıyla aydınlanıyor), ve ne
+	# Bataklık Karakolu'nda ne de Kül Nöbetçileri Kampı'nda gerçek bir ev/kapı var
+	# (house_doors yalnızca Kar Dağı Köyü'nde kayıtlı); o yüzden bu iki kampta "eve
+	# dönüp saklan" mantığı çalıştırılmaz, köylüler hep gündüz davranışıyla dolaşır
+	# ki gece çöktüğünde oldukları yerde donup kalmasınlar.
+	var night: bool = day_k < 0.4 and map == "snow"
 	for n in npcs:
 		if n["role"] != "amb":
 			continue

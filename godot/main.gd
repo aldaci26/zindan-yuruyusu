@@ -3119,6 +3119,7 @@ func _on_start_survivors() -> void:
 	survivors_run = SurvivorsScript.new()
 	survivors_run.position = Vector3(0.0, 4000.0, 0.0)
 	survivors_run.on_exit = _end_survivors
+	survivors_run.shared_world_env = we_node
 	add_child(survivors_run)
 
 func _end_survivors() -> void:
@@ -3127,6 +3128,10 @@ func _end_survivors() -> void:
 		survivors_run = null
 	mode = "title"
 	cam.current = true
+	# Mermi Cehennemi kendi ortamını aynı WorldEnvironment düğümüne yazmıştı;
+	# kampanyaya dönerken orijinal gökyüzü/ortam ayarlarını geri yükle.
+	if we_node != null and env_res != null:
+		we_node.environment = env_res
 	hud.set_process(true)
 	hud.title_box.visible = true
 

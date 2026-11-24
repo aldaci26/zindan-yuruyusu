@@ -9,6 +9,7 @@ const Dwarf = preload("res://dwarf.gd")
 const TouchJoystick = preload("res://touch_joystick.gd")
 
 var on_exit: Callable = Callable()
+var shared_world_env: WorldEnvironment = null  ## main.gd'nin WorldEnvironment'ı; varsa onu yeniden kullanırız.
 
 const ARENA_R := 46.0
 
@@ -100,15 +101,22 @@ func _build_arena() -> void:
 	sun.light_energy = 1.15
 	sun.shadow_enabled = true
 	add_child(sun)
-	var amb := WorldEnvironment.new()
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color.html("1a2420")
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color.html("3a4a40")
 	env.ambient_light_energy = 0.9
-	amb.environment = env
-	add_child(amb)
+	# İkinci bir WorldEnvironment eklemek yerine (aynı anda iki tane varsa hangisinin
+	# geçerli olacağı belirsizleşiyor ve kampanyanın parlak gökyüzü/ton eşlemesi bu
+	# arenayı eziyordu — ekranda yalnızca boş bir gökyüzü gradyanı görünüyordu),
+	# main.gd'nin tek WorldEnvironment düğümünü burada yeniden kullanıyoruz.
+	if shared_world_env != null:
+		shared_world_env.environment = env
+	else:
+		var amb := WorldEnvironment.new()
+		amb.environment = env
+		add_child(amb)
 
 func _build_camera() -> void:
 	cam = Camera3D.new()

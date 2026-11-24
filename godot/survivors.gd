@@ -8,6 +8,11 @@ extends Node3D
 const Dwarf = preload("res://dwarf.gd")
 
 var on_exit: Callable = Callable()
+var sfx = null  # main.gd'deki mevcut sfx düğümüne referans (burada yeniden oluşturulmaz)
+
+func _play_sfx(name: String, vol: float = 0.0, pitch: float = 1.0) -> void:
+	if sfx != null:
+		sfx.play(name, vol, pitch)
 
 const ARENA_R := 46.0
 
@@ -238,6 +243,7 @@ func _build_charselect() -> void:
 	vb.add_child(back)
 
 func _choose_char(id: String) -> void:
+	_play_sfx("click")
 	char_id = id
 	var cd: Dictionary = CHAR_DEFS[id]
 	P = {"x": 0.0, "z": 0.0, "yaw": 0.0, "hp": float(cd["hp"]), "maxhp": float(cd["hp"]), "spd": float(cd["spd"]), "dmg": float(cd["dmg"]),
@@ -311,6 +317,7 @@ func _roll_levelup_options() -> Array:
 	return pool.slice(0, mini(3, pool.size()))
 
 func _pick_levelup(opt: Dictionary) -> void:
+	_play_sfx("click")
 	if opt["kind"] == "w":
 		weapons[opt["id"]] = int(weapons.get(opt["id"], 0)) + 1
 	else:
@@ -408,6 +415,7 @@ func _restart_run() -> void:
 	_choose_char(char_id)
 
 func _exit_run() -> void:
+	_play_sfx("click")
 	if on_exit.is_valid():
 		on_exit.call()
 
@@ -523,6 +531,7 @@ func _update_enemies(dt: float) -> void:
 			e["node"].queue_free()
 			_spawn_gem(gx, gz, 2.0 + randf() * 2.0)
 			kills += 1
+			_play_sfx("die", -6.0, randf_range(0.9, 1.1))
 			enemies.remove_at(i)
 			i -= 1
 			continue
@@ -552,7 +561,10 @@ func _damage_player(v: float) -> void:
 	P["hp"] -= maxf(1.0, v - float(P.get("armor", 0.0)))
 	if P["hp"] <= 0.0 and state == "play":
 		P["hp"] = 0.0
+		_play_sfx("die", -4.0, 0.8)
 		_show_gameover()
+	else:
+		_play_sfx("hurt", -8.0, randf_range(0.95, 1.1))
 
 ## ---------- Silahlar ----------
 
@@ -613,6 +625,7 @@ func _fire_bolt(lv: int) -> void:
 	var node := Dwarf.sph(self, 0.18, Dwarf.mat(Color.html("8a3aff"), 0.0, 0.3, Color.html("9a50ff"), 2.4), Vector3(P["x"], 1.0, P["z"]))
 	bolts.append({"node": node, "x": P["x"], "z": P["z"], "vx": dx / d * 11.0, "vz": dz / d * 11.0,
 		"dmg": 9.0 * float(P["dmg_mult"]) * (1.0 + 0.3 * lv), "pierce": 1 + lv / 2, "life": 2.2})
+	_play_sfx("swing", -8.0, 1.2)
 
 func _update_bolts(dt: float) -> void:
 	var i := bolts.size() - 1
@@ -647,8 +660,10 @@ func _fire_nova(lv: int) -> void:
 			_hit_enemy(e, dmg)
 	var ring := Dwarf.cyl(self, r, r, 0.08, Dwarf.mat(Color.html("ff8a3a"), 0.0, 0.4, Color.html("ff6a1a"), 2.0), Vector3(P["x"], 0.08, P["z"]))
 	fx_list.append({"node": ring, "life": 0.3, "max_life": 0.3, "kind": "nova"})
+	_play_sfx("thunder", -10.0, 1.3)
 
 func _fire_rain(lv: int) -> void:
+	_play_sfx("charge", -10.0, 1.1)
 	var n: int = mini(3 + lv, enemies.size())
 	var pool := enemies.duplicate()
 	pool.sort_custom(func(a, b): return Vector2(a["x"] - P["x"], a["z"] - P["z"]).length() < Vector2(b["x"] - P["x"], b["z"] - P["z"]).length())
@@ -706,6 +721,7 @@ func _update_gems(dt: float) -> void:
 				g["node"].position = Vector3(g["x"], 0.5, g["z"])
 			if d < 0.45:
 				_gain_xp(g["val"])
+				_play_sfx("coin", -10.0, randf_range(1.1, 1.3))
 				if is_instance_valid(g["node"]):
 					g["node"].queue_free()
 				gems.remove_at(i)
@@ -723,6 +739,7 @@ func _gain_xp(v: float) -> void:
 		state = "levelup"
 		_rebuild_levelup_cards()
 		levelup_box.visible = true
+		_play_sfx("level")
 
 func _update_top_ui() -> void:
 	hp_bar.max_value = P["maxhp"]

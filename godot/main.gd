@@ -3120,12 +3120,14 @@ func _on_start(cont: bool) -> void:
 
 func _on_start_survivors() -> void:
 	mode = "survivors"
+	sfx.play("click")
 	cam.current = false
 	hud.set_process(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	survivors_run = SurvivorsScript.new()
 	survivors_run.position = Vector3(0.0, 4000.0, 0.0)
 	survivors_run.on_exit = _end_survivors
+	survivors_run.sfx = sfx
 	add_child(survivors_run)
 
 func _end_survivors() -> void:

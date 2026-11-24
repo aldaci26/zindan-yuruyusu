@@ -142,6 +142,10 @@ const ASH_NPCS := [
 		"o": {"beard": Color("b8501a"), "cloth": Color("3a2a22"), "metal": Color("8a6a4a"), "helm": false, "prop": "spear"}},
 	{"id": "rolf", "name": "Tüccar Rolf", "title": "Tüccar", "role": "vendor", "x": 0.0, "z": -7.0, "face": 0.0,
 		"o": {"beard": Color("d8a04a"), "cloth": Color("6a3a22"), "metal": Color("b09060"), "helm": false, "prop": "none"}},
+	{"id": "amb_korga", "name": "Nöbetçi Korga", "title": "Kül Nöbetçileri Kampı", "role": "amb", "x": 3.0, "z": -2.0, "face": 0.4, "wr": 4.0,
+		"o": {"beard": Color("5a3a22"), "cloth": Color("4a2a1a"), "metal": Color("7a6a4a"), "helm": false, "prop": "none"}},
+	{"id": "amb_senna", "name": "Köylü Senna", "title": "Kül Nöbetçileri Kampı", "role": "amb", "x": -3.0, "z": -4.0, "face": -1.0, "wr": 4.5,
+		"o": {"beard": Color("8a5a3a"), "cloth": Color("6a3a2a"), "metal": Color("8a7a60"), "helm": false, "prop": "none"}},
 ]
 
 const SWAMP_NPCS := [
@@ -151,6 +155,10 @@ const SWAMP_NPCS := [
 		"o": {"beard": Color("c46a2a"), "cloth": Color("5a3a22"), "metal": Color("8a7a5a"), "helm": false, "prop": "axe"}},
 	{"id": "fenn", "name": "Tüccar Fenn", "title": "Tüccar", "role": "vendor", "x": 0.0, "z": -7.0, "face": 0.0,
 		"o": {"beard": Color("dbb46a"), "cloth": Color("2f6a6a"), "metal": Color("b09060"), "helm": false, "prop": "none"}},
+	{"id": "amb_pell", "name": "Köylü Pell", "title": "Bataklık Karakolu", "role": "amb", "x": 3.0, "z": -3.0, "face": 0.5, "wr": 4.0,
+		"o": {"beard": Color("6a5a3a"), "cloth": Color("3a4a3a"), "metal": Color("7a8070"), "helm": false, "prop": "none"}},
+	{"id": "amb_orna", "name": "Köylü Orna", "title": "Bataklık Karakolu", "role": "amb", "x": -3.0, "z": 2.0, "face": -0.8, "wr": 4.5,
+		"o": {"beard": Color("9a7a4a"), "cloth": Color("4a5a2a"), "metal": Color("8a7a5a"), "helm": false, "prop": "none"}},
 ]
 
 const QUESTS := {
@@ -1937,9 +1945,11 @@ func _nearest_house_idx(x: float, z: float) -> int:
 ## Köylülerin günlük rutini: gündüz posta yakın serbest dolaşır, gece olunca
 ## en yakın eve yürüyüp içeri girer (görünmez olur), gün doğunca geri çıkar.
 func _update_amb_npcs(delta: float) -> void:
-	if mode != "play" or map != "snow":
+	if mode != "play" or (map != "snow" and map != "swamp" and map != "ash"):
 		return
-	var night: bool = day_k < 0.4
+	# Kül Diyarı'nda gece-gündüz döngüsü çalışmıyor (lav ışığıyla aydınlanıyor);
+	# oradaki köylüler hep gündüz davranışıyla dolaşsın, donmuş "gece" durumuna takılmasınlar.
+	var night: bool = day_k < 0.4 and map != "ash"
 	for n in npcs:
 		if n["role"] != "amb":
 			continue

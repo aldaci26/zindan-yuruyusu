@@ -730,16 +730,31 @@ func _update_gems(dt: float) -> void:
 		gems[i] = g
 		i -= 1
 
+## Tüm silahlar ve pasifler azami seviyedeyse kart havuzu boş kalır; o durumda
+## seviye atlama ekranını boş/tıkayıcı açmak yerine küçük bir can bonusu veririz.
+func _has_levelup_options() -> bool:
+	for wid in WEAPON_DEFS:
+		if int(weapons.get(wid, 0)) < WEAPON_MAX:
+			return true
+	for pid in PASSIVE_DEFS:
+		if int(passives.get(pid, 0)) < PASSIVE_MAX:
+			return true
+	return false
+
 func _gain_xp(v: float) -> void:
 	xp += v * float(P["xp_mult"])
 	while xp >= xp_next:
 		xp -= xp_next
 		lvl += 1
 		xp_next = 8.0 * pow(1.16, lvl - 1)
-		state = "levelup"
-		_rebuild_levelup_cards()
-		levelup_box.visible = true
 		_play_sfx("level")
+		if _has_levelup_options():
+			state = "levelup"
+			_rebuild_levelup_cards()
+			levelup_box.visible = true
+		else:
+			P["maxhp"] = float(P["maxhp"]) + 4.0
+			P["hp"] = minf(float(P["maxhp"]), float(P["hp"]) + 4.0)
 
 func _update_top_ui() -> void:
 	hp_bar.max_value = P["maxhp"]

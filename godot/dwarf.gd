@@ -3,8 +3,19 @@ extends RefCounted
 
 const TexScript = preload("res://tex.gd")
 static var _grain: ImageTexture
+# mat() eskiden her çağrıda yeni bir StandardMaterial3D üretiyordu; dünyada
+# yüzlerce yaratık/NPC olduğunda bu, Web (GLES Compatibility) derleyicisinin
+# kaldırabileceğinden çok daha fazla benzersiz materyal/shader varyantı
+# oluşturuyor ve bir noktadan sonra render pipeline'ı tamamen bozuluyordu
+# (bkz. "oyun grafikleri gözükmüyor" hatası). Aynı parametrelerle çağrılan
+# mat() artık aynı materyali paylaşıyor.
+static var _mat_cache: Dictionary = {}
 
 static func mat(c: Color, metal: float = 0.05, rough: float = 0.8, emit_c: Color = Color.BLACK, emit_e: float = 0.0) -> StandardMaterial3D:
+	var key := "%s|%f|%f|%s|%f" % [c.to_html(true), metal, rough, emit_c.to_html(true), emit_e]
+	var cached = _mat_cache.get(key)
+	if cached != null:
+		return cached
 	var m := StandardMaterial3D.new()
 	m.albedo_color = c
 	if emit_e <= 0.0:
@@ -21,6 +32,7 @@ static func mat(c: Color, metal: float = 0.05, rough: float = 0.8, emit_c: Color
 		m.emission_enabled = true
 		m.emission = emit_c
 		m.emission_energy_multiplier = emit_e
+	_mat_cache[key] = m
 	return m
 
 static func _add(parent: Node, mesh: Mesh, m: Material, pos: Vector3 = Vector3.ZERO, shadow: bool = true) -> MeshInstance3D:
@@ -37,39 +49,65 @@ static func _add(parent: Node, mesh: Mesh, m: Material, pos: Vector3 = Vector3.Z
 	parent.add_child(mi)
 	return mi
 
+# box/sph/cyl/torus eskiden her çağrıda yepyeni bir Mesh kaynağı (BoxMesh,
+# SphereMesh, ...) üretiyordu. Her cüce/yaratık onlarca parçadan oluştuğu
+# için dünyada yüzlerce tane olduğunda bu, Web (GLES Compatibility)
+# derleyicisinin kaldırabileceğinden çok daha fazla benzersiz GPU
+# arabelleği (her Mesh kaynağı kendi vertex/index buffer'ını alır) demek
+# oluyor ve bir noktadan sonra render pipeline'ı tamamen bozuluyordu (bkz.
+# "oyun grafikleri gözükmüyor" hatası). Aynı boyutlarla çağrılan şekiller
+# artık aynı Mesh kaynağını paylaşıyor (mat() ile aynı yöntem).
+static var _mesh_cache: Dictionary = {}
+
 static func box(parent: Node, size: Vector3, m: Material, pos: Vector3 = Vector3.ZERO) -> MeshInstance3D:
-	var b := BoxMesh.new()
-	b.size = size
+	var key := "box|%s" % [size]
+	var b = _mesh_cache.get(key)
+	if b == null:
+		b = BoxMesh.new()
+		b.size = size
+		_mesh_cache[key] = b
 	return _add(parent, b, m, pos)
 
 static func sph(parent: Node, r: float, m: Material, pos: Vector3 = Vector3.ZERO, sc: Vector3 = Vector3.ONE) -> MeshInstance3D:
-	var s := SphereMesh.new()
-	s.radius = r
-	s.height = r * 2.0
-	s.radial_segments = 14
-	s.rings = 8
+	var key := "sph|%f" % [r]
+	var s = _mesh_cache.get(key)
+	if s == null:
+		s = SphereMesh.new()
+		s.radius = r
+		s.height = r * 2.0
+		s.radial_segments = 14
+		s.rings = 8
+		_mesh_cache[key] = s
 	var n := _add(parent, s, m, pos)
 	n.scale = sc
 	return n
 
 static func cyl(parent: Node, rt: float, rb: float, h: float, m: Material, pos: Vector3 = Vector3.ZERO, seg: int = 12) -> MeshInstance3D:
-	var c := CylinderMesh.new()
-	c.top_radius = rt
-	c.bottom_radius = rb
-	c.height = h
-	c.radial_segments = seg
-	c.rings = 1
+	var key := "cyl|%f|%f|%f|%d" % [rt, rb, h, seg]
+	var c = _mesh_cache.get(key)
+	if c == null:
+		c = CylinderMesh.new()
+		c.top_radius = rt
+		c.bottom_radius = rb
+		c.height = h
+		c.radial_segments = seg
+		c.rings = 1
+		_mesh_cache[key] = c
 	return _add(parent, c, m, pos)
 
 static func cone(parent: Node, r: float, h: float, m: Material, pos: Vector3 = Vector3.ZERO, seg: int = 8) -> MeshInstance3D:
 	return cyl(parent, 0.0, r, h, m, pos, seg)
 
 static func torus(parent: Node, ring_r: float, tube: float, m: Material, pos: Vector3 = Vector3.ZERO) -> MeshInstance3D:
-	var t := TorusMesh.new()
-	t.inner_radius = ring_r - tube
-	t.outer_radius = ring_r + tube
-	t.rings = 20
-	t.ring_segments = 8
+	var key := "torus|%f|%f" % [ring_r, tube]
+	var t = _mesh_cache.get(key)
+	if t == null:
+		t = TorusMesh.new()
+		t.inner_radius = ring_r - tube
+		t.outer_radius = ring_r + tube
+		t.rings = 20
+		t.ring_segments = 8
+		_mesh_cache[key] = t
 	return _add(parent, t, m, pos)
 
 static func pivot(parent: Node, pos: Vector3) -> Node3D:
@@ -77,6 +115,177 @@ static func pivot(parent: Node, pos: Vector3) -> Node3D:
 	p.position = pos
 	parent.add_child(p)
 	return p
+
+# box/sph/cyl/torus için benzersiz Mesh önbelleği tek başına yetmedi:
+# Web (GLES Compatibility) render yolunun, sahnedeki toplam MeshInstance3D /
+# çizim komutu SAYISI için sabit (~1000 civarı) bir üst sınırı var gibi
+# görünüyor; bu sınır aşılınca TÜM 3D render sessizce bozuluyor (konsol
+# hatası yok). Her yaratık düzinelerce ayrı MeshInstance3D'den kurulduğu
+# için (kafa, gövde, omuz, kol/bacak parçaları...) dünyada birden fazla
+# yaratık/NPC olduğunda bu sınır çabucak aşılıyordu.
+# _collapse(), bir yaratık tamamen kurulduktan SONRA (tüm pozisyon/rotasyon/
+# ölçek ayarları bitince) çağrılır: aynı ebeveyne bağlı, aynı materyale ve
+# gölge ayarına sahip kardeş MeshInstance3D'leri TEK bir birleşik mesh'te
+# toplar. Animasyon pivotları (bacak/kol/kafa/silah) birer Node3D olduğu
+# için dokunulmaz; sadece onların altındaki düz mesh parçaları birleşir.
+# Tek materyal grubu bazlı birleştirme (~1000'lik sınıra karşı) yetersiz
+# kaldı: bir cücede bile 6-7 farklı renk (ten, çelik, mavi, altın, deri,
+# sakal, koyu) kullanıldığından, aynı ebeveyn altında birleştirme sonrası
+# yine de parça başına ~6-7 MeshInstance3D kalıyordu ve onlarca yaratıkla
+# toplam yine sınırı aşıyordu. Bu yüzden _collapse() artık FARKLI
+# materyallere sahip kardeşleri de TEK bir mesh'te birleştiriyor: her
+# vertex'e kendi orijinal materyalinin düz rengini (vertex color) basıp,
+# paylaşılan tek bir "vertex_color_use_as_albedo" materyali kullanıyor.
+# Emisyonlu parçalar (parlayan gözler vb.) rengi kaybetmemek için ayrı
+# tutuluyor ve eski (materyale göre) birleştirme yöntemiyle işleniyor.
+static var _vc_mat_cache: Dictionary = {}
+
+static func _vc_shared_material(rough: float, metal: float, use_grain: bool) -> StandardMaterial3D:
+	var key := "vc|%f|%f|%s" % [rough, metal, use_grain]
+	var cached = _vc_mat_cache.get(key)
+	if cached != null:
+		return cached
+	var m := StandardMaterial3D.new()
+	m.vertex_color_use_as_albedo = true
+	m.metallic = metal
+	m.roughness = rough
+	if use_grain:
+		if _grain == null:
+			_grain = TexScript.grain()
+		m.albedo_texture = _grain
+		m.uv1_triplanar = true
+		m.uv1_scale = Vector3(1.4, 1.4, 1.4)
+		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	_vc_mat_cache[key] = m
+	return m
+
+static func _collapse(root: Node3D) -> void:
+	_collapse_node(root)
+
+static func _is_emissive(mi: MeshInstance3D) -> bool:
+	return mi.material_override != null and mi.material_override is StandardMaterial3D and mi.material_override.emission_enabled
+
+static func _collapse_node(n: Node) -> void:
+	for c in n.get_children():
+		if c is Node3D and not (c is MeshInstance3D):
+			_collapse_node(c)
+	var mat_groups: Dictionary = {}
+	var mat_order: Array = []
+	var vc_items: Array = []
+	for c in n.get_children():
+		if c is MeshInstance3D:
+			var mi: MeshInstance3D = c
+			if mi.mesh == null or not mi.visible:
+				continue
+			# İskeletli (skinned/animasyonlu) mesh'lere dokunma: birleştirme
+			# kemik ağırlıklarını kaybeder ve animasyonu bozar. (Not:
+			# MeshInstance3D.skeleton varsayılan olarak ".." döner, bu yüzden
+			# gerçek gösterge atanmış bir Skin kaynağıdır.)
+			if mi.skin != null:
+				continue
+			# Oyun kodu bu düğümü doğrudan tutup kare başına değiştiriyorsa
+			# (örn. alev titreşimi), birleştirmeye dahil etme.
+			if mi.has_meta("no_collapse"):
+				continue
+			if _is_emissive(mi):
+				var mat_id := mi.material_override.get_instance_id() if mi.material_override else 0
+				var key := "%d|%d|%d" % [mat_id, mi.cast_shadow, mi.layers]
+				if not mat_groups.has(key):
+					mat_groups[key] = []
+					mat_order.append(key)
+				mat_groups[key].append(mi)
+			else:
+				vc_items.append(mi)
+	# Emisyonlu parçalar: eski, materyal-korumalı birleştirme.
+	for key in mat_order:
+		var items: Array = mat_groups[key]
+		if items.size() < 2:
+			continue
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for mi in items:
+			var mesh: Mesh = mi.mesh
+			for si in mesh.get_surface_count():
+				st.append_from(mesh, si, mi.transform)
+		var merged: ArrayMesh = st.commit()
+		var ref_mi: MeshInstance3D = items[0]
+		var new_mi := MeshInstance3D.new()
+		new_mi.mesh = merged
+		new_mi.material_override = ref_mi.material_override
+		new_mi.cast_shadow = ref_mi.cast_shadow
+		new_mi.layers = ref_mi.layers
+		new_mi.extra_cull_margin = ref_mi.extra_cull_margin
+		n.add_child(new_mi)
+		for mi in items:
+			n.remove_child(mi)
+			mi.queue_free()
+	# Emisyonsuz parçalar: cast_shadow/layers/doku-var-mı'ya göre grupla,
+	# farklı materyaller olsa bile tek mesh'te birleştir (vertex color).
+	var vc_groups: Dictionary = {}
+	var vc_order: Array = []
+	for mi in vc_items:
+		var mat: Material = mi.material_override
+		var has_tex := mat != null and mat is StandardMaterial3D and mat.albedo_texture != null
+		var key := "%d|%d|%s" % [mi.cast_shadow, mi.layers, has_tex]
+		if not vc_groups.has(key):
+			vc_groups[key] = []
+			vc_order.append(key)
+		vc_groups[key].append(mi)
+	for key in vc_order:
+		var items: Array = vc_groups[key]
+		if items.size() < 2:
+			# Tek parça: birleştirmeye gerek yok, olduğu gibi bırak.
+			continue
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		var avg_rough := 0.0
+		var avg_metal := 0.0
+		var has_tex := false
+		for mi in items:
+			var mesh: Mesh = mi.mesh
+			var mat: Material = mi.material_override
+			var col := Color.WHITE
+			var rough := 0.8
+			var metal := 0.05
+			if mat != null and mat is StandardMaterial3D:
+				col = mat.albedo_color
+				rough = mat.roughness
+				metal = mat.metallic
+				if mat.albedo_texture != null:
+					has_tex = true
+			avg_rough += rough
+			avg_metal += metal
+			var xform: Transform3D = mi.transform
+			var nbasis := xform.basis.inverse().transposed()
+			for si in mesh.get_surface_count():
+				var arrays := mesh.surface_get_arrays(si)
+				var verts: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+				var norms = arrays[Mesh.ARRAY_NORMAL]
+				var uvs = arrays[Mesh.ARRAY_TEX_UV]
+				var idx: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+				st.set_color(col)
+				for ii in idx.size():
+					var vi: int = idx[ii]
+					if norms != null:
+						st.set_normal((nbasis * norms[vi]).normalized())
+					if uvs != null:
+						st.set_uv(uvs[vi])
+					st.set_color(col)
+					st.add_vertex(xform * verts[vi])
+		var merged: ArrayMesh = st.commit()
+		var ref_mi: MeshInstance3D = items[0]
+		var new_mi := MeshInstance3D.new()
+		new_mi.mesh = merged
+		var rr := roundf((avg_rough / items.size()) * 5.0) / 5.0
+		var rm := roundf((avg_metal / items.size()) * 5.0) / 5.0
+		new_mi.material_override = _vc_shared_material(rr, rm, has_tex)
+		new_mi.cast_shadow = ref_mi.cast_shadow
+		new_mi.layers = ref_mi.layers
+		new_mi.extra_cull_margin = ref_mi.extra_cull_margin
+		n.add_child(new_mi)
+		for mi in items:
+			n.remove_child(mi)
+			mi.queue_free()
 
 ## Cüce savaşçı. o: skin, metal, cloth, beard (Color), helm (bool), prop ("axe", "hammer", "spear", "none")
 static func make_dwarf(o: Dictionary = {}) -> Node3D:
@@ -216,6 +425,7 @@ static func make_dwarf(o: Dictionary = {}) -> Node3D:
 		"feet": pivot(g, Vector3(0, 0.18, 0)),
 	}
 	g.set_meta("gear_sockets", gear_sockets)
+	_collapse(g)
 	return g
 
 static func _legs(g: Node3D, defs: Array, leg_size: Vector3, m: Material) -> Array:
@@ -242,6 +452,7 @@ static func make_wolf() -> Node3D:
 	var tail := cone(g, 0.14, 0.7, dk, Vector3(0, 0.85, -0.85), 5)
 	tail.rotation.x = -2.2
 	g.set_meta("legs", _legs(g, [[-0.2, 0.45, 0.5], [0.2, 0.45, 0.5], [-0.2, -0.45, 0.5], [0.2, -0.45, 0.5]], Vector3(0.15, 0.5, 0.17), dk))
+	_collapse(g)
 	return g
 
 static func make_boar() -> Node3D:
@@ -259,6 +470,7 @@ static func make_boar() -> Node3D:
 		t.rotation.z = s * 0.3
 		cone(g, 0.1, 0.22, dk, Vector3(s * 0.2, 1.12, 0.85), 4)
 	g.set_meta("legs", _legs(g, [[-0.28, 0.5, 0.45], [0.28, 0.5, 0.45], [-0.28, -0.5, 0.45], [0.28, -0.5, 0.45]], Vector3(0.2, 0.45, 0.2), dk))
+	_collapse(g)
 	return g
 
 static func make_bear(o: Dictionary = {}) -> Node3D:
@@ -274,6 +486,7 @@ static func make_bear(o: Dictionary = {}) -> Node3D:
 	for s in [-1.0, 1.0]:
 		sph(g, 0.15, dk, Vector3(s * 0.3, 1.72, 1.0))
 	g.set_meta("legs", _legs(g, [[-0.4, 0.6, 0.65], [0.4, 0.6, 0.65], [-0.4, -0.6, 0.65], [0.4, -0.6, 0.65]], Vector3(0.3, 0.65, 0.32), dk))
+	_collapse(g)
 	return g
 
 # ---------- boss ve yeni düşman modelleri ----------
@@ -320,6 +533,7 @@ static func make_trogg(ice: bool = false) -> Node3D:
 	for k in 3:
 		cone(arm, 0.04, 0.2, bone, Vector3(0.12 - k * 0.12, -0.6, 1.12), 4).rotation.x = 1.2
 	g.set_meta("legs", _biped_legs(g, 0.25, 0.8, Vector3(0.3, 0.8, 0.34), dk))
+	_collapse(g)
 	return g
 
 static func make_ogre() -> Node3D:
@@ -349,6 +563,7 @@ static func make_ogre() -> Node3D:
 	cyl(arm, 0.1, 0.18, 1.8, wood, Vector3(0, -0.2, 0.7), 6).rotation.x = 1.1
 	box(arm, Vector3(0.5, 0.5, 0.5), iron, Vector3(0, -0.8, 1.45))
 	g.set_meta("legs", _biped_legs(g, 0.42, 1.0, Vector3(0.5, 1.0, 0.5), dk))
+	_collapse(g)
 	return g
 
 ## Gnoll: kamburlu, tüylü. big: Hogger
@@ -378,6 +593,7 @@ static func make_gnoll(big: bool = false) -> Node3D:
 	var arm := pivot(g, Vector3(0.5, 1.4, 0.1))
 	box(arm, Vector3(0.1, 0.9, 0.18), iron, Vector3(0, -0.5, 0.55)).rotation.x = 1.1
 	g.set_meta("legs", _biped_legs(g, 0.2, 0.75, Vector3(0.24, 0.75, 0.28), dk))
+	_collapse(g)
 	return g
 
 ## Alev Oğlu: ateşli küçük yaratık
@@ -396,6 +612,7 @@ static func make_ember() -> Node3D:
 	light.position = Vector3(0, 1.0, 0)
 	g.add_child(light)
 	g.set_meta("legs", _biped_legs(g, 0.2, 0.6, Vector3(0.28, 0.6, 0.28), shell))
+	_collapse(g)
 	return g
 
 ## Ragnaros: lavdan yükselen dev gövde, çekiç
@@ -425,6 +642,7 @@ static func make_ragnaros() -> Node3D:
 	light.position = Vector3(0, 5.0, 2.0)
 	g.add_child(light)
 	g.set_meta("legs", _fake_legs(g))
+	_collapse(g)
 	return g
 
 
@@ -460,6 +678,7 @@ static func make_murloc(shaman: bool = false) -> Node3D:
 		sp.rotation.x = 0.0
 		cone(g, 0.07, 0.3, mat(Color.html("c8d0d8"), 0.7, 0.4), Vector3(0.5, 1.9, 0.3), 5)
 	g.set_meta("legs", _biped_legs(g, 0.13, 0.7, Vector3(0.16, 0.7, 0.2), skin))
+	_collapse(g)
 	return g
 
 ## Timsah: uzun gövdeli, sivri burunlu bataklık yaratığı
@@ -487,6 +706,7 @@ static func make_croc(big: bool = false) -> Node3D:
 	var t2 := cone(g, 0.22, 1.1, hide_c, Vector3(0, 0.45, -2.2), 5)
 	t2.rotation.x = -PI / 2.0 - 0.1
 	g.set_meta("legs", _legs(g, [[-0.5, 0.65, 0.4], [0.5, 0.65, 0.4], [-0.5, -0.65, 0.4], [0.5, -0.65, 0.4]], Vector3(0.2, 0.4, 0.26), dk))
+	_collapse(g)
 	return g
 
 ## Taş Golem: yontulmamış granit bloklardan, parlayan göz ve çatlaklı dev
@@ -507,6 +727,7 @@ static func make_golem(big: bool = false) -> Node3D:
 		var sp := cone(g, 0.18, 0.6, dk, Vector3(s * 0.6, 2.9, -0.2), 4)
 		sp.rotation.z = -s * 0.4
 	g.set_meta("legs", _biped_legs(g, 0.4, 1.1, Vector3(0.55, 1.1, 0.6), dk))
+	_collapse(g)
 	return g
 
 ## Mağara Örümceği: yassı gövde, sekiz bacak
@@ -538,6 +759,7 @@ static func make_spider() -> Node3D:
 		lo.rotation.z = side * 0.15
 		legs.append(l)
 	g.set_meta("legs", [legs[0], legs[3], legs[4], legs[7]])
+	_collapse(g)
 	return g
 
 ## Bataklık Canavarı: yosun kaplı, kambur taş-çamur dev
@@ -559,6 +781,7 @@ static func make_bogbeast() -> Node3D:
 		var tu := cone(g, 0.16, 0.5, moss, Vector3(-0.4 + k * 0.2, 2.5, -0.35), 5)
 		tu.rotation.x = -0.3
 	g.set_meta("legs", _biped_legs(g, 0.3, 1.05, Vector3(0.4, 1.05, 0.45), dk))
+	_collapse(g)
 	return g
 
 ## Kar Elementali: buzdan yontulmuş, parlayan çekirdekli
@@ -580,6 +803,7 @@ static func make_frost() -> Node3D:
 	light.position = Vector3(0, 1.0, 0)
 	g.add_child(light)
 	g.set_meta("legs", _biped_legs(g, 0.2, 0.6, Vector3(0.26, 0.6, 0.26), ice))
+	_collapse(g)
 	return g
 
 ## İskelet: kemik renkli, paslı kılıçlı
@@ -588,4 +812,5 @@ static func make_skeleton() -> Node3D:
 	var eye = mat(Color.html("60ff90"), 0.0, 0.4, Color.html("40ff80"), 2.5)
 	for sd in [-1.0, 1.0]:
 		sph(g, 0.04, eye, Vector3(sd * 0.1, 1.62, 0.2))
+	_collapse(g)
 	return g

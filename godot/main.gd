@@ -679,6 +679,13 @@ func _build_world() -> void:
 	if map != "mine" and map != "ash":
 		_setup_rain()
 	_spawn_walls()
+	# Web/GLES Compatibility render yolunun sahnedeki toplam MeshInstance3D
+	# sayısı için ~1000 civarı sert bir üst sınırı var; bu yüzden dünya
+	# tamamen kurulduktan SONRA tüm sahneyi tarayıp, aynı ebeveyne bağlı
+	# statik (iskeletsiz) mesh'leri tek seferde birleştiriyoruz. Köy/şehir
+	# dekorasyonları (örs, kamp ateşi, kuyu vb.) make_dwarf() gibi kendi
+	# kendini birleştirmiyordu; bu genel geçiş onları da kapsar.
+	Dwarf._collapse(self)
 	_apply_env()
 
 func _clear_world() -> void:
@@ -1275,6 +1282,10 @@ func _flame(parent: Node, pos: Vector3, size: float) -> void:
 	var m := Dwarf.mat(Color.html("ffa030"), 0.0, 0.5, Color.html("ff8a1a"), 4.0)
 	var f := Dwarf.cone(parent, 0.5 * size, 1.5 * size, m, pos, 7)
 	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Her alev her kare ayrı ayrı animasyonla ölçekleniyor (bkz. _step_effects);
+	# Dwarf._collapse() bu node'u başka bir mesh'le birleştirip serbest
+	# bırakmasın diye bu bayrak ile hariç tutuluyor.
+	f.set_meta("no_collapse", true)
 	flame_nodes.append(f)
 
 ## Evin kapısı: evin köy meydanına bakan tarafında; içi ROOM_X civarında bir odadır.
